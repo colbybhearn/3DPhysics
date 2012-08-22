@@ -27,7 +27,6 @@ namespace Winform_XNA
             Body = new Body();
             Skin = new CollisionSkin(Body);
             Body.CollisionSkin = Skin;
-
         }
 
         /// <summary>
