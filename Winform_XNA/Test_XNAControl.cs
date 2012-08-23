@@ -216,27 +216,6 @@ namespace Winform_XNA
             Matrix proj = Matrix.Identity;
             GraphicsDevice.Clear(Color.Gray);
 
-            double time = tmrElapsed.ElapsedMilliseconds;
-            if (Debug)
-            {
-                try
-                {
-                    spriteBatch.Begin();
-                    Vector2 position = new Vector2(5, 5);
-                    spriteBatch.DrawString(debugFont, "Debug Text: Enabled", position, Color.LightGray);
-                    position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, Color.LightGray);
-                    position.Y += debugFont.LineSpacing;
-                    spriteBatch.End();
-                }
-                catch (Exception e)
-                {
-                    System.Console.WriteLine(e.Message);
-                }
-            }
-
-            tmrElapsed.Restart();
-
             /* Do Drawing Here!
              * Should probably call Game.Draw(GraphicsDevice);
              * Allow Game to handle all of the Drawing independantly
@@ -252,7 +231,9 @@ namespace Winform_XNA
             Vector3 cameraOriginalTarget = Vector3.Forward;
             Vector3 cameraOriginalUpVector = Vector3.Up;
 
-            Vector3 camRotation = Vector3.Transform(Vector3.Forward, Matrix.CreateFromQuaternion(camOrientation));
+            //Vector3 camRotation = Vector3.Transform(Vector3.Forward, Matrix.CreateFromQuaternion(camOrientation));
+            // ^ is the same as v - I thought it was simplier to use v
+            Vector3 camRotation = Matrix.CreateFromQuaternion(camOrientation).Forward;
             Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, camOrientation);
             Vector3 cameraFinalTarget = camPosition + cameraRotatedTarget;
             //Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, camOrientation);
@@ -270,7 +251,45 @@ namespace Winform_XNA
                 up);
 
             DrawObjects();
+
+            if (Debug)
+            {
+                try
+                {
+
+                    double time = tmrElapsed.ElapsedMilliseconds;
+                    spriteBatch.Begin();
+                    Vector2 position = new Vector2(5, 5);
+                    spriteBatch.DrawString(debugFont, "Debug Text: Enabled", position, Color.LightGray);
+                    position.Y += debugFont.LineSpacing;
+                    spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, Color.LightGray);
+                    position.Y += debugFont.LineSpacing;
+                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", camPosition);
+                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(camOrientation).Forward);
+                    spriteBatch.End();
+                    tmrElapsed.Restart();
+                }
+                catch (Exception e)
+                {
+                    System.Console.WriteLine(e.Message);
+                }
+            }
         }
+
+        private Vector2 DebugShowVector(SpriteBatch sb, SpriteFont font, Vector2 p, string s, Vector3 vector)
+        {
+            sb.DrawString(font, s + ".X = " + vector.X, p, Color.LightGray);
+            p.Y += font.LineSpacing;
+
+            sb.DrawString(font, s + ".Y = " + vector.Y, p, Color.LightGray);
+            p.Y += font.LineSpacing;
+
+            sb.DrawString(font, s + ".Z = " + vector.Z, p, Color.LightGray);
+            p.Y += font.LineSpacing;
+
+            return p;
+        }
+
         public void DrawObjects()
         {
             foreach (Gobject go in gameObjects)
