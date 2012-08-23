@@ -30,7 +30,7 @@ namespace Winform_XNA
         Model stickman;
         #endregion
 
-        #region debug
+        #region Debug
         private SpriteBatch spriteBatch;
         private SpriteFont debugFont;        
         public bool Debug { get; set; }
@@ -42,7 +42,7 @@ namespace Winform_XNA
         private System.Timers.Timer tmrPhysicsUpdate;
         #endregion
 
-        #region game
+        #region Game
         private Stopwatch tmrElapsed;
         private List<Gobject> gameObjects;
         
@@ -54,8 +54,6 @@ namespace Winform_XNA
         {
             Content = new ContentManager(Services, "content");
 
-            // Potential timers for drawing
-            // Any GraphicsDevice effects
             try
             {
                 InitializePhysics();
@@ -87,6 +85,7 @@ namespace Winform_XNA
             }
             catch (Exception e)
             {
+                System.Console.WriteLine(e.Message);
             }
         }
         private void InitializeObjects()
@@ -201,8 +200,7 @@ namespace Winform_XNA
         }
         void tmrPhysicsUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            // every 10 milliseconds
-            // Should use a variable timerate to keep up a steady "feel"?
+            // Should use a variable timerate to keep up a steady "feel" if we bog down?
             PhysicsSystem.CurrentPhysicsSystem.Integrate((float)TIME_STEP);
 
 
@@ -243,8 +241,6 @@ namespace Winform_XNA
             // This does not appear to be related to the up vector.
             Vector3 side = new Vector3(camRotation.Z, 0, -camRotation.X);
             Vector3 up = Vector3.Cross(camRotation, side);
-
-            //Vector3.Clamp(cameraRotatedUpVector, new Vector3(-1, 0, -1), new Vector3(1, 1, 1)); ;
             _view = Matrix.CreateLookAt(
                 camPosition,
                 camPosition + camRotation,
