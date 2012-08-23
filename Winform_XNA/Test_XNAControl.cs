@@ -15,26 +15,41 @@ namespace Winform_XNA
     class Test_XNAControl : XNAControl
     {
 
+        #region Camera
         Matrix _view;
         Matrix _projection;
+        public Vector3 camPosition = new Vector3();
+        public Quaternion camOrientation;
+        float camSpeed = 10;
+        float camSpeedChangeRate = 1.2f;
+        #endregion
+
+        #region Content
+        public ContentManager Content { get; private set; }
         Model bullet;
         Model stickman;
+        #endregion
 
-
-        private System.Timers.Timer t;
-        private Stopwatch timer;
-
+        #region debug
         private SpriteBatch spriteBatch;
-
-        private List<Gobject> testGobjects;
-
-        private SpriteFont debugFont;
-        public Vector3 CameraPosition = new Vector3();
-        public Quaternion CameraOrientation;
+        private SpriteFont debugFont;        
         public bool Debug { get; set; }
+        #endregion
 
-        public ContentManager Content { get; private set; }
+        #region Physics
+        BoostController bController = new BoostController();
+        public PhysicsSystem PhysicsSystem { get; private set; }
+        private System.Timers.Timer tmrPhysicsUpdate;
+        #endregion
 
+        #region game
+        private Stopwatch tmrElapsed;
+        private List<Gobject> gameObjects;
+        
+        double TIME_STEP = .01; // Recommended timestep
+        #endregion
+
+        #region Init
         protected override void Initialize()
         {
             Content = new ContentManager(Services, "content");
@@ -46,17 +61,14 @@ namespace Winform_XNA
                 InitializePhysics();
                 InitializeObjects();
 
-                CameraPosition = new Vector3(0, 0, 800);
-                CameraOrientation = Quaternion.Identity;
+                camPosition = new Vector3(0, 0, 800);
+                camOrientation = Quaternion.Identity;
 
-                timer = Stopwatch.StartNew();
+                tmrElapsed = Stopwatch.StartNew();
                 spriteBatch = new SpriteBatch(GraphicsDevice);
                 
                 new Game();
                 debugFont = Content.Load<SpriteFont>("DebugFont");
-                
-                effectCam = new BasicEffect(GraphicsDevice);
-                effectCam.VertexColorEnabled = true;
                 
                 _projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
@@ -67,37 +79,39 @@ namespace Winform_XNA
                 // From the example code, should this be a timer instead?
                 Application.Idle += delegate { Invalidate(); };
 
-                t = new System.Timers.Timer();
-                t.AutoReset = false;
-                t.Enabled = false;
-                t.Interval = 10;
-                t.Elapsed += new System.Timers.ElapsedEventHandler(t_Elapsed);
+                tmrPhysicsUpdate = new System.Timers.Timer();
+                tmrPhysicsUpdate.AutoReset = false;
+                tmrPhysicsUpdate.Enabled = false;
+                tmrPhysicsUpdate.Interval = 10;
+                tmrPhysicsUpdate.Elapsed += new System.Timers.ElapsedEventHandler(tmrPhysicsUpdate_Elapsed);
             }
             catch (Exception e)
             {
             }
         }
-        public PhysicsSystem PhysicsSystem { get; private set; }
-
         private void InitializeObjects()
         {
             bullet = Content.Load<Model>("bullet");
             stickman = Content.Load<Model>("stickman");
+            AddSphere(new Vector3(0, 200, 0), .8f, bullet, true);
+            AddBox(new Vector3(0, 30, 0), new Vector3(.5f, .5f, .5f), bullet, false);
+        }
+        private void InitializePhysics()
+        {
+            gameObjects = new List<Gobject>();
 
-            Sphere spherePrimitive = new Sphere(new Vector3(0, 600, 0), 5);
-            Gobject sphere = new Gobject(
-                new Vector3(0, 500, 0),
-                Vector3.One,
-                spherePrimitive,
-                MaterialTable.MaterialID.BouncyNormal,
-                bullet);
-            testGobjects.Add(sphere);
+            PhysicsSystem = new PhysicsSystem();
+            PhysicsSystem.CollisionSystem = new CollisionSystemSAP();
+            PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
+            PhysicsSystem.Gravity = new Vector3(0, -9.8f, 0);
 
             
-            AddBox(new Vector3(0, 30, 0), new Vector3(5, 5, 5), false, bullet);
-        }
 
-        private void AddBox(Vector3 pos, Vector3 size, bool moveable, Model model)
+        }
+        #endregion
+
+        #region Methods
+        private void AddBox(Vector3 pos, Vector3 size, Model model, bool moveable)
         {
             Box boxPrimitive = new Box(pos, Matrix.Identity, size);
             Gobject box = new Gobject(
@@ -109,46 +123,101 @@ namespace Winform_XNA
                 );
 
            
-            testGobjects.Add(box);
+            gameObjects.Add(box);
         }
-
-        private void InitializePhysics()
+        private void AddSphere(Vector3 pos, float radius, Model model, bool moveable)
         {
-            testGobjects = new List<Gobject>();
-
-            PhysicsSystem = new PhysicsSystem();
-            PhysicsSystem.CollisionSystem = new CollisionSystemSAP();
-            PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
-            PhysicsSystem.Gravity = new Vector3(0,-9.8f,0);
+            Sphere spherePrimitive = new Sphere(pos, radius);
+            Gobject sphere = new Gobject(
+                pos,
+                Vector3.One*radius,
+                spherePrimitive,
+                model,
+                moveable);
+            gameObjects.Add(sphere);
+            
+            if(PhysicsSystem.Controllers.Contains(bController))
+                PhysicsSystem.RemoveController(bController);
+            bController.Initialize(sphere.Body);
+            bController.DisableController();
+            PhysicsSystem.AddController(bController);
         }
+        #endregion
 
-        public void WireUpTimer()
+        #region User Input
+        public void ProcessKeyDown(KeyEventArgs e)
         {
-            t.Enabled = true;
-            t.Stop();
-            t.Start();
-        }
-        
-        double TIME_STEP = .01; // Recommended timestep
+            if (e.KeyCode == Keys.Q)
+            {
+                camSpeed *= camSpeedChangeRate;
+            }
+            if (e.KeyCode == Keys.Z)
+            {
+                camSpeed /= camSpeedChangeRate;
+            }
+            if (e.KeyCode == Keys.W)
+            {
+                camPosition += Vector3.Transform(Vector3.Forward, camOrientation) * camSpeed;
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                camPosition += Vector3.Transform(Vector3.Left, camOrientation) * camSpeed;
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                camPosition += Vector3.Transform(Vector3.Backward, camOrientation) * camSpeed;
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                camPosition += Vector3.Transform(Vector3.Right, camOrientation) * camSpeed;
+            }
+            if (e.KeyCode == Keys.N)
+                AddSphere();
+            if (e.KeyCode == Keys.B)
+            {
+                bController.EnableController();
+            }
 
-        void t_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        }
+
+        private void AddSphere()
+        {
+            AddSphere(new Vector3(0, 600, 0), 5, bullet, true);
+            
+        }
+
+        internal void PanCam(float dX, float dY)
+        {
+            Quaternion cameraChange =
+            Quaternion.CreateFromAxisAngle(Vector3.UnitX, -dY * .001f) *
+            Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
+            camOrientation = camOrientation * cameraChange;
+        }
+        #endregion
+
+        public void ResetTimer()
+        {
+            tmrPhysicsUpdate.Stop();
+            tmrPhysicsUpdate.Start();
+        }
+        void tmrPhysicsUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             // every 10 milliseconds
             // Should use a variable timerate to keep up a steady "feel"?
             PhysicsSystem.CurrentPhysicsSystem.Integrate((float)TIME_STEP);
 
 
-            t.Stop();
-            t.Start();
+            tmrPhysicsUpdate.Stop();
+            tmrPhysicsUpdate.Start();
         }
 
-        BasicEffect effectCam;
+        #region Draw
         protected override void Draw()
         {
             Matrix proj = Matrix.Identity;
             GraphicsDevice.Clear(Color.Gray);
 
-            double time = timer.ElapsedMilliseconds;
+            double time = tmrElapsed.ElapsedMilliseconds;
             if (Debug)
             {
                 try
@@ -167,7 +236,7 @@ namespace Winform_XNA
                 }
             }
 
-            timer.Restart();
+            tmrElapsed.Restart();
 
             /* Do Drawing Here!
              * Should probably call Game.Draw(GraphicsDevice);
@@ -184,63 +253,33 @@ namespace Winform_XNA
             Vector3 cameraOriginalTarget = Vector3.Forward;
             Vector3 cameraOriginalUpVector = Vector3.Up;
 
-            Vector3 camOrientation = Vector3.Transform(Vector3.Forward, Matrix.CreateFromQuaternion(CameraOrientation));
-            Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, CameraOrientation);
-            Vector3 cameraFinalTarget = CameraPosition + cameraRotatedTarget;
-            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, CameraOrientation);
+            Vector3 camRotation = Vector3.Transform(Vector3.Forward, Matrix.CreateFromQuaternion(camOrientation));
+            Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, camOrientation);
+            Vector3 cameraFinalTarget = camPosition + cameraRotatedTarget;
+            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, camOrientation);
 
             Vector3.Clamp(cameraRotatedUpVector, new Vector3(-1, 0, -1), new Vector3(1, 1, 1)); ;
             _view = Matrix.CreateLookAt(
-                CameraPosition,
-                CameraPosition + camOrientation,
+                camPosition,
+                camPosition + camRotation,
                 cameraRotatedUpVector);
 
             DrawObjects();
         }
-
-        internal void PanCam(float dX, float dY)
-        {
-            Quaternion cameraChange =
-            Quaternion.CreateFromAxisAngle(Vector3.UnitX, -dY * .001f) *
-            Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
-            CameraOrientation = CameraOrientation * cameraChange;
-        }
-
-        float walkSpeed=10;
-        float walkChangeRate = 1.2f;
-        public void ProcessKey(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Q)
-            {
-                walkSpeed *= walkChangeRate;
-            }
-            if (e.KeyCode == Keys.Z)
-            {
-                walkSpeed /= walkChangeRate;
-            }
-            if (e.KeyCode == Keys.W)
-            {
-                CameraPosition += Vector3.Transform(Vector3.Forward, CameraOrientation) * walkSpeed;
-            }            
-            if (e.KeyCode == Keys.A)
-            {
-                CameraPosition += Vector3.Transform(Vector3.Left, CameraOrientation) * walkSpeed;
-            }
-            if (e.KeyCode == Keys.S)
-            {
-                CameraPosition += Vector3.Transform(Vector3.Backward, CameraOrientation) * walkSpeed;
-            }
-            if (e.KeyCode == Keys.D)
-            {
-                CameraPosition += Vector3.Transform(Vector3.Right, CameraOrientation) * walkSpeed;
-            }
-        }
-
         public void DrawObjects()
         {
-            foreach (Gobject go in testGobjects)
+            foreach (Gobject go in gameObjects)
             {
                 go.Draw(_view, _projection);
+            }
+        }
+        #endregion
+
+        internal void ProcessKeyUp(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.B)
+            {
+                bController.DisableController();
             }
         }
     }

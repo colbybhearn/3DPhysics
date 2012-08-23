@@ -23,7 +23,7 @@ namespace Winform_XNA
 
         private void button1_Click(object sender, EventArgs e)
         {
-            test_XNAControl.WireUpTimer();
+            test_XNAControl.ResetTimer();
             button1.Enabled = false;
         }
 
@@ -36,19 +36,9 @@ namespace Winform_XNA
             {
                 if (lastX != 0 && lastY != 0)
                 {
-
-                    //float scaleFactor = .005f * Math.Abs(test_XNAControl.CameraPosition.Y);
                     float dX = lastX - e.X;
                     float dY = lastY - e.Y;
-                    //dX *= scaleFactor;
-                    //dY *= scaleFactor;
-
-                    //test_XNAControl.CameraPosition.X += dX;
-                    //simView1.CameraPosition.Y -= dY;
-                    // Map is Top down, looking at the X-Z plane, so a mouse movement in the Y direction, is actually Z
-                    //test_XNAControl.CameraPosition.Z += dY;
-                    //txtCam.Text = test_XNAControl.CameraPosition.X.ToString() + ", " + test_XNAControl.CameraPosition.Z.ToString();
-                    test_XNAControl.PanCam(dX, dY);
+                    test_XNAControl.PanCam(dX, dY);                    
                 }
             }
             lastX = e.X;
@@ -57,7 +47,13 @@ namespace Winform_XNA
 
         private void test_XNAControl_KeyDown(object sender, KeyEventArgs e)
         {
-            test_XNAControl.ProcessKey(e);
+            test_XNAControl.ProcessKeyDown(e);
         }
+
+        private void test_XNAControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            test_XNAControl.ProcessKeyUp(e);
+        }
+        
     }
 }
