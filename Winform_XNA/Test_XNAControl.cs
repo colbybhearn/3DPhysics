@@ -31,9 +31,6 @@ namespace Winform_XNA
         private SpriteFont debugFont;
         public Vector3 CameraPosition = new Vector3();
         public Quaternion CameraOrientation;
-        /// <summary>
-        /// Tells the control to draw Debug information
-        /// </summary>
         public bool Debug { get; set; }
 
         public ContentManager Content { get; private set; }
@@ -87,7 +84,6 @@ namespace Winform_XNA
             bullet = Content.Load<Model>("bullet");
             stickman = Content.Load<Model>("stickman");
 
-
             Sphere spherePrimitive = new Sphere(new Vector3(0, 600, 0), 5);
             Gobject sphere = new Gobject(
                 new Vector3(0, 500, 0),
@@ -95,21 +91,10 @@ namespace Winform_XNA
                 spherePrimitive,
                 MaterialTable.MaterialID.BouncyNormal,
                 bullet);
-
             testGobjects.Add(sphere);
 
-
-            /*Box boxPrimitive = new Box(new Vector3(0, 30, 0), Matrix.Identity, new Vector3(5, 5, 5));
-            Gobject box = new Gobject(
-                Vector3.Zero,
-                Vector3.One,
-                boxPrimitive,
-                MaterialTable.MaterialID.BouncyNormal, 
-                bullet);*/
+            
             AddBox(new Vector3(0, 30, 0), new Vector3(5, 5, 5), false, bullet);
-
-            //box.Body.Immovable = true;
-            //testGobjects.Add(box);
         }
 
         private void AddBox(Vector3 pos, Vector3 size, bool moveable, Model model)
@@ -206,7 +191,6 @@ namespace Winform_XNA
 
             Vector3.Clamp(cameraRotatedUpVector, new Vector3(-1, 0, -1), new Vector3(1, 1, 1)); ;
             _view = Matrix.CreateLookAt(
-                //new Vector3(550, 00, 300),
                 CameraPosition,
                 CameraPosition + camOrientation,
                 cameraRotatedUpVector);
@@ -254,18 +238,10 @@ namespace Winform_XNA
 
         public void DrawObjects()
         {
-            //sb.Begin();
-
-            //sb.End();
-            //TEST CODE
-
             foreach (Gobject go in testGobjects)
             {
                 go.Draw(_view, _projection);
             }
-            
-            //END TEST
         }
-
     }
 }
