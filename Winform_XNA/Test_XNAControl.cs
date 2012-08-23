@@ -29,8 +29,7 @@ namespace Winform_XNA
 
         private SpriteFont debugFont;
         public Vector3 CameraPosition = new Vector3();
-        public Vector3 CameraForward = new Vector3();
-
+        public Quaternion CameraOrientation;
         /// <summary>
         /// Tells the control to draw Debug information
         /// </summary>
@@ -49,8 +48,9 @@ namespace Winform_XNA
                 InitializePhysics();
                 InitializeObjects();
 
-                CameraPosition = new Vector3(550, 0, 0);
-                CameraForward = new Vector3(-1, 0, 0);
+                CameraPosition = new Vector3(0, 0, 800);
+                CameraOrientation = Quaternion.Identity;
+
                 timer = Stopwatch.StartNew();
                 spriteBatch = new SpriteBatch(GraphicsDevice);
                 
@@ -59,13 +59,12 @@ namespace Winform_XNA
                 
                 effectCam = new BasicEffect(GraphicsDevice);
                 effectCam.VertexColorEnabled = true;
-
                 
                 _projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
                 (float)GraphicsDeviceManager.DefaultBackBufferWidth / (float)GraphicsDeviceManager.DefaultBackBufferHeight,
                 0.1f,
-                1000.0f);
+                5000.0f);
                 
                 // From the example code, should this be a timer instead?
                 Application.Idle += delegate { Invalidate(); };
@@ -78,10 +77,7 @@ namespace Winform_XNA
             }
             catch (Exception e)
             {
-
             }
-
-            //throw new NotImplementedException();
         }
         public PhysicsSystem PhysicsSystem { get; private set; }
 
@@ -111,46 +107,6 @@ namespace Winform_XNA
             box.Model = bullet;
             box.Body.Immovable = true;
             testGobjects.Add(box);
-
-
-            /*
-            
-            float junk;
-            Vector3 com;
-            Matrix it;
-            Matrix itCoM;
-            
-            
-            Body sphere = new Body();
-            sphere.CollisionSkin = new CollisionSkin(sphere);
-
-            sphere.CollisionSkin.AddPrimitive(new JigLibX.Geometry.Sphere(new Vector3(0, 600, 0), 5), (int)MaterialTable.MaterialID.BouncyNormal);
-            sphere.Position = new Vector3(0, 500, 0);
-            PrimitiveProperties primitiveProperties = new PrimitiveProperties(
-                PrimitiveProperties.MassDistributionEnum.Solid,
-                PrimitiveProperties.MassTypeEnum.Mass, 5);
-
-            sphere.CollisionSkin.GetMassProperties(primitiveProperties, out junk, out com, out it, out itCoM);
-            sphere.BodyInertia = itCoM;
-            sphere.Mass = junk;
-            sphere.CollisionSkin.ApplyLocalTransform(new Transform(-com, Matrix.Identity));
-            sphere.EnableBody();
-             
-
-            Body box = new Body();
-            box.CollisionSkin = new CollisionSkin(box);
-            box.CollisionSkin.AddPrimitive(new JigLibX.Geometry.Box(new Vector3(0, 30, 0), Matrix.Identity, new Vector3(5, 5, 5)), (int)MaterialTable.MaterialID.BouncyNormal);
-            box.CollisionSkin.GetMassProperties(primitiveProperties, out junk, out com, out it, out itCoM);
-            box.BodyInertia = itCoM;
-            box.Mass = junk;
-            box.CollisionSkin.ApplyLocalTransform(new Transform(-com, Matrix.Identity));
-            box.EnableBody();
-
-            testBodies.Add(sphere);
-            testBodies.Add(box);
-            box.Immovable = true;
-            PhysicsSystem.AddBody(sphere);
-            PhysicsSystem.AddBody(box);*/
         }
 
         private void InitializePhysics()
@@ -160,9 +116,7 @@ namespace Winform_XNA
             PhysicsSystem = new PhysicsSystem();
             PhysicsSystem.CollisionSystem = new CollisionSystemSAP();
             PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
-            //PhysicsSystem.AddController(Co
-
-            
+            PhysicsSystem.Gravity = new Vector3(0,-9.8f,0);
         }
 
         public void WireUpTimer()
@@ -177,7 +131,6 @@ namespace Winform_XNA
         void t_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             // every 10 milliseconds
-            //Game.Instance.Update();
             // Should use a variable timerate to keep up a steady "feel"?
             PhysicsSystem.CurrentPhysicsSystem.Integrate((float)TIME_STEP);
 
@@ -209,8 +162,6 @@ namespace Winform_XNA
                 {
                     System.Console.WriteLine(e.Message);
                 }
-
-                //Game.Instance.DebugView.RenderDebugData(ref proj);
             }
 
             timer.Restart();
@@ -229,18 +180,13 @@ namespace Winform_XNA
             effectCam.View = Matrix.CreateLookAt(new Vector3(CameraPosition.X, CameraPosition.Y, CameraPosition.Z),
                                               new Vector3(CameraPosition.X, CameraPosition.Y - 1, CameraPosition.Z), Vector3.Forward);
             */
-            
-            _view = Matrix.CreateLookAt(
-                //new Vector3(550, 00, 300),
-                new Vector3(CameraPosition.X, CameraPosition.Y, CameraPosition.Z),
-                CameraPosition + CameraForward,
-                Vector3.Up);
+
 
             //effectCam.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, .0001f, 10000);
             // Draw the triangle.
             //effectCam.CurrentTechnique.Passes[0].Apply();
-             
-            DrawObjects();
+
+            
 
             /* Do Drawing Here!
              * Should probably call Game.Draw(GraphicsDevice);
@@ -254,9 +200,61 @@ namespace Winform_XNA
              * This allows for a 4x split panel for world editing, or 2-4x splitscreen
              */
 
-            //throw new NotImplementedException();
+            Vector3 cameraOriginalTarget = Vector3.Forward;
+            Vector3 cameraOriginalUpVector = Vector3.Up;
+
+            Vector3 camOrientation = Vector3.Transform(Vector3.Forward, Matrix.CreateFromQuaternion(CameraOrientation));
+            Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, CameraOrientation);
+            Vector3 cameraFinalTarget = CameraPosition + cameraRotatedTarget;
+            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, CameraOrientation);
+
+            Vector3.Clamp(cameraRotatedUpVector, new Vector3(-1, 0, -1), new Vector3(1, 1, 1)); ;
+            _view = Matrix.CreateLookAt(
+                //new Vector3(550, 00, 300),
+                CameraPosition,
+                CameraPosition + camOrientation,
+                cameraRotatedUpVector);
+
+            DrawObjects();
         }
 
+        internal void PanCam(float dX, float dY)
+        {
+            Quaternion cameraChange =
+            Quaternion.CreateFromAxisAngle(Vector3.UnitX, -dY * .001f) *
+            Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
+            CameraOrientation = CameraOrientation * cameraChange;
+        }
+
+        float walkSpeed=10;
+        float walkChangeRate = 1.2f;
+        public void ProcessKey(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Q)
+            {
+                walkSpeed *= walkChangeRate;
+            }
+            if (e.KeyCode == Keys.Z)
+            {
+                walkSpeed /= walkChangeRate;
+            }
+            if (e.KeyCode == Keys.W)
+            {
+                CameraPosition += Vector3.Transform(Vector3.Forward, CameraOrientation) * walkSpeed;
+            }            
+            if (e.KeyCode == Keys.A)
+            {
+                CameraPosition += Vector3.Transform(Vector3.Left, CameraOrientation) * walkSpeed;
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                CameraPosition += Vector3.Transform(Vector3.Backward, CameraOrientation) * walkSpeed;
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                CameraPosition += Vector3.Transform(Vector3.Right, CameraOrientation) * walkSpeed;
+            }
+        }
 
         public void DrawObjects()
         {
@@ -299,22 +297,5 @@ namespace Winform_XNA
             //END TEST
         }
 
-        Vector3 walkIncrement = Vector3.Forward;
-        public void ProcessKey(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.W)
-            {
-                CameraPosition += walkIncrement;
-            }
-        }
-
-        internal void PanCam(float dX, float dY)
-        {
-            Matrix cam = Matrix.CreateRotationX(.001f * dX);
-            cam *= Matrix.CreateRotationY(.001f * dY);
-
-            CameraForward = Vector3.Transform(CameraForward, Matrix.CreateRotationX(.001f * dX));
-            CameraForward = Vector3.Transform(CameraForward, Matrix.CreateRotationY(.001f * dY));
-        }
     }
 }
