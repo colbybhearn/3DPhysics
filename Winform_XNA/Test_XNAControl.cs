@@ -255,13 +255,19 @@ namespace Winform_XNA
             Vector3 camRotation = Vector3.Transform(Vector3.Forward, Matrix.CreateFromQuaternion(camOrientation));
             Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, camOrientation);
             Vector3 cameraFinalTarget = camPosition + cameraRotatedTarget;
-            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, camOrientation);
+            //Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, camOrientation);
 
-            Vector3.Clamp(cameraRotatedUpVector, new Vector3(-1, 0, -1), new Vector3(1, 1, 1)); ;
+            // Side x camRotation gives the correct Up vector WITHOUT roll, if you do -Z,0,X instead, you will be upsidedown
+            // There is still an issue when nearing a "1" in camRotation in the positive or negative Y, in that it rotates weird,
+            // This does not appear to be related to the up vector.
+            Vector3 side = new Vector3(camRotation.Z, 0, -camRotation.X);
+            Vector3 up = Vector3.Cross(camRotation, side);
+
+            //Vector3.Clamp(cameraRotatedUpVector, new Vector3(-1, 0, -1), new Vector3(1, 1, 1)); ;
             _view = Matrix.CreateLookAt(
                 camPosition,
                 camPosition + camRotation,
-                cameraRotatedUpVector);
+                up);
 
             DrawObjects();
         }
