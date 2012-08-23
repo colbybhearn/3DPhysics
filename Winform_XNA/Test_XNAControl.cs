@@ -182,8 +182,7 @@ namespace Winform_XNA
 
         private void AddSphere()
         {
-            AddSphere(new Vector3(0, 600, 0), 5, bullet, true);
-            
+            AddSphere(new Vector3(0, 300, 0), .5f, bullet, true);
         }
 
         internal void PanCam(float dX, float dY)
