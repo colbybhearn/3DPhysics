@@ -18,6 +18,7 @@ namespace Winform_XNA
         Matrix _view;
         Matrix _projection;
         Model bullet;
+        Model stickman;
 
 
         private System.Timers.Timer t;
@@ -84,6 +85,7 @@ namespace Winform_XNA
         private void InitializeObjects()
         {
             bullet = Content.Load<Model>("bullet");
+            stickman = Content.Load<Model>("stickman");
 
 
             Sphere spherePrimitive = new Sphere(new Vector3(0, 600, 0), 5);
@@ -91,21 +93,37 @@ namespace Winform_XNA
                 new Vector3(0, 500, 0),
                 Vector3.One,
                 spherePrimitive,
-                MaterialTable.MaterialID.BouncyNormal);
+                MaterialTable.MaterialID.BouncyNormal,
+                bullet);
 
-            sphere.Model = bullet;
             testGobjects.Add(sphere);
 
 
-            Box boxPrimitive = new Box(new Vector3(0, 30, 0), Matrix.Identity, new Vector3(5, 5, 5));
+            /*Box boxPrimitive = new Box(new Vector3(0, 30, 0), Matrix.Identity, new Vector3(5, 5, 5));
             Gobject box = new Gobject(
                 Vector3.Zero,
                 Vector3.One,
                 boxPrimitive,
-                MaterialTable.MaterialID.BouncyNormal);
+                MaterialTable.MaterialID.BouncyNormal, 
+                bullet);*/
+            AddBox(new Vector3(0, 30, 0), new Vector3(5, 5, 5), false, bullet);
 
-            box.Model = bullet;
-            box.Body.Immovable = true;
+            //box.Body.Immovable = true;
+            //testGobjects.Add(box);
+        }
+
+        private void AddBox(Vector3 pos, Vector3 size, bool moveable, Model model)
+        {
+            Box boxPrimitive = new Box(pos, Matrix.Identity, size);
+            Gobject box = new Gobject(
+                Vector3.Zero,
+                Vector3.One,
+                boxPrimitive,
+                model,
+                moveable
+                );
+
+           
             testGobjects.Add(box);
         }
 
@@ -165,28 +183,6 @@ namespace Winform_XNA
             }
 
             timer.Restart();
-
-            /*
-            // Set transform matrices.
-            float aspect = GraphicsDevice.Viewport.AspectRatio;
-
-            /*
-            float yaw = 0;// (float)time * 0.7f;
-            float pitch = 0;//time * 0.8f;
-            float roll = 0;// time * 0.9f;
-            
-            effectCam.World = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
-
-            effectCam.View = Matrix.CreateLookAt(new Vector3(CameraPosition.X, CameraPosition.Y, CameraPosition.Z),
-                                              new Vector3(CameraPosition.X, CameraPosition.Y - 1, CameraPosition.Z), Vector3.Forward);
-            */
-
-
-            //effectCam.Projection = Matrix.CreatePerspectiveFieldOfView(1, aspect, .0001f, 10000);
-            // Draw the triangle.
-            //effectCam.CurrentTechnique.Passes[0].Apply();
-
-            
 
             /* Do Drawing Here!
              * Should probably call Game.Draw(GraphicsDevice);
@@ -267,33 +263,7 @@ namespace Winform_XNA
             {
                 go.Draw(_view, _projection);
             }
-
-            /*
-            foreach (Body b in testBodies)
-            {
-                Matrix[] transforms = new Matrix[bullet.Bones.Count];
-                bullet.CopyAbsoluteBoneTransformsTo(transforms);
-
-
-                Matrix worldMatrix = Matrix.CreateScale(Vector3.One) *
-                                    b.CollisionSkin.GetPrimitiveLocal(0).Transform.Orientation *
-                                    b.Orientation *
-                                    Matrix.CreateTranslation(b.Position);
-
-                foreach (ModelMesh mesh in bullet.Meshes)
-                {
-                    foreach (BasicEffect effect in mesh.Effects)
-                    {
-                        effect.EnableDefaultLighting();
-                        effect.PreferPerPixelLighting = true;
-                        effect.World = transforms[mesh.ParentBone.Index] * worldMatrix;
-                        effect.View = _view;
-                        effect.Projection = _projection;
-                    }
-                    mesh.Draw();
-                }
-
-            }*/
+            
             //END TEST
         }
 

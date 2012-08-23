@@ -36,15 +36,12 @@ namespace Winform_XNA
         /// <param name="scale">Scale</param>
         /// <param name="primative">Primitive to add to Skin</param>
         /// <param name="prop">Material Properties of Primitive</param>
-        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialProperties prop)
+        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialProperties prop, Model model)
             : this()
         {
             Skin.AddPrimitive(primative, prop);
 
-            Position = position;
-            Scale = scale;
-
-            FinalizeBody();
+            CommonInit(position, scale, model, true);
         }
 
         /// <summary>
@@ -54,15 +51,12 @@ namespace Winform_XNA
         /// <param name="scale">Scale</param>
         /// <param name="primative">Primitive to add to Skin</param>
         /// <param name="propId">Predefined Material Properties of Primitive</param>
-        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialTable.MaterialID propId)
+        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialTable.MaterialID propId, Model model)
             : this()
         {
             Skin.AddPrimitive(primative, (int)propId);
 
-            Position = position;
-            Scale = scale;
-
-            FinalizeBody();
+            CommonInit(position, scale, model, true);
         }
 
         /// <summary>
@@ -73,17 +67,32 @@ namespace Winform_XNA
         /// <param name="scale">Scale</param>
         /// <param name="primatives">Primitives to add to Skin</param>
         /// <param name="props">Material Properties of Primitives to add</param>
-        public Gobject(Vector3 position, Vector3 scale, List<Primitive> primatives, List<MaterialProperties> props)
+        public Gobject(Vector3 position, Vector3 scale, List<Primitive> primatives, List<MaterialProperties> props, Model model)
             : this()
         {
             for (int i = 0; i < primatives.Count && i < props.Count; i++)
                 Skin.AddPrimitive(primatives[i], props[i]);
 
-            Position = position;
-            Scale = scale;
+            CommonInit(position, scale, model, true);
+        }
 
+        public Gobject(Vector3 position, Vector3 scale, Primitive primitive, Model model, bool moveable)
+            : this()
+        {
+            Skin.AddPrimitive(primitive, (int) MaterialTable.MaterialID.BouncyNormal);
+            CommonInit(position, scale, model, moveable);
+        }
+
+        private void CommonInit(Vector3 pos, Vector3 scale, Model model, bool moveable)
+        {
+            Position = pos;
+            Scale = scale;
+            Model = model;
+            Body.Immovable = !moveable;
             FinalizeBody();
         }
+
+
 
         private void FinalizeBody()
         {
