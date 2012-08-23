@@ -141,6 +141,6 @@ namespace Winform_XNA
         private Matrix GetWorldMatrix()
         {
             return Matrix.CreateScale(Scale) * Skin.GetPrimitiveLocal(0).Transform.Orientation * Body.Orientation * Matrix.CreateTranslation(Body.Position);
-        }
+        } //
     }
 }
