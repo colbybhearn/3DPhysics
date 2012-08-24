@@ -10,14 +10,14 @@ namespace Winform_XNA
     {
         public Matrix _projection;
         public Vector3 Position = new Vector3();
-        public Vector3 YawPitchRoll = new Vector3();
+        public Vector3 PitchYawRoll = new Vector3(); // Named this way Becuase X,Y,Z = Pitch,Yaw,Roll when stored
         public Quaternion Orientation;
         public float Speed = 10;
         public float SpeedChangeRate = 1.2f;
 
         public Camera(Vector3 pos)
         {
-            YawPitchRoll = Vector3.Zero;
+            PitchYawRoll = Vector3.Zero;
             Orientation = Quaternion.Identity;
             Position = pos;
             _projection = Matrix.CreatePerspectiveFieldOfView(
@@ -83,17 +83,17 @@ namespace Winform_XNA
         }
         public void AdjustOrientation(float pitch, float yaw)
         {
-            YawPitchRoll.X = (YawPitchRoll.X + pitch);
-            YawPitchRoll.Y = (YawPitchRoll.Y + yaw);
+            PitchYawRoll.X = (PitchYawRoll.X + pitch);
+            PitchYawRoll.Y = (PitchYawRoll.Y + yaw);
 
             //prevents camera from flipping over, Math.Pi/2 = 1.57f with rounding
             // I use 1.57f because Math.PI causes constant "flipping"
-            YawPitchRoll = Vector3.Clamp(YawPitchRoll, new Vector3(-1.57f, float.MinValue, float.MinValue), new Vector3(1.57f, float.MaxValue, float.MaxValue));
+            PitchYawRoll = Vector3.Clamp(PitchYawRoll, new Vector3(-1.57f, float.MinValue, float.MinValue), new Vector3(1.57f, float.MaxValue, float.MaxValue));
 
             //Quaternion cameraChange =
             Orientation = 
-            Quaternion.CreateFromAxisAngle(Vector3.UnitY, YawPitchRoll.Y) *
-            Quaternion.CreateFromAxisAngle(Vector3.UnitX, YawPitchRoll.X);
+            Quaternion.CreateFromAxisAngle(Vector3.UnitY, PitchYawRoll.Y) *
+            Quaternion.CreateFromAxisAngle(Vector3.UnitX, PitchYawRoll.X);
             //Quaternion.CreateFromAxisAngle(GetLevelCameraLhs.Right, -dY * .001f) *
             //Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
             //Orientation = Orientation * cameraChange;
