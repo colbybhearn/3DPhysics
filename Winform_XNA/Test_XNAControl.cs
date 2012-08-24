@@ -112,6 +112,11 @@ namespace Winform_XNA
 
            
             gameObjects.Add(box);
+
+            if (PhysicsSystem.Controllers.Contains(bController))
+                PhysicsSystem.RemoveController(bController);
+            bController = new BoostController(box.Body, Vector3.Up * 12, Vector3.Zero);
+            PhysicsSystem.AddController(bController);
         }
         private void AddSphere(Vector3 pos, float radius, Model model, bool moveable)
         {
@@ -126,7 +131,7 @@ namespace Winform_XNA
             
             if(PhysicsSystem.Controllers.Contains(bController))
                 PhysicsSystem.RemoveController(bController);
-            bController = new BoostController(sphere.Body, Vector3.Up*12);
+            bController = new BoostController(sphere.Body, Vector3.Up*12, Vector3.Zero);
             PhysicsSystem.AddController(bController);
         }
         #endregion
