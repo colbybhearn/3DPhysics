@@ -73,11 +73,11 @@ namespace Winform_XNA
         }
         public void MoveForward()
         {
-            AdjustPosition(LhsLevelViewMatrix.Forward);
+            AdjustPosition(Vector3.Normalize(LhsLevelViewMatrix.Forward) * .1f);
         }
         public void MoveBackward()
         {
-            AdjustPosition(LhsLevelViewMatrix.Backward);
+            AdjustPosition(LhsLevelViewMatrix.Backward * .1f);
         }
         public void AdjustOrientation(float pitch, float yaw)
         {

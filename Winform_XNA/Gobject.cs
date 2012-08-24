@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using JigLibX.Collision;
-using JigLibX.Geometry;
+﻿using JigLibX.Collision;
 using JigLibX.Physics;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using JigLibX.Geometry;
+using System.Collections.Generic;
+using System;
 
 namespace Winform_XNA
 {
@@ -80,7 +80,7 @@ namespace Winform_XNA
         public Gobject(Vector3 position, Vector3 scale, Primitive primitive, Model model, bool moveable)
             : this()
         {
-            Skin.AddPrimitive(primitive, (int) MaterialTable.MaterialID.BouncyNormal);
+            Skin.AddPrimitive(primitive, (int) MaterialTable.MaterialID.NormalRough);
             CommonInit(position, scale, model, moveable);
         }
 
@@ -90,12 +90,13 @@ namespace Winform_XNA
             Scale = scale;
             Model = model;
             Body.Immovable = !moveable;
-            FinalizeBody();
+            // MOVED TO BEFORE INTEGRATE
+            //FinalizeBody();
         }
 
 
 
-        private void FinalizeBody()
+        public void FinalizeBody()
         {
             Vector3 com = SetMass(1.0f);
 
@@ -103,8 +104,8 @@ namespace Winform_XNA
 
             Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
             Body.EnableBody();
-
-            PhysicsSystem.CurrentPhysicsSystem.AddBody(Body);
+            // EnableBody adds it
+            //PhysicsSystem.CurrentPhysicsSystem.AddBody(Body);
         }
 
         private Vector3 SetMass(float mass)

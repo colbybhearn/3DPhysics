@@ -42,8 +42,11 @@ namespace Winform_XNA
         #endregion
 
         #region Game
-        private Stopwatch tmrElapsed;
-        private List<Gobject> gameObjects;
+        private Stopwatch tmrDrawElapsed;
+        private Stopwatch tmrPhysicsElapsed;
+        private double lastPhysicsElapsed;
+        private List<Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
+        private List<Gobject> newObjects;
         
         double TIME_STEP = .01; // Recommended timestep
         #endregion
@@ -60,7 +63,8 @@ namespace Winform_XNA
 
                 cam = new Camera(new Vector3(0, 0, 20));
 
-                tmrElapsed = Stopwatch.StartNew();
+                tmrDrawElapsed = Stopwatch.StartNew();
+                tmrPhysicsElapsed = new Stopwatch();
                 spriteBatch = new SpriteBatch(GraphicsDevice);
                 
                 new Game();
@@ -86,24 +90,41 @@ namespace Winform_XNA
             sphereModel = Content.Load<Model>("Sphere");
             //AddSphere(new Vector3(0, 0, .2f), 1f, sphereModel, false);
             //AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
-            AddBox(new Vector3(0, 1, 0), new Vector3(.05f, .05f, .05f), cubeModel, true);
-            AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f), cubeModel, false);
+            AddBox(new Vector3(0, 10, 0), new Vector3(1f, 1f, 1f), cubeModel, true);
+            AddBox(new Vector3(0, 0, 0), new Vector3(50f, 5f, 50f), cubeModel, false);
+            AddBox(new Vector3(0, 1.25f, 27.5f), new Vector3(50f, 7.5f, 5f), cubeModel, false);
+            AddBox(new Vector3(0, 1.25f, -27.5f), new Vector3(50f, 7.5f, 5f), cubeModel, false);
+            AddBox(new Vector3(27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), cubeModel, false);
+            AddBox(new Vector3(-27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), cubeModel, false);
+
+            AddNewObjects();
         }
         private void InitializePhysics()
         {
             gameObjects = new List<Gobject>();
+            newObjects = new List<Gobject>();
 
             PhysicsSystem = new PhysicsSystem();
             PhysicsSystem.CollisionSystem = new CollisionSystemSAP();
+            PhysicsSystem.EnableFreezing = true;
             PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
+            PhysicsSystem.CollisionSystem.UseSweepTests = true;
             PhysicsSystem.Gravity = new Vector3(0, -9.8f, 0);
+            // CollisionTOllerance and Allowed Penetration
+            // changed because our objects were "too small"
+            PhysicsSystem.CollisionTollerance = 0.01f;
+            PhysicsSystem.AllowedPenetration = 0.001f;
+
+            PhysicsSystem.NumCollisionIterations = 8;
+            PhysicsSystem.NumContactIterations = 8;
+            PhysicsSystem.NumPenetrationRelaxtionTimesteps = 15;
         }
         #endregion
 
         #region Methods
         private void AddBox(Vector3 pos, Vector3 size, Model model, bool moveable)
         {
-            Box boxPrimitive = new Box(pos, Matrix.Identity, size);
+            Box boxPrimitive = new Box(Vector3.Zero, Matrix.Identity, size);
             Gobject box = new Gobject(
                 pos,
                 size/2,
@@ -112,9 +133,10 @@ namespace Winform_XNA
                 moveable
                 );
 
-           
-            gameObjects.Add(box);
+            //gameObjects.Add(box);
+            newObjects.Add(box);
         }
+
         private void AddSphere(Vector3 pos, float radius, Model model, bool moveable)
         {
             Sphere spherePrimitive = new Sphere(pos, radius);
@@ -124,7 +146,8 @@ namespace Winform_XNA
                 spherePrimitive,
                 model,
                 moveable);
-            gameObjects.Add(sphere);
+            //gameObjects.Add(sphere);
+            newObjects.Add(sphere);
             
             if(PhysicsSystem.Controllers.Contains(bController))
                 PhysicsSystem.RemoveController(bController);
@@ -162,7 +185,12 @@ namespace Winform_XNA
                 cam.MoveRight();
             }
             if (e.KeyCode == Keys.N)
-                AddSphere();
+            {
+                if (e.Shift)
+                    AddSpheres(5);
+                else
+                    AddSphere();
+            }
             if (e.KeyCode == Keys.B)
             {
                 bController.EnableController();
@@ -171,7 +199,14 @@ namespace Winform_XNA
         }
         private void AddSphere()
         {
-            AddSphere(new Vector3(0, 300, 0), .5f, sphereModel, true);
+            AddSphere(new Vector3(0, 30, 0), .5f, sphereModel, true);
+        }
+
+        private void AddSpheres(int n)
+        {
+            Random r = new Random();
+            for (int i = 0; i < n; i++)
+                AddSphere(new Vector3((float)(10 - r.NextDouble() * 20), (float)(40 - r.NextDouble() * 20), (float)(10 - r.NextDouble() * 20)), (float)(.5f + r.NextDouble()), sphereModel, true);
         }
         internal void PanCam(float dX, float dY)
         {
@@ -181,17 +216,37 @@ namespace Winform_XNA
 
         public void ResetTimer()
         {
+            tmrPhysicsElapsed.Restart();
+
             tmrPhysicsUpdate.Stop();
             tmrPhysicsUpdate.Start();
         }
         void tmrPhysicsUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            //Add our new objects
+            AddNewObjects();
+
             // Should use a variable timerate to keep up a steady "feel" if we bog down?
             PhysicsSystem.CurrentPhysicsSystem.Integrate((float)TIME_STEP);
 
+            lastPhysicsElapsed = tmrPhysicsElapsed.ElapsedMilliseconds;
 
-            tmrPhysicsUpdate.Stop();
-            tmrPhysicsUpdate.Start();
+            ResetTimer();
+        }
+
+        private void AddNewObjects()
+        {
+            lock (gameObjects)
+            {
+                while (newObjects.Count > 0)
+                {
+                    // Remove from end of list so no shuffling occurs? (maybe)
+                    int i = newObjects.Count - 1;
+                    newObjects[i].FinalizeBody();
+                    gameObjects.Add(newObjects[i]);
+                    newObjects.RemoveAt(i);
+                }
+            }
         }
 
 
@@ -200,43 +255,51 @@ namespace Winform_XNA
         #region Draw
         protected override void Draw()
         {
-            Matrix proj = Matrix.Identity;
-            GraphicsDevice.Clear(Color.Gray);
-
-            /* Do Drawing Here!
-             * Should probably call Game.Draw(GraphicsDevice);
-             * Allow Game to handle all of the Drawing independantly
-             *   thus this form just exist heres?
-             * Need to think of a good structure for this
-             *
-             * Answer to above question!
-             * This Control should only handle the world VIEW
-             *    possibly passing a camera to Game when calling draw.
-             * This allows for a 4x split panel for world editing, or 2-4x splitscreen
-             */
-
-            DrawObjects();
-
-            if (Debug)
+            try
             {
-                try
+                Matrix proj = Matrix.Identity;
+                GraphicsDevice.Clear(Color.Gray);
+
+                /* Do Drawing Here!
+                 * Should probably call Game.Draw(GraphicsDevice);
+                 * Allow Game to handle all of the Drawing independantly
+                 *   thus this form just exist heres?
+                 * Need to think of a good structure for this
+                 *
+                 * Answer to above question!
+                 * This Control should only handle the world VIEW
+                 *    possibly passing a camera to Game when calling draw.
+                 * This allows for a 4x split panel for world editing, or 2-4x splitscreen
+                 */
+
+                DrawObjects();
+
+                if (Debug)
                 {
-                    double time = tmrElapsed.ElapsedMilliseconds;
+                    double time = tmrDrawElapsed.ElapsedMilliseconds;
                     spriteBatch.Begin();
                     Vector2 position = new Vector2(5, 5);
                     spriteBatch.DrawString(debugFont, "Debug Text: Enabled", position, Color.LightGray);
                     position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, Color.LightGray);
                     position.Y += debugFont.LineSpacing;
+                    spriteBatch.DrawString(debugFont, "TPS: " + (1000.0 / lastPhysicsElapsed), position, Color.LightGray); // physics Ticks Per Second
+                    position.Y += debugFont.LineSpacing;
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.Position);
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
                     spriteBatch.End();
-                    tmrElapsed.Restart();
+
+                    // Following 3 lines are to reset changes to graphics device made by spritebatch
+                    GraphicsDevice.BlendState = BlendState.Opaque;
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    //GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+
+                    tmrDrawElapsed.Restart();
                 }
-                catch (Exception e)
-                {
-                    System.Console.WriteLine(e.Message);
-                }
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e.Message);
             }
         }
 
@@ -256,11 +319,14 @@ namespace Winform_XNA
 
         public void DrawObjects()
         {
-            foreach (Gobject go in gameObjects)
+            lock (gameObjects)
             {
-                go.Draw(cam.RhsLevelViewMatrix, cam._projection);
-                if (DebugPhysics)
-                    go.DebugDraw(GraphicsDevice, cam.RhsLevelViewMatrix, cam._projection);
+                foreach (Gobject go in gameObjects)
+                {
+                    go.Draw(cam.RhsLevelViewMatrix, cam._projection);
+                    if (DebugPhysics)
+                        go.DebugDraw(GraphicsDevice, cam.RhsLevelViewMatrix, cam._projection);
+                }
             }
         }
         #endregion

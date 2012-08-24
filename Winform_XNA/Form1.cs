@@ -63,7 +63,7 @@ namespace Winform_XNA
 
         private void chkDebugPhysics_CheckedChanged(object sender, EventArgs e)
         {
-            test_XNAControl.DebugPhysics = true;
+            test_XNAControl.DebugPhysics = chkDebugPhysics.Checked;
         }
         
     }
