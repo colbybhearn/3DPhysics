@@ -42,7 +42,7 @@ namespace Winform_XNA
         #endregion
 
         #region Physics
-        BoostController bController;
+        //BoostController bController;
         public PhysicsSystem PhysicsSystem { get; private set; }
         private System.Timers.Timer tmrPhysicsUpdate;
         #endregion
@@ -308,6 +308,24 @@ namespace Winform_XNA
 
         }
 
+        internal void ProcessKeyUp(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.B)
+            {
+                //bController.DisableController();
+            }
+
+            switch (controlMode)
+            {
+                case ControlModes.Camera:
+                    break;
+                case ControlModes.Object:
+                    ProcessObjectControlKeyUp(e);
+                    break;
+                default:
+                    break;
+            }
+        }
         
         private void AddSphere()
         {
@@ -360,7 +378,6 @@ namespace Winform_XNA
                 }
             }
         }
-        
 
         #region Draw
         protected override void Draw()
@@ -441,23 +458,5 @@ namespace Winform_XNA
         }
         #endregion
 
-        internal void ProcessKeyUp(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.B)
-            {
-                //bController.DisableController();
-            }
-
-            switch (controlMode)
-            {
-                case ControlModes.Camera:
-                    break;
-                case ControlModes.Object:
-                    ProcessObjectControlKeyUp(e);
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 }
