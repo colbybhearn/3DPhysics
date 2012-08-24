@@ -92,8 +92,10 @@ namespace Winform_XNA
             sphereModel = Content.Load<Model>("Sphere");
             //AddSphere(new Vector3(0, 0, .2f), 1f, sphereModel, false);
             //AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
-            AddBox(new Vector3(0, 1, 0), new Vector3(.05f, .05f, .05f), cubeModel, true);
+            //AddBox(new Vector3(0, 1, 0), new Vector3(.05f, .05f, .05f), cubeModel, true);
             AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f), cubeModel, false);
+            AddBox(new Vector3(-1, .5f, 1), new Vector3(.5f, .5f, .5f), cubeModel, false);
+
         }
         private void InitializePhysics()
         {
@@ -120,11 +122,11 @@ namespace Winform_XNA
 
            
             gameObjects.Add(box);
-
+            /*
             if (PhysicsSystem.Controllers.Contains(bController))
                 PhysicsSystem.RemoveController(bController);
             bController = new BoostController(box.Body, Vector3.Up * 12, Vector3.Zero);
-            PhysicsSystem.AddController(bController);
+            PhysicsSystem.AddController(bController);*/
         }
         private void AddSphere(Vector3 pos, float radius, Model model, bool moveable)
         {
@@ -136,11 +138,11 @@ namespace Winform_XNA
                 model,
                 moveable);
             gameObjects.Add(sphere);
-            
+            /*
             if(PhysicsSystem.Controllers.Contains(bController))
                 PhysicsSystem.RemoveController(bController);
             bController = new BoostController(sphere.Body, Vector3.Up*12, Vector3.Zero);
-            PhysicsSystem.AddController(bController);
+            PhysicsSystem.AddController(bController);*/
         }
         #endregion
 
@@ -222,7 +224,6 @@ namespace Winform_XNA
             if (e.KeyCode == Keys.D)
             {
                 lv.SetRotJetXThrust(-.9f);
-                
             }
         }
         private void ProcessObjectControlKeyUp(KeyEventArgs e)
