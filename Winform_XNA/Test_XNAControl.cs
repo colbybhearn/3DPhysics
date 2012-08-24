@@ -39,6 +39,7 @@ namespace Winform_XNA
         private SpriteFont debugFont;        
         public bool Debug { get; set; }
         public bool DebugPhysics { get; set; }
+        public bool DrawingEnabled { get; set; }
         #endregion
 
         #region Physics
@@ -96,12 +97,12 @@ namespace Winform_XNA
             sphereModel = Content.Load<Model>("Sphere");
             //AddSphere(new Vector3(0, 0, .2f), 1f, sphereModel, false);
             //AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
-            AddBox(new Vector3(0, 10, 0), new Vector3(1f, 1f, 1f), cubeModel, true);
-            AddBox(new Vector3(0, 0, 0), new Vector3(50f, 5f, 50f), cubeModel, false);
-            AddBox(new Vector3(0, 1.25f, 27.5f), new Vector3(50f, 7.5f, 5f), cubeModel, false);
-            AddBox(new Vector3(0, 1.25f, -27.5f), new Vector3(50f, 7.5f, 5f), cubeModel, false);
-            AddBox(new Vector3(27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), cubeModel, false);
-            AddBox(new Vector3(-27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), cubeModel, false);
+            AddBox(new Vector3(0, 10, 0), new Vector3(1f, 1f, 1f), Matrix.Identity, cubeModel, true);
+            AddBox(new Vector3(0, -5, 0), new Vector3(50f, 5f, 50f), Matrix.CreateFromAxisAngle(Vector3.UnitX, (float)(10 * Math.PI / 180)), cubeModel, false);
+            AddBox(new Vector3(0, 1.25f, 27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
+            AddBox(new Vector3(0, 1.25f, -27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
+            AddBox(new Vector3(27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
+            AddBox(new Vector3(-27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
             
             //AddBox(new Vector3(0, 1, 0), new Vector3(.05f, .05f, .05f), cubeModel, true);
             //AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f), cubeModel, false);
@@ -133,9 +134,9 @@ namespace Winform_XNA
         #endregion
 
         #region Methods
-        private void AddBox(Vector3 pos, Vector3 size, Model model, bool moveable)
+        private Gobject AddBox(Vector3 pos, Vector3 size, Matrix orient, Model model, bool moveable)
         {
-            Box boxPrimitive = new Box(Vector3.Zero, Matrix.Identity, size);
+            Box boxPrimitive = new Box(-.5f*size, orient, size);
             Gobject box = new Gobject(
                 pos,
                 size/2,
@@ -151,9 +152,11 @@ namespace Winform_XNA
                 PhysicsSystem.RemoveController(bController);
             bController = new BoostController(box.Body, Vector3.Up * 12, Vector3.Zero);
             PhysicsSystem.AddController(bController);*/
+
+            return box;
         }
 
-        private void AddSphere(Vector3 pos, float radius, Model model, bool moveable)
+        private Gobject AddSphere(Vector3 pos, float radius, Model model, bool moveable)
         {
             Sphere spherePrimitive = new Sphere(pos, radius);
             Gobject sphere = new Gobject(
@@ -170,6 +173,7 @@ namespace Winform_XNA
                 PhysicsSystem.RemoveController(bController);
             bController = new BoostController(sphere.Body, Vector3.Up*12, Vector3.Zero);
             PhysicsSystem.AddController(bController);*/
+            return sphere;
         }
         #endregion
 
@@ -220,17 +224,8 @@ namespace Winform_XNA
             {
                 Vector3 size = new Vector3(.5f, .5f, .5f);
                 Vector3 pos = new Vector3(0, 1, 0);
-                Box boxPrimitive = new Box(pos, Matrix.Identity, size);
-                Gobject box = new Gobject(
-                    pos,
-                    size / 2,
-                    boxPrimitive,
-                    cubeModel,
-                    true
-                    );
+                Gobject box = AddBox(pos, size, Matrix.Identity, cubeModel, true);
                 lv = new LunarVehicle(box.Body);
-
-                gameObjects.Add(box);
             }
             if (lv == null)
                 return;
@@ -336,7 +331,14 @@ namespace Winform_XNA
         {
             Random r = new Random();
             for (int i = 0; i < n; i++)
-                AddSphere(new Vector3((float)(10 - r.NextDouble() * 20), (float)(40 - r.NextDouble() * 20), (float)(10 - r.NextDouble() * 20)), (float)(.5f + r.NextDouble()), sphereModel, true);
+            {
+                AddSphere(
+                    new Vector3(
+                        (float)(10 - r.NextDouble() * 20),
+                        (float)(40 - r.NextDouble() * 20),
+                        (float)(10 - r.NextDouble() * 20)),
+                    (float)(.5f + r.NextDouble()), sphereModel, true);
+            }
         }
         internal void PanCam(float dX, float dY)
         {
@@ -450,9 +452,10 @@ namespace Winform_XNA
             {
                 foreach (Gobject go in gameObjects)
                 {
-                    go.Draw(cam.RhsLevelViewMatrix, cam._projection);
+                    if(DrawingEnabled)
+                        go.Draw(cam.RhsLevelViewMatrix, cam._projection);
                     if (DebugPhysics)
-                        go.DebugDraw(GraphicsDevice, cam.RhsLevelViewMatrix, cam._projection);
+                        go.DrawWireframe(GraphicsDevice, cam.RhsLevelViewMatrix, cam._projection);
                 }
             }
         }

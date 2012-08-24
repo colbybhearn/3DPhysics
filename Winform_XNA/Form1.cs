@@ -65,6 +65,11 @@ namespace Winform_XNA
         {
             test_XNAControl.DebugPhysics = chkDebugPhysics.Checked;
         }
+
+        private void chkDrawing_CheckedChanged(object sender, EventArgs e)
+        {
+            test_XNAControl.DrawingEnabled = chkDrawing.Checked;
+        }
         
     }
 }

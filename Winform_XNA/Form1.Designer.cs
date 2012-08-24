@@ -29,10 +29,11 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.chkDrawing = new System.Windows.Forms.CheckBox();
+            this.chkDebugPhysics = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.test_XNAControl = new Winform_XNA.Test_XNAControl();
-            this.chkDebugPhysics = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -48,6 +49,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.chkDrawing);
             this.splitContainer1.Panel1.Controls.Add(this.chkDebugPhysics);
             this.splitContainer1.Panel1.Controls.Add(this.button1);
             this.splitContainer1.Panel1.Controls.Add(this.chkDebug);
@@ -58,6 +60,32 @@
             this.splitContainer1.Size = new System.Drawing.Size(923, 557);
             this.splitContainer1.SplitterDistance = 207;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // chkDrawing
+            // 
+            this.chkDrawing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkDrawing.AutoSize = true;
+            this.chkDrawing.Checked = true;
+            this.chkDrawing.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDrawing.Location = new System.Drawing.Point(13, 482);
+            this.chkDrawing.Name = "chkDrawing";
+            this.chkDrawing.Size = new System.Drawing.Size(101, 17);
+            this.chkDrawing.TabIndex = 3;
+            this.chkDrawing.Text = "Enable Drawing";
+            this.chkDrawing.UseVisualStyleBackColor = true;
+            this.chkDrawing.CheckedChanged += new System.EventHandler(this.chkDrawing_CheckedChanged);
+            // 
+            // chkDebugPhysics
+            // 
+            this.chkDebugPhysics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkDebugPhysics.AutoSize = true;
+            this.chkDebugPhysics.Location = new System.Drawing.Point(12, 505);
+            this.chkDebugPhysics.Name = "chkDebugPhysics";
+            this.chkDebugPhysics.Size = new System.Drawing.Size(97, 17);
+            this.chkDebugPhysics.TabIndex = 2;
+            this.chkDebugPhysics.Text = "Debug Physics";
+            this.chkDebugPhysics.UseVisualStyleBackColor = true;
+            this.chkDebugPhysics.CheckedChanged += new System.EventHandler(this.chkDebugPhysics_CheckedChanged);
             // 
             // button1
             // 
@@ -86,6 +114,7 @@
             this.test_XNAControl.Debug = false;
             this.test_XNAControl.DebugPhysics = false;
             this.test_XNAControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.test_XNAControl.DrawingEnabled = true;
             this.test_XNAControl.Location = new System.Drawing.Point(0, 0);
             this.test_XNAControl.Name = "test_XNAControl";
             this.test_XNAControl.Size = new System.Drawing.Size(712, 557);
@@ -95,18 +124,6 @@
             this.test_XNAControl.KeyUp += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyUp);
             this.test_XNAControl.MouseEnter += new System.EventHandler(this.test_XNAControl_MouseEnter);
             this.test_XNAControl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
-            // 
-            // chkDebugPhysics
-            // 
-            this.chkDebugPhysics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkDebugPhysics.AutoSize = true;
-            this.chkDebugPhysics.Location = new System.Drawing.Point(12, 505);
-            this.chkDebugPhysics.Name = "chkDebugPhysics";
-            this.chkDebugPhysics.Size = new System.Drawing.Size(97, 17);
-            this.chkDebugPhysics.TabIndex = 2;
-            this.chkDebugPhysics.Text = "Debug Physics";
-            this.chkDebugPhysics.UseVisualStyleBackColor = true;
-            this.chkDebugPhysics.CheckedChanged += new System.EventHandler(this.chkDebugPhysics_CheckedChanged);
             // 
             // Form1
             // 
@@ -132,6 +149,7 @@
         private System.Windows.Forms.CheckBox chkDebug;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox chkDebugPhysics;
+        private System.Windows.Forms.CheckBox chkDrawing;
     }
 }
 

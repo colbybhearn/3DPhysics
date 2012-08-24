@@ -16,6 +16,8 @@ namespace Winform_XNA
         public Vector3 Position { get; private set; }
         public Vector3 Scale { get; private set; }
 
+        private BasicEffect Effect { get; set; }
+
         /// <summary>
         /// Default Constructor
         /// Initalizes the Body and a CollisionSkin
@@ -149,19 +151,22 @@ namespace Winform_XNA
             }
         }
 
-        public void DebugDraw(GraphicsDevice Graphics, Matrix View, Matrix Projection)
+        public void DrawWireframe(GraphicsDevice Graphics, Matrix View, Matrix Projection)
         {
             try
             {
                 VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe();
                 Body.TransformWireframe(wireFrame);
+                if (Effect == null)
+                {
+                    Effect = new BasicEffect(Graphics);
+                    Effect.VertexColorEnabled = true;
+                }
 
-                BasicEffect be = new BasicEffect(Graphics);
-                be.View = View;
-                be.Projection = Projection;
-                be.VertexColorEnabled = true;
+                Effect.View = View;
+                Effect.Projection = Projection;
 
-                foreach (EffectPass pass in be.CurrentTechnique.Passes)
+                foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
                     Graphics.DrawUserPrimitives<VertexPositionColor>(
