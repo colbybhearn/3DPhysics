@@ -32,6 +32,7 @@ namespace Winform_XNA
         private SpriteBatch spriteBatch;
         private SpriteFont debugFont;        
         public bool Debug { get; set; }
+        public bool DebugPhysics { get; set; }
         #endregion
 
         #region Physics
@@ -258,6 +259,8 @@ namespace Winform_XNA
             foreach (Gobject go in gameObjects)
             {
                 go.Draw(cam.RhsLevelViewMatrix, cam._projection);
+                if (DebugPhysics)
+                    go.DebugDraw(GraphicsDevice, cam.RhsLevelViewMatrix, cam._projection);
             }
         }
         #endregion

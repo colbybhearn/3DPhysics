@@ -30,8 +30,9 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.button1 = new System.Windows.Forms.Button();
-            this.cbDebug = new System.Windows.Forms.CheckBox();
+            this.chkDebug = new System.Windows.Forms.CheckBox();
             this.test_XNAControl = new Winform_XNA.Test_XNAControl();
+            this.chkDebugPhysics = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -47,8 +48,9 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.chkDebugPhysics);
             this.splitContainer1.Panel1.Controls.Add(this.button1);
-            this.splitContainer1.Panel1.Controls.Add(this.cbDebug);
+            this.splitContainer1.Panel1.Controls.Add(this.chkDebug);
             // 
             // splitContainer1.Panel2
             // 
@@ -67,20 +69,22 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // cbDebug
+            // chkDebug
             // 
-            this.cbDebug.AutoSize = true;
-            this.cbDebug.Location = new System.Drawing.Point(12, 528);
-            this.cbDebug.Name = "cbDebug";
-            this.cbDebug.Size = new System.Drawing.Size(58, 17);
-            this.cbDebug.TabIndex = 0;
-            this.cbDebug.Text = "Debug";
-            this.cbDebug.UseVisualStyleBackColor = true;
-            this.cbDebug.CheckedChanged += new System.EventHandler(this.cbDebug_CheckedChanged);
+            this.chkDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkDebug.AutoSize = true;
+            this.chkDebug.Location = new System.Drawing.Point(12, 528);
+            this.chkDebug.Name = "chkDebug";
+            this.chkDebug.Size = new System.Drawing.Size(82, 17);
+            this.chkDebug.TabIndex = 0;
+            this.chkDebug.Text = "Debug Text";
+            this.chkDebug.UseVisualStyleBackColor = true;
+            this.chkDebug.CheckedChanged += new System.EventHandler(this.cbDebug_CheckedChanged);
             // 
             // test_XNAControl
             // 
             this.test_XNAControl.Debug = false;
+            this.test_XNAControl.DebugPhysics = false;
             this.test_XNAControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.test_XNAControl.Location = new System.Drawing.Point(0, 0);
             this.test_XNAControl.Name = "test_XNAControl";
@@ -91,6 +95,18 @@
             this.test_XNAControl.KeyUp += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyUp);
             this.test_XNAControl.MouseEnter += new System.EventHandler(this.test_XNAControl_MouseEnter);
             this.test_XNAControl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
+            // 
+            // chkDebugPhysics
+            // 
+            this.chkDebugPhysics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkDebugPhysics.AutoSize = true;
+            this.chkDebugPhysics.Location = new System.Drawing.Point(12, 505);
+            this.chkDebugPhysics.Name = "chkDebugPhysics";
+            this.chkDebugPhysics.Size = new System.Drawing.Size(97, 17);
+            this.chkDebugPhysics.TabIndex = 2;
+            this.chkDebugPhysics.Text = "Debug Physics";
+            this.chkDebugPhysics.UseVisualStyleBackColor = true;
+            this.chkDebugPhysics.CheckedChanged += new System.EventHandler(this.chkDebugPhysics_CheckedChanged);
             // 
             // Form1
             // 
@@ -113,8 +129,9 @@
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Test_XNAControl test_XNAControl;
-        private System.Windows.Forms.CheckBox cbDebug;
+        private System.Windows.Forms.CheckBox chkDebug;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox chkDebugPhysics;
     }
 }
 

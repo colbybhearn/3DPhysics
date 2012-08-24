@@ -1,9 +1,10 @@
-﻿using JigLibX.Collision;
-using JigLibX.Physics;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using JigLibX.Geometry;
+﻿using System;
 using System.Collections.Generic;
+using JigLibX.Collision;
+using JigLibX.Geometry;
+using JigLibX.Physics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Winform_XNA
 {
@@ -147,9 +148,35 @@ namespace Winform_XNA
             }
         }
 
+        public void DebugDraw(GraphicsDevice Graphics, Matrix View, Matrix Projection)
+        {
+            try
+            {
+                VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe();
+                Body.TransformWireframe(wireFrame);
+
+                BasicEffect be = new BasicEffect(Graphics);
+                be.View = View;
+                be.Projection = Projection;
+                be.VertexColorEnabled = true;
+
+                foreach (EffectPass pass in be.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    Graphics.DrawUserPrimitives<VertexPositionColor>(
+                        Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
+                        wireFrame, 0, wireFrame.Length - 1);
+                }
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+            }
+        }
+
         private Matrix GetWorldMatrix()
         {
             return Matrix.CreateScale(Scale) * Skin.GetPrimitiveLocal(0).Transform.Orientation * Body.Orientation * Matrix.CreateTranslation(Body.Position);
-        } //
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace Winform_XNA
 
         private void cbDebug_CheckedChanged(object sender, EventArgs e)
         {
-            test_XNAControl.Debug = cbDebug.Checked;
+            test_XNAControl.Debug = chkDebug.Checked;
             test_XNAControl.Focus();
         }
 
@@ -59,6 +59,11 @@ namespace Winform_XNA
         private void test_XNAControl_MouseEnter(object sender, EventArgs e)
         {
             test_XNAControl.Focus();
+        }
+
+        private void chkDebugPhysics_CheckedChanged(object sender, EventArgs e)
+        {
+            test_XNAControl.DebugPhysics = true;
         }
         
     }
