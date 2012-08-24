@@ -89,6 +89,7 @@
             this.test_XNAControl.Text = "test_XNAControl";
             this.test_XNAControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyDown);
             this.test_XNAControl.KeyUp += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyUp);
+            this.test_XNAControl.MouseEnter += new System.EventHandler(this.test_XNAControl_MouseEnter);
             this.test_XNAControl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
             // 
             // Form1
