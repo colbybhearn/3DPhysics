@@ -14,6 +14,13 @@ namespace Winform_XNA
 {
     class Test_XNAControl : XNAControl
     {
+        #region Todo
+        /*
+         * Add Primitive Models
+         * Refactor Camera control
+         * Refactor Physics Controllers
+         */
+        #endregion
 
         #region Camera
         Matrix _view;
@@ -156,19 +163,19 @@ namespace Winform_XNA
             }
             if (e.KeyCode == Keys.W)
             {
-                camPosition += Vector3.Transform(Vector3.Forward, camOrientation) * camSpeed;
+                camPosition += GetLevelCameraLhs.Forward * camSpeed;
             }
             if (e.KeyCode == Keys.A)
             {
-                camPosition += Vector3.Transform(Vector3.Left, camOrientation) * camSpeed;
+                camPosition += GetLevelCameraLhs.Left * camSpeed;
             }
             if (e.KeyCode == Keys.S)
             {
-                camPosition += Vector3.Transform(Vector3.Backward, camOrientation) * camSpeed;
+                camPosition += GetLevelCameraLhs.Backward * camSpeed;
             }
             if (e.KeyCode == Keys.D)
             {
-                camPosition += Vector3.Transform(Vector3.Right, camOrientation) * camSpeed;
+                 camPosition += GetLevelCameraLhs.Right * camSpeed;
             }
             if (e.KeyCode == Keys.N)
                 AddSphere();
@@ -178,17 +185,17 @@ namespace Winform_XNA
             }
 
         }
-
         private void AddSphere()
         {
             AddSphere(new Vector3(0, 300, 0), .5f, sphereModel, true);
         }
-
         internal void PanCam(float dX, float dY)
         {
             Quaternion cameraChange =
             Quaternion.CreateFromAxisAngle(Vector3.UnitX, -dY * .001f) *
             Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
+            //Quaternion.CreateFromAxisAngle(GetLevelCameraLhs.Right, -dY * .001f) *
+            //Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
             camOrientation = camOrientation * cameraChange;
         }
         #endregion
@@ -206,6 +213,25 @@ namespace Winform_XNA
 
             tmrPhysicsUpdate.Stop();
             tmrPhysicsUpdate.Start();
+        }
+
+
+        public Matrix GetLevelCameraLhs
+        {
+            get
+            {
+                Vector3 camRotation = Matrix.CreateFromQuaternion(camOrientation).Forward;
+                // Side x camRotation gives the correct Up vector WITHOUT roll, if you do -Z,0,X instead, you will be upsidedown
+                // There is still an issue when nearing a "1" in camRotation in the positive or negative Y, in that it rotates weird,
+                // This does not appear to be related to the up vector.
+                Vector3 side = new Vector3(camRotation.Z, 0, -camRotation.X);
+                Vector3 up = Vector3.Cross(camRotation, side);
+                Matrix m = Matrix.CreateLookAt(
+                    camPosition,
+                    camPosition + camRotation,
+                    up);
+                return Matrix.Invert(m);
+            }
         }
 
         #region Draw
@@ -240,6 +266,10 @@ namespace Winform_XNA
             // There is still an issue when nearing a "1" in camRotation in the positive or negative Y, in that it rotates weird,
             // This does not appear to be related to the up vector.
             Vector3 side = new Vector3(camRotation.Z, 0, -camRotation.X);
+            // camera orientation points in the camera Z axis
+            // to get a perpendicular vector, swap components and negate one
+            // this side vector points left initially (-1, 0, 0)
+            // moving to the right with D
             Vector3 up = Vector3.Cross(camRotation, side);
             _view = Matrix.CreateLookAt(
                 camPosition,
