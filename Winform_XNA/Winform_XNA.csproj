@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoostController.cs" />
+    <Compile Include="Camera.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

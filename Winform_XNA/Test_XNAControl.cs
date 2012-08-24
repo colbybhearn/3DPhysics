@@ -17,20 +17,11 @@ namespace Winform_XNA
         #region Todo
         /*
          * Add Primitive Models
-         * Refactor Camera control
          * Refactor Physics Controllers
          */
         #endregion
 
-        #region Camera
-        Matrix _view;
-        Matrix _projection;
-        public Vector3 camPosition = new Vector3();
-        public Quaternion camOrientation;
-        float camSpeed = 10;
-        float camSpeedChangeRate = 1.2f;
-        #endregion
-
+        Camera cam;
         #region Content
         public ContentManager Content { get; private set; }
         Model cubeModel;
@@ -66,20 +57,13 @@ namespace Winform_XNA
                 InitializePhysics();
                 InitializeObjects();
 
-                camPosition = new Vector3(0, 0, 80);
-                camOrientation = Quaternion.Identity;
+                cam = new Camera(new Vector3(0, 0, 800));
 
                 tmrElapsed = Stopwatch.StartNew();
                 spriteBatch = new SpriteBatch(GraphicsDevice);
                 
                 new Game();
                 debugFont = Content.Load<SpriteFont>("DebugFont");
-                
-                _projection = Matrix.CreatePerspectiveFieldOfView(
-                MathHelper.ToRadians(45.0f),
-                (float)GraphicsDeviceManager.DefaultBackBufferWidth / (float)GraphicsDeviceManager.DefaultBackBufferHeight,
-                0.1f,
-                5000.0f);
                 
                 // From the example code, should this be a timer instead?
                 Application.Idle += delegate { Invalidate(); };
@@ -110,9 +94,6 @@ namespace Winform_XNA
             PhysicsSystem.CollisionSystem = new CollisionSystemSAP();
             PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
             PhysicsSystem.Gravity = new Vector3(0, -9.8f, 0);
-
-            
-
         }
         #endregion
 
@@ -155,27 +136,27 @@ namespace Winform_XNA
         {
             if (e.KeyCode == Keys.Q)
             {
-                camSpeed *= camSpeedChangeRate;
+                cam.IncreaseSpeed();
             }
             if (e.KeyCode == Keys.Z)
             {
-                camSpeed /= camSpeedChangeRate;
+                cam.DecreaseSpeed();
             }
             if (e.KeyCode == Keys.W)
             {
-                camPosition += GetLevelCameraLhs.Forward * camSpeed;
+                cam.MoveForward();
             }
             if (e.KeyCode == Keys.A)
             {
-                camPosition += GetLevelCameraLhs.Left * camSpeed;
+                cam.MoveLeft();
             }
             if (e.KeyCode == Keys.S)
             {
-                camPosition += GetLevelCameraLhs.Backward * camSpeed;
+                cam.MoveBackward();
             }
             if (e.KeyCode == Keys.D)
             {
-                 camPosition += GetLevelCameraLhs.Right * camSpeed;
+                cam.MoveRight();
             }
             if (e.KeyCode == Keys.N)
                 AddSphere();
@@ -191,12 +172,7 @@ namespace Winform_XNA
         }
         internal void PanCam(float dX, float dY)
         {
-            Quaternion cameraChange =
-            Quaternion.CreateFromAxisAngle(Vector3.UnitX, -dY * .001f) *
-            Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
-            //Quaternion.CreateFromAxisAngle(GetLevelCameraLhs.Right, -dY * .001f) *
-            //Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
-            camOrientation = camOrientation * cameraChange;
+            cam.AdjustOrientation(-dY*.001f,-dX*.001f);
         }
         #endregion
 
@@ -216,23 +192,7 @@ namespace Winform_XNA
         }
 
 
-        public Matrix GetLevelCameraLhs
-        {
-            get
-            {
-                Vector3 camRotation = Matrix.CreateFromQuaternion(camOrientation).Forward;
-                // Side x camRotation gives the correct Up vector WITHOUT roll, if you do -Z,0,X instead, you will be upsidedown
-                // There is still an issue when nearing a "1" in camRotation in the positive or negative Y, in that it rotates weird,
-                // This does not appear to be related to the up vector.
-                Vector3 side = new Vector3(camRotation.Z, 0, -camRotation.X);
-                Vector3 up = Vector3.Cross(camRotation, side);
-                Matrix m = Matrix.CreateLookAt(
-                    camPosition,
-                    camPosition + camRotation,
-                    up);
-                return Matrix.Invert(m);
-            }
-        }
+        
 
         #region Draw
         protected override void Draw()
@@ -252,37 +212,12 @@ namespace Winform_XNA
              * This allows for a 4x split panel for world editing, or 2-4x splitscreen
              */
 
-            Vector3 cameraOriginalTarget = Vector3.Forward;
-            Vector3 cameraOriginalUpVector = Vector3.Up;
-
-            //Vector3 camRotation = Vector3.Transform(Vector3.Forward, Matrix.CreateFromQuaternion(camOrientation));
-            // ^ is the same as v - I thought it was simplier to use v
-            Vector3 camRotation = Matrix.CreateFromQuaternion(camOrientation).Forward;
-            Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, camOrientation);
-            Vector3 cameraFinalTarget = camPosition + cameraRotatedTarget;
-            //Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, camOrientation);
-
-            // Side x camRotation gives the correct Up vector WITHOUT roll, if you do -Z,0,X instead, you will be upsidedown
-            // There is still an issue when nearing a "1" in camRotation in the positive or negative Y, in that it rotates weird,
-            // This does not appear to be related to the up vector.
-            Vector3 side = new Vector3(camRotation.Z, 0, -camRotation.X);
-            // camera orientation points in the camera Z axis
-            // to get a perpendicular vector, swap components and negate one
-            // this side vector points left initially (-1, 0, 0)
-            // moving to the right with D
-            Vector3 up = Vector3.Cross(camRotation, side);
-            _view = Matrix.CreateLookAt(
-                camPosition,
-                camPosition + camRotation,
-                up);
-
             DrawObjects();
 
             if (Debug)
             {
                 try
                 {
-
                     double time = tmrElapsed.ElapsedMilliseconds;
                     spriteBatch.Begin();
                     Vector2 position = new Vector2(5, 5);
@@ -290,8 +225,8 @@ namespace Winform_XNA
                     position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, Color.LightGray);
                     position.Y += debugFont.LineSpacing;
-                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", camPosition);
-                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(camOrientation).Forward);
+                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.Position);
+                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
                     spriteBatch.End();
                     tmrElapsed.Restart();
                 }
@@ -320,7 +255,7 @@ namespace Winform_XNA
         {
             foreach (Gobject go in gameObjects)
             {
-                go.Draw(_view, _projection);
+                go.Draw(cam.RhsLevelViewMatrix, cam._projection);
             }
         }
         #endregion
