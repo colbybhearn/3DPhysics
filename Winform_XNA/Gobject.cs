@@ -80,7 +80,7 @@ namespace Winform_XNA
         public Gobject(Vector3 position, Vector3 scale, Primitive primitive, Model model, bool moveable)
             : this()
         {
-            Skin.AddPrimitive(primitive, (int) MaterialTable.MaterialID.BouncyNormal);
+            Skin.AddPrimitive(primitive, (int) MaterialTable.MaterialID.NotBouncyNormal);
             CommonInit(position, scale, model, moveable);
         }
 

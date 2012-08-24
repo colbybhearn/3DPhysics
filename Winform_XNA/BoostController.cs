@@ -46,11 +46,15 @@ namespace Winform_XNA
             if (Force != null && Force != Vector3.Zero)
             {
                 Body.AddBodyForce(Force * forceMag);
+                //Body.AddBodyForce(Force * forceMag);
                 if (!Body.IsActive)
                     Body.SetActive();
             }
             if (Torque != null && Torque != Vector3.Zero)
             {
+                if (torqueMag > 0)
+                {
+                }
                 Body.AddBodyTorque(Torque * torqueMag);
                 if (!Body.IsActive)
                     Body.SetActive();

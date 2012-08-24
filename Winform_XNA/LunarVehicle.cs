@@ -13,9 +13,9 @@ namespace Winform_XNA
         //BoostController RotJetY;
         BoostController RotJetX;
         BoostController RotJetZ;
-        const float MAX_VERT_MAGNITUDE=10;
-        const float MAX_ROT_JETX=2;
-        const float MAX_ROT_JETZ=2;
+        const float MAX_VERT_MAGNITUDE=5;
+        const float MAX_ROT_JETX=1;
+        const float MAX_ROT_JETZ=1;
 
         public LunarVehicle(Body body)
         {

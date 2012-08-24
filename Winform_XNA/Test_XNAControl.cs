@@ -20,6 +20,13 @@ namespace Winform_XNA
         #endregion
 
         Camera cam;
+        LunarVehicle lv;
+        enum ControlModes
+        { 
+            Camera,
+            Object            
+        }
+        ControlModes controlMode = ControlModes.Object;
 
         #region Content
         public ContentManager Content { get; private set; }
@@ -57,7 +64,7 @@ namespace Winform_XNA
                 InitializePhysics();
                 InitializeObjects();
 
-                cam = new Camera(new Vector3(0, 0, 20));
+                cam = new Camera(new Vector3(.05f, 1.5f, 2.7f));
 
                 tmrElapsed = Stopwatch.StartNew();
                 spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -95,7 +102,7 @@ namespace Winform_XNA
             PhysicsSystem = new PhysicsSystem();
             PhysicsSystem.CollisionSystem = new CollisionSystemSAP();
             PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
-            PhysicsSystem.Gravity = new Vector3(0, -9.8f, 0);
+            PhysicsSystem.Gravity = new Vector3(0, -2.8f, 0);
         }
         #endregion
 
@@ -138,7 +145,7 @@ namespace Winform_XNA
         #endregion
 
         #region User Input
-        public void ProcessKeyDown(KeyEventArgs e)
+        private void ProcessCameraControl(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Q)
             {
@@ -164,14 +171,114 @@ namespace Winform_XNA
             {
                 cam.MoveRight();
             }
+
             if (e.KeyCode == Keys.N)
+            {
                 AddSphere();
+            }
+
             if (e.KeyCode == Keys.B)
             {
-                bController.EnableController();
+                //bController.EnableController();
+            }
+        }
+        private void ProcessObjectControlKeyDown(KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.L)
+            {
+                Vector3 size = new Vector3(.5f, .5f, .5f);
+                Vector3 pos = new Vector3(0, 1, 0);
+                Box boxPrimitive = new Box(pos, Matrix.Identity, size);
+                Gobject box = new Gobject(
+                    pos,
+                    size / 2,
+                    boxPrimitive,
+                    cubeModel,
+                    true
+                    );
+                lv = new LunarVehicle(box.Body);
+
+                gameObjects.Add(box);
+            }
+            if (lv == null)
+                return;
+            if (e.KeyCode == Keys.T)
+            {
+                lv.SetVertJetThrust(1.0f);
+            }
+            if (e.KeyCode == Keys.W)
+            {
+                lv.SetFireRotJetZThrust(-.9f);
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                lv.SetRotJetXThrust(.9f);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                lv.SetFireRotJetZThrust(.9f);
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                lv.SetRotJetXThrust(-.9f);
+                
+            }
+        }
+        private void ProcessObjectControlKeyUp(KeyEventArgs e)
+        {
+            if (lv == null)
+                return;
+            if (e.KeyCode == Keys.T)
+            {
+                lv.SetVertJetThrust(0);
+            }
+            if (e.KeyCode == Keys.W)
+            {
+                lv.SetFireRotJetZThrust(0);
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                lv.SetRotJetXThrust(0);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                lv.SetFireRotJetZThrust(0);
+                
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                lv.SetRotJetXThrust(0);
+            }
+        }
+
+        public void ProcessKeyDown(KeyEventArgs e)
+        {
+
+            switch (controlMode)
+            {
+                case ControlModes.Camera:
+                    ProcessCameraControl(e);
+                    break;
+                case ControlModes.Object:
+                    ProcessObjectControlKeyDown(e);
+                    break;
+                default:
+                    break;
+            }
+
+            
+            if (e.KeyCode == Keys.M)
+            {
+                if (controlMode == ControlModes.Object)
+                    controlMode = ControlModes.Camera;
+                else
+                    controlMode = ControlModes.Object;
             }
 
         }
+
+        
         private void AddSphere()
         {
             AddSphere(new Vector3(0, 300, 0), .5f, sphereModel, true);
@@ -270,7 +377,18 @@ namespace Winform_XNA
         {
             if (e.KeyCode == Keys.B)
             {
-                bController.DisableController();
+                //bController.DisableController();
+            }
+
+            switch (controlMode)
+            {
+                case ControlModes.Camera:
+                    break;
+                case ControlModes.Object:
+                    ProcessObjectControlKeyUp(e);
+                    break;
+                default:
+                    break;
             }
         }
     }
