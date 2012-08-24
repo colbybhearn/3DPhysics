@@ -26,8 +26,8 @@ namespace Winform_XNA
 
         #region Content
         public ContentManager Content { get; private set; }
-        Model bullet;
-        Model stickman;
+        Model cubeModel;
+        Model sphereModel;
         #endregion
 
         #region Debug
@@ -59,7 +59,7 @@ namespace Winform_XNA
                 InitializePhysics();
                 InitializeObjects();
 
-                camPosition = new Vector3(0, 0, 800);
+                camPosition = new Vector3(0, 0, 80);
                 camOrientation = Quaternion.Identity;
 
                 tmrElapsed = Stopwatch.StartNew();
@@ -90,10 +90,10 @@ namespace Winform_XNA
         }
         private void InitializeObjects()
         {
-            bullet = Content.Load<Model>("bullet");
-            stickman = Content.Load<Model>("stickman");
-            AddSphere(new Vector3(0, 200, 0), .8f, bullet, true);
-            AddBox(new Vector3(0, 30, 0), new Vector3(.5f, .5f, .5f), bullet, false);
+            cubeModel = Content.Load<Model>("Cube");
+            sphereModel = Content.Load<Model>("Sphere");
+            AddSphere(new Vector3(0, -2, 0), 1f, sphereModel, true);
+            AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f), cubeModel, false);
         }
         private void InitializePhysics()
         {
@@ -114,8 +114,8 @@ namespace Winform_XNA
         {
             Box boxPrimitive = new Box(pos, Matrix.Identity, size);
             Gobject box = new Gobject(
-                Vector3.Zero,
-                Vector3.One,
+                pos,
+                size,
                 boxPrimitive,
                 model,
                 moveable
@@ -129,7 +129,7 @@ namespace Winform_XNA
             Sphere spherePrimitive = new Sphere(pos, radius);
             Gobject sphere = new Gobject(
                 pos,
-                Vector3.One*radius,
+                Vector3.One*radius*1.0f,
                 spherePrimitive,
                 model,
                 moveable);
@@ -181,7 +181,7 @@ namespace Winform_XNA
 
         private void AddSphere()
         {
-            AddSphere(new Vector3(0, 300, 0), .5f, bullet, true);
+            AddSphere(new Vector3(0, 300, 0), .5f, sphereModel, true);
         }
 
         internal void PanCam(float dX, float dY)
