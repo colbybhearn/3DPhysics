@@ -99,7 +99,7 @@ namespace Winform_XNA
         {
             cubeModel = Content.Load<Model>("Cube");
             sphereModel = Content.Load<Model>("Sphere");
-            AddSphere(new Vector3(0, -2, 0), 1f, sphereModel, true);
+            AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
             AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f), cubeModel, false);
         }
         private void InitializePhysics()
@@ -136,7 +136,7 @@ namespace Winform_XNA
             Sphere spherePrimitive = new Sphere(pos, radius);
             Gobject sphere = new Gobject(
                 pos,
-                Vector3.One*radius*1.0f,
+                Vector3.One * radius,
                 spherePrimitive,
                 model,
                 moveable);
