@@ -15,13 +15,12 @@ namespace Winform_XNA
     class Test_XNAControl : XNAControl
     {
         #region Todo
-        /*
-         * Add Primitive Models
-         * Refactor Physics Controllers
-         */
+        //Refactor Physics Controllers
+
         #endregion
 
         Camera cam;
+
         #region Content
         public ContentManager Content { get; private set; }
         Model cubeModel;
@@ -35,7 +34,7 @@ namespace Winform_XNA
         #endregion
 
         #region Physics
-        BoostController bController = new BoostController();
+        BoostController bController;
         public PhysicsSystem PhysicsSystem { get; private set; }
         private System.Timers.Timer tmrPhysicsUpdate;
         #endregion
@@ -125,8 +124,7 @@ namespace Winform_XNA
             
             if(PhysicsSystem.Controllers.Contains(bController))
                 PhysicsSystem.RemoveController(bController);
-            bController.Initialize(sphere.Body);
-            bController.DisableController();
+            bController = new BoostController(sphere.Body, Vector3.Up*12);
             PhysicsSystem.AddController(bController);
         }
         #endregion
@@ -190,8 +188,6 @@ namespace Winform_XNA
             tmrPhysicsUpdate.Stop();
             tmrPhysicsUpdate.Start();
         }
-
-
         
 
         #region Draw
