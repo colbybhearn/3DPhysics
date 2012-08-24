@@ -15,7 +15,12 @@ namespace Winform_XNA
     class Test_XNAControl : XNAControl
     {
         #region Todo
-        //Refactor Physics Controllers
+        /* Refactor Physics Controllers
+         * Should the LunarVehicle inherit Gobject?
+         * Should LunarVehicle handle its own input
+         * Need to get the "Select an object in space" code from Stickman (I think this was possible there)
+         * This will allow individual objects to be selected and modified
+         */
 
         #endregion
 
