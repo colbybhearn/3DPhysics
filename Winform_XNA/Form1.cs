@@ -19,6 +19,7 @@ namespace Winform_XNA
         private void cbDebug_CheckedChanged(object sender, EventArgs e)
         {
             test_XNAControl.Debug = cbDebug.Checked;
+            test_XNAControl.Focus();
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -22,7 +22,7 @@ namespace Winform_XNA
 
         public void Initialize(Body b)
         {
-            EnableController();
+            //EnableController();
             this.body = b;
         }
 
