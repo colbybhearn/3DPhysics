@@ -15,13 +15,19 @@ namespace Winform_XNA
     class Test_XNAControl : XNAControl
     {
         #region Todo
-        /*
-         * Add Primitive Models
-         * Refactor Physics Controllers
-         */
+        //Refactor Physics Controllers
+
         #endregion
 
         Camera cam;
+        LunarVehicle lv;
+        enum ControlModes
+        { 
+            Camera,
+            Object            
+        }
+        ControlModes controlMode = ControlModes.Object;
+
         #region Content
         public ContentManager Content { get; private set; }
         Model cubeModel;
@@ -36,7 +42,7 @@ namespace Winform_XNA
         #endregion
 
         #region Physics
-        BoostController bController = new BoostController();
+        BoostController bController;
         public PhysicsSystem PhysicsSystem { get; private set; }
         private System.Timers.Timer tmrPhysicsUpdate;
         #endregion
@@ -61,7 +67,7 @@ namespace Winform_XNA
                 InitializePhysics();
                 InitializeObjects();
 
-                cam = new Camera(new Vector3(0, 0, 20));
+                cam = new Camera(new Vector3(.05f, 1.5f, 2.7f));
 
                 tmrDrawElapsed = Stopwatch.StartNew();
                 tmrPhysicsElapsed = new Stopwatch();
@@ -96,6 +102,10 @@ namespace Winform_XNA
             AddBox(new Vector3(0, 1.25f, -27.5f), new Vector3(50f, 7.5f, 5f), cubeModel, false);
             AddBox(new Vector3(27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), cubeModel, false);
             AddBox(new Vector3(-27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), cubeModel, false);
+            
+            //AddBox(new Vector3(0, 1, 0), new Vector3(.05f, .05f, .05f), cubeModel, true);
+            //AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f), cubeModel, false);
+            //AddBox(new Vector3(-1, .5f, 1), new Vector3(.5f, .5f, .5f), cubeModel, false);
 
             AddNewObjects();
         }
@@ -108,6 +118,7 @@ namespace Winform_XNA
             PhysicsSystem.CollisionSystem = new CollisionSystemSAP();
             PhysicsSystem.EnableFreezing = true;
             PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
+
             PhysicsSystem.CollisionSystem.UseSweepTests = true;
             PhysicsSystem.Gravity = new Vector3(0, -9.8f, 0);
             // CollisionTOllerance and Allowed Penetration
@@ -135,6 +146,11 @@ namespace Winform_XNA
 
             //gameObjects.Add(box);
             newObjects.Add(box);
+            /*
+            if (PhysicsSystem.Controllers.Contains(bController))
+                PhysicsSystem.RemoveController(bController);
+            bController = new BoostController(box.Body, Vector3.Up * 12, Vector3.Zero);
+            PhysicsSystem.AddController(bController);*/
         }
 
         private void AddSphere(Vector3 pos, float radius, Model model, bool moveable)
@@ -146,19 +162,19 @@ namespace Winform_XNA
                 spherePrimitive,
                 model,
                 moveable);
+
             //gameObjects.Add(sphere);
             newObjects.Add(sphere);
-            
+            /*
             if(PhysicsSystem.Controllers.Contains(bController))
                 PhysicsSystem.RemoveController(bController);
-            bController.Initialize(sphere.Body);
-            bController.DisableController();
-            PhysicsSystem.AddController(bController);
+            bController = new BoostController(sphere.Body, Vector3.Up*12, Vector3.Zero);
+            PhysicsSystem.AddController(bController);*/
         }
         #endregion
 
         #region User Input
-        public void ProcessKeyDown(KeyEventArgs e)
+        private void ProcessCameraControl(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Q)
             {
@@ -184,6 +200,7 @@ namespace Winform_XNA
             {
                 cam.MoveRight();
             }
+
             if (e.KeyCode == Keys.N)
             {
                 if (e.Shift)
@@ -193,10 +210,105 @@ namespace Winform_XNA
             }
             if (e.KeyCode == Keys.B)
             {
-                bController.EnableController();
+                //bController.EnableController();
+            }
+        }
+        private void ProcessObjectControlKeyDown(KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.L)
+            {
+                Vector3 size = new Vector3(.5f, .5f, .5f);
+                Vector3 pos = new Vector3(0, 1, 0);
+                Box boxPrimitive = new Box(pos, Matrix.Identity, size);
+                Gobject box = new Gobject(
+                    pos,
+                    size / 2,
+                    boxPrimitive,
+                    cubeModel,
+                    true
+                    );
+                lv = new LunarVehicle(box.Body);
+
+                gameObjects.Add(box);
+            }
+            if (lv == null)
+                return;
+            if (e.KeyCode == Keys.T)
+            {
+                lv.SetVertJetThrust(1.0f);
+            }
+            if (e.KeyCode == Keys.W)
+            {
+                lv.SetFireRotJetZThrust(-.9f);
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                lv.SetRotJetXThrust(.9f);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                lv.SetFireRotJetZThrust(.9f);
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                lv.SetRotJetXThrust(-.9f);
+            }
+        }
+        private void ProcessObjectControlKeyUp(KeyEventArgs e)
+        {
+            if (lv == null)
+                return;
+            if (e.KeyCode == Keys.T)
+            {
+                lv.SetVertJetThrust(0);
+            }
+            if (e.KeyCode == Keys.W)
+            {
+                lv.SetFireRotJetZThrust(0);
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                lv.SetRotJetXThrust(0);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                lv.SetFireRotJetZThrust(0);
+                
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                lv.SetRotJetXThrust(0);
+            }
+        }
+
+        public void ProcessKeyDown(KeyEventArgs e)
+        {
+
+            switch (controlMode)
+            {
+                case ControlModes.Camera:
+                    ProcessCameraControl(e);
+                    break;
+                case ControlModes.Object:
+                    ProcessObjectControlKeyDown(e);
+                    break;
+                default:
+                    break;
+            }
+
+            
+            if (e.KeyCode == Keys.M)
+            {
+                if (controlMode == ControlModes.Object)
+                    controlMode = ControlModes.Camera;
+                else
+                    controlMode = ControlModes.Object;
             }
 
         }
+
+        
         private void AddSphere()
         {
             AddSphere(new Vector3(0, 30, 0), .5f, sphereModel, true);
@@ -248,8 +360,6 @@ namespace Winform_XNA
                 }
             }
         }
-
-
         
 
         #region Draw
@@ -335,7 +445,18 @@ namespace Winform_XNA
         {
             if (e.KeyCode == Keys.B)
             {
-                bController.DisableController();
+                //bController.DisableController();
+            }
+
+            switch (controlMode)
+            {
+                case ControlModes.Camera:
+                    break;
+                case ControlModes.Object:
+                    ProcessObjectControlKeyUp(e);
+                    break;
+                default:
+                    break;
             }
         }
     }
