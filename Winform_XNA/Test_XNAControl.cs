@@ -56,7 +56,7 @@ namespace Winform_XNA
                 InitializePhysics();
                 InitializeObjects();
 
-                cam = new Camera(new Vector3(0, 0, 800));
+                cam = new Camera(new Vector3(0, 0, 20));
 
                 tmrElapsed = Stopwatch.StartNew();
                 spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -82,7 +82,9 @@ namespace Winform_XNA
         {
             cubeModel = Content.Load<Model>("Cube");
             sphereModel = Content.Load<Model>("Sphere");
-            AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
+            //AddSphere(new Vector3(0, 0, .2f), 1f, sphereModel, false);
+            //AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
+            AddBox(new Vector3(0, 1, 0), new Vector3(.05f, .05f, .05f), cubeModel, true);
             AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f), cubeModel, false);
         }
         private void InitializePhysics()
@@ -102,7 +104,7 @@ namespace Winform_XNA
             Box boxPrimitive = new Box(pos, Matrix.Identity, size);
             Gobject box = new Gobject(
                 pos,
-                size,
+                size/2,
                 boxPrimitive,
                 model,
                 moveable

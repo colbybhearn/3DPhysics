@@ -55,6 +55,11 @@ namespace Winform_XNA
         {
             test_XNAControl.ProcessKeyUp(e);
         }
+
+        private void test_XNAControl_MouseEnter(object sender, EventArgs e)
+        {
+            test_XNAControl.Focus();
+        }
         
     }
 }
