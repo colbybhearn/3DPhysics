@@ -22,13 +22,6 @@ namespace Winform_XNA
             test_XNAControl.Focus();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            test_XNAControl.ResetTimer();
-            button1.Enabled = false;
-        }
-
-
         float lastX;
         float lastY;
         private void test_XNAControl_MouseMove(object sender, MouseEventArgs e)
@@ -69,6 +62,11 @@ namespace Winform_XNA
         private void chkDrawing_CheckedChanged(object sender, EventArgs e)
         {
             test_XNAControl.DrawingEnabled = chkDrawing.Checked;
+        }
+
+        private void chkPhysics_CheckedChanged(object sender, EventArgs e)
+        {
+            test_XNAControl.PhysicsEnabled = chkPhysics.Checked;
         }
         
     }
