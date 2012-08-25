@@ -22,12 +22,11 @@ namespace Winform_XNA
             XnaPanelMain.Focus();
         }
 
+
         private void button1_Click(object sender, EventArgs e)
         {
             XnaPanelMain.ResetTimer();
-            button1.Enabled = false;
         }
-
 
         float lastX;
         float lastY;
@@ -74,6 +73,11 @@ namespace Winform_XNA
         private void XnaPanelMain_MouseClick(object sender, MouseEventArgs e)
         {
             XnaPanelMain.ProcessMouseClick(e, XnaPanelMain.Bounds);
+        }
+
+        private void chkPhysics_CheckedChanged(object sender, EventArgs e)
+        {
+            //XnaPanelMain.PhysicsEnabled = chkPhysics.Checked;
         }
         
     }
