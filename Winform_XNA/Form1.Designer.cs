@@ -33,7 +33,7 @@
             this.chkDebugPhysics = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
             this.chkDebug = new System.Windows.Forms.CheckBox();
-            this.test_XNAControl = new Winform_XNA.Test_XNAControl();
+            this.XnaPanelMain = new Winform_XNA.XnaPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -56,7 +56,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.test_XNAControl);
+            this.splitContainer1.Panel2.Controls.Add(this.XnaPanelMain);
             this.splitContainer1.Size = new System.Drawing.Size(923, 557);
             this.splitContainer1.SplitterDistance = 207;
             this.splitContainer1.TabIndex = 0;
@@ -109,21 +109,22 @@
             this.chkDebug.UseVisualStyleBackColor = true;
             this.chkDebug.CheckedChanged += new System.EventHandler(this.cbDebug_CheckedChanged);
             // 
-            // test_XNAControl
+            // XnaPanelMain
             // 
-            this.test_XNAControl.Debug = false;
-            this.test_XNAControl.DebugPhysics = false;
-            this.test_XNAControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.test_XNAControl.DrawingEnabled = true;
-            this.test_XNAControl.Location = new System.Drawing.Point(0, 0);
-            this.test_XNAControl.Name = "test_XNAControl";
-            this.test_XNAControl.Size = new System.Drawing.Size(712, 557);
-            this.test_XNAControl.TabIndex = 0;
-            this.test_XNAControl.Text = "test_XNAControl";
-            this.test_XNAControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyDown);
-            this.test_XNAControl.KeyUp += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyUp);
-            this.test_XNAControl.MouseEnter += new System.EventHandler(this.test_XNAControl_MouseEnter);
-            this.test_XNAControl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
+            this.XnaPanelMain.Debug = false;
+            this.XnaPanelMain.DebugPhysics = false;
+            this.XnaPanelMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.XnaPanelMain.DrawingEnabled = true;
+            this.XnaPanelMain.Location = new System.Drawing.Point(0, 0);
+            this.XnaPanelMain.Name = "XnaPanelMain";
+            this.XnaPanelMain.Size = new System.Drawing.Size(712, 557);
+            this.XnaPanelMain.TabIndex = 0;
+            this.XnaPanelMain.Text = "XnaPanel";
+            this.XnaPanelMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyDown);
+            this.XnaPanelMain.KeyUp += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyUp);
+            this.XnaPanelMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.XnaPanelMain_MouseClick);
+            this.XnaPanelMain.MouseEnter += new System.EventHandler(this.test_XNAControl_MouseEnter);
+            this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
             // 
             // Form1
             // 
@@ -145,7 +146,7 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private Test_XNAControl test_XNAControl;
+        private XnaPanel XnaPanelMain;
         private System.Windows.Forms.CheckBox chkDebug;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox chkDebugPhysics;

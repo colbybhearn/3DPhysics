@@ -63,10 +63,10 @@
     <Compile Include="LunarVehicle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test_XNAControl.cs">
+    <Compile Include="XnaPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="XNAControl.cs">
+    <Compile Include="XnaControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <EmbeddedResource Include="Form1.resx">

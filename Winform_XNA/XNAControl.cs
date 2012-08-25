@@ -17,7 +17,7 @@ namespace Winform_XNA
     /// a Windows Form. Derived classes can override the Initialize and Draw
     /// methods to add their own drawing code.
     /// </summary>
-    abstract public class XNAControl : Control
+    abstract public class XnaControl : Control
     {
         #region Fields
 

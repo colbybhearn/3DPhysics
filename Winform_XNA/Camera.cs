@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Winform_XNA
 {
@@ -43,6 +44,22 @@ namespace Winform_XNA
                     up);
             }
         }
+
+        public Ray GetMouseRay(Vector2 mousePosition, Viewport viewport)
+        {            
+            Vector3 nearPoint = new Vector3(mousePosition, 0);
+            Vector3 farPoint = new Vector3(mousePosition, 1);
+
+            nearPoint = viewport.Unproject(nearPoint, _projection, RhsLevelViewMatrix, Matrix.Identity);
+            farPoint = viewport.Unproject(farPoint, _projection, RhsLevelViewMatrix, Matrix.Identity);
+
+            Vector3 direction = farPoint - nearPoint;
+            direction.Normalize();
+
+            return new Ray(nearPoint, direction);
+        }
+
+
         public Matrix LhsLevelViewMatrix
         {
             get

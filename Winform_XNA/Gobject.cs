@@ -15,6 +15,7 @@ namespace Winform_XNA
         public Model Model { get; set; }
         public Vector3 Position { get; private set; }
         public Vector3 Scale { get; private set; }
+        public bool Selected;
 
         private BasicEffect Effect { get; set; }
 
@@ -143,6 +144,8 @@ namespace Winform_XNA
                 {
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;
+                    if(Selected)
+                        effect.AmbientLightColor = Color.Red.ToVector3();
                     effect.World = transforms[mesh.ParentBone.Index] * worldMatrix;
                     effect.View = View;
                     effect.Projection = Projection;

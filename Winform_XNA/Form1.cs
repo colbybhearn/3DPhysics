@@ -18,13 +18,13 @@ namespace Winform_XNA
 
         private void cbDebug_CheckedChanged(object sender, EventArgs e)
         {
-            test_XNAControl.Debug = chkDebug.Checked;
-            test_XNAControl.Focus();
+            XnaPanelMain.Debug = chkDebug.Checked;
+            XnaPanelMain.Focus();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            test_XNAControl.ResetTimer();
+            XnaPanelMain.ResetTimer();
             button1.Enabled = false;
         }
 
@@ -39,7 +39,7 @@ namespace Winform_XNA
                 {
                     float dX = lastX - e.X;
                     float dY = lastY - e.Y;
-                    test_XNAControl.PanCam(dX, dY);                    
+                    XnaPanelMain.PanCam(dX, dY);                    
                 }
             }
             lastX = e.X;
@@ -48,27 +48,32 @@ namespace Winform_XNA
 
         private void test_XNAControl_KeyDown(object sender, KeyEventArgs e)
         {
-            test_XNAControl.ProcessKeyDown(e);
+            XnaPanelMain.ProcessKeyDown(e);
         }
 
         private void test_XNAControl_KeyUp(object sender, KeyEventArgs e)
         {
-            test_XNAControl.ProcessKeyUp(e);
+            XnaPanelMain.ProcessKeyUp(e);
         }
 
         private void test_XNAControl_MouseEnter(object sender, EventArgs e)
         {
-            test_XNAControl.Focus();
+            XnaPanelMain.Focus();
         }
 
         private void chkDebugPhysics_CheckedChanged(object sender, EventArgs e)
         {
-            test_XNAControl.DebugPhysics = chkDebugPhysics.Checked;
+            XnaPanelMain.DebugPhysics = chkDebugPhysics.Checked;
         }
 
         private void chkDrawing_CheckedChanged(object sender, EventArgs e)
         {
-            test_XNAControl.DrawingEnabled = chkDrawing.Checked;
+            XnaPanelMain.DrawingEnabled = chkDrawing.Checked;
+        }
+
+        private void XnaPanelMain_MouseClick(object sender, MouseEventArgs e)
+        {
+            XnaPanelMain.ProcessMouseClick(e, XnaPanelMain.Bounds);
         }
         
     }
