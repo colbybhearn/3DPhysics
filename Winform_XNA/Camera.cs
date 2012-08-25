@@ -45,6 +45,22 @@ namespace Winform_XNA
             }
         }
 
+        public Matrix RhsViewMatrix
+        {
+            get
+            {
+                Vector3 camRotation = Matrix.CreateFromQuaternion(Orientation).Forward;
+                // Side x camRotation gives the correct Up vector WITHOUT roll, if you do -Z,0,X instead, you will be upsidedown
+                // There is still an issue when nearing a "1" in camRotation in the positive or negative Y, in that it rotates weird,
+                // This does not appear to be related to the up vector.
+                Vector3 cameraRotatedUpVector = Vector3.Transform(Vector3.Up, Orientation);
+                return Matrix.CreateLookAt(
+                    Position,
+                    Position + camRotation,
+                    cameraRotatedUpVector);
+            }
+        }
+
         public Ray GetMouseRay(Vector2 mousePosition, Viewport viewport)
         {            
             Vector3 nearPoint = new Vector3(mousePosition, 0);
@@ -114,6 +130,18 @@ namespace Winform_XNA
             //Quaternion.CreateFromAxisAngle(GetLevelCameraLhs.Right, -dY * .001f) *
             //Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
             //Orientation = Orientation * cameraChange;
+        }
+        public void SetOrientation(Matrix o)
+        {
+            Orientation = Quaternion.CreateFromRotationMatrix(o);
+        }
+        public void LookAtLocation(Vector3 location)
+        {
+            Orientation = Quaternion.CreateFromRotationMatrix(Matrix.Invert(Matrix.CreateLookAt(Position, location, Vector3.Up)));
+        }
+        public void LookToward(Vector3 direction)
+        {
+            LookAtLocation(Position + direction);
         }
     }
 }

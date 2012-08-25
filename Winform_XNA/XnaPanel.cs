@@ -23,12 +23,23 @@ namespace Winform_XNA
 
         Camera cam;
         LunarVehicle lv;
-        enum ControlModes
+        Camera objectCam;
+
+        enum CameraModes
+        {
+            Fixed,
+            ObjectFirstPerson,
+            ObjectChase,
+            ObjectWatch
+        }
+        CameraModes cameraMode = CameraModes.Fixed;
+
+        enum InputModes
         { 
             Camera,
             Object            
         }
-        ControlModes controlMode = ControlModes.Object;
+        InputModes inputMode = InputModes.Object;
 
         #region Content
         public ContentManager Content { get; private set; }
@@ -72,6 +83,7 @@ namespace Winform_XNA
                 InitializeObjects();
 
                 cam = new Camera(new Vector3(.05f, 1.5f, 2.7f));
+                objectCam = new Camera(new Vector3(0, 0, 0));
 
                 tmrDrawElapsed = Stopwatch.StartNew();
                 tmrPhysicsElapsed = new Stopwatch();
@@ -101,19 +113,29 @@ namespace Winform_XNA
             sphereModel = Content.Load<Model>("Sphere");
             //AddSphere(new Vector3(0, 0, .2f), 1f, sphereModel, false);
             //AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
+            /*
             AddBox(new Vector3(0, 10, 0), new Vector3(1f, 1f, 1f), Matrix.Identity, cubeModel, true);
             AddBox(new Vector3(0, -5, 0), new Vector3(50f, 5f, 50f), Matrix.CreateFromAxisAngle(Vector3.UnitX, (float)(10 * Math.PI / 180)), cubeModel, false);
             AddBox(new Vector3(0, 1.25f, 27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
             AddBox(new Vector3(0, 1.25f, -27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
             AddBox(new Vector3(27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
             AddBox(new Vector3(-27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
-            
-            //AddBox(new Vector3(0, 1, 0), new Vector3(.05f, .05f, .05f), cubeModel, true);
-            //AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f), cubeModel, false);
-            //AddBox(new Vector3(-1, .5f, 1), new Vector3(.5f, .5f, .5f), cubeModel, false);
+            */
+            //AddBox(new Vector3(0, 1, 0), new Vector3(.05f, .05f, .05f), Matrix.Identity * Matrix.CreateRotationY((float)Math.PI/4), cubeModel, true);
+            AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f),  Matrix.Identity, cubeModel, false);
+            //AddBox(new Vector3(-1, .5f, 1), new Vector3(.5f, .5f, .5f),  Matrix.Identity, cubeModel, false);
+            AddBox(new Vector3(0, .4f, -5), new Vector3(.5f, .5f, .5f), Matrix.Identity, cubeModel, false);
+
+            AddBox(new Vector3(0, -1, 0), new Vector3(50f, 1f, 50f), Matrix.Identity, cubeModel, false);
 
             AddNewObjects();
         }
+
+        //private Matrix RotatedMatrix()
+        //{
+            //Matrix.CreateLookAt(
+        //}
+
         private void InitializePhysics()
         {
             gameObjects = new List<Gobject>();
@@ -125,7 +147,7 @@ namespace Winform_XNA
             PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
 
             PhysicsSystem.CollisionSystem.UseSweepTests = true;
-            PhysicsSystem.Gravity = new Vector3(0, -9.8f, 0);
+            PhysicsSystem.Gravity = new Vector3(0, -2f, 0);
             // CollisionTOllerance and Allowed Penetration
             // changed because our objects were "too small"
             PhysicsSystem.CollisionTollerance = 0.01f;
@@ -228,43 +250,76 @@ namespace Winform_XNA
             {
                 Vector3 size = new Vector3(.5f, .5f, .5f);
                 Vector3 pos = new Vector3(0, 1, 0);
-                Gobject box = AddBox(pos, size, Matrix.Identity, cubeModel, true);
+                Gobject box = AddBox(pos, size, Matrix.CreateRotationY((float)Math.PI), cubeModel, true);
                 lv = new LunarVehicle(box.Body);
             }
-            if (lv == null)
-                return;
-            if (e.KeyCode == Keys.T)
+            if (lv != null)
             {
-                lv.SetVertJetThrust(1.0f);
+
+                if (e.KeyCode == Keys.Space)
+                {
+                    lv.SetVertJetThrust(1.0f);
+                }
+                if (e.KeyCode == Keys.W)
+                {
+                    lv.SetRotJetZThrust(-.4f);
+                }
+                if (e.KeyCode == Keys.A)
+                {
+                    lv.SetRotJetXThrust(.4f);
+                }
+                if (e.KeyCode == Keys.S)
+                {
+                    lv.SetRotJetZThrust(.4f);
+                }
+                if (e.KeyCode == Keys.D)
+                {
+                    lv.SetRotJetXThrust(-.4f);
+                }
+                if (e.KeyCode == Keys.Q)
+                {
+                    lv.SetRotJetYThrust(.4f);
+                }
+                if (e.KeyCode == Keys.E)
+                {
+                    lv.SetRotJetYThrust(-.4f);
+                }
+
             }
-            if (e.KeyCode == Keys.W)
+            if (e.KeyCode == Keys.C)
             {
-                lv.SetFireRotJetZThrust(-.9f);
-            }
-            if (e.KeyCode == Keys.A)
-            {
-                lv.SetRotJetXThrust(.9f);
-            }
-            if (e.KeyCode == Keys.S)
-            {
-                lv.SetFireRotJetZThrust(.9f);
-            }
-            if (e.KeyCode == Keys.D)
-            {
-                lv.SetRotJetXThrust(-.9f);
+                switch (cameraMode)
+                {
+                    case CameraModes.Fixed:
+                        cameraMode = CameraModes.ObjectFirstPerson;
+                        break;
+                    case CameraModes.ObjectFirstPerson:
+                        cameraMode = CameraModes.ObjectChase;
+                        break;
+                    case CameraModes.ObjectChase:
+                        cameraMode = CameraModes.ObjectWatch;
+                        break;
+                    case CameraModes.ObjectWatch:
+                        cameraMode = CameraModes.Fixed;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+
+
         private void ProcessObjectControlKeyUp(KeyEventArgs e)
         {
             if (lv == null)
                 return;
-            if (e.KeyCode == Keys.T)
+            if (e.KeyCode == Keys.Space)
             {
                 lv.SetVertJetThrust(0);
             }
             if (e.KeyCode == Keys.W)
             {
-                lv.SetFireRotJetZThrust(0);
+                lv.SetRotJetZThrust(0);
             }
             if (e.KeyCode == Keys.A)
             {
@@ -272,39 +327,44 @@ namespace Winform_XNA
             }
             if (e.KeyCode == Keys.S)
             {
-                lv.SetFireRotJetZThrust(0);
-                
+                lv.SetRotJetZThrust(0);
             }
             if (e.KeyCode == Keys.D)
             {
                 lv.SetRotJetXThrust(0);
+            }
+            if (e.KeyCode == Keys.Q)
+            {
+                lv.SetRotJetYThrust(0);
+            }
+            if (e.KeyCode == Keys.E)
+            {
+                lv.SetRotJetYThrust(0);
             }
         }
 
         public void ProcessKeyDown(KeyEventArgs e)
         {
 
-            switch (controlMode)
+            switch (inputMode)
             {
-                case ControlModes.Camera:
+                case InputModes.Camera:
                     ProcessCameraControl(e);
                     break;
-                case ControlModes.Object:
+                case InputModes.Object:
                     ProcessObjectControlKeyDown(e);
                     break;
                 default:
                     break;
             }
-
             
             if (e.KeyCode == Keys.M)
             {
-                if (controlMode == ControlModes.Object)
-                    controlMode = ControlModes.Camera;
+                if (inputMode == InputModes.Object)
+                    inputMode = InputModes.Camera;
                 else
-                    controlMode = ControlModes.Object;
+                    inputMode = InputModes.Object;
             }
-
         }
 
         internal void ProcessKeyUp(KeyEventArgs e)
@@ -314,11 +374,11 @@ namespace Winform_XNA
                 //bController.DisableController();
             }
 
-            switch (controlMode)
+            switch (inputMode)
             {
-                case ControlModes.Camera:
+                case InputModes.Camera:
                     break;
-                case ControlModes.Object:
+                case InputModes.Object:
                     ProcessObjectControlKeyUp(e);
                     break;
                 default:
@@ -424,6 +484,11 @@ namespace Winform_XNA
                     position.Y += debugFont.LineSpacing;
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.Position);
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
+
+                    spriteBatch.DrawString(debugFont, "Cam Mode: " + cameraMode.ToString(), position, Color.LightGray); // physics Ticks Per Second
+                    position.Y += debugFont.LineSpacing;
+                    spriteBatch.DrawString(debugFont, "Input Mode: " + inputMode.ToString(), position, Color.LightGray); // physics Ticks Per Second
+
                     spriteBatch.End();
 
                     // Following 3 lines are to reset changes to graphics device made by spritebatch
@@ -460,10 +525,40 @@ namespace Winform_XNA
             {
                 foreach (Gobject go in gameObjects)
                 {
-                    if(DrawingEnabled)
-                        go.Draw(cam.RhsLevelViewMatrix, cam._projection);
-                    if (DebugPhysics)
-                        go.DrawWireframe(GraphicsDevice, cam.RhsLevelViewMatrix, cam._projection);
+                    switch (cameraMode)
+                    {
+                        case CameraModes.Fixed:
+                            if (DrawingEnabled)
+                                go.Draw(cam.RhsLevelViewMatrix, cam._projection);
+                            if (DebugPhysics)
+                                go.DrawWireframe(GraphicsDevice, cam.RhsLevelViewMatrix, cam._projection);
+                            break;
+                        case CameraModes.ObjectFirstPerson:
+                            objectCam.SetOrientation(currentSelectedObject.Body.Orientation);
+                            objectCam.Position = currentSelectedObject.Body.Position;
+                            if (DrawingEnabled)
+                                go.Draw(objectCam.RhsViewMatrix, objectCam._projection);
+                            if (DebugPhysics)
+                                go.DrawWireframe(GraphicsDevice, objectCam.RhsViewMatrix, objectCam._projection);
+                            break;
+                        case CameraModes.ObjectChase:
+                            Vector3 ThirdPersonRef = new Vector3(0, 1, 5);
+                            Vector3 TransRef = Vector3.Transform(ThirdPersonRef, currentSelectedObject.Body.Orientation);
+                            objectCam.Position = TransRef + currentSelectedObject.Body.Position;
+                            objectCam.LookAtLocation(currentSelectedObject.Body.Position);
+
+                            if (DrawingEnabled)
+                                go.Draw(objectCam.RhsViewMatrix, objectCam._projection);
+                            if (DebugPhysics)
+                                go.DrawWireframe(GraphicsDevice, objectCam.RhsLevelViewMatrix, objectCam._projection);
+                            break;
+                        case CameraModes.ObjectWatch:
+                            cam.LookAtLocation(currentSelectedObject.Body.Position);
+                            go.Draw(cam.RhsLevelViewMatrix, cam._projection);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -487,12 +582,19 @@ namespace Winform_XNA
                 if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
                 {
                     Body b = cs.Owner;
-                    if (currentSelectedObject != null)
-                        currentSelectedObject.Selected = false;
-                    currentSelectedObject = b.ExternalData as Gobject;
-                    currentSelectedObject.Selected = true;
+                    Gobject go = b.ExternalData as Gobject;
+                    SelectGameObject(go);
                 }
             }
+        }
+
+        private void SelectGameObject(Gobject go) 
+        {
+            if (currentSelectedObject != null)
+                currentSelectedObject.Selected = false;
+            currentSelectedObject = go;
+            currentSelectedObject.Selected = true;
+            objectCam.Position = currentSelectedObject.Position;
         }
 
         float SimFactor = 1.0f;

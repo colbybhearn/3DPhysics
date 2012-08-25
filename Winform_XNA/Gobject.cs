@@ -177,6 +177,19 @@ namespace Winform_XNA
                         Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
                         wireFrame, 0, wireFrame.Length - 1);
                 }
+
+                VertexPositionColor[] Velocity = new VertexPositionColor[2];
+                Velocity[0] = new VertexPositionColor(Body.Position, Color.Black);
+                Velocity[1] = new VertexPositionColor(Body.Position + Body.Velocity, Color.Blue);
+
+                foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    Graphics.DrawUserPrimitives<VertexPositionColor>(
+                        Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
+                        Velocity, 0, Velocity.Length - 1);
+                }
+
             }
             catch (Exception e)
             {
@@ -184,7 +197,7 @@ namespace Winform_XNA
             }
         }
 
-        private Matrix GetWorldMatrix()
+        public Matrix GetWorldMatrix()
         {
             return Matrix.CreateScale(Scale) * Skin.GetPrimitiveLocal(0).Transform.Orientation * Body.Orientation * Matrix.CreateTranslation(Body.Position);
         }

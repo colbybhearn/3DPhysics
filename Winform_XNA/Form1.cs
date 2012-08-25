@@ -71,8 +71,7 @@ namespace Winform_XNA
         }
 
         private void XnaPanelMain_MouseClick(object sender, MouseEventArgs e)
-        {
-            
+        {            
         }
 
         private void chkPhysics_CheckedChanged(object sender, EventArgs e)
@@ -88,7 +87,7 @@ namespace Winform_XNA
         private void tbStep_Scroll(object sender, EventArgs e)
         {
             float value = tbStep.Value;
-            if(value < 10)
+            if(value <= 10)
                 value /= 10;
             else
             {
