@@ -33,8 +33,8 @@
             this.chkDrawing = new System.Windows.Forms.CheckBox();
             this.chkDebugPhysics = new System.Windows.Forms.CheckBox();
             this.chkDebug = new System.Windows.Forms.CheckBox();
-            this.XnaPanelMain = new Winform_XNA.XnaPanel();
             this.tbStep = new System.Windows.Forms.TrackBar();
+            this.XnaPanelMain = new Winform_XNA.XnaPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -116,6 +116,17 @@
             this.chkDebug.UseVisualStyleBackColor = true;
             this.chkDebug.CheckedChanged += new System.EventHandler(this.cbDebug_CheckedChanged);
             // 
+            // tbStep
+            // 
+            this.tbStep.Location = new System.Drawing.Point(12, 110);
+            this.tbStep.Maximum = 20;
+            this.tbStep.Name = "tbStep";
+            this.tbStep.Size = new System.Drawing.Size(171, 45);
+            this.tbStep.TabIndex = 5;
+            this.tbStep.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tbStep.Value = 1;
+            this.tbStep.Scroll += new System.EventHandler(this.tbStep_Scroll);
+            // 
             // XnaPanelMain
             // 
             this.XnaPanelMain.Debug = false;
@@ -134,14 +145,6 @@
             this.XnaPanelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.XnaPanelMain_MouseDown);
             this.XnaPanelMain.MouseEnter += new System.EventHandler(this.test_XNAControl_MouseEnter);
             this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
-            // 
-            // tbStep
-            // 
-            this.tbStep.Location = new System.Drawing.Point(12, 110);
-            this.tbStep.Name = "tbStep";
-            this.tbStep.Size = new System.Drawing.Size(171, 45);
-            this.tbStep.TabIndex = 5;
-            this.tbStep.TickStyle = System.Windows.Forms.TickStyle.None;
             // 
             // Form1
             // 

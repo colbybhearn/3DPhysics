@@ -364,7 +364,10 @@ namespace Winform_XNA
 
             // Should use a variable timerate to keep up a steady "feel" if we bog down?
             if (PhysicsEnabled)
-                PhysicsSystem.CurrentPhysicsSystem.Integrate((float)TIME_STEP);
+            {
+                float step = (float)TIME_STEP * SimFactor;
+                PhysicsSystem.CurrentPhysicsSystem.Integrate(step);
+            }
             
             lastPhysicsElapsed = tmrPhysicsElapsed.ElapsedMilliseconds;
 
@@ -490,6 +493,12 @@ namespace Winform_XNA
                     currentSelectedObject.Selected = true;
                 }
             }
+        }
+
+        float SimFactor = 1.0f;
+        internal void SetSimFactor(float value)
+        {
+            SimFactor = value;
         }
     }
 

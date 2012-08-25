@@ -84,6 +84,25 @@ namespace Winform_XNA
         {
             XnaPanelMain.ProcessMouseClick(e, XnaPanelMain.Bounds);
         }
+
+        private void tbStep_Scroll(object sender, EventArgs e)
+        {
+            float value = tbStep.Value;
+            if(value < 10)
+                value /= 10;
+            else
+            {
+                value = value - 10;
+                // 15 should be around 5 times
+                // 16 should be around 6
+                // 18 should be around 9 times
+            }
+            //1 -> 1/10
+            //11 -> 10/10
+            //20 -> 20/10
+            XnaPanelMain.SetSimFactor(value);
+
+        }
         
     }
 }
