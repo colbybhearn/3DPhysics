@@ -34,10 +34,12 @@
             this.chkDebugPhysics = new System.Windows.Forms.CheckBox();
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.XnaPanelMain = new Winform_XNA.XnaPanel();
+            this.tbStep = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbStep)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -49,6 +51,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.tbStep);
             this.splitContainer1.Panel1.Controls.Add(this.chkPhysics);
             this.splitContainer1.Panel1.Controls.Add(this.chkDrawing);
             this.splitContainer1.Panel1.Controls.Add(this.chkDebugPhysics);
@@ -113,7 +116,6 @@
             this.chkDebug.UseVisualStyleBackColor = true;
             this.chkDebug.CheckedChanged += new System.EventHandler(this.cbDebug_CheckedChanged);
             // 
-
             // XnaPanelMain
             // 
             this.XnaPanelMain.Debug = false;
@@ -129,8 +131,17 @@
             this.XnaPanelMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyDown);
             this.XnaPanelMain.KeyUp += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyUp);
             this.XnaPanelMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.XnaPanelMain_MouseClick);
+            this.XnaPanelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.XnaPanelMain_MouseDown);
             this.XnaPanelMain.MouseEnter += new System.EventHandler(this.test_XNAControl_MouseEnter);
             this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
+            // 
+            // tbStep
+            // 
+            this.tbStep.Location = new System.Drawing.Point(12, 110);
+            this.tbStep.Name = "tbStep";
+            this.tbStep.Size = new System.Drawing.Size(171, 45);
+            this.tbStep.TabIndex = 5;
+            this.tbStep.TickStyle = System.Windows.Forms.TickStyle.None;
             // 
             // Form1
             // 
@@ -145,6 +156,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tbStep)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -157,6 +169,7 @@
         private System.Windows.Forms.CheckBox chkDebugPhysics;
         private System.Windows.Forms.CheckBox chkDrawing;
         private System.Windows.Forms.CheckBox chkPhysics;
+        private System.Windows.Forms.TrackBar tbStep;
     }
 }
 

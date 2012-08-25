@@ -478,14 +478,17 @@ namespace Winform_XNA
             Vector3 pos;
             Vector3 norm;
             CollisionSkin cs = new CollisionSkin();
-            
-            if(PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
+
+            lock (gameObjects)
             {
-                Body b = cs.Owner;
-                if (currentSelectedObject != null)
-                    currentSelectedObject.Selected = false;
-                currentSelectedObject = b.ExternalData as Gobject;
-                currentSelectedObject.Selected = true;
+                if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
+                {
+                    Body b = cs.Owner;
+                    if (currentSelectedObject != null)
+                        currentSelectedObject.Selected = false;
+                    currentSelectedObject = b.ExternalData as Gobject;
+                    currentSelectedObject.Selected = true;
+                }
             }
         }
     }
