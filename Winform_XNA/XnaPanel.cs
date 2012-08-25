@@ -362,11 +362,14 @@ namespace Winform_XNA
         void tmrPhysicsUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             //Add our new objects
-            AddNewObjects();
+            lock (gameObjects)
+            {
+                AddNewObjects();
 
-            // Should use a variable timerate to keep up a steady "feel" if we bog down?
-            if (PhysicsEnabled)
-                PhysicsSystem.CurrentPhysicsSystem.Integrate((float)TIME_STEP);
+                // Should use a variable timerate to keep up a steady "feel" if we bog down?
+                if (PhysicsEnabled)
+                    PhysicsSystem.CurrentPhysicsSystem.Integrate((float)TIME_STEP);
+            }
             
             lastPhysicsElapsed = tmrPhysicsElapsed.ElapsedMilliseconds;
 
@@ -375,16 +378,13 @@ namespace Winform_XNA
 
         private void AddNewObjects()
         {
-            lock (gameObjects)
+            while (newObjects.Count > 0)
             {
-                while (newObjects.Count > 0)
-                {
-                    // Remove from end of list so no shuffling occurs? (maybe)
-                    int i = newObjects.Count - 1;
-                    newObjects[i].FinalizeBody();
-                    gameObjects.Add(newObjects[i]);
-                    newObjects.RemoveAt(i);
-                }
+                // Remove from end of list so no shuffling occurs? (maybe)
+                int i = newObjects.Count - 1;
+                newObjects[i].FinalizeBody();
+                gameObjects.Add(newObjects[i]);
+                newObjects.RemoveAt(i);
             }
         }
 
