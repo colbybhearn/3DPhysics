@@ -42,6 +42,7 @@ namespace Winform_XNA
         public bool Debug { get; set; }
         public bool DebugPhysics { get; set; }
         public bool DrawingEnabled { get; set; }
+        public bool PhysicsEnabled { get; set; }
         #endregion
 
         #region Physics
@@ -87,6 +88,7 @@ namespace Winform_XNA
                 tmrPhysicsUpdate.Enabled = false;
                 tmrPhysicsUpdate.Interval = 10;
                 tmrPhysicsUpdate.Elapsed += new System.Timers.ElapsedEventHandler(tmrPhysicsUpdate_Elapsed);
+                tmrPhysicsUpdate.Start();
             }
             catch (Exception e)
             {
@@ -361,8 +363,9 @@ namespace Winform_XNA
             AddNewObjects();
 
             // Should use a variable timerate to keep up a steady "feel" if we bog down?
-            PhysicsSystem.CurrentPhysicsSystem.Integrate((float)TIME_STEP);
-
+            if (PhysicsEnabled)
+                PhysicsSystem.CurrentPhysicsSystem.Integrate((float)TIME_STEP);
+            
             lastPhysicsElapsed = tmrPhysicsElapsed.ElapsedMilliseconds;
 
             ResetTimer();

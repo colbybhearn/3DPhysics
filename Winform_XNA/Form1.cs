@@ -72,12 +72,17 @@ namespace Winform_XNA
 
         private void XnaPanelMain_MouseClick(object sender, MouseEventArgs e)
         {
-            XnaPanelMain.ProcessMouseClick(e, XnaPanelMain.Bounds);
+            
         }
 
         private void chkPhysics_CheckedChanged(object sender, EventArgs e)
         {
-            //XnaPanelMain. = chkPhysics.Checked;
+            XnaPanelMain.PhysicsEnabled = chkPhysics.Checked;
+        }
+
+        private void XnaPanelMain_MouseDown(object sender, MouseEventArgs e)
+        {
+            XnaPanelMain.ProcessMouseClick(e, XnaPanelMain.Bounds);
         }
         
     }

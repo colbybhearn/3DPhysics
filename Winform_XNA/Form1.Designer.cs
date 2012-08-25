@@ -122,7 +122,7 @@
             this.XnaPanelMain.DrawingEnabled = true;
             this.XnaPanelMain.Location = new System.Drawing.Point(0, 0);
             this.XnaPanelMain.Name = "XnaPanelMain";
-            //this.XnaPanelMain.PhysicsEnabled = true;
+            this.XnaPanelMain.PhysicsEnabled = true;
             this.XnaPanelMain.Size = new System.Drawing.Size(712, 557);
             this.XnaPanelMain.TabIndex = 0;
             this.XnaPanelMain.Text = "XnaPanel";
