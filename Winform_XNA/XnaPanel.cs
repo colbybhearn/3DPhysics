@@ -18,8 +18,6 @@ namespace Winform_XNA
         /* Refactor Physics Controllers
          * Should the LunarVehicle inherit Gobject?
          * Should LunarVehicle handle its own input
-         * Need to get the "Select an object in space" code from Stickman (I think this was possible there)
-         * This will allow individual objects to be selected and modified
          */
         #endregion
 
@@ -468,7 +466,7 @@ namespace Winform_XNA
         }
         #endregion
 
-        Gobject selected = null;
+        Gobject currentSelectedObject = null;
         internal void ProcessMouseClick(MouseEventArgs e,  System.Drawing.Rectangle bounds)
         {
             Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
@@ -476,33 +474,27 @@ namespace Winform_XNA
             Microsoft.Xna.Framework.Ray r = cam.GetMouseRay(mouse, view);
             Gobject nearest = null;
             float min = float.MaxValue;
-            foreach(Gobject go in gameObjects)
+            float dist = 0;
+            Vector3 pos;
+            Vector3 norm;
+            CollisionSkin cs = new CollisionSkin();
+            
+            if(PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
             {
-                float? dist = r.Intersects(go.Body.CollisionSkin.WorldBoundingBox);
-                if (dist == null)
-                    continue;
-                if (dist < min)
-                {
-                    min = (float)dist;
-                    nearest = go;
-                }
+                Body b = cs.Owner;
+                if (currentSelectedObject != null)
+                    currentSelectedObject.Selected = false;
+                currentSelectedObject = b.ExternalData as Gobject;
+                currentSelectedObject.Selected = true;
             }
-
-            if (min == float.MaxValue)
-            {
-                if(e.Button == System.Windows.Forms.MouseButtons.Right)
-                    UnSelectAllObjects();
-                return;
-            }
-            UnSelectAllObjects();
-            nearest.Selected = true;
         }
+    }
 
-        private void UnSelectAllObjects()
+    public class MyCollisionPredicate : CollisionSkinPredicate1
+    {
+        public override bool ConsiderSkin(CollisionSkin skin0)
         {
-            foreach (Gobject go in gameObjects)
-                go.Selected = false;
+            return true;
         }
-
     }
 }
