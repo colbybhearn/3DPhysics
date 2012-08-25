@@ -77,7 +77,7 @@ namespace Winform_XNA
 
         private void chkPhysics_CheckedChanged(object sender, EventArgs e)
         {
-            //XnaPanelMain.PhysicsEnabled = chkPhysics.Checked;
+            XnaPanelMain.PhysicsEnabled = chkPhysics.Checked;
         }
         
     }
