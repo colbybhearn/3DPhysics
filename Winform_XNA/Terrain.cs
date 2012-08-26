@@ -176,9 +176,11 @@ namespace Winform_XNA
                     Effect = new BasicEffect(Graphics);
                     Effect.VertexColorEnabled = true;
                 }
-
                 Effect.View = View;
                 Effect.Projection = Projection;
+
+                Effect.TextureEnabled = false;
+                Effect.LightingEnabled = false;
 
                 foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                 {

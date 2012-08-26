@@ -474,8 +474,11 @@ namespace Winform_XNA
                         break;
                 }
 
-                //terrain.DrawWireframe(GraphicsDevice, v, p);
-                terrain.Draw(GraphicsDevice, v, p); 
+                
+                if(DrawingEnabled)
+                    terrain.Draw(GraphicsDevice, v, p);
+                if(DebugPhysics)
+                    terrain.DrawWireframe(GraphicsDevice, v, p);
 
                 if (Debug)
                 {
