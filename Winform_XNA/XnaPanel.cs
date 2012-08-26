@@ -16,7 +16,9 @@ namespace Winform_XNA
     {
         #region Todo
         /* Refactor Physics Controllers
-         * 
+         * fix mesh wireframe connections being drawn
+         * fix location of wireframe to match physics
+         * fix collision with objects
          */
         #endregion
 
@@ -53,7 +55,7 @@ namespace Winform_XNA
         private SpriteBatch spriteBatch;
         private SpriteFont debugFont;        
         public bool Debug { get; set; }
-        public bool DebugPhysics { get; set; }
+        public bool DebugPhysics { get; set; } 
         public bool DrawingEnabled { get; set; }
         public bool PhysicsEnabled { get; set; }
         private int ObjectsDrawn { get; set; }
@@ -144,7 +146,8 @@ namespace Winform_XNA
         private void InitializeCameras()
         {
 
-            cam = new Camera(new Vector3(.05f, 1.5f, 2.7f));
+            cam = new Camera(new Vector3(0, 1.25f, 15.7f));
+            cam.AdjustOrientation(-.05f, 0);
             cam.lagFactor = .07f;
             objectCam = new Camera(new Vector3(0, 0, 0));
             objectCam.lagFactor = 1.0f;
@@ -175,10 +178,9 @@ namespace Winform_XNA
         {
             try
             {
-                terrain = new Terrain(new Vector3(0, .5f, 0), new Vector3(15, 1, 15), 100, 100,  this.GraphicsDevice, moon);
-                //Gobject terraingo = new Gobject(, terrain.GetMesh(), null, false);
-                //terrain.Body = terraingo.Body;
-                //terrain.Skin = terraingo.Body.CollisionSkin;
+                terrain = new Terrain(new Vector3(0, 0, 0), // position
+                                        new Vector3(5.5f, .01f, 5.5f),  // X with, possible y range, Z depth 
+                                        100, 100,  this.GraphicsDevice, moon);
                 newObjects.Add(terrain);
             }
             catch (Exception E)
@@ -191,7 +193,11 @@ namespace Winform_XNA
         #region Methods
         private Gobject AddBox(Vector3 pos, Vector3 size, Matrix orient, Model model, bool moveable)
         {
-            Box boxPrimitive = new Box(-.5f*size, orient, size);
+            // position of box was upper leftmost corner
+            // body has world position
+            // skin is relative to the body
+            Box boxPrimitive = new Box(-.5f*size, orient, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
+
             Gobject box = new Gobject(
                 pos,
                 size/2,
@@ -218,15 +224,10 @@ namespace Winform_XNA
         }
         private LunarVehicle AddLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
         {
-            Box boxPrimitive = new Box(pos, orient, size);
-            // 2012.08.25 CBH
-            // I'm very confused by the different size and scale notations.
-            //The triangle mesh may be working well for these large objects.
-            //boxes do still get stuck sometimes in the mesh
-            
+            Box boxPrimitive = new Box(-.5f*size, orient, size); // this is relative to the Body!
             LunarVehicle lander = new LunarVehicle(
                 pos,
-                size,// /2
+                size/2,
                 boxPrimitive,
                 model
                 );            
@@ -391,7 +392,7 @@ namespace Winform_XNA
         }
         private void AddSphere()
         {
-            AddSphere(new Vector3(0, 30, 0), .5f, sphereModel, true);
+            AddSphere(new Vector3(0, 3, 0), .5f, sphereModel, true);
         }
         private void AddSpheres(int n)
         {
@@ -473,13 +474,13 @@ namespace Winform_XNA
                     default:
                         break;
                 }
-
                 
                 if(DrawingEnabled)
                     terrain.Draw(GraphicsDevice, v, p);
                 if(DebugPhysics)
                     terrain.DrawWireframe(GraphicsDevice, v, p);
 
+                
                 if (Debug)
                 {
                     double time = tmrDrawElapsed.ElapsedMilliseconds;
@@ -489,10 +490,11 @@ namespace Winform_XNA
                     position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "TPS: " + (1000.0 / lastPhysicsElapsed), position, Color.LightGray); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
-                    //position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.TargetPosition);
-                    //position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
-
+                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.TargetPosition);
+                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
+                    position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "Objects Drawn: " + gameObjects.Count + "/" + ObjectsDrawn, position, Color.LightGray);
+                    position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "Cam Mode: " + cameraMode.ToString(), position, Color.LightGray); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "Input Mode: " + inputMode.ToString(), position, Color.LightGray); // physics Ticks Per Second

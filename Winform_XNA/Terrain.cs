@@ -22,12 +22,8 @@ namespace Winform_XNA
         int numTriX = 0;
         int numTriZ = 0;
         int numTris = 0;        
-        //BasicEffect Effect;
         List<TriangleVertexIndices> meshIndices = new List<TriangleVertexIndices>();
         List<Vector3> meshVertices = new List<Vector3>();// overlapping verts
-        //public Body Body;
-        //public CollisionSkin Skin;
-        //TriangleMeshObject m;
 
         public Terrain( Vector3 posCenter,Vector3 size, int cellsX, int cellsZ, GraphicsDevice g, Texture2D tex)
         {
@@ -48,13 +44,15 @@ namespace Winform_XNA
 
             // Fill in the vertices
             int count = 0;
-            float worldZPosition = posCenter.Z - size.Z / 2;
+            //float worldZPosition = posCenter.Z - (size.Z / 2);
+            float worldZPosition = - (size.Z / 2);
             for (int z = 0; z < numVertsZ; z++)
             {
-                float worldXPosition = posCenter.X - size.X / 2;
+                //float worldXPosition = posCenter.X - (size.X / 2);
+                float worldXPosition = - (size.X / 2);
                 for (int x = 0; x < numVertsX; x++)
                 {
-                    verts[count].Position = new Vector3(worldXPosition, posCenter.Y + (float)r.NextDouble() / 20, worldZPosition);
+                    verts[count].Position = new Vector3(worldXPosition,  (float)r.NextDouble() * size.Y, worldZPosition);
                     verts[count].Normal = Vector3.Zero;
                     verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
                     verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);
@@ -113,7 +111,9 @@ namespace Winform_XNA
             Body.CollisionSkin = Skin;
             Body.ExternalData = this;
             Skin.AddPrimitive(GetMesh(), (int)MaterialTable.MaterialID.NotBouncyNormal);
-            CommonInit(posCenter, size, null, false);
+            VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe(); // 1200 across before Z changes to from -7.5/-7.35 to -7.35/-7.2
+                
+            CommonInit(posCenter, new Vector3(1,1,1), null, false);
         }
 
         private Triangle GetTriangleOfFirstVert(int startVertex)
@@ -131,12 +131,16 @@ namespace Winform_XNA
             Vector3 vA = verts[a].Position;
             Vector3 vB = verts[b].Position;
             Vector3 vC = verts[c].Position;
-            Triangle t = new Triangle(vA, vB, vC);
+            Triangle t = new Triangle(vA, vC, vB);
             Vector3 n = t.Normal;
             verts[a].Normal += n;
             verts[b].Normal += n;
             verts[c].Normal += n;
+            verts[a].Normal.Normalize();
+            verts[b].Normal.Normalize();
+            verts[c].Normal.Normalize();
         }
+        
 
         public void Draw(GraphicsDevice g, Matrix view, Matrix projection)
         {
@@ -144,19 +148,20 @@ namespace Winform_XNA
                 return;
 
             try
-            {                
+            {
                 this.Effect.View = view;
                 Effect.Texture = texture;
                 Effect.Projection = projection;
                 Effect.EnableDefaultLighting();
-                Effect.AmbientLightColor = Color.Purple.ToVector3();
+                Effect.AmbientLightColor = Color.Gray.ToVector3();
                 //effect.DiffuseColor = Color.LightGray.ToVector3();
                 Effect.TextureEnabled = true;
 
+                VertexPositionNormalTexture[] worldly = TransformVPNTs(verts); // because the verts are relative to the body, but here we need the real deal for drawing in the world
                 foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    g.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleList, verts, 0, verts.Length, indices, 0, indices.Length / 3);
+                    g.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleList, worldly, 0, verts.Length, indices, 0, indices.Length / 3);
                 }
             }
             catch (Exception E)
@@ -165,12 +170,24 @@ namespace Winform_XNA
             }
         }
 
+        private VertexPositionNormalTexture[] TransformVPNTs(VertexPositionNormalTexture[] vpnt)
+        {
+            VertexPositionNormalTexture[] tverts = new VertexPositionNormalTexture[vpnt.Length];
+            for (int i = 0; i < vpnt.Length; i++)
+            {
+                tverts[i] = vpnt[i];
+                tverts[i].Position = Vector3.Transform(vpnt[i].Position,
+                                            Body.Orientation * Matrix.CreateTranslation(Body.Position));
+            }
+            return tverts;
+        }
+
         public void DrawWireframe(GraphicsDevice Graphics, Matrix View, Matrix Projection)
         {
             try
             {
-                VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe();
-                Body.TransformWireframe(wireFrame);
+                VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe(); 
+                Body.TransformWireframe(wireFrame); // because the wireframed primitives are relative to the body, but we need them in the world
                 if (Effect == null)
                 {
                     Effect = new BasicEffect(Graphics);
@@ -188,6 +205,17 @@ namespace Winform_XNA
                     Graphics.DrawUserPrimitives<VertexPositionColor>(
                         Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
                         wireFrame, 0, wireFrame.Length - 1);
+
+                    foreach (VertexPositionNormalTexture vpc in verts)
+                    {
+                        VertexPositionColor[] normal = new VertexPositionColor[2];
+                        normal[0].Position = vpc.Position;
+                        normal[1].Position = vpc.Position+vpc.Normal;
+
+                        Graphics.DrawUserPrimitives<VertexPositionColor>(
+                            Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
+                            normal, 0, normal.Length - 1);
+                    }
                 }
             }
             catch (Exception e)

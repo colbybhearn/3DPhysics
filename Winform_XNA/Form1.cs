@@ -14,6 +14,7 @@ namespace Winform_XNA
         public Form1()
         {
             InitializeComponent();
+            XnaPanelMain.DebugPhysics = true;
         }
 
         private void cbDebug_CheckedChanged(object sender, EventArgs e)

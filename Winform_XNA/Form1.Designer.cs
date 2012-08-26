@@ -107,6 +107,8 @@
             // 
             this.chkDebugPhysics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkDebugPhysics.AutoSize = true;
+            this.chkDebugPhysics.Checked = true;
+            this.chkDebugPhysics.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDebugPhysics.Location = new System.Drawing.Point(12, 505);
             this.chkDebugPhysics.Name = "chkDebugPhysics";
             this.chkDebugPhysics.Size = new System.Drawing.Size(97, 17);

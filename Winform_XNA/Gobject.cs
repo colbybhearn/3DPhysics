@@ -185,7 +185,8 @@ namespace Winform_XNA
                     Effect = new BasicEffect(Graphics);
                     Effect.VertexColorEnabled = true;
                 }
-
+                Effect.TextureEnabled = false;
+                Effect.LightingEnabled = false;
                 Effect.View = View;
                 Effect.Projection = Projection;
 
@@ -216,6 +217,10 @@ namespace Winform_XNA
             }
         }
 
+        /// <summary>
+        /// only used for the model
+        /// </summary>
+        /// <returns></returns>
         public Matrix GetWorldMatrix()
         {
             return Matrix.CreateScale(Scale) * Skin.GetPrimitiveLocal(0).Transform.Orientation * Body.Orientation * Matrix.CreateTranslation(Body.Position);
