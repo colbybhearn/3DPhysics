@@ -16,15 +16,17 @@ namespace Winform_XNA
     {
         #region Todo
         /* Refactor Physics Controllers
-         * Should the LunarVehicle inherit Gobject?
-         * Should LunarVehicle handle its own input
+         * smooth camera transitions
          */
         #endregion
 
+        #region Fields
         Camera cam;
         LunarVehicle lv;
+        Texture2D moon;
         Camera objectCam;
-
+        float SimFactor = 1.0f;
+        Gobject currentSelectedObject = null;
         enum CameraModes
         {
             Fixed,
@@ -60,6 +62,7 @@ namespace Winform_XNA
         //BoostController bController;
         public PhysicsSystem PhysicsSystem { get; private set; }
         private System.Timers.Timer tmrPhysicsUpdate;
+
         #endregion
 
         #region Game
@@ -71,6 +74,7 @@ namespace Winform_XNA
         
         double TIME_STEP = .01; // Recommended timestep
         #endregion
+        #endregion
 
         #region Init
         protected override void Initialize()
@@ -79,11 +83,15 @@ namespace Winform_XNA
 
             try
             {
+                InitTerrain(15, 15, 10, 10, new Vector3(0,-1,0));
                 InitializePhysics();
                 InitializeObjects();
 
                 cam = new Camera(new Vector3(.05f, 1.5f, 2.7f));
+                cam.lagFactor = .1f;
                 objectCam = new Camera(new Vector3(0, 0, 0));
+                objectCam.lagFactor = 1.0f;
+
 
                 tmrDrawElapsed = Stopwatch.StartNew();
                 tmrPhysicsElapsed = new Stopwatch();
@@ -111,6 +119,7 @@ namespace Winform_XNA
         {
             cubeModel = Content.Load<Model>("Cube");
             sphereModel = Content.Load<Model>("Sphere");
+            moon= Content.Load<Texture2D>("Moon");
             //AddSphere(new Vector3(0, 0, .2f), 1f, sphereModel, false);
             //AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
             /*
@@ -126,15 +135,11 @@ namespace Winform_XNA
             //AddBox(new Vector3(-1, .5f, 1), new Vector3(.5f, .5f, .5f),  Matrix.Identity, cubeModel, false);
             AddBox(new Vector3(0, .4f, -5), new Vector3(.5f, .5f, .5f), Matrix.Identity, cubeModel, false);
 
-            AddBox(new Vector3(0, -1, 0), new Vector3(50f, 1f, 50f), Matrix.Identity, cubeModel, false);
+            // Giant Floor
+            //AddBox(new Vector3(0, -1, 0), new Vector3(50f, 1f, 50f), Matrix.Identity, cubeModel, false);
 
             AddNewObjects();
         }
-
-        //private Matrix RotatedMatrix()
-        //{
-            //Matrix.CreateLookAt(
-        //}
 
         private void InitializePhysics()
         {
@@ -171,17 +176,9 @@ namespace Winform_XNA
                 moveable
                 );
 
-            //gameObjects.Add(box);
             newObjects.Add(box);
-            /*
-            if (PhysicsSystem.Controllers.Contains(bController))
-                PhysicsSystem.RemoveController(bController);
-            bController = new BoostController(box.Body, Vector3.Up * 12, Vector3.Zero);
-            PhysicsSystem.AddController(bController);*/
-
             return box;
         }
-
         private Gobject AddSphere(Vector3 pos, float radius, Model model, bool moveable)
         {
             Sphere spherePrimitive = new Sphere(pos, radius);
@@ -192,14 +189,42 @@ namespace Winform_XNA
                 model,
                 moveable);
 
-            //gameObjects.Add(sphere);
             newObjects.Add(sphere);
-            /*
-            if(PhysicsSystem.Controllers.Contains(bController))
-                PhysicsSystem.RemoveController(bController);
-            bController = new BoostController(sphere.Body, Vector3.Up*12, Vector3.Zero);
-            PhysicsSystem.AddController(bController);*/
             return sphere;
+        }
+        private LunarVehicle AddLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
+        {
+            Box boxPrimitive = new Box(pos, orient, size);
+            LunarVehicle lander = new LunarVehicle(
+                pos,
+                size / 2,
+                boxPrimitive,
+                model
+                );
+            
+
+            newObjects.Add(lander);
+            return lander;
+
+        }
+        private void AddNewObjects()
+        {
+            while (newObjects.Count > 0)
+            {
+                // Remove from end of list so no shuffling occurs? (maybe)
+                int i = newObjects.Count - 1;
+                newObjects[i].FinalizeBody();
+                gameObjects.Add(newObjects[i]);
+                newObjects.RemoveAt(i);
+            }
+        }
+        private void SelectGameObject(Gobject go)
+        {
+            if (currentSelectedObject != null)
+                currentSelectedObject.Selected = false;
+            currentSelectedObject = go;
+            currentSelectedObject.Selected = true;
+            objectCam.TargetPosition = currentSelectedObject.Position;
         }
         #endregion
 
@@ -238,54 +263,19 @@ namespace Winform_XNA
                 else
                     AddSphere();
             }
-            if (e.KeyCode == Keys.B)
-            {
-                //bController.EnableController();
-            }
         }
         private void ProcessObjectControlKeyDown(KeyEventArgs e)
         {
 
             if (e.KeyCode == Keys.L)
             {
-                Vector3 size = new Vector3(.5f, .5f, .5f);
-                Vector3 pos = new Vector3(0, 1, 0);
-                Gobject box = AddBox(pos, size, Matrix.CreateRotationY((float)Math.PI), cubeModel, true);
-                lv = new LunarVehicle(box.Body);
+                lv = AddLunarLander(new Vector3(0, 1, 0), new Vector3(.3f, .3f, .3f), Matrix.CreateRotationY((float)Math.PI), cubeModel);
             }
             if (lv != null)
             {
-
-                if (e.KeyCode == Keys.Space)
-                {
-                    lv.SetVertJetThrust(1.0f);
-                }
-                if (e.KeyCode == Keys.W)
-                {
-                    lv.SetRotJetZThrust(-.4f);
-                }
-                if (e.KeyCode == Keys.A)
-                {
-                    lv.SetRotJetXThrust(.4f);
-                }
-                if (e.KeyCode == Keys.S)
-                {
-                    lv.SetRotJetZThrust(.4f);
-                }
-                if (e.KeyCode == Keys.D)
-                {
-                    lv.SetRotJetXThrust(-.4f);
-                }
-                if (e.KeyCode == Keys.Q)
-                {
-                    lv.SetRotJetYThrust(.4f);
-                }
-                if (e.KeyCode == Keys.E)
-                {
-                    lv.SetRotJetYThrust(-.4f);
-                }
-
+                lv.ProcessInputKeyDown(e);
             }
+
             if (e.KeyCode == Keys.C)
             {
                 switch (cameraMode)
@@ -307,45 +297,14 @@ namespace Winform_XNA
                 }
             }
         }
-
-
         private void ProcessObjectControlKeyUp(KeyEventArgs e)
         {
-            if (lv == null)
-                return;
-            if (e.KeyCode == Keys.Space)
-            {
-                lv.SetVertJetThrust(0);
-            }
-            if (e.KeyCode == Keys.W)
-            {
-                lv.SetRotJetZThrust(0);
-            }
-            if (e.KeyCode == Keys.A)
-            {
-                lv.SetRotJetXThrust(0);
-            }
-            if (e.KeyCode == Keys.S)
-            {
-                lv.SetRotJetZThrust(0);
-            }
-            if (e.KeyCode == Keys.D)
-            {
-                lv.SetRotJetXThrust(0);
-            }
-            if (e.KeyCode == Keys.Q)
-            {
-                lv.SetRotJetYThrust(0);
-            }
-            if (e.KeyCode == Keys.E)
-            {
-                lv.SetRotJetYThrust(0);
-            }
+            if (lv != null)
+                lv.ProcessInputKeyUp(e);
+            
         }
-
         public void ProcessKeyDown(KeyEventArgs e)
         {
-
             switch (inputMode)
             {
                 case InputModes.Camera:
@@ -356,8 +315,8 @@ namespace Winform_XNA
                     break;
                 default:
                     break;
-            }
-            
+            }           
+
             if (e.KeyCode == Keys.M)
             {
                 if (inputMode == InputModes.Object)
@@ -366,14 +325,8 @@ namespace Winform_XNA
                     inputMode = InputModes.Object;
             }
         }
-
         internal void ProcessKeyUp(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.B)
-            {
-                //bController.DisableController();
-            }
-
             switch (inputMode)
             {
                 case InputModes.Camera:
@@ -385,12 +338,32 @@ namespace Winform_XNA
                     break;
             }
         }
-        
+        internal void ProcessMouseDown(MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {
+            Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+            Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
+            Microsoft.Xna.Framework.Ray r = cam.GetMouseRay(mouse, view);
+            Gobject nearest = null;
+            float min = float.MaxValue;
+            float dist = 0;
+            Vector3 pos;
+            Vector3 norm;
+            CollisionSkin cs = new CollisionSkin();
+
+            lock (gameObjects)
+            {
+                if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
+                {
+                    Body b = cs.Owner;
+                    Gobject go = b.ExternalData as Gobject;
+                    SelectGameObject(go);
+                }
+            }
+        }
         private void AddSphere()
         {
             AddSphere(new Vector3(0, 30, 0), .5f, sphereModel, true);
         }
-
         private void AddSpheres(int n)
         {
             Random r = new Random();
@@ -410,6 +383,11 @@ namespace Winform_XNA
         }
         #endregion
 
+        #region Physics
+        internal void SetSimFactor(float value)
+        {
+            SimFactor = value;
+        }
         public void ResetTimer()
         {
             tmrPhysicsElapsed.Restart();
@@ -431,23 +409,13 @@ namespace Winform_XNA
                     PhysicsSystem.CurrentPhysicsSystem.Integrate(step);
                 }
             }
-            
+            cam.UpdatePosition();
+            objectCam.UpdatePosition();
             lastPhysicsElapsed = tmrPhysicsElapsed.ElapsedMilliseconds;
 
             ResetTimer();
         }
-
-        private void AddNewObjects()
-        {
-            while (newObjects.Count > 0)
-            {
-                // Remove from end of list so no shuffling occurs? (maybe)
-                int i = newObjects.Count - 1;
-                newObjects[i].FinalizeBody();
-                gameObjects.Add(newObjects[i]);
-                newObjects.RemoveAt(i);
-            }
-        }
+        #endregion
 
         #region Draw
         protected override void Draw()
@@ -468,8 +436,10 @@ namespace Winform_XNA
                  *    possibly passing a camera to Game when calling draw.
                  * This allows for a 4x split panel for world editing, or 2-4x splitscreen
                  */
+                
 
                 DrawObjects();
+                DrawTerrain(GraphicsDevice);
 
                 if (Debug)
                 {
@@ -482,7 +452,7 @@ namespace Winform_XNA
                     position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "TPS: " + (1000.0 / lastPhysicsElapsed), position, Color.LightGray); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
-                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.Position);
+                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.TargetPosition);
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
 
                     spriteBatch.DrawString(debugFont, "Cam Mode: " + cameraMode.ToString(), position, Color.LightGray); // physics Ticks Per Second
@@ -502,6 +472,54 @@ namespace Winform_XNA
             catch (Exception e)
             {
                 System.Console.WriteLine(e.Message);
+            }
+        }
+
+        private void DrawTerrain(GraphicsDevice g)
+        {
+            if (verts == null)
+                return;
+
+            Camera c = null;
+            Matrix v = Matrix.Identity;            
+            switch (cameraMode)
+            {
+                case CameraModes.Fixed:
+                case CameraModes.ObjectWatch:
+                    c = cam;
+                    v = cam.RhsLevelViewMatrix;
+                    break;
+                case CameraModes.ObjectFirstPerson:
+                case CameraModes.ObjectChase:
+                    c = objectCam;
+                    v = objectCam.LhsLevelViewMatrix;
+                    break;
+                default:
+                    break;
+            }
+
+            if (c == null)
+                return;
+            try
+            {
+                BasicEffect effect = new BasicEffect(g);
+                effect.View = v;
+                effect.Texture = moon;
+                effect.Projection = c._projection;
+                effect.EnableDefaultLighting();
+                effect.AmbientLightColor = Color.LightGray.ToVector3();
+                effect.DiffuseColor = Color.LightGray.ToVector3();
+                effect.TextureEnabled = true;
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    g.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleList, verts, 0, verts.Length, indices, 0, indices.Length / 3);
+                }
+            }
+            catch(Exception E)
+            {
+
             }
         }
 
@@ -535,7 +553,7 @@ namespace Winform_XNA
                             break;
                         case CameraModes.ObjectFirstPerson:
                             objectCam.SetOrientation(currentSelectedObject.Body.Orientation);
-                            objectCam.Position = currentSelectedObject.Body.Position;
+                            objectCam.TargetPosition = currentSelectedObject.Body.Position;
                             if (DrawingEnabled)
                                 go.Draw(objectCam.RhsViewMatrix, objectCam._projection);
                             if (DebugPhysics)
@@ -544,7 +562,7 @@ namespace Winform_XNA
                         case CameraModes.ObjectChase:
                             Vector3 ThirdPersonRef = new Vector3(0, 1, 5);
                             Vector3 TransRef = Vector3.Transform(ThirdPersonRef, currentSelectedObject.Body.Orientation);
-                            objectCam.Position = TransRef + currentSelectedObject.Body.Position;
+                            objectCam.TargetPosition = TransRef + currentSelectedObject.Body.Position;
                             objectCam.LookAtLocation(currentSelectedObject.Body.Position);
 
                             if (DrawingEnabled)
@@ -562,46 +580,90 @@ namespace Winform_XNA
                 }
             }
         }
+
         #endregion
 
-        Gobject currentSelectedObject = null;
-        internal void ProcessMouseClick(MouseEventArgs e,  System.Drawing.Rectangle bounds)
+        #region Terrain
+        VertexPositionNormalTexture[] verts;
+        int[] indices;
+        private void InitTerrain(int lenX, int lenZ, int cellsX, int cellsZ, Vector3 posCenter)
         {
-            Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
-            Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
-            Microsoft.Xna.Framework.Ray r = cam.GetMouseRay(mouse, view);
-            Gobject nearest = null;
-            float min = float.MaxValue;
-            float dist = 0;
-            Vector3 pos;
-            Vector3 norm;
-            CollisionSkin cs = new CollisionSkin();
+            int numVertsX = cellsX + 1;
+            int numVertsZ = cellsZ + 1;
+            int numVerts = numVertsX * numVertsZ;
+            int numTriX = cellsX * 2;
+            int numTriZ = cellsZ;
+            int numTris = numTriX * numTriZ;
+            verts = new VertexPositionNormalTexture[numVerts];
+            int numIndices = numTris * 3;
+            indices = new int[numIndices];
+            float cellSizeX = (float)lenX / cellsX;
+            float cellSizeZ = (float)lenZ / cellsZ;
 
-            lock (gameObjects)
+            Random r = new Random();
+
+            // Fill in the vertices
+            int count = 0;
+            float worldZPosition = posCenter.Z - lenZ / 2;
+            for (int z = 0; z < numVertsZ; z++)
             {
-                if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
+                float worldXPosition = posCenter.X - lenX / 2;
+                for (int x = 0; x < numVertsX; x++)
                 {
-                    Body b = cs.Owner;
-                    Gobject go = b.ExternalData as Gobject;
-                    SelectGameObject(go);
+                    verts[count].Position = new Vector3(worldXPosition, (float)r.NextDouble()/10, worldZPosition);
+                    verts[count].Normal = Vector3.Zero;
+                    verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
+                    verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);
+
+                    count++;
+
+                    // Advance in x
+                    worldXPosition += cellSizeX;
                 }
+                // Advance in z
+                worldZPosition += cellSizeZ;
+            }
+
+            int index = 0;
+            int startVertex = 0;
+            for (int cellZ = 0; cellZ < cellsZ; cellZ++)
+            {
+                for (int cellX = 0; cellX < cellsX; cellX++)
+                {
+                    indices[index] = startVertex + 0;
+                    indices[index + 1] = startVertex + 1;
+                    indices[index + 2] = startVertex + numVertsX;
+                    SetNormalOfTriangleAtIndices(indices[index], indices[index + 1], indices[index + 2]);
+
+                    index += 3;
+
+                    indices[index] = startVertex + 1;
+                    indices[index + 1] = startVertex + numVertsX + 1;
+                    indices[index + 2] = startVertex + numVertsX;
+                    SetNormalOfTriangleAtIndices(indices[index], indices[index + 1], indices[index + 2]);
+
+                    index += 3;
+
+                    startVertex++;
+                }
+                startVertex++;
             }
         }
 
-        private void SelectGameObject(Gobject go) 
+        private void SetNormalOfTriangleAtIndices(int a, int b, int c)
         {
-            if (currentSelectedObject != null)
-                currentSelectedObject.Selected = false;
-            currentSelectedObject = go;
-            currentSelectedObject.Selected = true;
-            objectCam.Position = currentSelectedObject.Position;
-        }
+            Vector3 vA = verts[a].Position;
+            Vector3 vB = verts[b].Position;
+            Vector3 vC = verts[c].Position;
+            Triangle t = new Triangle(vA, vC, vB);
+            
 
-        float SimFactor = 1.0f;
-        internal void SetSimFactor(float value)
-        {
-            SimFactor = value;
+            Vector3 n = t.Normal;
+            verts[a].Normal += n;
+            verts[b].Normal += n;
+            verts[c].Normal += n;
         }
+        #endregion
     }
 
     public class MyCollisionPredicate : CollisionSkinPredicate1

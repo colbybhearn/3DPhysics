@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using JigLibX.Physics;
 using Microsoft.Xna.Framework;
+using System.Windows.Forms;
+using Microsoft.Xna.Framework.Graphics;
+using JigLibX.Geometry;
 
 namespace Winform_XNA
 {
-    public class LunarVehicle
+    public class LunarVehicle : Gobject
     {
         BoostController VertJet;
         BoostController RotJetY;
@@ -17,12 +20,13 @@ namespace Winform_XNA
         const float MAX_ROT_JETX=1;
         const float MAX_ROT_JETZ=1;
 
-        public LunarVehicle(Body body)
+        public LunarVehicle(Vector3 position, Vector3 scale, Primitive primitive, Model model)
+            : base(position, scale, primitive, model, true)
         {
-            VertJet = new BoostController(body, Vector3.Up, Vector3.Zero);
-            RotJetX = new BoostController(body, Vector3.Zero, Vector3.UnitZ);
-            RotJetZ = new BoostController(body, Vector3.Zero, Vector3.UnitX);
-            RotJetY = new BoostController(body, Vector3.Zero, Vector3.UnitY);
+            VertJet = new BoostController(Body, Vector3.Up, Vector3.Zero);
+            RotJetX = new BoostController(Body, Vector3.Zero, Vector3.UnitZ);
+            RotJetZ = new BoostController(Body, Vector3.Zero, Vector3.UnitX);
+            RotJetY = new BoostController(Body, Vector3.Zero, Vector3.UnitY);
 
             PhysicsSystem.CurrentPhysicsSystem.AddController(VertJet);
             PhysicsSystem.CurrentPhysicsSystem.AddController(RotJetX);
@@ -50,6 +54,71 @@ namespace Winform_XNA
             RotJetY.SetTorqueMagnitude(percentThrust * MAX_ROT_JETZ);
         }
 
+        public void ProcessInputKeyUp(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Space)
+            {
+                SetVertJetThrust(0);
+            }
+            if (e.KeyCode == Keys.W)
+            {
+                SetRotJetZThrust(0);
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                SetRotJetXThrust(0);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                SetRotJetZThrust(0);
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                SetRotJetXThrust(0);
+            }
+            if (e.KeyCode == Keys.Q)
+            {
+                SetRotJetYThrust(0);
+            }
+            if (e.KeyCode == Keys.E)
+            {
+                SetRotJetYThrust(0);
+            }
+
+
+        }
+
+        public void ProcessInputKeyDown(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Space)
+            {
+                SetVertJetThrust(1.0f);
+            }
+            if (e.KeyCode == Keys.W)
+            {
+                SetRotJetZThrust(-.4f);
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                SetRotJetXThrust(.4f);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                SetRotJetZThrust(.4f);
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                SetRotJetXThrust(-.4f);
+            }
+            if (e.KeyCode == Keys.Q)
+            {
+                SetRotJetYThrust(.4f);
+            }
+            if (e.KeyCode == Keys.E)
+            {
+                SetRotJetYThrust(-.4f);
+            }   
+        }
         
     }
 }

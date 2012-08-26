@@ -8,7 +8,7 @@ using System;
 
 namespace Winform_XNA
 {
-    class Gobject
+    public class Gobject
     {
         public Body Body { get; private set; }
         public CollisionSkin Skin { get; private set; }
@@ -26,7 +26,7 @@ namespace Winform_XNA
         /// </summary>
         /// <param name="position">Initial Body Position</param>
         /// <param name="scale">Scale</param>
-        Gobject()
+        public Gobject()
         {
             Body = new Body();
             Skin = new CollisionSkin(Body);

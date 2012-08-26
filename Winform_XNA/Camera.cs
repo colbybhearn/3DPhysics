@@ -10,17 +10,21 @@ namespace Winform_XNA
     class Camera
     {
         public Matrix _projection;
-        public Vector3 Position = new Vector3();
+        public Vector3 TargetPosition = new Vector3();
         public Vector3 PitchYawRoll = new Vector3(); // Named this way Becuase X,Y,Z = Pitch,Yaw,Roll when stored
         public Quaternion Orientation;
         public float Speed = 10;
         public float SpeedChangeRate = 1.2f;
+        public Vector3 CurrentPosition;
+        public float lagFactor = 1.0f;
 
         public Camera(Vector3 pos)
         {
             PitchYawRoll = Vector3.Zero;
             Orientation = Quaternion.Identity;
-            Position = pos;
+            
+            TargetPosition = pos;
+            CurrentPosition = TargetPosition;
             _projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(45.0f),
                 (float)GraphicsDeviceManager.DefaultBackBufferWidth / (float)GraphicsDeviceManager.DefaultBackBufferHeight,
@@ -39,8 +43,8 @@ namespace Winform_XNA
                 Vector3 side = new Vector3(camRotation.Z, 0, -camRotation.X);
                 Vector3 up = Vector3.Cross(camRotation, side);
                 return Matrix.CreateLookAt(
-                    Position,
-                    Position + camRotation,
+                    CurrentPosition,
+                    CurrentPosition + camRotation,
                     up);
             }
         }
@@ -55,8 +59,8 @@ namespace Winform_XNA
                 // This does not appear to be related to the up vector.
                 Vector3 cameraRotatedUpVector = Vector3.Transform(Vector3.Up, Orientation);
                 return Matrix.CreateLookAt(
-                    Position,
-                    Position + camRotation,
+                    CurrentPosition,
+                    CurrentPosition + camRotation,
                     cameraRotatedUpVector);
             }
         }
@@ -75,6 +79,10 @@ namespace Winform_XNA
             return new Ray(nearPoint, direction);
         }
 
+        public void UpdatePosition()
+        {
+            CurrentPosition += (TargetPosition - CurrentPosition) * lagFactor;
+        }
 
         public Matrix LhsLevelViewMatrix
         {
@@ -96,15 +104,15 @@ namespace Winform_XNA
 
         private void AdjustPosition(Vector3 delta)
         {
-            Position += delta * Speed;
+            TargetPosition += delta * Speed;
         }
         public void MoveRight()
         {
-            AdjustPosition(LhsLevelViewMatrix.Right);
+            AdjustPosition(LhsLevelViewMatrix.Right * .1f);
         }
         public void MoveLeft()
         {
-            AdjustPosition(LhsLevelViewMatrix.Left);
+            AdjustPosition(LhsLevelViewMatrix.Left * .1f);
         }
         public void MoveForward()
         {
@@ -137,11 +145,11 @@ namespace Winform_XNA
         }
         public void LookAtLocation(Vector3 location)
         {
-            Orientation = Quaternion.CreateFromRotationMatrix(Matrix.Invert(Matrix.CreateLookAt(Position, location, Vector3.Up)));
+            Orientation = Quaternion.CreateFromRotationMatrix(Matrix.Invert(Matrix.CreateLookAt(TargetPosition, location, Vector3.Up)));
         }
         public void LookToward(Vector3 direction)
         {
-            LookAtLocation(Position + direction);
+            LookAtLocation(TargetPosition + direction);
         }
     }
 }

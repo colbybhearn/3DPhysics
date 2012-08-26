@@ -81,7 +81,7 @@ namespace Winform_XNA
 
         private void XnaPanelMain_MouseDown(object sender, MouseEventArgs e)
         {
-            XnaPanelMain.ProcessMouseClick(e, XnaPanelMain.Bounds);
+            XnaPanelMain.ProcessMouseDown(e, XnaPanelMain.Bounds);
         }
 
         private void tbStep_Scroll(object sender, EventArgs e)
