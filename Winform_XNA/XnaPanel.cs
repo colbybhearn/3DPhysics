@@ -56,6 +56,7 @@ namespace Winform_XNA
         public bool DebugPhysics { get; set; }
         public bool DrawingEnabled { get; set; }
         public bool PhysicsEnabled { get; set; }
+        private int ObjectsDrawn { get; set; }
         #endregion
 
         #region Physics
@@ -425,19 +426,6 @@ namespace Winform_XNA
                 Matrix proj = Matrix.Identity;
                 GraphicsDevice.Clear(Color.Gray);
 
-                /* Do Drawing Here!
-                 * Should probably call Game.Draw(GraphicsDevice);
-                 * Allow Game to handle all of the Drawing independantly
-                 *   thus this form just exist heres?
-                 * Need to think of a good structure for this
-                 *
-                 * Answer to above question!
-                 * This Control should only handle the world VIEW
-                 *    possibly passing a camera to Game when calling draw.
-                 * This allows for a 4x split panel for world editing, or 2-4x splitscreen
-                 */
-                
-
                 DrawObjects();
                 DrawTerrain(GraphicsDevice);
 
@@ -446,15 +434,14 @@ namespace Winform_XNA
                     double time = tmrDrawElapsed.ElapsedMilliseconds;
                     spriteBatch.Begin();
                     Vector2 position = new Vector2(5, 5);
-                    spriteBatch.DrawString(debugFont, "Debug Text: Enabled", position, Color.LightGray);
-                    position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, Color.LightGray);
                     position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "TPS: " + (1000.0 / lastPhysicsElapsed), position, Color.LightGray); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
-                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.TargetPosition);
-                    position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
+                    //position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.TargetPosition);
+                    //position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
 
+                    spriteBatch.DrawString(debugFont, "Objects Drawn: " + gameObjects.Count + "/" + ObjectsDrawn, position, Color.LightGray);
                     spriteBatch.DrawString(debugFont, "Cam Mode: " + cameraMode.ToString(), position, Color.LightGray); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "Input Mode: " + inputMode.ToString(), position, Color.LightGray); // physics Ticks Per Second
@@ -464,7 +451,7 @@ namespace Winform_XNA
                     // Following 3 lines are to reset changes to graphics device made by spritebatch
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                    //GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+                    //GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap; // Described as "may not be needed"
 
                     tmrDrawElapsed.Restart();
                 }
@@ -541,43 +528,57 @@ namespace Winform_XNA
         {
             lock (gameObjects)
             {
+                ObjectsDrawn = 0;
                 foreach (Gobject go in gameObjects)
                 {
-                    switch (cameraMode)
+                    Matrix view, proj;
+                    GetCameraViewProjection(out view, out proj);
+                    BoundingFrustum frustum = new BoundingFrustum(view * proj);
+                    if (frustum.Contains(go.Skin.WorldBoundingBox) != ContainmentType.Disjoint)
                     {
-                        case CameraModes.Fixed:
-                            if (DrawingEnabled)
-                                go.Draw(cam.RhsLevelViewMatrix, cam._projection);
-                            if (DebugPhysics)
-                                go.DrawWireframe(GraphicsDevice, cam.RhsLevelViewMatrix, cam._projection);
-                            break;
-                        case CameraModes.ObjectFirstPerson:
-                            objectCam.SetOrientation(currentSelectedObject.Body.Orientation);
-                            objectCam.TargetPosition = currentSelectedObject.Body.Position;
-                            if (DrawingEnabled)
-                                go.Draw(objectCam.RhsViewMatrix, objectCam._projection);
-                            if (DebugPhysics)
-                                go.DrawWireframe(GraphicsDevice, objectCam.RhsViewMatrix, objectCam._projection);
-                            break;
-                        case CameraModes.ObjectChase:
-                            Vector3 ThirdPersonRef = new Vector3(0, 1, 5);
-                            Vector3 TransRef = Vector3.Transform(ThirdPersonRef, currentSelectedObject.Body.Orientation);
-                            objectCam.TargetPosition = TransRef + currentSelectedObject.Body.Position;
-                            objectCam.LookAtLocation(currentSelectedObject.Body.Position);
-
-                            if (DrawingEnabled)
-                                go.Draw(objectCam.RhsViewMatrix, objectCam._projection);
-                            if (DebugPhysics)
-                                go.DrawWireframe(GraphicsDevice, objectCam.RhsLevelViewMatrix, objectCam._projection);
-                            break;
-                        case CameraModes.ObjectWatch:
-                            cam.LookAtLocation(currentSelectedObject.Body.Position);
-                            go.Draw(cam.RhsLevelViewMatrix, cam._projection);
-                            break;
-                        default:
-                            break;
+                        ObjectsDrawn++;
+                        if (DrawingEnabled)
+                            go.Draw(view, proj);
+                        if (DebugPhysics)
+                            go.DrawWireframe(GraphicsDevice, view, proj);
                     }
                 }
+            }
+        }
+
+        private void GetCameraViewProjection(out Matrix view, out Matrix proj)
+        {
+            switch (cameraMode)
+            {
+                case CameraModes.Fixed:
+                    view = cam.RhsLevelViewMatrix;
+                    proj = cam._projection;
+                    break;
+                case CameraModes.ObjectFirstPerson:
+                    objectCam.SetOrientation(currentSelectedObject.Body.Orientation);
+                    objectCam.TargetPosition = currentSelectedObject.Body.Position;
+
+                    view = objectCam.RhsViewMatrix;
+                    proj = objectCam._projection;
+                    break;
+                case CameraModes.ObjectChase:
+                    Vector3 ThirdPersonRef = new Vector3(0, 1, 5);
+                    Vector3 TransRef = Vector3.Transform(ThirdPersonRef, currentSelectedObject.Body.Orientation);
+                    objectCam.TargetPosition = TransRef + currentSelectedObject.Body.Position;
+                    objectCam.LookAtLocation(currentSelectedObject.Body.Position);
+
+                    view = objectCam.RhsViewMatrix;
+                    proj = objectCam._projection;
+                    break;
+                case CameraModes.ObjectWatch:
+                    cam.LookAtLocation(currentSelectedObject.Body.Position);
+                    view = cam.RhsLevelViewMatrix;
+                    proj = cam._projection;
+                    break;
+                default:
+                    view = Matrix.Identity;
+                    proj = Matrix.Identity;
+                    break;
             }
         }
 
