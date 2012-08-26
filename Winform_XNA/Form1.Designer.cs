@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tbStep = new System.Windows.Forms.TrackBar();
             this.chkPhysics = new System.Windows.Forms.CheckBox();
             this.chkDrawing = new System.Windows.Forms.CheckBox();
             this.chkDebugPhysics = new System.Windows.Forms.CheckBox();
             this.chkDebug = new System.Windows.Forms.CheckBox();
-            this.tbStep = new System.Windows.Forms.TrackBar();
             this.XnaPanelMain = new Winform_XNA.XnaPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -63,6 +63,17 @@
             this.splitContainer1.Size = new System.Drawing.Size(923, 557);
             this.splitContainer1.SplitterDistance = 207;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // tbStep
+            // 
+            this.tbStep.Location = new System.Drawing.Point(12, 110);
+            this.tbStep.Maximum = 20;
+            this.tbStep.Name = "tbStep";
+            this.tbStep.Size = new System.Drawing.Size(171, 45);
+            this.tbStep.TabIndex = 5;
+            this.tbStep.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.tbStep.Value = 1;
+            this.tbStep.Scroll += new System.EventHandler(this.tbStep_Scroll);
             // 
             // chkPhysics
             // 
@@ -116,17 +127,6 @@
             this.chkDebug.UseVisualStyleBackColor = true;
             this.chkDebug.CheckedChanged += new System.EventHandler(this.cbDebug_CheckedChanged);
             // 
-            // tbStep
-            // 
-            this.tbStep.Location = new System.Drawing.Point(12, 110);
-            this.tbStep.Maximum = 20;
-            this.tbStep.Name = "tbStep";
-            this.tbStep.Size = new System.Drawing.Size(171, 45);
-            this.tbStep.TabIndex = 5;
-            this.tbStep.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.tbStep.Value = 1;
-            this.tbStep.Scroll += new System.EventHandler(this.tbStep_Scroll);
-            // 
             // XnaPanelMain
             // 
             this.XnaPanelMain.Debug = false;
@@ -154,6 +154,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);

@@ -16,7 +16,7 @@ namespace Winform_XNA
     {
         #region Todo
         /* Refactor Physics Controllers
-         * smooth camera transitions
+         * 
          */
         #endregion
 
@@ -27,6 +27,7 @@ namespace Winform_XNA
         Camera objectCam;
         float SimFactor = 1.0f;
         Gobject currentSelectedObject = null;
+        Terrain terrain;
         enum CameraModes
         {
             Fixed,
@@ -35,7 +36,6 @@ namespace Winform_XNA
             ObjectWatch
         }
         CameraModes cameraMode = CameraModes.Fixed;
-
         enum InputModes
         { 
             Camera,
@@ -83,15 +83,11 @@ namespace Winform_XNA
 
             try
             {
-                InitTerrain(15, 15, 10, 10, new Vector3(0,-1,0));
+                InitializeContent();                
                 InitializePhysics();
+                InitializeCameras();
                 InitializeObjects();
-
-                cam = new Camera(new Vector3(.05f, 1.5f, 2.7f));
-                cam.lagFactor = .1f;
-                objectCam = new Camera(new Vector3(0, 0, 0));
-                objectCam.lagFactor = 1.0f;
-
+                InitializeEnvironment();
 
                 tmrDrawElapsed = Stopwatch.StartNew();
                 tmrPhysicsElapsed = new Stopwatch();
@@ -114,33 +110,15 @@ namespace Winform_XNA
             {
                 System.Console.WriteLine(e.Message);
             }
+            
         }
-        private void InitializeObjects()
+        
+        private void InitializeContent()
         {
             cubeModel = Content.Load<Model>("Cube");
             sphereModel = Content.Load<Model>("Sphere");
-            moon= Content.Load<Texture2D>("Moon");
-            //AddSphere(new Vector3(0, 0, .2f), 1f, sphereModel, false);
-            //AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
-            /*
-            AddBox(new Vector3(0, 10, 0), new Vector3(1f, 1f, 1f), Matrix.Identity, cubeModel, true);
-            AddBox(new Vector3(0, -5, 0), new Vector3(50f, 5f, 50f), Matrix.CreateFromAxisAngle(Vector3.UnitX, (float)(10 * Math.PI / 180)), cubeModel, false);
-            AddBox(new Vector3(0, 1.25f, 27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
-            AddBox(new Vector3(0, 1.25f, -27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
-            AddBox(new Vector3(27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
-            AddBox(new Vector3(-27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
-            */
-            //AddBox(new Vector3(0, 1, 0), new Vector3(.05f, .05f, .05f), Matrix.Identity * Matrix.CreateRotationY((float)Math.PI/4), cubeModel, true);
-            AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f),  Matrix.Identity, cubeModel, false);
-            //AddBox(new Vector3(-1, .5f, 1), new Vector3(.5f, .5f, .5f),  Matrix.Identity, cubeModel, false);
-            AddBox(new Vector3(0, .4f, -5), new Vector3(.5f, .5f, .5f), Matrix.Identity, cubeModel, false);
-
-            // Giant Floor
-            //AddBox(new Vector3(0, -1, 0), new Vector3(50f, 1f, 50f), Matrix.Identity, cubeModel, false);
-
-            AddNewObjects();
+            moon = Content.Load<Texture2D>("Moon");
         }
-
         private void InitializePhysics()
         {
             gameObjects = new List<Gobject>();
@@ -162,6 +140,51 @@ namespace Winform_XNA
             PhysicsSystem.NumContactIterations = 8;
             PhysicsSystem.NumPenetrationRelaxtionTimesteps = 15;
         }
+        private void InitializeCameras()
+        {
+
+            cam = new Camera(new Vector3(.05f, 1.5f, 2.7f));
+            cam.lagFactor = .07f;
+            objectCam = new Camera(new Vector3(0, 0, 0));
+            objectCam.lagFactor = 1.0f;
+
+        }
+        private void InitializeObjects()
+        {            
+            //AddSphere(new Vector3(0, 0, .2f), 1f, sphereModel, false);
+            //AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
+            /*
+            AddBox(new Vector3(0, 10, 0), new Vector3(1f, 1f, 1f), Matrix.Identity, cubeModel, true);
+            AddBox(new Vector3(0, -5, 0), new Vector3(50f, 5f, 50f), Matrix.CreateFromAxisAngle(Vector3.UnitX, (float)(10 * Math.PI / 180)), cubeModel, false);
+            AddBox(new Vector3(0, 1.25f, 27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
+            AddBox(new Vector3(0, 1.25f, -27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
+            AddBox(new Vector3(27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
+            AddBox(new Vector3(-27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
+            */
+            //AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f),  Matrix.Identity, cubeModel, false);
+            //AddBox(new Vector3(-1, .5f, 1), new Vector3(.5f, .5f, .5f),  Matrix.Identity, cubeModel, false);
+            //AddBox(new Vector3(0, .4f, -5), new Vector3(.5f, .5f, .5f), Matrix.Identity, cubeModel, false);
+
+            // Giant Floor
+            //AddBox(new Vector3(0, -1, 0), new Vector3(50f, 1f, 50f), Matrix.Identity, cubeModel, false);
+
+            AddNewObjects();
+        }
+        private void InitializeEnvironment()
+        {
+            try
+            {
+                terrain = new Terrain(new Vector3(0, .5f, 0), new Vector3(15, 1, 15), 100, 100,  this.GraphicsDevice, moon);
+                //Gobject terraingo = new Gobject(, terrain.GetMesh(), null, false);
+                //terrain.Body = terraingo.Body;
+                //terrain.Skin = terraingo.Body.CollisionSkin;
+                newObjects.Add(terrain);
+            }
+            catch (Exception E)
+            {
+            }
+        }
+        
         #endregion
 
         #region Methods
@@ -195,13 +218,17 @@ namespace Winform_XNA
         private LunarVehicle AddLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
         {
             Box boxPrimitive = new Box(pos, orient, size);
+            // 2012.08.25 CBH
+            // I'm very confused by the different size and scale notations.
+            //The triangle mesh may be working well for these large objects.
+            //boxes do still get stuck sometimes in the mesh
+            
             LunarVehicle lander = new LunarVehicle(
                 pos,
-                size / 2,
+                size,// /2
                 boxPrimitive,
                 model
-                );
-            
+                );            
 
             newObjects.Add(lander);
             return lander;
@@ -226,6 +253,7 @@ namespace Winform_XNA
             currentSelectedObject.Selected = true;
             objectCam.TargetPosition = currentSelectedObject.Position;
         }
+
         #endregion
 
         #region User Input
@@ -269,7 +297,7 @@ namespace Winform_XNA
 
             if (e.KeyCode == Keys.L)
             {
-                lv = AddLunarLander(new Vector3(0, 1, 0), new Vector3(.3f, .3f, .3f), Matrix.CreateRotationY((float)Math.PI), cubeModel);
+                lv = AddLunarLander(new Vector3(0, 3, 0), new Vector3(1.0f, 1.0f, 1.0f), Matrix.CreateRotationY((float)Math.PI), cubeModel);
             }
             if (lv != null)
             {
@@ -436,10 +464,31 @@ namespace Winform_XNA
                  *    possibly passing a camera to Game when calling draw.
                  * This allows for a 4x split panel for world editing, or 2-4x splitscreen
                  */
+
                 
 
                 DrawObjects();
-                DrawTerrain(GraphicsDevice);
+
+                Matrix v = Matrix.Identity;
+                Matrix p = Matrix.Identity;
+                switch (cameraMode)
+                {
+                    case CameraModes.Fixed:
+                    case CameraModes.ObjectWatch:
+                        v = cam.RhsLevelViewMatrix;
+                        p = cam._projection;
+                        break;
+                    case CameraModes.ObjectFirstPerson:
+                    case CameraModes.ObjectChase:
+                        v = objectCam.RhsViewMatrix;
+                        p = objectCam._projection;
+                        break;
+                    default:
+                        break;
+                }
+
+                //terrain.DrawWireframe(GraphicsDevice, v, p);
+                terrain.Draw(GraphicsDevice, v, p); 
 
                 if (Debug)
                 {
@@ -474,55 +523,6 @@ namespace Winform_XNA
                 System.Console.WriteLine(e.Message);
             }
         }
-
-        private void DrawTerrain(GraphicsDevice g)
-        {
-            if (verts == null)
-                return;
-
-            Camera c = null;
-            Matrix v = Matrix.Identity;            
-            switch (cameraMode)
-            {
-                case CameraModes.Fixed:
-                case CameraModes.ObjectWatch:
-                    c = cam;
-                    v = cam.RhsLevelViewMatrix;
-                    break;
-                case CameraModes.ObjectFirstPerson:
-                case CameraModes.ObjectChase:
-                    c = objectCam;
-                    v = objectCam.LhsLevelViewMatrix;
-                    break;
-                default:
-                    break;
-            }
-
-            if (c == null)
-                return;
-            try
-            {
-                BasicEffect effect = new BasicEffect(g);
-                effect.View = v;
-                effect.Texture = moon;
-                effect.Projection = c._projection;
-                effect.EnableDefaultLighting();
-                effect.AmbientLightColor = Color.LightGray.ToVector3();
-                effect.DiffuseColor = Color.LightGray.ToVector3();
-                effect.TextureEnabled = true;
-
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    g.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleList, verts, 0, verts.Length, indices, 0, indices.Length / 3);
-                }
-            }
-            catch(Exception E)
-            {
-
-            }
-        }
-
         private Vector2 DebugShowVector(SpriteBatch sb, SpriteFont font, Vector2 p, string s, Vector3 vector)
         {
             sb.DrawString(font, s + ".X = " + vector.X, p, Color.LightGray);
@@ -536,7 +536,6 @@ namespace Winform_XNA
 
             return p;
         }
-
         public void DrawObjects()
         {
             lock (gameObjects)
@@ -579,89 +578,6 @@ namespace Winform_XNA
                     }
                 }
             }
-        }
-
-        #endregion
-
-        #region Terrain
-        VertexPositionNormalTexture[] verts;
-        int[] indices;
-        private void InitTerrain(int lenX, int lenZ, int cellsX, int cellsZ, Vector3 posCenter)
-        {
-            int numVertsX = cellsX + 1;
-            int numVertsZ = cellsZ + 1;
-            int numVerts = numVertsX * numVertsZ;
-            int numTriX = cellsX * 2;
-            int numTriZ = cellsZ;
-            int numTris = numTriX * numTriZ;
-            verts = new VertexPositionNormalTexture[numVerts];
-            int numIndices = numTris * 3;
-            indices = new int[numIndices];
-            float cellSizeX = (float)lenX / cellsX;
-            float cellSizeZ = (float)lenZ / cellsZ;
-
-            Random r = new Random();
-
-            // Fill in the vertices
-            int count = 0;
-            float worldZPosition = posCenter.Z - lenZ / 2;
-            for (int z = 0; z < numVertsZ; z++)
-            {
-                float worldXPosition = posCenter.X - lenX / 2;
-                for (int x = 0; x < numVertsX; x++)
-                {
-                    verts[count].Position = new Vector3(worldXPosition, (float)r.NextDouble()/10, worldZPosition);
-                    verts[count].Normal = Vector3.Zero;
-                    verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
-                    verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);
-
-                    count++;
-
-                    // Advance in x
-                    worldXPosition += cellSizeX;
-                }
-                // Advance in z
-                worldZPosition += cellSizeZ;
-            }
-
-            int index = 0;
-            int startVertex = 0;
-            for (int cellZ = 0; cellZ < cellsZ; cellZ++)
-            {
-                for (int cellX = 0; cellX < cellsX; cellX++)
-                {
-                    indices[index] = startVertex + 0;
-                    indices[index + 1] = startVertex + 1;
-                    indices[index + 2] = startVertex + numVertsX;
-                    SetNormalOfTriangleAtIndices(indices[index], indices[index + 1], indices[index + 2]);
-
-                    index += 3;
-
-                    indices[index] = startVertex + 1;
-                    indices[index + 1] = startVertex + numVertsX + 1;
-                    indices[index + 2] = startVertex + numVertsX;
-                    SetNormalOfTriangleAtIndices(indices[index], indices[index + 1], indices[index + 2]);
-
-                    index += 3;
-
-                    startVertex++;
-                }
-                startVertex++;
-            }
-        }
-
-        private void SetNormalOfTriangleAtIndices(int a, int b, int c)
-        {
-            Vector3 vA = verts[a].Position;
-            Vector3 vB = verts[b].Position;
-            Vector3 vC = verts[c].Position;
-            Triangle t = new Triangle(vA, vC, vB);
-            
-
-            Vector3 n = t.Normal;
-            verts[a].Normal += n;
-            verts[b].Normal += n;
-            verts[c].Normal += n;
         }
         #endregion
     }

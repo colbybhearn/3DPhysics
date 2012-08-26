@@ -10,14 +10,14 @@ namespace Winform_XNA
 {
     public class Gobject
     {
-        public Body Body { get; private set; }
-        public CollisionSkin Skin { get; private set; }
+        public Body Body { get; internal set; }
+        public CollisionSkin Skin { get; internal set; }
         public Model Model { get; set; }
         public Vector3 Position { get; private set; }
         public Vector3 Scale { get; private set; }
         public bool Selected;
 
-        private BasicEffect Effect { get; set; }
+        internal BasicEffect Effect { get; set; }
 
         /// <summary>
         /// Default Constructor
@@ -83,12 +83,22 @@ namespace Winform_XNA
 
         public Gobject(Vector3 position, Vector3 scale, Primitive primitive, Model model, bool moveable)
             : this()
-        {
-            Skin.AddPrimitive(primitive, (int) MaterialTable.MaterialID.NotBouncyNormal);
-            CommonInit(position, scale, model, moveable);
+        {            
+            
+            try
+            {
+                Skin.AddPrimitive(primitive, (int)MaterialTable.MaterialID.NotBouncyNormal);
+                //CollisionSkin collision = new CollisionSkin(null);
+                //Skin.AddPrimitive(primitive, 2);
+                CommonInit(position, scale, model, moveable);
+                //Body.CollisionSkin = collision;
+            }
+            catch (Exception E)
+            {
+            }
         }
 
-        private void CommonInit(Vector3 pos, Vector3 scale, Model model, bool moveable)
+        internal void CommonInit(Vector3 pos, Vector3 scale, Model model, bool moveable)
         {
             Position = pos;
             Scale = scale;
@@ -102,14 +112,21 @@ namespace Winform_XNA
 
         public void FinalizeBody()
         {
-            Vector3 com = SetMass(1.0f);
 
-            Body.MoveTo(Position, Matrix.Identity);
+            try
+            {
+                Vector3 com = SetMass(1.0f);
 
-            Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
-            Body.EnableBody();
-            // EnableBody adds it
-            //PhysicsSystem.CurrentPhysicsSystem.AddBody(Body);
+                Body.MoveTo(Position, Matrix.Identity);
+
+                Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
+                Body.EnableBody(); // adds to CurrentPhysicsSystem
+                // EnableBody adds it
+                //PhysicsSystem.CurrentPhysicsSystem.AddBody(Body);
+            }
+            catch (Exception E)
+            {
+            }
         }
 
         private Vector3 SetMass(float mass)
@@ -133,6 +150,8 @@ namespace Winform_XNA
 
         public void Draw(Matrix View, Matrix Projection)
         {
+            if (Model == null)
+                return;
             Matrix[] transforms = new Matrix[Model.Bones.Count];
 
             Model.CopyAbsoluteBoneTransformsTo(transforms);
