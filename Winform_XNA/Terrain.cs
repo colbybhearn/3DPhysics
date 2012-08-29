@@ -48,18 +48,23 @@ namespace Winform_XNA
             int count = 0;
             //float worldZPosition = posCenter.Z - (size.Z / 2);
             float worldZPosition = - (size.Z / 2);
+            float height;
             for (int z = 0; z < numVertsZ; z++)
             {
                 //float worldXPosition = posCenter.X - (size.X / 2);
                 float worldXPosition = - (size.X / 2);
                 for (int x = 0; x < numVertsX; x++)
                 {
-                    targetHeight = 0;
-                    targetHeight += Math.Abs(worldXPosition) * -worldZPosition * 10.0f;
-                    targetHeight += Math.Abs(worldZPosition) * worldXPosition * 10.0f;
+                    if (count % 50 == 0)
+                        targetHeight = r2.NextDouble();
+                    //targetHeight += Math.Abs(worldZPosition);// +worldXPosition * 1.0f;
+                    
                     currentHeight += (targetHeight - currentHeight) * .05f;
+                    height = (float)((r.NextDouble() + currentHeight) * size.Y);
+                    //height = 1;
 
-                    verts[count].Position = new Vector3(worldXPosition, (float)((r.NextDouble() + currentHeight) * size.Y), worldZPosition);
+
+                    verts[count].Position = new Vector3(worldXPosition, height, worldZPosition);
                     verts[count].Normal = Vector3.Zero;
                     verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
                     verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);

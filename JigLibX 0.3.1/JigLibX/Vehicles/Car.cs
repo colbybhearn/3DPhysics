@@ -12,13 +12,13 @@ namespace JigLibX.Vehicles
     /// </summary>
     public class Car
     {
-        enum WheelId 
-        { 
+        enum WheelId
+        {
             WheelBR = 0,
             WheelFR = 1,
             WheelBL = 2,
-            WheelFL = 3, 
-            MaxWheels = 4 
+            WheelFL = 3,
+            MaxWheels = 4
         }
 
         #region private fields
@@ -46,7 +46,7 @@ namespace JigLibX.Vehicles
 
         private float steering = 0.0f;
         private float accelerate = 0.0f;
-        private float hBrake = 0.0f; 
+        private float hBrake = 0.0f;
         #endregion
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace JigLibX.Vehicles
             // beta = d/m   w0^2 = k/m
             // critical if sq(beta) = 4*sq(w0)
             // so d = 2 * sqrt(k*m)
-            float damping = 2.0f * (float)System.Math.Sqrt(spring * mass);
+            float damping = 2.0f * (float)System.Math.Sqrt(System.Math.Abs(spring * mass));
             damping *= 0.25f; // assume wheels act together
             damping *= wheelDampingFrac;  // a bit bouncy
 
@@ -214,8 +214,8 @@ namespace JigLibX.Vehicles
         /// </summary>
         public void DisableCar()
         {
-            if(chassis != null)
-            chassis.DisableChassis();
+            if (chassis != null)
+                chassis.DisableChassis();
 
         }
 
@@ -249,7 +249,7 @@ namespace JigLibX.Vehicles
             accelerate += dAccelerate;
 
             float dSteering = destSteering - steering;
-            dSteering = MathHelper.Clamp(dSteering, -deltaSteering, deltaSteering); 
+            dSteering = MathHelper.Clamp(dSteering, -deltaSteering, deltaSteering);
 
             steering += dSteering;
 
@@ -314,8 +314,8 @@ namespace JigLibX.Vehicles
         /// Gets or Sets back-wheel drive
         /// </summary>
         public bool BWDrive
-        { 
-            get {return bWDrive;}
+        {
+            get { return bWDrive; }
             set { bWDrive = value; }
         }
 
@@ -350,9 +350,9 @@ namespace JigLibX.Vehicles
         /// Accelerate control - values -1/0 to 1
         /// </summary>
         public float Accelerate
-        { 
-            get { return destAccelerate;}
-            set{destAccelerate = value;}
+        {
+            get { return destAccelerate; }
+            set { destAccelerate = value; }
         }
 
         /// <summary>
@@ -360,8 +360,8 @@ namespace JigLibX.Vehicles
         /// </summary>
         public float Steer
         {
-            get {return destSteering;}
-            set {destSteering = value;}
+            get { return destSteering; }
+            set { destSteering = value; }
         }
 
         /// <summary>
@@ -369,8 +369,8 @@ namespace JigLibX.Vehicles
         /// </summary>
         public float HBrake
         {
-            get {return hBrake;}
-            set {hBrake = value;}
+            get { return hBrake; }
+            set { hBrake = value; }
         }
 
         /// <summary>

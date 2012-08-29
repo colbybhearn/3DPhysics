@@ -9,6 +9,8 @@ using JigLibX.Physics;
 using JigLibX.Geometry;
 using JigLibX.Collision;
 using JigLibX.Math;
+using JigLibX.Vehicles;
+using Winform_XNA.PhysicObjects;
 
 namespace Winform_XNA
 {
@@ -133,7 +135,7 @@ namespace Winform_XNA
             PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
 
             PhysicsSystem.CollisionSystem.UseSweepTests = true;
-            PhysicsSystem.Gravity = new Vector3(0, -2f, 0);
+            //PhysicsSystem.Gravity = new Vector3(0, -2f, 0);
             // CollisionTOllerance and Allowed Penetration
             // changed because our objects were "too small"
             PhysicsSystem.CollisionTollerance = 0.01f;
@@ -151,7 +153,6 @@ namespace Winform_XNA
             cam.lagFactor = .07f;
             objectCam = new Camera(new Vector3(0, 0, 0));
             objectCam.lagFactor = 1.0f;
-
         }
         private void InitializeObjects()
         {            
@@ -179,8 +180,10 @@ namespace Winform_XNA
             try
             {
                 terrain = new Terrain(new Vector3(0, 0, 0), // position
-                                        new Vector3(100f, .5f, 100f),  // X with, possible y range, Z depth 
+                                        //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
+                                        new Vector3(10f, .1f, 10f),  // X with, possible y range, Z depth 
                                         100, 100,  this.GraphicsDevice, moon);
+                AddCar();
                 newObjects.Add(terrain);
             }
             catch (Exception E)
@@ -236,6 +239,23 @@ namespace Winform_XNA
             return lander;
 
         }
+        Model carModel, wheelModel;
+        CarObject carObject;
+        private void AddCar()
+        {
+            try
+            {
+                carModel = Content.Load<Model>("car");
+                wheelModel = Content.Load<Model>("wheel");
+                carObject = new CarObject(new Vector3(0, 1, 0), carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.15f, 0.45f, 0.3f, 1, 520.0f, PhysicsSystem.Gravity.Length());
+                carObject.Car.EnableCar();
+                carObject.Car.Chassis.Body.AllowFreezing = false;
+                newObjects.Add(carObject);
+            }
+            catch(Exception E)
+            {
+            }
+        }
         private void AddNewObjects()
         {
             while (newObjects.Count > 0)
@@ -249,6 +269,8 @@ namespace Winform_XNA
         }
         private void SelectGameObject(Gobject go)
         {
+            if (go == null)
+                return;
             if (currentSelectedObject != null)
                 currentSelectedObject.Selected = false;
             currentSelectedObject = go;
@@ -294,19 +316,22 @@ namespace Winform_XNA
                     AddSphere();
             }
         }
+
         private void ProcessObjectControlKeyDown(KeyEventArgs e)
         {
+            Keys key = e.KeyCode;
 
             if (e.KeyCode == Keys.L)
             {
                 lv = AddLunarLander(new Vector3(0, 3, 0), new Vector3(1.0f, 1.0f, 1.0f), Matrix.CreateRotationY((float)Math.PI), cubeModel);
             }
+
             if (lv != null)
             {
                 lv.ProcessInputKeyDown(e);
             }
 
-            if (e.KeyCode == Keys.C)
+            if (key == Keys.C)
             {
                 switch (cameraMode)
                 {
@@ -331,6 +356,7 @@ namespace Winform_XNA
         {
             if (lv != null)
                 lv.ProcessInputKeyUp(e);
+
             
         }
         public void ProcessKeyDown(KeyEventArgs e)
@@ -669,6 +695,36 @@ namespace Winform_XNA
             verts[c].Normal += n;
         }
         #endregion
+
+        internal void ProcessKeyDown(PreviewKeyDownEventArgs e)
+        {
+            Keys key = e.KeyCode;
+
+            if (key == Keys.Up || key == Keys.Down)
+            {
+                if (e.KeyCode == Keys.Up)
+                    carObject.Car.Accelerate = 1.0f;
+                else
+                    carObject.Car.Accelerate = -1.0f;
+            }
+            else
+                carObject.Car.Accelerate = 0.0f;
+
+            if (key == Keys.Left || key == Keys.Right)
+            {
+                if (key == Keys.Left)
+                    carObject.Car.Steer = 1.0f;
+                else
+                    carObject.Car.Steer = -1.0f;
+            }
+            else
+                carObject.Car.Steer = 0.0f;
+
+            if (key == Keys.B)
+                carObject.Car.HBrake = 1.0f;
+            else
+                carObject.Car.HBrake = 0.0f;
+        }
     }
 
     public class MyCollisionPredicate : CollisionSkinPredicate1

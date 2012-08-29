@@ -56,15 +56,16 @@ namespace Winform_XNA
 
         public void ProcessInputKeyUp(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Space)
+            Keys key = e.KeyCode;
+            if (key == Keys.Space)
             {
                 SetVertJetThrust(0);
             }
-            if (e.KeyCode == Keys.W)
+            if (key == Keys.W)
             {
                 SetRotJetZThrust(0);
             }
-            if (e.KeyCode == Keys.A)
+            if (key == Keys.A)
             {
                 SetRotJetXThrust(0);
             }

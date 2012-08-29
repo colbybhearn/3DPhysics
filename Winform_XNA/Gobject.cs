@@ -13,7 +13,7 @@ namespace Winform_XNA
         public Body Body { get; internal set; }
         public CollisionSkin Skin { get; internal set; }
         public Model Model { get; set; }
-        public Vector3 Position { get; private set; }
+        public Vector3 Position { get; internal set; }
         public Vector3 Scale { get; private set; }
         public bool Selected;
 
@@ -110,7 +110,7 @@ namespace Winform_XNA
 
 
 
-        public void FinalizeBody()
+        public virtual void FinalizeBody()
         {
 
             try
@@ -118,7 +118,6 @@ namespace Winform_XNA
                 Vector3 com = SetMass(1.0f);
 
                 Body.MoveTo(Position, Matrix.Identity);
-
                 Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
                 Body.EnableBody(); // adds to CurrentPhysicsSystem
                 // EnableBody adds it
@@ -129,7 +128,7 @@ namespace Winform_XNA
             }
         }
 
-        private Vector3 SetMass(float mass)
+        internal Vector3 SetMass(float mass)
         {
             PrimitiveProperties primitiveProperties = new PrimitiveProperties(
                 PrimitiveProperties.MassDistributionEnum.Solid,
@@ -148,7 +147,7 @@ namespace Winform_XNA
             return com;
         }
 
-        public void Draw(Matrix View, Matrix Projection)
+        public virtual void Draw(Matrix View, Matrix Projection)
         {
             if (Model == null)
                 return;

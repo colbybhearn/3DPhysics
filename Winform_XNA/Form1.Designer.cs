@@ -107,8 +107,6 @@
             // 
             this.chkDebugPhysics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkDebugPhysics.AutoSize = true;
-            this.chkDebugPhysics.Checked = true;
-            this.chkDebugPhysics.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDebugPhysics.Location = new System.Drawing.Point(12, 505);
             this.chkDebugPhysics.Name = "chkDebugPhysics";
             this.chkDebugPhysics.Size = new System.Drawing.Size(97, 17);
@@ -147,6 +145,7 @@
             this.XnaPanelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.XnaPanelMain_MouseDown);
             this.XnaPanelMain.MouseEnter += new System.EventHandler(this.test_XNAControl_MouseEnter);
             this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
+            this.XnaPanelMain.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.XnaPanelMain_PreviewKeyDown);
             // 
             // Form1
             // 

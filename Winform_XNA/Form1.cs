@@ -14,7 +14,6 @@ namespace Winform_XNA
         public Form1()
         {
             InitializeComponent();
-            XnaPanelMain.DebugPhysics = true;
         }
 
         private void cbDebug_CheckedChanged(object sender, EventArgs e)
@@ -102,6 +101,11 @@ namespace Winform_XNA
             //20 -> 20/10
             XnaPanelMain.SetSimFactor(value);
 
+        }
+
+        private void XnaPanelMain_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            XnaPanelMain.ProcessKeyDown(e);
         }
         
     }
