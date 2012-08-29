@@ -41,7 +41,9 @@ namespace Winform_XNA
             texture = tex;
 
             Random r = new Random();
-
+            Random r2 = new Random(DateTime.Now.Millisecond);
+            double targetHeight = 0;
+            double currentHeight = 0;
             // Fill in the vertices
             int count = 0;
             //float worldZPosition = posCenter.Z - (size.Z / 2);
@@ -52,7 +54,12 @@ namespace Winform_XNA
                 float worldXPosition = - (size.X / 2);
                 for (int x = 0; x < numVertsX; x++)
                 {
-                    verts[count].Position = new Vector3(worldXPosition,  (float)r.NextDouble() * size.Y, worldZPosition);
+                    targetHeight = 0;
+                    targetHeight += Math.Abs(worldXPosition) * -worldZPosition * 10.0f;
+                    targetHeight += Math.Abs(worldZPosition) * worldXPosition * 10.0f;
+                    currentHeight += (targetHeight - currentHeight) * .05f;
+
+                    verts[count].Position = new Vector3(worldXPosition, (float)((r.NextDouble() + currentHeight) * size.Y), worldZPosition);
                     verts[count].Normal = Vector3.Zero;
                     verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
                     verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);
@@ -101,7 +108,7 @@ namespace Winform_XNA
             {
                 Effect = new BasicEffect(g);
                 mesh = new TriangleMesh();
-                mesh.CreateMesh(meshVertices, meshIndices, 2, cellSizeX);
+                mesh.CreateMesh(meshVertices, meshIndices, 4, cellSizeX);
             }
             catch (Exception E)
             {
@@ -110,7 +117,7 @@ namespace Winform_XNA
             Skin = new CollisionSkin(Body);
             Body.CollisionSkin = Skin;
             Body.ExternalData = this;
-            Skin.AddPrimitive(GetMesh(), (int)MaterialTable.MaterialID.NotBouncyNormal);
+            Skin.AddPrimitive(GetMesh(), new MaterialProperties(0.7f, 0.7f, 0.6f));
             VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe(); // 1200 across before Z changes to from -7.5/-7.35 to -7.35/-7.2
                 
             CommonInit(posCenter, new Vector3(1,1,1), null, false);

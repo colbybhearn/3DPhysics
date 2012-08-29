@@ -32,34 +32,40 @@ namespace JiggleGame.PhysicObjects
         }
 
 
-        /// <summary>
-        /// Helper Method to get the vertex and index List from the model.
-        /// </summary>
-        /// <param name="vertices"></param>
-        /// <param name="indices"></param>
-        /// <param name="model"></param>
-        public void ExtractData(List<Vector3> vertices, List<TriangleVertexIndices> indices,Model model)
+        // Extracts the neccesary information from a model to
+        // simulate physics on it
+        public void ExtractData(List<Vector3> vertices, List<TriangleVertexIndices> indices, Model model)
         {
             Matrix[] bones_ = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(bones_);
             foreach (ModelMesh mm in model.Meshes)
             {
+                int offset = vertices.Count;
                 Matrix xform = bones_[mm.ParentBone.Index];
                 foreach (ModelMeshPart mmp in mm.MeshParts)
                 {
-                    int offset = vertices.Count;
                     Vector3[] a = new Vector3[mmp.NumVertices];
-                    mm.VertexBuffer.GetData<Vector3>(mmp.StreamOffset + mmp.BaseVertex * mmp.VertexStride,
-                        a, 0, mmp.NumVertices, mmp.VertexStride);
+                    int stride = mmp.VertexBuffer.VertexDeclaration.VertexStride;
+
+                    byte[] bRaw = new byte[mmp.VertexBuffer.VertexCount * mmp.VertexBuffer.VertexDeclaration.VertexStride];
+                    mmp.VertexBuffer.GetData<byte>(bRaw);
+
+                    for (int i = 0; i < mmp.NumVertices; i++)
+                    {
+                        int iStart = (i + mmp.VertexOffset) * stride;
+                        a[i] = new Vector3(BitConverter.ToSingle(bRaw, iStart), BitConverter.ToSingle(bRaw, iStart + 4), BitConverter.ToSingle(bRaw, iStart + 8));
+                    }
+
                     for (int i = 0; i != a.Length; ++i)
                         Vector3.Transform(ref a[i], ref xform, out a[i]);
                     vertices.AddRange(a);
 
-                    if (mm.IndexBuffer.IndexElementSize != IndexElementSize.SixteenBits)
-                        throw new Exception(
-                            String.Format("Model uses 32-bit indices, which are not supported."));
+                    if (mmp.IndexBuffer.IndexElementSize != IndexElementSize.SixteenBits)
+                        throw new Exception(String.Format("Model uses 32-bit indices, which are not supported."));
+
                     short[] s = new short[mmp.PrimitiveCount * 3];
-                    mm.IndexBuffer.GetData<short>(mmp.StartIndex * 2, s, 0, mmp.PrimitiveCount * 3);
+                    mmp.IndexBuffer.GetData(mmp.StartIndex * 2, s, 0, mmp.PrimitiveCount * 3);
+
                     JigLibX.Geometry.TriangleVertexIndices[] tvi = new JigLibX.Geometry.TriangleVertexIndices[mmp.PrimitiveCount];
                     for (int i = 0; i != tvi.Length; ++i)
                     {

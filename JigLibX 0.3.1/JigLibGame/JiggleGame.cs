@@ -552,11 +552,12 @@ namespace JiggleGame
 
         public void RestoreRenderState()
         {
-            this.graphics.GraphicsDevice.RenderState.DepthBufferEnable = true;
-            this.graphics.GraphicsDevice.RenderState.AlphaTestEnable = true;
-            this.graphics.GraphicsDevice.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
-            this.graphics.GraphicsDevice.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
-            this.graphics.GraphicsDevice.RenderState.AlphaBlendEnable = true;
+            this.graphics.GraphicsDevice.DepthStencilState = new DepthStencilState();
+            //this.graphics.GraphicsDevice.RenderState.DepthBufferEnable = true;
+            //this.graphics.GraphicsDevice.RenderState.AlphaTestEnable = true;
+            //this.graphics.GraphicsDevice.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
+            //this.graphics.GraphicsDevice.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
+            //this.graphics.GraphicsDevice.RenderState.AlphaBlendEnable = true;
         }
 
         private Vector3 RayTo(int x, int y)

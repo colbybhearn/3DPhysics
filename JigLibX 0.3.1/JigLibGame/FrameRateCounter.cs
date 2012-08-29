@@ -40,7 +40,7 @@ namespace JiggleGame
 
         protected override void LoadContent()
         {
-            this.GraphicsDevice.DeviceReset += new EventHandler(GraphicsDevice_DeviceReset);
+            this.GraphicsDevice.DeviceReset += new EventHandler<EventArgs>(GraphicsDevice_DeviceReset);
             GraphicsDevice_DeviceReset(null, null);
 
             spriteBatch = new SpriteBatch(GraphicsDevice);

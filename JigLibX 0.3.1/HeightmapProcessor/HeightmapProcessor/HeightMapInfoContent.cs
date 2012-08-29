@@ -14,6 +14,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content.Pipeline;
 #endregion
 
 namespace HeightmapProcessor
@@ -91,7 +92,7 @@ namespace HeightmapProcessor
                 output.Write(height);
             }
         }
-
+        
         /// <summary>
         /// Tells the content pipeline what CLR type the sky
         /// data will be loaded into at runtime.
@@ -101,7 +102,7 @@ namespace HeightmapProcessor
             return "JiggleGame.HeightMapInfo, " +
                 "JiggleGame, Version=1.0.0.0, Culture=neutral";
         }
-
+        
 
         /// <summary>
         /// Tells the content pipeline what worker type

@@ -26,8 +26,8 @@ namespace JiggleGame
         {
             base.Initialize();
 
-            basicEffect = new BasicEffect(this.GraphicsDevice, null);
-            GraphicsDevice.VertexDeclaration = new VertexDeclaration(GraphicsDevice, VertexPositionColor.VertexElements);
+            basicEffect = new BasicEffect(this.GraphicsDevice);
+            //GraphicsDevice.VertexDeclaration = new VertexDeclaration(GraphicsDevice, VertexPositionColor.VertexElements);
         }
 
         public override void Draw(GameTime gameTime)
@@ -41,17 +41,14 @@ namespace JiggleGame
             this.basicEffect.Projection = playGround.Camera.Projection;
             this.basicEffect.VertexColorEnabled = true;
 
-            this.basicEffect.Begin();
             foreach (EffectPass pass in this.basicEffect.CurrentTechnique.Passes)
             {
-                pass.Begin();
+                pass.Apply();
 
                 GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineStrip,
                     vertexData.ToArray(), 0, vertexData.Count - 1);
 
-                pass.End();
             }
-            this.basicEffect.End();
 
             vertexData.Clear();
 

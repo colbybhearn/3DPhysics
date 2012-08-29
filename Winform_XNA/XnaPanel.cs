@@ -477,8 +477,8 @@ namespace Winform_XNA
                 
                 if(DrawingEnabled)
                     terrain.Draw(GraphicsDevice, v, p);
-                if(DebugPhysics)
-                    terrain.DrawWireframe(GraphicsDevice, v, p);
+                //if(DebugPhysics)
+                    //terrain.DrawWireframe(GraphicsDevice, v, p);
 
                 
                 if (Debug)
