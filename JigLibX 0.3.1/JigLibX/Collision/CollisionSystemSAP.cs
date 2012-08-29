@@ -25,13 +25,22 @@ namespace JigLibX.Collision
         List<CollisionSkin> active_ = new List<CollisionSkin>();
         List<Primitive> testing_ = new List<Primitive>();
         List<Primitive> second_ = new List<Primitive>();
-
+        /// <summary>
+        /// Gets largestX_
+        /// </summary>
         public float LargestX { get { return largestX_; } }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public CollisionSystemSAP()
         {
         }
 
+        /// <summary>
+        /// Adds a CollisionSkin
+        /// </summary>
+        /// <param name="collisionSkin"></param>
         public override void AddCollisionSkin(CollisionSkin collisionSkin)
         {
             collisionSkin.CollisionSystem = this;
@@ -42,6 +51,11 @@ namespace JigLibX.Collision
                 largestX_ = dx;
         }
 
+        /// <summary>
+        /// Removes a CollisionSkin
+        /// </summary>
+        /// <param name="collisionSkin"></param>
+        /// <returns>bool</returns>
         public override bool RemoveCollisionSkin(CollisionSkin collisionSkin)
         {
             int ix = skins_.IndexOf(collisionSkin);
@@ -51,16 +65,29 @@ namespace JigLibX.Collision
             return true;
         }
 
+        /// <summary>
+        /// Gets skins_.AsReadOnly()
+        /// </summary>
         public override ReadOnlyCollection<CollisionSkin> CollisionSkins
         {
             get { return skins_.AsReadOnly(); }
         }
 
+        /// <summary>
+        /// CollisionSkin moved
+        /// </summary>
+        /// <param name="skin"></param>
         public override void CollisionSkinMoved(CollisionSkin skin)
         {
             dirty_ = true;
         }
 
+        /// <summary>
+        /// Extract
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="skins"></param>
         void Extract(Vector3 min, Vector3 max, List<CollisionSkin> skins)
         {
             if (skins_.Count == 0)
@@ -76,6 +103,11 @@ namespace JigLibX.Collision
             }
         }
 
+        /// <summary>
+        /// bsearch
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns>int</returns>
         int bsearch(float x)
         {
             //  It is up to the caller to make sure this isn't called on an empty collection.
@@ -86,21 +118,36 @@ namespace JigLibX.Collision
                 int mid = (top + bot) >> 1;
                 if (skins_[mid].WorldBoundingBox.Min.X >= x)
                 {
+#if DEBUG
                     System.Diagnostics.Debug.Assert(top > mid);
+#endif
                     top = mid;
                 }
                 else
                 {
+#if DEBUG
                     System.Diagnostics.Debug.Assert(bot <= mid);
+#endif
                     bot = mid + 1;
                 }
             }
+
+#if DEBUG
             System.Diagnostics.Debug.Assert(top >= 0 && top <= skins_.Count);
             System.Diagnostics.Debug.Assert(top == 0 || skins_[top - 1].WorldBoundingBox.Min.X < x);
             System.Diagnostics.Debug.Assert(top == skins_.Count || skins_[top].WorldBoundingBox.Min.X >= x);
+#endif
+
             return top;
         }
 
+        /// <summary>
+        /// DetectCollisions
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="collisionFunctor"></param>
+        /// <param name="collisionPredicate"></param>
+        /// <param name="collTolerance"></param>
         public override void DetectCollisions(JigLibX.Physics.Body body, CollisionFunctor collisionFunctor, CollisionSkinPredicate2 collisionPredicate, float collTolerance)
         {
             if (!body.IsActive)
@@ -147,19 +194,34 @@ namespace JigLibX.Collision
 
         SkinTester skinTester_ = new SkinTester();
 
+        /// <summary>
+        /// DetectAllCollisions
+        /// </summary>
+        /// <param name="bodies"></param>
+        /// <param name="collisionFunctor"></param>
+        /// <param name="collisionPredicate"></param>
+        /// <param name="collTolerance"></param>
         public override void DetectAllCollisions(List<JigLibX.Physics.Body> bodies, CollisionFunctor collisionFunctor, CollisionSkinPredicate2 collisionPredicate, float collTolerance)
         {
             skinTester_.Set(this, collisionFunctor, collisionPredicate, collTolerance);
+
             MaybeSort();
             //  I know that each skin for the bodies is already in my list of skins.
             //  Thus, I can do collision between all skins, culling out non-active bodies.
             int nSkins = skins_.Count;
             active_.Clear();
-            //  sweep the sorted list for potential overlaps
-            for (int i = 0; i != nSkins; ++i)
-                AddToActive(skins_[i], skinTester_);
+
+            // BEN-OPTIMISATION: unsafe, remove array boundary checks.
+            unsafe
+            {
+                for (int i = 0; i != nSkins; ++i)
+                    AddToActive(skins_[i], skinTester_);
+            }
         }
 
+        /// <summary>
+        /// Class SkinTester
+        /// </summary>
         class SkinTester : CollisionSkinPredicate2
         {
             CollisionFunctor collisionFunctor_;
@@ -168,10 +230,20 @@ namespace JigLibX.Collision
             CollDetectInfo info_;
             CollisionSystem sys_;
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
             internal SkinTester()
             {
             }
 
+            /// <summary>
+            /// Set
+            /// </summary>
+            /// <param name="sys"></param>
+            /// <param name="collisionFunctor"></param>
+            /// <param name="collisionPredicate"></param>
+            /// <param name="collTolerance"></param>
             internal void Set(CollisionSystem sys, CollisionFunctor collisionFunctor, CollisionSkinPredicate2 collisionPredicate, float collTolerance)
             {
                 sys_ = sys;
@@ -182,12 +254,18 @@ namespace JigLibX.Collision
                 collTolerance_ = collTolerance;
             }
 
+            /// <summary>
+            /// CheckCollidables
+            /// </summary>
+            /// <param name="skin0"></param>
+            /// <param name="skin1"></param>
+            /// <returns>bool</returns>
             private static bool CheckCollidables(CollisionSkin skin0,CollisionSkin skin1)
             {
                 List<CollisionSkin> nonColl0 = skin0.NonCollidables;
                 List<CollisionSkin> nonColl1 = skin1.NonCollidables;
 
-                //most common case
+                // Most common case
                 if (nonColl0.Count == 0 && nonColl1.Count == 0)
                     return true;
 
@@ -206,104 +284,177 @@ namespace JigLibX.Collision
                 return true;
             }
 
-            internal void TestSkin(CollisionSkin b, CollisionSkin s)
+            // BEN-OPTIMISATION: unsafe i.e. Remove array boundary checks.
+            /// <summary>
+            /// TestSkin
+            /// </summary>
+            /// <param name="b"></param>
+            /// <param name="s"></param>
+            internal unsafe void TestSkin(CollisionSkin b, CollisionSkin s)
             {
+#if DEBUG
                 System.Diagnostics.Debug.Assert(b.Owner != null);
                 System.Diagnostics.Debug.Assert(b.Owner.IsActive);
+#endif
                 if (!collisionPredicate_.ConsiderSkinPair(b, s))
                     return;
+
                 info_.Skin0 = b;
                 info_.Skin1 = s;
                 int nSkin0 = info_.Skin0.NumPrimitives;
                 int nSkin1 = info_.Skin1.NumPrimitives;
+
+                // BEN-OPTIMISATION: Reuse detectFunctor.
+                DetectFunctor detectFunctor;
                 for (info_.IndexPrim0 = 0; info_.IndexPrim0 != nSkin0; ++info_.IndexPrim0)
                 {
                     for (info_.IndexPrim1 = 0; info_.IndexPrim1 != nSkin1; ++info_.IndexPrim1)
                     {
                         if (CheckCollidables(info_.Skin0, info_.Skin1))
                         {
-                            DetectFunctor f =
-                              sys_.GetCollDetectFunctor(info_.Skin0.GetPrimitiveNewWorld(info_.IndexPrim0).Type,
+                            detectFunctor = sys_.GetCollDetectFunctor(
+                                info_.Skin0.GetPrimitiveNewWorld(info_.IndexPrim0).Type,
                                 info_.Skin1.GetPrimitiveNewWorld(info_.IndexPrim1).Type);
-                            if (f != null)
-                                f.CollDetect(info_, collTolerance_, collisionFunctor_);
+
+                            if (detectFunctor != null)
+                                detectFunctor.CollDetect(info_, collTolerance_, collisionFunctor_);
                         }
                     }
                 }
             }
-
+            /// <summary>
+            /// ConsiderSkinPair
+            /// </summary>
+            /// <param name="skin0"></param>
+            /// <param name="skin1"></param>
+            /// <returns>bool</returns>
             public override bool ConsiderSkinPair(CollisionSkin skin0, CollisionSkin skin1)
             {
                 return true;
             }
         }
 
+        /// <summary>
+        /// AddToActive
+        /// </summary>
+        /// <param name="cs"></param>
+        /// <param name="st"></param>
         void AddToActive(CollisionSkin cs, SkinTester st)
         {
             int n = active_.Count;
             float xMin = cs.WorldBoundingBox.Min.X;
             bool active = (cs.Owner != null) && cs.Owner.IsActive;
-            for (int i = 0; i != n; )
+            // BEN-OPTIMISATION: unsafe i.e. Remove array boundary checks.
+            unsafe
             {
-                CollisionSkin asi = active_[i];
-                if (asi.WorldBoundingBox.Max.X < xMin)
+                CollisionSkin asi;
+                for (int i = 0; i != n; )
                 {
-                    //  prune no longer interesting boxes from potential overlaps
-                    --n;
-                    active_.RemoveAt(i);
-                }
-                else
-                {
-                    bool active2 = active || (active_[i].Owner != null && asi.Owner.IsActive);
-                    if (active2 && BoundingBoxHelper.OverlapTest(ref cs.WorldBoundingBox, ref asi.WorldBoundingBox))
+                    asi = active_[i];
+                    if (asi.WorldBoundingBox.Max.X < xMin)
+                    {
+                        //  prune no longer interesting boxes from potential overlaps
+                        --n;
+                        active_.RemoveAt(i);
+                    }
+                    else
+                    {
+                        // BEN-OPTIMISATION: Inlined BoundingBoxHelper.OverlapTest() and removed two redundant
+                        //                   comparisons the X comparison and the extra "if (active)" which can
+                        //                   be removed by rearranging.
                         if (active)
-                            st.TestSkin(cs, asi);
-                        else
+                        {
+                            if (!((cs.WorldBoundingBox.Min.Z >= asi.WorldBoundingBox.Max.Z) ||
+                                    (cs.WorldBoundingBox.Max.Z <= asi.WorldBoundingBox.Min.Z) ||
+                                    (cs.WorldBoundingBox.Min.Y >= asi.WorldBoundingBox.Max.Y) ||
+                                    (cs.WorldBoundingBox.Max.Y <= asi.WorldBoundingBox.Min.Y) ||
+                                    (cs.WorldBoundingBox.Max.X <= asi.WorldBoundingBox.Min.X)))
+                            {
+                                st.TestSkin(cs, asi);
+                            }
+                        }
+                        else if (active_[i].Owner != null && asi.Owner.IsActive
+                                && !((cs.WorldBoundingBox.Min.Z >= asi.WorldBoundingBox.Max.Z) ||
+                                    (cs.WorldBoundingBox.Max.Z <= asi.WorldBoundingBox.Min.Z) ||
+                                    (cs.WorldBoundingBox.Min.Y >= asi.WorldBoundingBox.Max.Y) ||
+                                    (cs.WorldBoundingBox.Max.Y <= asi.WorldBoundingBox.Min.Y) ||
+                                    (cs.WorldBoundingBox.Max.X <= asi.WorldBoundingBox.Min.X)))
+                        {
                             st.TestSkin(asi, cs);
-                    ++i;
+                        }
+                        ++i;
+                    }
                 }
             }
             active_.Add(cs);
         }
 
+        /// <summary>
+        /// SegmentIntersect
+        /// </summary>
+        /// <param name="fracOut"></param>
+        /// <param name="skinOut"></param>
+        /// <param name="posOut"></param>
+        /// <param name="normalOut"></param>
+        /// <param name="seg"></param>
+        /// <param name="collisionPredicate"></param>
+        /// <returns>bool</returns>
         public override bool SegmentIntersect(out float fracOut, out CollisionSkin skinOut, out Microsoft.Xna.Framework.Vector3 posOut, out Microsoft.Xna.Framework.Vector3 normalOut, JigLibX.Geometry.Segment seg, CollisionSkinPredicate1 collisionPredicate)
         {
             fracOut = float.MaxValue;
             skinOut = null;
             posOut = normalOut = Vector3.Zero;
 
-            Vector3 min = seg.GetPoint(0);
-            Vector3 tmp = seg.GetEnd();
-            Vector3 max;
-            Vector3.Max(ref min, ref tmp, out max);
-            Vector3.Min(ref min, ref tmp, out min);
-
-            BoundingBox box = new BoundingBox(min, max);
             float frac;
             Vector3 pos;
             Vector3 normal;
 
+            Vector3 segmentBeginning = seg.Origin;
+            Vector3 segmentEnd = seg.Origin + seg.Delta;
+
+            Vector3 min = Vector3.Min(segmentBeginning, segmentEnd);
+            Vector3 max = Vector3.Max(segmentBeginning, segmentEnd);
+
             active_.Clear();
+
+            BoundingBox box = new BoundingBox(min, max);
             Extract(min, max, active_);
 
+            float distanceSquared = float.MaxValue;
             int nActive = active_.Count;
             for (int i = 0; i != nActive; ++i)
             {
                 CollisionSkin skin = active_[i];
                 if (collisionPredicate == null || collisionPredicate.ConsiderSkin(skin))
+                {
                     if (BoundingBoxHelper.OverlapTest(ref box, ref skin.WorldBoundingBox))
+                    {
                         if (skin.SegmentIntersect(out frac, out pos, out normal, seg))
-                            if (frac >= 0 && frac < fracOut)
+                        {
+                            if (frac >= 0)
                             {
-                                fracOut = frac;
-                                skinOut = skin;
-                                posOut = pos;
-                                normalOut = normal;
+                                float newDistanceSquared = Vector3.DistanceSquared(segmentBeginning, pos);
+                                if (newDistanceSquared < distanceSquared)
+                                {
+                                    distanceSquared = newDistanceSquared;
+
+                                    fracOut = frac;
+                                    skinOut = skin;
+                                    posOut = pos;
+                                    normalOut = normal;
+                                }
                             }
+                        }
+                    }
+                }
             }
+            
             return (fracOut <= 1);
         }
 
+        /// <summary>
+        /// MaybeSort
+        /// </summary>
         void MaybeSort()
         {
             if (dirty_)
@@ -313,6 +464,12 @@ namespace JigLibX.Collision
             }
         }
 
+        /// <summary>
+        /// Compare
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>int</returns>
         public int Compare(CollisionSkin x, CollisionSkin y)
         {
             float f = x.WorldBoundingBox.Min.X - y.WorldBoundingBox.Min.X;

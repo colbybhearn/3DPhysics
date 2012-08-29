@@ -23,6 +23,13 @@ namespace JigLibX.Geometry
         private int convexFlags;
         private Microsoft.Xna.Framework.Plane plane;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="i0"></param>
+        /// <param name="i1"></param>
+        /// <param name="i2"></param>
+        /// <param name="vertexArray"></param>
         public IndexedTriangle(int i0, int i1, int i2, List<Vector3> vertexArray)
         {
             counter = 0;
@@ -33,6 +40,14 @@ namespace JigLibX.Geometry
             convexFlags = unchecked((ushort)~0); // TODO check this
             plane = new Microsoft.Xna.Framework.Plane(vertexArray[i0], vertexArray[i1], vertexArray[i2]);
         }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="i0"></param>
+        /// <param name="i1"></param>
+        /// <param name="i2"></param>
+        /// <param name="vertexArray"></param>
         public IndexedTriangle(int i0, int i1, int i2, Vector3[] vertexArray)
         {
             counter = 0;
@@ -91,8 +106,11 @@ namespace JigLibX.Geometry
             i2 = vertexIndices2;
         }
 
-        /// Get the vertex index association with iCorner (which should be
-        /// 0, 1 or 2)
+        /// <summary>
+        /// Get the vertex index association with iCorner (which should be 0, 1, or 2)
+        /// </summary>
+        /// <param name="iCorner"></param>
+        /// <returns>int</returns>
         public int GetVertexIndex(int iCorner)
         {
             switch (iCorner)
@@ -109,19 +127,29 @@ namespace JigLibX.Geometry
             }
         }
 
-        /// Get the triangle plane
+        /// <summary>
+        /// Gets the triangle plane
+        /// </summary>
         public Microsoft.Xna.Framework.Plane Plane
         {
             get { return plane; }
         }
 
-        /// Has the edge been marked as convex. Same convention for edge
-        /// numbering as in tTriangle.
+        /// <summary>
+        /// Has the edge been marked as convex. Same convention for edge numbering as in tTriangle
+        /// </summary>
+        /// <param name="iEdge"></param>
+        /// <returns>bool</returns>
         public bool IsEdgeConvex(int iEdge)
         {
             return 0 != (convexFlags & (1 << iEdge));
         }
 
+        /// <summary>
+        /// SetEdgeConvex
+        /// </summary>
+        /// <param name="iEdge"></param>
+        /// <param name="convex"></param>
         public void SetEdgeConvex(int iEdge, bool convex)
         {
             if (convex)
@@ -130,13 +158,21 @@ namespace JigLibX.Geometry
                 convexFlags &= (ushort)~(1 << iEdge);
         }
 
-        /// Has the point been marked as convex. Same convention for point
-        /// numbering as in tTriangle
+        /// <summary>
+        /// Has the point been marked as convex. Samve convention for point numbering as in tTriangle
+        /// </summary>
+        /// <param name="iPoint"></param>
+        /// <returns>bool</returns>
         public bool IsPointConvex(int iPoint)
         {
             return 0 != (convexFlags & (1 << (iPoint + 3)));
         }
 
+        /// <summary>
+        /// SetPointConvex
+        /// </summary>
+        /// <param name="iPoint"></param>
+        /// <param name="convex"></param>
         public void SetPointConvex(int iPoint, bool convex)
         {
             if (convex)
@@ -148,12 +184,21 @@ namespace JigLibX.Geometry
     }
 
     /// <summary>
-    /// structure used to set up the mesh
+    /// Structure used to set up the mesh
     /// </summary>
     public struct TriangleVertexIndices
     {
+        /// <summary>
+        /// Integers I0, I1, I2
+        /// </summary>
         public int I0, I1, I2;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="i0"></param>
+        /// <param name="i1"></param>
+        /// <param name="i2"></param>
         public TriangleVertexIndices(int i0, int i1, int i2) 
         {
             this.I0 = i0; 
@@ -161,6 +206,12 @@ namespace JigLibX.Geometry
             this.I2 = i2;
         }
 
+        /// <summary>
+        /// Set
+        /// </summary>
+        /// <param name="i0"></param>
+        /// <param name="i1"></param>
+        /// <param name="i2"></param>
         public void Set(int i0, int i1, int i2)
         {
             I0 = i0; I1 = i1; I2 = i2;

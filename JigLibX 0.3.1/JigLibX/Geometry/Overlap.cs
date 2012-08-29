@@ -9,6 +9,9 @@ using JigLibX.Utils;
 
 namespace JigLibX.Geometry
 {
+    /// <summary>
+    /// Class Overlap
+    /// </summary>
     public sealed class Overlap
     {
         // Missing: SegmentPlaneOverlap
@@ -19,10 +22,10 @@ namespace JigLibX.Geometry
         /// </summary>
         /// <param name="seg"></param>
         /// <param name="triangle"></param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         public static bool SegmentTriangleOverlap(Segment seg, Triangle triangle)
         {
-            /// the parameters - if hit then they get copied into the args
+            // the parameters - if hit then they get copied into the args
             float u, v, t;
 
             Vector3 e1 = triangle.Edge0;
@@ -64,7 +67,7 @@ namespace JigLibX.Geometry
         /// </summary>
         /// <param name="seg"></param>
         /// <param name="AABox"></param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         public static bool SegmentAABoxOverlap(Segment seg, AABox AABox)
         {
             Vector3 p0 = seg.Origin;

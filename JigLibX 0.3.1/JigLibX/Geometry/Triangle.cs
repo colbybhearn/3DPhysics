@@ -48,34 +48,62 @@ namespace JigLibX.Geometry
         /// Same numbering as in the constructor
         /// </summary>
         /// <param name="i"></param>
-        /// <returns></returns>
+        /// <returns>Vector3</returns>
         public Vector3 GetPoint(int i)
         {
-                if(i == 1)
-                    return origin + edge0;
+            if (i == 1)
+                return origin + edge0;
 
-                if(i == 2)
-                    return origin + edge1;
+            if (i == 2)
+                 return origin + edge1;
 
-                return origin;
-
+            return origin;
         }
+
 
         /// <summary>
         /// Same numbering as in the constructor
         /// </summary>
         /// <param name="i"></param>
-        /// <returns></returns>
-        public void GetPoint(int i,out Vector3 point)
+        /// <param name="point"></param>
+        public void GetPoint(int i, out Vector3 point)
         {
+            // BEN-BUG-FIX: Previous method always returned origin!
             if (i == 1)
                 point = origin + edge0;
-
-            if (i == 2)
+            else if (i == 2)
                 point = origin + edge1;
+            else
+                point = origin;
 
-            point = origin;
+        }
 
+        // BEN-OPTIMISATION: New method with ref point, also accounts for the bug fix.
+        /// <summary>
+        /// Same numbering as in the constructor
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="i"></param>
+        public void GetPoint(ref Vector3 point, int i)
+        {
+            if (i == 1)
+            {
+                point.X = origin.X + edge0.X;
+                point.Y = origin.Y + edge0.Y;
+                point.Z = origin.Z + edge0.Z;
+            }
+            else if (i == 2)
+            {
+                point.X = origin.X + edge1.X;
+                point.Y = origin.Y + edge1.Y;
+                point.Z = origin.Z + edge1.Z;
+            }
+            else
+            {
+                point.X = origin.X;
+                point.Y = origin.Y;
+                point.Z = origin.Z;
+            }
         }
 
         /// <summary>
@@ -83,7 +111,7 @@ namespace JigLibX.Geometry
         /// </summary>
         /// <param name="t0"></param>
         /// <param name="t1"></param>
-        /// <returns></returns>
+        /// <returns>Vector3</returns>
         public Vector3 GetPoint(float t0, float t1) 
         {
             return origin + t0 * edge0 + t1 * edge1;
@@ -105,23 +133,57 @@ namespace JigLibX.Geometry
             max = JiggleMath.Max(d0, d1, d2);
         }
 
+        // BEN-OPTIMISATION: New method, ref axis
+        /// <summary>
+        /// Gets the minimum and maximum extents of the triangle along the axis
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="axis"></param>
+        public void GetSpan(out float min, out float max, ref Vector3 axis)
+        {
+            Vector3 point = new Vector3();
+
+            GetPoint(ref point, 0);
+            float d0 = point.X * axis.X + point.Y * axis.Y + point.Z * axis.Z;
+            GetPoint(ref point, 1);
+            float d1 = point.X * axis.X + point.Y * axis.Y + point.Z * axis.Z;
+            GetPoint(ref point, 2);
+            float d2 = point.X * axis.X + point.Y * axis.Y + point.Z * axis.Z;
+
+            min = JiggleMath.Min(d0, d1, d2);
+            max = JiggleMath.Max(d0, d1, d2);
+        }
+
+        /// <summary>
+        /// Gets centre
+        /// </summary>
         public Vector3 Centre
         {
             get { return origin + 0.333333333333f * (edge0 + edge1); }
         }
 
+        /// <summary>
+        /// Gets or Sets origin
+        /// </summary>
         public Vector3 Origin
         {
             get { return origin; }
             set { origin = value; }
         }
 
+        /// <summary>
+        /// Gets or Sets edge0
+        /// </summary>
         public Vector3 Edge0
         {
             get { return edge0; }
             set { edge0 = value; }
         }
 
+        /// <summary>
+        /// Gets or Sets edge1
+        /// </summary>
         public Vector3 Edge1
         {
             get { return edge1; }

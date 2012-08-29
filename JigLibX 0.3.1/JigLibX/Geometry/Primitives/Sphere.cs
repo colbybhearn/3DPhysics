@@ -9,23 +9,43 @@ using JigLibX.Math;
 
 namespace JigLibX.Geometry
 {
+    /// <summary>
+    /// Class Sphere
+    /// </summary>
     public class Sphere : Primitive
     {
         private float radius;
         
         private static Sphere hugeSphere = new Sphere(Vector3.Zero, float.MaxValue);
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="radius"></param>
         public Sphere(Vector3 pos, float radius) : base((int)PrimitiveType.Sphere)
         {
             this.transform.Position = pos;
             this.radius = radius;
         }
 
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <returns>new Sphere</returns>
         public override Primitive Clone()
         {
             return new Sphere(this.transform.Position, this.radius);
         }
 
+        /// <summary>
+        /// SegmentIntersect
+        /// </summary>
+        /// <param name="frac"></param>
+        /// <param name="pos"></param>
+        /// <param name="normal"></param>
+        /// <param name="seg"></param>
+        /// <returns>bool</returns>
         public override bool SegmentIntersect(out float frac, out Vector3 pos, out Vector3 normal, Segment seg)
         {
             bool result;
@@ -47,6 +67,13 @@ namespace JigLibX.Geometry
             return result;
         }
 
+        /// <summary>
+        /// GetMassProperties
+        /// </summary>
+        /// <param name="primitiveProperties"></param>
+        /// <param name="mass"></param>
+        /// <param name="centerOfMass"></param>
+        /// <param name="inertiaTensor"></param>
         public override void GetMassProperties(PrimitiveProperties primitiveProperties, out float mass, out Vector3 centerOfMass, out Matrix inertiaTensor)
         {
             if (primitiveProperties.MassType == PrimitiveProperties.MassTypeEnum.Mass)
@@ -66,7 +93,7 @@ namespace JigLibX.Geometry
             if (primitiveProperties.MassDistribution == PrimitiveProperties.MassDistributionEnum.Solid)
                 Ixx = 0.4f * mass * radius;
             else
-                Ixx = (2.0f / 3.0f) * mass * radius;
+                Ixx = (2.0f / 3.0f) * mass * radius * radius;
 
 
             inertiaTensor = Matrix.Identity;
@@ -82,34 +109,54 @@ namespace JigLibX.Geometry
             inertiaTensor.M31 = inertiaTensor.M13 = inertiaTensor.M31 - mass * centerOfMass.Z * centerOfMass.X;
         }
 
+        /// <summary>
+        /// Gets or Sets transform
+        /// </summary>
         public override Transform Transform
         {
             get{return this.transform;}
             set{this.transform = value;}
         }
 
+        /// <summary>
+        /// GetVolume
+        /// </summary>
+        /// <returns>float</returns>
         public override float GetVolume()
         {
             return (4.0f / 3.0f) * MathHelper.Pi * radius * radius * radius;
         }
 
+        /// <summary>
+        /// GetSurfaceArea
+        /// </summary>
+        /// <returns>float</returns>
         public override float GetSurfaceArea()
         {
             return 4.0f * MathHelper.Pi * radius * radius;
         }
 
+        /// <summary>
+        /// Gets or Sets transform.Position
+        /// </summary>
         public Vector3 Position
         {
             get { return this.transform.Position; }
             set { this.transform.Position = value; }
         }
 
+        /// <summary>
+        /// Gets or Sets radius
+        /// </summary>
         public float Radius
         {
             get { return this.radius; }
             set { this.radius = value; }
         }
 
+        /// <summary>
+        /// Gets hugeSphere
+        /// </summary>
         public static Sphere HugeSphere
         {
             get { return hugeSphere; }

@@ -51,7 +51,7 @@ namespace JigLibX.Physics
         }
 
         /// <summary>
-        /// implement this to apply whatever forces are needed to the
+        /// Implement this to apply whatever forces are needed to the
         /// objects this controls
         /// </summary>
         /// <param name="dt"></param>

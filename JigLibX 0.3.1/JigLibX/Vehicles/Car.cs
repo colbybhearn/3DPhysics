@@ -7,7 +7,9 @@ using Microsoft.Xna.Framework;
 
 namespace JigLibX.Vehicles
 {
-
+    /// <summary>
+    /// Class Car
+    /// </summary>
     public class Car
     {
         enum WheelId 
@@ -47,8 +49,24 @@ namespace JigLibX.Vehicles
         private float hBrake = 0.0f; 
         #endregion
 
+        /// <summary>
         /// On construction the physical/collision objects are created, but
         /// not registered
+        /// </summary>
+        /// <param name="FWDrive"></param>
+        /// <param name="RWDrive"></param>
+        /// <param name="maxSteerAngle"></param>
+        /// <param name="steerRate"></param>
+        /// <param name="wheelSideFriction"></param>
+        /// <param name="wheelFwdFriction"></param>
+        /// <param name="wheelTravel"></param>
+        /// <param name="wheelRadius"></param>
+        /// <param name="wheelZOffset"></param>
+        /// <param name="wheelRestingFrac"></param>
+        /// <param name="wheelDampingFrac"></param>
+        /// <param name="wheelNumRays"></param>
+        /// <param name="driveTorque"></param>
+        /// <param name="gravity"></param>
         public Car(bool FWDrive, bool RWDrive, float maxSteerAngle, float steerRate, float wheelSideFriction,
              float wheelFwdFriction, float wheelTravel, float wheelRadius, float wheelZOffset, float wheelRestingFrac,
              float wheelDampingFrac, int wheelNumRays, float driveTorque, float gravity)
@@ -74,7 +92,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// sets up some sensible wheels based on the chassis
+        /// Sets up some sensible wheels based on the chassis
         /// </summary>
         public void SetupDefaultWheels()
         {
@@ -192,7 +210,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// remove from the physics system
+        /// Remove from the physics system
         /// </summary>
         public void DisableCar()
         {
@@ -201,6 +219,10 @@ namespace JigLibX.Vehicles
 
         }
 
+        /// <summary>
+        /// AddExternalForces
+        /// </summary>
+        /// <param name="dt"></param>
         public void AddExternalForces(float dt)
         {
             for (int i = 0; i < wheels.Count; i++)
@@ -289,7 +311,7 @@ namespace JigLibX.Vehicles
 
 
         /// <summary>
-        /// Sets back-wheel drive
+        /// Gets or Sets back-wheel drive
         /// </summary>
         public bool BWDrive
         { 
@@ -298,7 +320,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// Sets front-wheel drive
+        /// Gets or Sets front-wheel drive
         /// </summary>
         public bool FWDrive
         {
@@ -308,7 +330,7 @@ namespace JigLibX.Vehicles
 
 
         /// <summary>
-        /// There will always be a chassis
+        /// Gets or Sets chassis (There will always be a chassis)
         /// </summary>
         public Chassis Chassis
         {
@@ -351,6 +373,9 @@ namespace JigLibX.Vehicles
             set {hBrake = value;}
         }
 
+        /// <summary>
+        /// Gets count NumWheelsOnFloor
+        /// </summary>
         public int NumWheelsOnFloor
         {
             get

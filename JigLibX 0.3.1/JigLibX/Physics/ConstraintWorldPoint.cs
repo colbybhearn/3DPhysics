@@ -20,13 +20,16 @@ namespace JigLibX.Physics
         private Vector3 pointOnBody;
         private Vector3 worldPosition;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ConstraintWorldPoint()
         {
             Initialise(null, Vector3.Zero, Vector3.Zero);
         }
 
         /// <summary>
-        /// Constructor.
+        /// Constructor
         /// </summary>
         /// <param name="body"></param>
         /// <param name="pointOnBody">pointOnBody is in body coords</param>
@@ -36,6 +39,12 @@ namespace JigLibX.Physics
             Initialise(body, pointOnBody, worldPosition);
         }
 
+        /// <summary>
+        /// Initialise
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="pointOnBody"></param>
+        /// <param name="worldPosition"></param>
         public void Initialise(Body body, Vector3 pointOnBody, Vector3 worldPosition)
         {
             this.body = body;
@@ -45,11 +54,20 @@ namespace JigLibX.Physics
             if (body!=null) body.AddConstraint(this);
         }
 
+        /// <summary>
+        /// PreApply
+        /// </summary>
+        /// <param name="dt"></param>
         public override void PreApply(float dt)
         {
             Satisfied = false;
         }
 
+        /// <summary>
+        /// Apply
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns>bool</returns>
         public override bool Apply(float dt)
         {
             Satisfied = true;
@@ -58,7 +76,7 @@ namespace JigLibX.Physics
 
             #region REFERENCE: Vector3 worldPos = body.Position + Vector3.Transform(pointOnBody, body.Orientation);
             Vector3 worldPos;
-            Vector3.Transform(ref pointOnBody, ref body.transform.Orientation, out worldPos);
+            Vector3.TransformNormal(ref pointOnBody, ref body.transform.Orientation, out worldPos);
             Vector3.Add(ref worldPos, ref body.transform.Position, out worldPos);
             #endregion
 
@@ -147,7 +165,7 @@ namespace JigLibX.Physics
             #region REFERENCE: float denominator = body.InvMass + Vector3.Dot(N, Vector3.Cross(Vector3.Transform(Vector3.Cross(R, N), body.WorldInvInertia), R));
             Vector3 v1; float f1;
             Vector3.Cross(ref R, ref N, out v1);
-            Vector3.Transform(ref v1, ref body.worldInvInertia, out v1);
+            Vector3.TransformNormal(ref v1, ref body.worldInvInertia, out v1);
             Vector3.Cross(ref v1, ref R, out v1);
             Vector3.Dot(ref N, ref v1, out f1);
 
@@ -167,6 +185,9 @@ namespace JigLibX.Physics
             return true;
         }
 
+        /// <summary>
+        /// Destroy - sets body = null; calls DisableConstraint()
+        /// </summary>
         public override void Destroy()
         {
             // this is moved here from ConstraintWorldPoint destructor..
@@ -177,12 +198,18 @@ namespace JigLibX.Physics
 
         }
 
+        /// <summary>
+        /// Gets or Set worldPosition
+        /// </summary>
         public Vector3 WorldPosition
         {   
             set { worldPosition = value;}
             get { return worldPosition; }
         }
 
+        /// <summary>
+        /// Gets body
+        /// </summary>
         public Body Body
         {
             get { return body; }

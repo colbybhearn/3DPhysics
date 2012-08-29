@@ -19,7 +19,9 @@ namespace JigLibX.Collision
         private CollisionSystem collSystem;
         private Body owner;
 
-        // Bounding box in world reference frame - includes all children too
+        /// <summary>
+        /// Bounding box in world reference frame - includes all children too
+        /// </summary>
         public BoundingBox WorldBoundingBox = new BoundingBox();
 
         private List<CollisionInfo> collisions = new List<CollisionInfo>(16);
@@ -39,8 +41,14 @@ namespace JigLibX.Collision
 
         internal object ExternalData;
         internal int ID;
+        /// <summary>
+        /// callbackFn
+        /// </summary>
         public event CollisionCallbackFn callbackFn;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public CollisionSkin()
         {
             this.ID = idCounter++;
@@ -49,6 +57,10 @@ namespace JigLibX.Collision
             collSystem = null;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="owner"></param>
         public CollisionSkin(Body owner)
         {
             this.ID = idCounter++;
@@ -57,6 +69,12 @@ namespace JigLibX.Collision
             collSystem = null;
         }
 
+        /// <summary>
+        /// OnCollisionEvent
+        /// </summary>
+        /// <param name="skin0"></param>
+        /// <param name="skin1"></param>
+        /// <returns>bool</returns>
         public bool OnCollisionEvent(CollisionSkin skin0, CollisionSkin skin1)
         {
             if (callbackFn != null)
@@ -85,6 +103,10 @@ namespace JigLibX.Collision
         /// primitive index, or -1 if failure Also takes that material ID
         /// and the properties used when a collision ID is USER_DEFINED
         /// </summary>
+        /// <param name="prim"></param>
+        /// <param name="matID"></param>
+        /// <param name="matProps"></param>
+        /// <returns>int</returns>
         private int AddPrimitive(Primitive prim, int matID, MaterialProperties matProps)
         {
             Primitive newPrim = prim.Clone();
@@ -104,6 +126,12 @@ namespace JigLibX.Collision
             return materialIDs.Count - 1;
         }
 
+        /// <summary>
+        /// Adds a Primitive
+        /// </summary>
+        /// <param name="prim"></param>
+        /// <param name="matID"></param>
+        /// <returns>int</returns>
         public int AddPrimitive(Primitive prim, int matID)
         {
             if (matID == (int)MaterialTable.MaterialID.UserDefined)
@@ -112,6 +140,12 @@ namespace JigLibX.Collision
             return AddPrimitive(prim, matID, MaterialProperties.Unset);
         }
 
+        /// <summary>
+        /// Adds a Primitive
+        /// </summary>
+        /// <param name="prim"></param>
+        /// <param name="matProps"></param>
+        /// <returns>int</returns>
         public int AddPrimitive(Primitive prim, MaterialProperties matProps)
         {
             return AddPrimitive(prim, (int)MaterialTable.MaterialID.UserDefined, matProps);
@@ -141,7 +175,7 @@ namespace JigLibX.Collision
         /// Gets the primitive in local space
         /// </summary>
         /// <param name="prim"></param>
-        /// <returns></returns>
+        /// <returns>Primitive</returns>
         public Primitive GetPrimitiveLocal(int prim)
         {
             return primitivesLocal[prim];
@@ -151,7 +185,7 @@ namespace JigLibX.Collision
         /// Gets the old value of primitive in world space 
         /// </summary>
         /// <param name="prim"></param>
-        /// <returns></returns>
+        /// <returns>Primitive</returns>
         public Primitive GetPrimitiveOldWorld(int prim)
         {
             return primitivesOldWorld[prim];
@@ -161,7 +195,7 @@ namespace JigLibX.Collision
         /// Gets the new value of primitive in world space
         /// </summary>
         /// <param name="prim"></param>
-        /// <returns></returns>
+        /// <returns>Primitive</returns>
         public Primitive GetPrimitiveNewWorld(int prim)
         {
             return primitivesNewWorld[prim];
@@ -171,7 +205,7 @@ namespace JigLibX.Collision
         /// Gets the material ID for a primitive 
         /// </summary>
         /// <param name="prim"></param>
-        /// <returns></returns>
+        /// <returns>int</returns>
         public int GetMaterialID(int prim)
         {
             return materialIDs[prim];
@@ -181,7 +215,7 @@ namespace JigLibX.Collision
         /// Returns the material properties for a primitive
         /// </summary>
         /// <param name="prim"></param>
-        /// <returns></returns>
+        /// <returns>MaterialProperties</returns>
         public MaterialProperties GetMaterialProperties(int prim)
         {
             return materialProperties[prim];
@@ -200,9 +234,9 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// returns the total volume
+        /// Returns the total volume
         /// </summary>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public float GetVolume()
         {
             float result = 0.0f;
@@ -212,9 +246,9 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// returns the total surface area
+        /// Returns the total surface area
         /// </summary>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public float GetSurfaceArea()
         {
             float result = 0.0f;
@@ -224,7 +258,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// these get called during the collision detection
+        /// Gets called during the collision detection
         /// </summary>
         /// <param name="transform"></param>
         public void SetNewTransform(ref Transform transform)
@@ -245,6 +279,10 @@ namespace JigLibX.Collision
 
         }
 
+        /// <summary>
+        /// Gets called during the collision detection
+        /// </summary>
+        /// <param name="transform"></param>
         public void SetOldTransform(ref Transform transform)
         {
             transformOld = transform;
@@ -263,6 +301,11 @@ namespace JigLibX.Collision
 
         }
 
+        /// <summary>
+        /// SetTransform
+        /// </summary>
+        /// <param name="transformOld"></param>
+        /// <param name="transformNew"></param>
         public void SetTransform(ref Transform transformOld, ref Transform transformNew)
         {
             this.transformOld = transformOld;
@@ -297,31 +340,49 @@ namespace JigLibX.Collision
             SetTransform(ref transformOld, ref transformNew);
         }
 
+        /// <summary>
+        /// Gets tranformOld.Position
+        /// </summary>
         public Vector3 OldPosition
         {
             get { return transformOld.Position; }
         }
 
+        /// <summary>
+        /// Gets transformNew.Position
+        /// </summary>
         public Vector3 NewPosition
         {
             get { return transformNew.Position; }
         }
 
+        /// <summary>
+        /// Gets transformOld.Orientation
+        /// </summary>
         public Matrix OldOrient
         {
             get { return transformOld.Orientation; }
         }
 
+        /// <summary>
+        /// Gets transformNew.Orientation
+        /// </summary>
         public Matrix NewOrient
         {
             get { return transformNew.Orientation; }
         }
 
+        /// <summary>
+        /// Gets transformOld
+        /// </summary>
         public Transform OldTransform
         {
             get { return transformOld; }
         }
 
+        /// <summary>
+        /// Gets transformNew
+        /// </summary>
         public Transform NewTransform
         {
             get { return transformNew; }
@@ -347,8 +408,7 @@ namespace JigLibX.Collision
                 }
             }
             WorldBoundingBox = BoundingBoxHelper.InitialBox;
-            BoundingBoxHelper.AddPoint(ref temp.Min, ref WorldBoundingBox);
-            BoundingBoxHelper.AddPoint(ref temp.Max, ref WorldBoundingBox);
+            BoundingBoxHelper.AddBBox(temp, ref WorldBoundingBox);
         }
 
         /// <summary>
@@ -370,6 +430,9 @@ namespace JigLibX.Collision
             get { return nonCollidables; }
         }
 
+        /// <summary>
+        /// Gets or Sets collSystem
+        /// </summary>
         public CollisionSystem CollisionSystem
         {
             set { this.collSystem = value; }
@@ -384,7 +447,7 @@ namespace JigLibX.Collision
         /// <param name="pos"></param>
         /// <param name="normal"></param>
         /// <param name="seg"></param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         public bool SegmentIntersect(out float frac, out Vector3 pos, out Vector3 normal, Segment seg)
         {
             Vector3 segEnd = seg.GetEnd();

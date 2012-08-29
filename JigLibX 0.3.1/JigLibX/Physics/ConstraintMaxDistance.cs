@@ -31,14 +31,33 @@ namespace JigLibX.Physics
         private Vector3 worldPos;
         private Vector3 currentRelPos0;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ConstraintMaxDistance()
         { }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="body0"></param>
+        /// <param name="body0Pos"></param>
+        /// <param name="body1"></param>
+        /// <param name="body1Pos"></param>
+        /// <param name="maxDistance"></param>
         public ConstraintMaxDistance(Body body0, Vector3 body0Pos, Body body1, Vector3 body1Pos, float maxDistance)
         {
             Initialise(body0, body0Pos, body1, body1Pos, maxDistance);
         }
 
+        /// <summary>
+        /// Initialise
+        /// </summary>
+        /// <param name="body0"></param>
+        /// <param name="body0Pos"></param>
+        /// <param name="body1"></param>
+        /// <param name="body1Pos"></param>
+        /// <param name="maxDistance"></param>
         public void Initialise(Body body0, Vector3 body0Pos, Body body1, Vector3 body1Pos, float maxDistance)
         {
             this.body0Pos = body0Pos;
@@ -51,16 +70,20 @@ namespace JigLibX.Physics
             if (body1 != null) this.body1.AddConstraint(this);
         }
 
+        /// <summary>
+        /// PreApply
+        /// </summary>
+        /// <param name="dt"></param>
         public override void PreApply(float dt)
         {
             this.Satisfied = false;
 
             #region REFERENCE: R0 = Vector3.Transform(body0Pos, body0.Orientation);
-            Vector3.Transform(ref body0Pos, ref body0.transform.Orientation,out R0);
+            Vector3.TransformNormal(ref body0Pos, ref body0.transform.Orientation,out R0);
             #endregion
 
             #region REFERENCE: R1 = Vector3.Transform(body1Pos, body1.Orientation);
-            Vector3.Transform(ref body1Pos, ref body1.transform.Orientation,out R1);
+            Vector3.TransformNormal(ref body1Pos, ref body1.transform.Orientation,out R1);
             #endregion 
 
             #region REFERENCE: Vector3 worldPos0 = body0.Position + R0;
@@ -83,6 +106,11 @@ namespace JigLibX.Physics
             #endregion
         }
 
+        /// <summary>
+        /// Apply
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns>bool</returns>
         public override bool Apply(float dt)
         {
             this.Satisfied = true;
@@ -164,11 +192,11 @@ namespace JigLibX.Physics
             #region REFERENCE: float denominator = body0.InvMass + body1.InvMass + Vector3.Dot(N, Vector3.Cross(Vector3.Transform(Vector3.Cross(R0, N), body0.WorldInvInertia), R0)) + Vector3.Dot(N, Vector3.Cross(Vector3.Transform(Vector3.Cross(R1, N), body1.WorldInvInertia), R1));
             Vector3 v1; float f1, f2;
             Vector3.Cross(ref R0, ref N, out v1);
-            Vector3.Transform(ref v1, ref body0.worldInvInertia, out v1);
+            Vector3.TransformNormal(ref v1, ref body0.worldInvInertia, out v1);
             Vector3.Cross(ref v1, ref R0, out v1);
             Vector3.Dot(ref N,ref v1,out f1);
             Vector3.Cross(ref R1, ref N, out v1);
-            Vector3.Transform(ref v1, ref body1.worldInvInertia, out v1);
+            Vector3.TransformNormal(ref v1, ref body1.worldInvInertia, out v1);
             Vector3.Cross(ref v1, ref R1, out v1);
             Vector3.Dot(ref N, ref v1, out f2);
 
@@ -203,6 +231,9 @@ namespace JigLibX.Physics
             return true;
         }
 
+        /// <summary>
+        /// Destroy - sets body0 and body1 to null; calls DisableConstraint()
+        /// </summary>
         public override void Destroy()
         {
             body0 = null;

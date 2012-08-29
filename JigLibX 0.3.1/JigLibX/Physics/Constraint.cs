@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework;
 
 namespace JigLibX.Physics
 {
+    /// <summary>
+    /// Class Constraint
+    /// </summary>
     public abstract class Constraint
     {
 
@@ -26,7 +29,7 @@ namespace JigLibX.Physics
         }
 
         /// <summary>
-        /// deregister from the physics system
+        /// Deregister from the physics system
         /// </summary>
         public void DisableConstraint()
         {
@@ -46,7 +49,7 @@ namespace JigLibX.Physics
         }
 
         /// <summary>
-        /// prepare for applying constraints - the subsequent calls to
+        /// Prepare for applying constraints - the subsequent calls to
         /// apply will all occur with a constant position i.e. precalculate
         /// everything possible
         /// </summary>
@@ -54,7 +57,7 @@ namespace JigLibX.Physics
         public abstract void PreApply(float dt);
 
         /// <summary>
-        /// apply the constraint by adding impulses. Return value
+        /// Apply the constraint by adding impulses. Return value
         /// indicates if any impulses were applied. If impulses were applied
         /// the derived class should call SetConstraintsUnsatisfied() on each
         /// body that is involved.
@@ -63,7 +66,7 @@ namespace JigLibX.Physics
         public abstract bool Apply(float dt);
 
         /// <summary>
-        /// implementation should remove all references to bodies etc - they've 
+        /// Implementation should remove all references to bodies etc - they've 
         /// been destroyed.
         /// </summary>
         public abstract void Destroy();

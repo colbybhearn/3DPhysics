@@ -9,6 +9,9 @@ using JigLibX.Math;
 
 namespace JigLibX.Collision
 {
+    /// <summary>
+    /// Class CollDetectCapsuleHeightmap
+    /// </summary>
     public class CollDetectCapsuleHeightmap : DetectFunctor
     {
 
@@ -21,7 +24,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="infoOrig"></param>
         /// <param name="collTolerance"></param>
@@ -77,7 +80,10 @@ namespace JigLibX.Collision
                             Vector3 worldPos = oldCapsule.Position - oldCapsule.Radius * normal;
                             if (numCollPts < MaxLocalStackSCPI)
                             {
-                                collPts[numCollPts++] = new SmallCollPointInfo(worldPos - body0Pos, worldPos - body1Pos, oldDepth);
+                                // BEN-OPTIMISATION: Now reuses existing collPts instead of reallocating.
+                                collPts[numCollPts].R0 = worldPos - body0Pos;
+                                collPts[numCollPts].R1 = worldPos - body1Pos;
+                                collPts[numCollPts++].InitialPenetration = oldDepth;
                             }
                             averageNormal += normal;
                         }
@@ -97,7 +103,10 @@ namespace JigLibX.Collision
                             Vector3 worldPos = oldEnd - oldCapsule.Radius * normal;
                             if (numCollPts < MaxLocalStackSCPI)
                             {
-                                collPts[numCollPts++] = new SmallCollPointInfo(worldPos - body0Pos, worldPos - body1Pos, oldDepth);
+                                // BEN-OPTIMISATION: Now reuses existing collPts instead of reallocating.
+                                collPts[numCollPts].R0 = worldPos - body0Pos;
+                                collPts[numCollPts].R1 = worldPos - body1Pos;
+                                collPts[numCollPts++].InitialPenetration = oldDepth;
                             }
                             averageNormal += normal;
                         }

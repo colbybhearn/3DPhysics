@@ -29,13 +29,16 @@ namespace JigLibX.Collision
         /// <param name="collDetectInfo"></param>
         /// <param name="dirToBody0"></param>
         /// <param name="pointInfos"></param>
+        /// <param name="numCollPts"></param>
         public unsafe abstract void CollisionNotify(ref CollDetectInfo collDetectInfo,
             ref Vector3 dirToBody0, SmallCollPointInfo* pointInfos, int numCollPts);
     }
 
+    /// <summary>
     /// The user can create an object derived from this and pass it in
     /// to CollisionSystem.DetectCollisions to indicate whether a pair
-    /// of skins should be considered. 
+    /// of skins should be considered.
+    /// </summary>
     public abstract class CollisionSkinPredicate2
     {
         /// <summary>
@@ -65,12 +68,12 @@ namespace JigLibX.Collision
     }
 
     /// <summary>
-    /// a skin can ask to get a callback when a collision is detected this will be called
+    /// A skin can ask to get a callback when a collision is detected this will be called
     /// if it return false, the contact points will not be generated
     /// </summary>
-    /// <param name="skin0">the skin that had the callback on</param>
-    /// <param name="skin1">the other skin that we have collided with (maybe null tho would be odd...)</param>
-    /// <returns>false to inhibit contact point generation</returns>
+    /// <param name="skin0">The skin that had the callback on</param>
+    /// <param name="skin1">The other skin that we have collided with (maybe null tho would be odd...)</param>
+    /// <returns>False to inhibit contact point generation</returns>
     public delegate bool CollisionCallbackFn( CollisionSkin skin0, CollisionSkin skin1);
 
     /// <summary>
@@ -137,6 +140,9 @@ namespace JigLibX.Collision
         /// <param name="collisionSkin"></param>
         public abstract bool RemoveCollisionSkin(CollisionSkin collisionSkin);
 
+        /// <summary>
+        /// CollisionSkins
+        /// </summary>
         public abstract ReadOnlyCollection<CollisionSkin> CollisionSkins { get; }
 
         /// <summary>
@@ -198,7 +204,7 @@ namespace JigLibX.Collision
         /// </summary>
         /// <param name="type0"></param>
         /// <param name="type1"></param>
-        /// <returns></returns>
+        /// <returns>DetectFunctor</returns>
         public DetectFunctor GetCollDetectFunctor(int type0, int type1)
         {
             DetectFunctor functor;
@@ -213,14 +219,18 @@ namespace JigLibX.Collision
         /// Intersect a segment with the world. If non-zero the predicate
         /// allows certain skins to be excluded
         /// </summary>
-        /// <param name="seg"></param>
-        /// <param name="collisionPredicate"></param>
-        /// <returns></returns>
+        /// <param name="fracOut"></param>
+        /// <param name="skinOut"></param>
+        /// <param name="posOut"></param>
+        ///  <param name="normalOut"></param>
+        ///  <param name="seg"></param>
+        ///  <param name="collisionPredicate"></param>
+        /// <returns>bool</returns>
         public abstract bool SegmentIntersect(out float fracOut, out CollisionSkin skinOut, out Vector3 posOut, out Vector3 normalOut,
             Segment seg, CollisionSkinPredicate1 collisionPredicate);
 
         /// <summary>
-        /// Sets whether collision tests should use sweep or overlap
+        /// Gets or Sets whether collision tests should use sweep or overlap
         /// </summary>
         public bool UseSweepTests
         {
@@ -229,7 +239,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// Get the current MaterialTable of the CollisionSystem.
+        /// Gets the current MaterialTable of the CollisionSystem.
         /// </summary>
         public MaterialTable MaterialTable
         {

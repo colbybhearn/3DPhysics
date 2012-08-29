@@ -14,13 +14,27 @@ namespace JigLibX.Utils
     /// </summary>
     public class Array2D
     {
+        /// <summary>
+        /// Delegate function
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="z"></param>
+        /// <param name="arrInstance"></param>
+        /// <returns>float</returns>
         public delegate float Function(int x, int z, Array2D arrInstance);
 
         private int nx, nz;
         private bool wrap;
 
+        /// <summary>
+        /// Array
+        /// </summary>
         public float[] Array;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="arr"></param>
         public Array2D(Array2D arr)
         {
             if (arr == null || arr.Array == null)
@@ -33,6 +47,11 @@ namespace JigLibX.Utils
             Buffer.BlockCopy(arr.Array, 0, this.Array, 0, this.Array.Length*4);
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="nx"></param>
+        /// <param name="nz"></param>
         public Array2D(int nx, int nz)
         {
             Array = new float[nx * nz];
@@ -40,6 +59,12 @@ namespace JigLibX.Utils
             this.nz = nz;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="nx"></param>
+        /// <param name="nz"></param>
+        /// <param name="val"></param>
         public Array2D(int nx, int nz, float val)
         {
             Array = new float[nx * nz];
@@ -55,9 +80,9 @@ namespace JigLibX.Utils
         /// Creates 2D array from mathematical function
         /// </summary>
         /// <param name="nx"></param>
-        /// <param name="ny"></param>
-        /// <param name="yScale"></param>
-        /// <returns></returns>
+        /// <param name="nz"></param>
+        /// <param name="func"></param>
+        /// <returns>Array2D</returns>
         public static Array2D CreateArray(int nx, int nz, Function func)
         {
             Array2D arr = new Array2D(nx, nz);
@@ -79,10 +104,10 @@ namespace JigLibX.Utils
         }
 
         /// <summary>
-        /// allows resizing. Data will be lost if resizing occurred
+        /// Allows resizing. Data will be lost if resizing occurred
         /// </summary>
         /// <param name="nx"></param>
-        /// <param name="ny"></param>
+        /// <param name="nz"></param>
         public void Resize(int nx, int nz)
         {
             if (nx == this.nx && nz == this.nz) 
@@ -95,10 +120,10 @@ namespace JigLibX.Utils
         }
 
         /// <summary>
-        /// raise array elements to a power
+        /// Raise array elements to a power
         /// </summary>
         /// <param name="rhs"></param>
-        /// <returns></returns>
+        /// <returns>Array2D</returns>
         public Array2D Pow(float rhs)
         {
             for (int i = 0; i < this.nx * this.nz; ++i)
@@ -110,7 +135,7 @@ namespace JigLibX.Utils
         }
 
         /// <summary>
-        /// sets each value to its absolute value by comparison with float(0)
+        /// Sets each value to its absolute value by comparison with float(0)
         /// </summary>
         public void Abs()
         {
@@ -172,10 +197,10 @@ namespace JigLibX.Utils
         }
 
         /// <summary>
-        /// shifts all the elements...
+        /// Shifts all the elements...
         /// </summary>
         /// <param name="offsetX"></param>
-        /// <param name="offsetY"></param>
+        /// <param name="offsetZ"></param>
         public void Shift(int offsetX, int offsetZ)
         {
             Array2D orig = new Array2D(this);
@@ -194,7 +219,7 @@ namespace JigLibX.Utils
         }
 
         /// <summary>
-        /// scale to fit within range...
+        /// Scale to fit within range...
         /// </summary>
         /// <param name="valMin"></param>
         /// <param name="valMax"></param>
@@ -228,11 +253,11 @@ namespace JigLibX.Utils
         }
 
         /// <summary>
-        /// interpolate
+        /// Interpolate
         /// </summary>
         /// <param name="fi"></param>
         /// <param name="fj"></param>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public float Interpolate(float fi, float fj)
         {
             fi = MathHelper.Clamp(fi, 0.0f, (this.nx - 1.0f));
@@ -256,11 +281,11 @@ namespace JigLibX.Utils
         }
 
         /// <summary>
-        /// checked access - unwraps if wrapping set
+        /// Checked access - unwraps if wrapping set
         /// </summary>
         /// <param name="i"></param>
         /// <param name="j"></param>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public float GetAt(int i, int j)
         {
             UnwrapIndices(ref i, ref j);
@@ -269,8 +294,11 @@ namespace JigLibX.Utils
         }
 
         /// <summary>
-        /// checked access - unwraps if wrapping set
+        /// Checked access - unwraps if wrapping set
         /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <param name="val"></param>
         public void SetAt(int i, int j, float val)
         {
             UnwrapIndices(ref i, ref j);
@@ -278,6 +306,11 @@ namespace JigLibX.Utils
             Array[i + j * this.nx] = val;
         }
 
+        /// <summary>
+        /// UnwrapIndices
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
         private void UnwrapIndices(ref int i, ref int j)
         {
             if (wrap == false)
@@ -298,7 +331,7 @@ namespace JigLibX.Utils
         /// </summary>
         /// <param name="i"></param>
         /// <param name="j"></param>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public float this[int i, int j]
         {
             get
@@ -333,6 +366,9 @@ namespace JigLibX.Utils
             get { return this.nz; }
         }
 
+        /// <summary>
+        /// Gets or Sets min
+        /// </summary>
         public float Min
         {
             get
@@ -348,6 +384,9 @@ namespace JigLibX.Utils
             }
         }
 
+        /// <summary>
+        /// Gets or Sets max
+        /// </summary>
         public float Max
         {
             get

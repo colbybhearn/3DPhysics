@@ -8,12 +8,30 @@ namespace JigLibX.Collision
 {
 
     #region public struct MaterialPairProperties
+    /// <summary>
+    /// Struct MaterialPairProperties
+    /// </summary>
     public struct MaterialPairProperties
     {
+        /// <summary>
+        /// Restitution
+        /// </summary>
         public float Restitution;
+        /// <summary>
+        /// Static Friction
+        /// </summary>
         public float StaticFriction;
+        /// <summary>
+        /// Dynamic Friction
+        /// </summary>
         public float DynamicFriction;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="sf"></param>
+        /// <param name="df"></param>
         public MaterialPairProperties(float r, float sf, float df)
         {
             this.Restitution = r;
@@ -24,12 +42,30 @@ namespace JigLibX.Collision
     #endregion
 
     #region public struct MaterialProperties
+    /// <summary>
+    /// Struct MaterialProperties
+    /// </summary>
     public struct MaterialProperties
     {
+        /// <summary>
+        /// Elasticity
+        /// </summary>
         public float Elasticity;
+        /// <summary>
+        /// Static Roughness
+        /// </summary>
         public float StaticRoughness;
+        /// <summary>
+        /// Dynamic Roughness
+        /// </summary>
         public float DynamicRoughness;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="sr"></param>
+        /// <param name="dr"></param>
         public MaterialProperties(float e, float sr, float dr)
         {
             this.Elasticity = e;
@@ -37,6 +73,9 @@ namespace JigLibX.Collision
             this.DynamicRoughness = dr;
         }
 
+        /// <summary>
+        /// Gets new empty MaterialProperties
+        /// </summary>
         public static MaterialProperties Unset { get { return new MaterialProperties(); } }
 
     }
@@ -58,10 +97,53 @@ namespace JigLibX.Collision
         /// </summary>
         public enum MaterialID
         {
-            Unset, UserDefined, //< individual values should be used/calculated at run-time
-            NotBouncySmooth, NotBouncyNormal, NotBouncyRough,
-            NormalSmooth, NormalNormal, NormalRough,
-            BouncySmooth, BouncyNormal, BouncyRough,
+            /// <summary>
+            /// Unset
+            /// </summary>
+            Unset, 
+            /// <summary>
+            /// Individual values should be used/calculated at runtime
+            /// </summary>
+            UserDefined,
+            /// <summary>
+            /// NotBouncySmooth
+            /// </summary>
+            NotBouncySmooth, 
+            /// <summary>
+            /// NotBouncyNormal
+            /// </summary>
+            NotBouncyNormal, 
+            /// <summary>
+            /// NotBouncyRough
+            /// </summary>
+            NotBouncyRough,
+            /// <summary>
+            /// NormalSmooth
+            /// </summary>
+            NormalSmooth, 
+            /// <summary>
+            /// NormalNormal
+            /// </summary>
+            NormalNormal, 
+            /// <summary>
+            /// NormalRough
+            /// </summary>
+            NormalRough,
+            /// <summary>
+            /// BouncySmooth
+            /// </summary>
+            BouncySmooth, 
+            /// <summary>
+            /// BouncyNormal
+            /// </summary>
+            BouncyNormal, 
+            /// <summary>
+            /// BouncyRough
+            /// </summary>
+            BouncyRough,
+            /// <summary>
+            /// NumMaterialTypes
+            /// </summary>
             NumMaterialTypes
         }
 
@@ -138,7 +220,7 @@ namespace JigLibX.Collision
         /// frictionless.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>MaterialProperties</returns>
         public MaterialProperties GetMaterialProperties(int id)
         {
             return materials[id];
@@ -150,7 +232,7 @@ namespace JigLibX.Collision
         /// </summary>
         /// <param name="id1"></param>
         /// <param name="id2"></param>
-        /// <returns></returns>
+        /// <returns>MaterialProperties</returns>
         public MaterialPairProperties GetPairProperties(int id1, int id2)
         {
             int key = id1 << 16 | id2;

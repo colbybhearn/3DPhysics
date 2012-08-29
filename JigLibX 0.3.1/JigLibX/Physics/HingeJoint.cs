@@ -23,19 +23,31 @@ namespace JigLibX.Physics
         private bool hingeEnabled;
         private bool broken;
         private float damping;
-        private float extraTorque; // allow extra torque applied per update
+        private float extraTorque = 0; // allow extra torque applied per update
 
         private ConstraintPoint mMidPointConstraint;
         private ConstraintMaxDistance[] mSidePointConstraints;
         private ConstraintMaxDistance mMaxDistanceConstraint;
 
         /// <summary>
-        /// default constructor so you can initialise this joint later
+        /// Default constructor so you can initialise this joint later
         /// </summary>
         public HingeJoint()
         {
         }
 
+        /// <summary>
+        /// Initialise
+        /// </summary>
+        /// <param name="body0"></param>
+        /// <param name="body1"></param>
+        /// <param name="hingeAxis"></param>
+        /// <param name="hingePosRel0"></param>
+        /// <param name="hingeHalfWidth"></param>
+        /// <param name="hingeFwdAngle"></param>
+        /// <param name="hingeBckAngle"></param>
+        /// <param name="sidewaysSlack"></param>
+        /// <param name="damping"></param>
         public void Initialise(Body body0, Body body1, Vector3 hingeAxis, Vector3 hingePosRel0,
                 float hingeHalfWidth, float hingeFwdAngle, float hingeBckAngle, float sidewaysSlack, float damping)
         {
@@ -97,7 +109,7 @@ namespace JigLibX.Physics
                 // anchor point for body 2 is chosen to be in the middle of the
                 // angle range.  relative to hinge
                 float angleToMiddle = 0.5f * (hingeFwdAngle - hingeBckAngle);
-                Vector3 hingeRelAnchorPos1 = Vector3.Transform(hingeRelAnchorPos0, Matrix.CreateFromAxisAngle(hingeAxis,MathHelper.ToRadians(-angleToMiddle)));
+                Vector3 hingeRelAnchorPos1 = Vector3.TransformNormal(hingeRelAnchorPos0, Matrix.CreateFromAxisAngle(hingeAxis,MathHelper.ToRadians(-angleToMiddle)));
 
                 // work out the "string" length
                 float hingeHalfAngle = 0.5f * (hingeFwdAngle + hingeBckAngle);
@@ -142,7 +154,7 @@ namespace JigLibX.Physics
         }
 
         /// <summary>
-        /// deregister the constraints
+        /// Deregister the constraints
         /// </summary>
         public void DisableHinge()
         {
@@ -164,7 +176,7 @@ namespace JigLibX.Physics
         }
 
         /// <summary>
-        /// Just remove the limit constraint
+        /// Remove the limit constraint
         /// </summary>
         public void Break()
         {
@@ -179,7 +191,7 @@ namespace JigLibX.Physics
         }
 
         /// <summary>
-        /// Just enable the limit constraint
+        /// Enable the limit constraint
         /// </summary>
         public void Mend()
         {
@@ -193,6 +205,10 @@ namespace JigLibX.Physics
 
         }
 
+        /// <summary>
+        /// UpdateController
+        /// </summary>
+        /// <param name="dt"></param>
         public override void UpdateController(float dt)
         {
             if (body0 == null || body1 == null)
@@ -236,7 +252,7 @@ namespace JigLibX.Physics
             if (extraTorque != 0.0f)
             {
                 Vector3 torque1;// = extraTorque * Vector3.Transform(hingeAxis, body0.Orientation);
-                Vector3.Transform(ref hingeAxis, ref body0.transform.Orientation, out torque1);
+                Vector3.TransformNormal(ref hingeAxis, ref body0.transform.Orientation, out torque1);
                 Vector3.Multiply(ref torque1, extraTorque, out torque1);
 
                 body0.AddWorldTorque(torque1);
@@ -244,13 +260,16 @@ namespace JigLibX.Physics
             }
         }
 
+        /// <summary>
+        /// Gets hingeEnabled
+        /// </summary>
         public bool HingeEnabled
         {
             get { return hingeEnabled; }
         }
 
         /// <summary>
-        /// Are we broken
+        /// Are we broken? Gets broken.
         /// </summary>
         public bool IsBroken
         {

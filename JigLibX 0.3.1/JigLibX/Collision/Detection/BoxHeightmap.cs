@@ -88,7 +88,10 @@ namespace JigLibX.Collision
                             Vector3.Subtract(ref oldPt, ref body1Pos, out pt1);
                             if (numCollPts < MaxLocalStackSCPI)
                             {
-                                collPts[numCollPts++] = new SmallCollPointInfo(ref pt0, ref pt1, -oldDist);
+                                // BEN-OPTIMISATION: Now reuses existing collPts instead of reallocating.
+                                collPts[numCollPts].R0 = pt0;
+                                collPts[numCollPts].R1 = pt1;
+                                collPts[numCollPts++].InitialPenetration = -oldDist;
                             }
                             #endregion
 

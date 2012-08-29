@@ -1,0 +1,1380 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpTOC>
+
+  <HelpTOCNode Id="3ce19e05-ffc9-4dc9-b455-ff1ccaeac272" Title="JigLibX.Collision Namespace" Url="html/9b9d6051-a5af-81e2-689c-3dd63186ac17.htm">
+    <HelpTOCNode Id="b01ec228-5e61-4a2d-96c8-5c6abd56afae" Title="CollDetectBoxBox Class" Url="html/9481bac7-3e7f-228e-fcc9-e7e9370a15fa.htm">
+      <HelpTOCNode Title="CollDetectBoxBox Members" Url="html/8c71e2b0-d666-b701-6cd0-1b33666c4ae5.htm" />
+      <HelpTOCNode Title="CollDetectBoxBox Constructor " Url="html/deab67ea-253d-a10e-e5f8-a9b29199a45a.htm" />
+      <HelpTOCNode Id="af1f79e7-ff18-437e-a83f-c0a9ad3e3213" Title="CollDetectBoxBox Methods" Url="html/e3a29d90-4353-9191-8ff9-a854b6bfdc18.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/d506df5a-6173-7dae-ef3f-9805ff7b33cb.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectBoxBox Properties" Url="html/f9c85cf7-8d74-2a54-3ad2-57cdadba87cd.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="4496549b-867a-4f55-8bb3-616a1b1c2753" Title="CollDetectBoxHeightmap Class" Url="html/715de313-8d60-38a6-3041-76204a0c5eb8.htm">
+      <HelpTOCNode Title="CollDetectBoxHeightmap Members" Url="html/3090bd4e-cc75-f628-d42f-f0de05fb3b2d.htm" />
+      <HelpTOCNode Title="CollDetectBoxHeightmap Constructor " Url="html/2d673228-6b9c-6152-9f06-9a4c140b2e9c.htm" />
+      <HelpTOCNode Id="58f56788-a5c4-4f6c-ace0-be887b8e4fc1" Title="CollDetectBoxHeightmap Methods" Url="html/cb92a94d-d29c-8f93-cfd1-88ede98e4e03.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/672513e7-affd-634b-4ccd-5eac2c943d1c.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectBoxHeightmap Properties" Url="html/f58272aa-701a-cdb8-12c4-54c9509e9c12.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="b9a863d7-95ca-47c4-ad9c-1e26b66fd120" Title="CollDetectBoxPlane Class" Url="html/c7be5154-af39-0881-79f0-0baf41cdd511.htm">
+      <HelpTOCNode Title="CollDetectBoxPlane Members" Url="html/1da7aff9-2b05-10b0-2d4b-e7ae151ce45f.htm" />
+      <HelpTOCNode Title="CollDetectBoxPlane Constructor " Url="html/236b5f37-9951-1235-e25a-7555606ac059.htm" />
+      <HelpTOCNode Id="7a9c0784-d0d1-431c-bad6-3a0966248e33" Title="CollDetectBoxPlane Methods" Url="html/a34004f0-c0a2-bf1c-1f6a-8110c9f6f533.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/f773cdc3-be8d-0774-37bf-fe3f6d175ac5.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectBoxPlane Properties" Url="html/480b3f39-6311-a24e-2c9c-5ce5bdd45640.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="69b4b775-2c5b-49fc-8078-6e03a045162a" Title="CollDetectBoxStaticMesh Class" Url="html/dc9af8f5-e27a-c4c9-a6b4-c4041e989ff5.htm">
+      <HelpTOCNode Title="CollDetectBoxStaticMesh Members" Url="html/65107915-465c-4744-58f3-8bca5b37c0c3.htm" />
+      <HelpTOCNode Title="CollDetectBoxStaticMesh Constructor " Url="html/39b4bb17-a6e0-b55d-5d8c-2010da25c0ab.htm" />
+      <HelpTOCNode Id="6aa15eff-fd8a-43cf-879b-5768f228d25f" Title="CollDetectBoxStaticMesh Methods" Url="html/6877f890-bf53-ec45-cc0d-ac2d6f6c09ce.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/a67c8392-01f9-6715-69f0-c57dfffda91a.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectBoxStaticMesh Properties" Url="html/ff018a0a-82d2-d35f-ccd3-bcaf04ca2ea5.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="2696f565-2a32-459b-bd63-b0112a3db11a" Title="CollDetectCapsuleBox Class" Url="html/0f558103-6a0a-3ebb-8ff7-438904c678c6.htm">
+      <HelpTOCNode Title="CollDetectCapsuleBox Members" Url="html/1f637b16-affb-f933-ca52-b48069e6a251.htm" />
+      <HelpTOCNode Title="CollDetectCapsuleBox Constructor " Url="html/d714ce08-2b49-567c-f5ab-3717fd91b8f8.htm" />
+      <HelpTOCNode Id="b7da0b42-ca0b-4732-bc6a-ff80eb6cf39e" Title="CollDetectCapsuleBox Methods" Url="html/6f0bb755-a520-5ccd-9f7f-45d97f6c7053.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/c220226a-f17a-5439-5e21-a1d806bda1e6.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectCapsuleBox Properties" Url="html/df0e1c1a-73ec-225c-ea28-0b6b5fca8058.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="6470da29-87b4-4ac6-a4f4-d19ab2fb7a74" Title="CollDetectCapsuleCapsule Class" Url="html/8da430ab-a7ff-268d-73f1-672bb943465b.htm">
+      <HelpTOCNode Title="CollDetectCapsuleCapsule Members" Url="html/4e470b07-0a11-fae8-6161-ed7c447020a9.htm" />
+      <HelpTOCNode Title="CollDetectCapsuleCapsule Constructor " Url="html/e7bfff6c-5fa8-fdf5-c232-8bec7aae92fa.htm" />
+      <HelpTOCNode Id="76a8f71e-2ea7-4c5b-b993-37cd6769f5ff" Title="CollDetectCapsuleCapsule Methods" Url="html/289679e4-ebf1-7c0a-d071-985204e84877.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/a0f8fd88-a919-b67d-429a-9786b7a851d0.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectCapsuleCapsule Properties" Url="html/3210e665-cc6d-ea1e-9cd4-2ac0ac8d5243.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="d1cff794-da62-4f42-97ef-402aa8954cb7" Title="CollDetectCapsuleHeightmap Class" Url="html/4be92d56-51a4-640b-83bd-599a9eeb8fd9.htm">
+      <HelpTOCNode Title="CollDetectCapsuleHeightmap Members" Url="html/0dcd3939-1e33-97bd-79ec-13e5d2db2d45.htm" />
+      <HelpTOCNode Title="CollDetectCapsuleHeightmap Constructor " Url="html/6f551a17-c16b-82ac-610b-c0a2606f5208.htm" />
+      <HelpTOCNode Id="ff9b2409-89af-456a-8367-d5d60a423eb6" Title="CollDetectCapsuleHeightmap Methods" Url="html/91347e3c-2d75-01e0-e070-d829794dbcfe.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/feb59ae7-a45a-b0fe-b7af-c0dff38296af.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectCapsuleHeightmap Properties" Url="html/b541649f-2607-0b68-7f9f-f0fdf1d4e2f8.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="aa7d22ff-75a5-459d-b279-14317d128108" Title="CollDetectCapsulePlane Class" Url="html/c410046c-8a9a-befd-719e-a3193dfee4e1.htm">
+      <HelpTOCNode Title="CollDetectCapsulePlane Members" Url="html/111aef0d-aee2-e014-8772-39f393c23065.htm" />
+      <HelpTOCNode Title="CollDetectCapsulePlane Constructor " Url="html/e8fd6921-e76a-b3e3-8a05-8ee48499cc86.htm" />
+      <HelpTOCNode Id="2de20b9e-843d-40cd-b465-4dbfd973a5df" Title="CollDetectCapsulePlane Methods" Url="html/2087bfb3-f060-753b-65a9-506af74243c5.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/6e68d736-df05-a9c2-684a-7c087762043f.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectCapsulePlane Properties" Url="html/8fcb26f7-382e-3473-206f-8f4affbf676e.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="019fb44f-ca27-4149-8b4b-02ad3535cf78" Title="CollDetectCapsuleStaticMesh Class" Url="html/a98ea94d-7820-a7a3-839a-6c4fbdd2471b.htm">
+      <HelpTOCNode Title="CollDetectCapsuleStaticMesh Members" Url="html/70288f80-97c6-e654-392a-bc4725b94a72.htm" />
+      <HelpTOCNode Title="CollDetectCapsuleStaticMesh Constructor " Url="html/6356ecd0-347e-9d0e-4e53-588140fa89be.htm" />
+      <HelpTOCNode Id="46f66677-02fd-4134-b3a5-0ce469fd3ad9" Title="CollDetectCapsuleStaticMesh Methods" Url="html/2ba871cc-db84-4255-e20b-4be964ba6ee5.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/31d03780-9be9-d3c9-01fa-bada7cbefc00.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectCapsuleStaticMesh Properties" Url="html/2e0a4474-5f27-8c28-57e9-52ef340a4193.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="d91e7aa6-028a-4797-a81f-ba79d8269586" Title="CollDetectInfo Structure" Url="html/193a2876-1d5a-d4c8-09e7-8be6a0bc7ab7.htm">
+      <HelpTOCNode Title="CollDetectInfo Members" Url="html/76f7c047-b7b2-eb37-8469-bba8ba0e0cf2.htm" />
+      <HelpTOCNode Title="CollDetectInfo Constructor " Url="html/e97052ee-be69-bb1e-0d72-4aa74f28941a.htm" />
+      <HelpTOCNode Id="693408d4-13e7-4b0b-a8b3-1059710ede21" Title="CollDetectInfo Fields" Url="html/e026fab5-b41b-c627-1fbb-cfa1b1375743.htm">
+        <HelpTOCNode Title="IndexPrim0 Field" Url="html/6b02d9e9-a590-b528-4397-e9535ee8d7a5.htm" />
+        <HelpTOCNode Title="IndexPrim1 Field" Url="html/514f71bc-0819-baa7-3623-b645b20ff944.htm" />
+        <HelpTOCNode Title="Skin0 Field" Url="html/c13cf75c-b150-44ef-e624-4b48fe930587.htm" />
+        <HelpTOCNode Title="Skin1 Field" Url="html/f9fcb628-3ee4-46bc-b846-4799ea260550.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectInfo Methods" Url="html/55f05dfe-bcf8-9ce8-b67f-3dcf2171927e.htm" />
+      <HelpTOCNode Id="ec10637b-8448-4ff8-8148-5782d2d4eb5d" Title="CollDetectInfo Properties" Url="html/e9610ad1-2837-8cf8-9933-8eaf52660aaf.htm">
+        <HelpTOCNode Title="Empty Property " Url="html/9cfc537b-4483-768b-0027-c7b8f4150550.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="1df333bb-439d-4d25-845a-5b7d238adb4c" Title="CollDetectSphereBox Class" Url="html/336c524c-94de-60a7-b41b-966f1a79da02.htm">
+      <HelpTOCNode Title="CollDetectSphereBox Members" Url="html/4058cfd7-ac55-e160-cbaf-17a66a6eba71.htm" />
+      <HelpTOCNode Title="CollDetectSphereBox Constructor " Url="html/3c176989-fce5-093a-6b49-ffc3a3ac299c.htm" />
+      <HelpTOCNode Id="085f170c-7f3a-48d5-aaa3-78f43369103e" Title="CollDetectSphereBox Methods" Url="html/ac16fac1-02b7-13ae-7165-bd10aaafb365.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/8d27229c-012e-8b58-d8e4-86b0ab7e77f7.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectSphereBox Properties" Url="html/d408009d-c951-20a8-b034-334e984eb8de.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="26c75023-ea5e-4a19-a2be-3c0065d7f594" Title="CollDetectSphereCapsule Class" Url="html/3caf1c7f-2b6a-a7dd-f792-cba75d963435.htm">
+      <HelpTOCNode Title="CollDetectSphereCapsule Members" Url="html/8bfea5e1-de2c-dd8b-32f9-f8acc674b88e.htm" />
+      <HelpTOCNode Title="CollDetectSphereCapsule Constructor " Url="html/8334d01d-7057-6ca1-52da-ed7300db3b55.htm" />
+      <HelpTOCNode Id="03a8522a-6ca4-4d5d-9646-79c7d0c57e25" Title="CollDetectSphereCapsule Methods" Url="html/7d472b39-193a-1f5a-2a1a-d4fa9b9b893a.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/6aef1c82-dae4-9b36-81da-ae0c1c31e441.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectSphereCapsule Properties" Url="html/0b084a0b-0ea7-a5c9-8283-c4a90127cf6f.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="b83da95d-bae4-40a1-a274-5cff15678202" Title="CollDetectSphereHeightmap Class" Url="html/1d65eec2-b130-b09a-acf5-1458feb6a3ce.htm">
+      <HelpTOCNode Title="CollDetectSphereHeightmap Members" Url="html/56441e4e-484e-bad4-4351-8b925083dceb.htm" />
+      <HelpTOCNode Title="CollDetectSphereHeightmap Constructor " Url="html/b9167eb5-612f-e67c-6852-839344b2bfef.htm" />
+      <HelpTOCNode Id="5e18f6fd-edde-43ae-a1ee-3ca5a1882694" Title="CollDetectSphereHeightmap Methods" Url="html/420d1d6a-a74d-628f-517f-ff7ac2468860.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/731c0033-5eb6-395b-84ce-c1e27171e9cc.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectSphereHeightmap Properties" Url="html/b2ac3050-8965-5dd0-6063-bba7aa593b2a.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="da764a68-e4ac-46d2-9390-11a5c64141ae" Title="CollDetectSpherePlane Class" Url="html/15153151-f5b3-d2e6-0dab-c63606065e59.htm">
+      <HelpTOCNode Title="CollDetectSpherePlane Members" Url="html/c352d551-d814-df5a-f953-2a8377a67d28.htm" />
+      <HelpTOCNode Title="CollDetectSpherePlane Constructor " Url="html/d30a7342-e03f-84b2-1377-4129065c63aa.htm" />
+      <HelpTOCNode Id="93eaa3e8-53b4-41e3-9171-d1217f97cbcf" Title="CollDetectSpherePlane Methods" Url="html/591c87e3-3569-ac20-4138-09c2fdb89f3b.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/229227a5-e777-1721-3d59-ee5496ea3f2f.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectSpherePlane Properties" Url="html/3c3b9c18-22bc-0ab2-e9e4-04cac922c79f.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="16a956a6-c0eb-4af7-8a55-746da33e00b7" Title="CollDetectSphereSphere Class" Url="html/83a3eb65-da7f-b75c-a2f0-7e32a5b40887.htm">
+      <HelpTOCNode Title="CollDetectSphereSphere Members" Url="html/9c48a9eb-89e0-696d-d059-5072d997f977.htm" />
+      <HelpTOCNode Title="CollDetectSphereSphere Constructor " Url="html/4e9896a9-611f-9692-1416-a79aca294a5c.htm" />
+      <HelpTOCNode Id="20a61627-c2ac-4b3d-91de-62520d26b037" Title="CollDetectSphereSphere Methods" Url="html/b51374ef-6739-8cb2-9a5f-9831d4e5b980.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/d032bd9a-804d-d8d3-2fbc-da5726c922b0.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectSphereSphere Properties" Url="html/62f670c3-e2b1-3cfc-87f3-bf3200f2e6b0.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="5d5784c5-349f-480f-9204-c4f8bd944979" Title="CollDetectSphereStaticMesh Class" Url="html/6cc6ad42-74d5-b6f6-a884-48c208c16cf7.htm">
+      <HelpTOCNode Title="CollDetectSphereStaticMesh Members" Url="html/536d6422-0269-8f16-b2e4-343921fc8ffa.htm" />
+      <HelpTOCNode Title="CollDetectSphereStaticMesh Constructor " Url="html/ee669e5e-6f90-4c96-2ebb-da39f33852dc.htm" />
+      <HelpTOCNode Id="105fb26c-c19f-4040-9ee6-137aff29debd" Title="CollDetectSphereStaticMesh Methods" Url="html/326ea87d-faf5-5c5f-9512-df5f7d902ada.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/d4bc0b9e-9dad-5a33-bd80-f88d7b559c02.htm" />
+        <HelpTOCNode Title="CollDetectSphereStaticMeshOverlap Method " Url="html/0adea5ec-c190-d9ac-0264-527d8324bc44.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="CollDetectSphereStaticMesh Properties" Url="html/8b266f5f-1e46-660a-6616-b9781f0660dd.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Title="CollisionCallbackFn Delegate" Url="html/3d6660a1-1d6c-21ce-62e2-1304dc2d34a8.htm" />
+    <HelpTOCNode Id="afe9bde9-a949-4a33-b2f1-17349de6cf8a" Title="CollisionFunctor Class" Url="html/0a66620b-f697-22a2-87d1-e67869a2dfc6.htm">
+      <HelpTOCNode Title="CollisionFunctor Members" Url="html/5777657d-57a7-fd37-5ce6-5b610bd7e0ae.htm" />
+      <HelpTOCNode Title="CollisionFunctor Constructor " Url="html/f9112aea-c819-c4be-779b-23836be7d4e0.htm" />
+      <HelpTOCNode Id="95ada415-033a-4a2e-b2af-0ce5d28eaf7a" Title="CollisionFunctor Methods" Url="html/e2afe7db-c8c6-876e-4b02-0dc85871c3da.htm">
+        <HelpTOCNode Title="CollisionNotify Method " Url="html/fd467c1a-5d1a-bd4a-54e9-6df1d4425a37.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="449a36e1-94b1-4579-a5c8-dc5f785073d0" Title="CollisionInfo Class" Url="html/1895dae4-fd8a-161b-9ea4-883017253382.htm">
+      <HelpTOCNode Title="CollisionInfo Members" Url="html/89f168db-5307-8a19-5f0b-420faa995550.htm" />
+      <HelpTOCNode Id="e37e34b1-f334-4293-b2bd-c408d2bb5843" Title="CollisionInfo Fields" Url="html/c00b53ed-ab9b-8adb-8258-66234f3223df.htm">
+        <HelpTOCNode Title="InitialCollisionInfoStack Field" Url="html/c27a51e5-3765-1656-d6c4-e4d18634cdec.htm" />
+        <HelpTOCNode Title="InitialCollisionPointInfoStack Field" Url="html/c3b0e915-3c69-c448-5607-d4178b96db1f.htm" />
+        <HelpTOCNode Title="MatPairProperties Field" Url="html/2ed672fd-32ad-2862-f80b-c758a0355a91.htm" />
+        <HelpTOCNode Title="MaxCollisionPoints Field" Url="html/4e6c5742-a34b-07a4-aa36-75a6faef1487.htm" />
+        <HelpTOCNode Title="NumCollPts Field" Url="html/c8313245-d831-e447-3ea6-a8761ee42904.htm" />
+        <HelpTOCNode Title="PointInfo Field" Url="html/20cac8d9-08c8-b064-77fe-ae8b6b4360d4.htm" />
+        <HelpTOCNode Title="SkinInfo Field" Url="html/1219e6c3-e9aa-b13c-67dd-c7d218caf102.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="ee04f20b-5ed6-4e19-b1f9-0c81e95dad80" Title="CollisionInfo Methods" Url="html/1f03648a-e1d7-5c10-f818-45f574a76a53.htm">
+        <HelpTOCNode Title="FreeCollisionInfo Method " Url="html/07e5158f-7353-9043-f08e-4409b6c837a7.htm" />
+        <HelpTOCNode Title="GetCollisionInfo Method " Url="html/50c35eca-9e3f-e99e-a9c2-e71e9a97bf5c.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="c858a82b-a7b0-4daa-9e21-ca714542b881" Title="CollisionInfo Properties" Url="html/0bf4997c-ea56-ec1c-c47b-dbf256059633.htm">
+        <HelpTOCNode Title="DirToBody0 Property " Url="html/e1e62e96-b318-dfd5-5c7c-776b85f4f5fd.htm" />
+        <HelpTOCNode Title="Satisfied Property " Url="html/e9c494fe-0daa-dad4-278e-8e50d13a8f51.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ebe7e158-80fe-4ef4-88c8-c048cdf96fe5" Title="CollisionSkin Class" Url="html/9e780bc7-af92-fde8-8007-04c93f2aed82.htm">
+      <HelpTOCNode Title="CollisionSkin Members" Url="html/31681466-866d-d12f-d92f-8ca4953add9a.htm" />
+      <HelpTOCNode Id="07e3c8b6-dea0-4e98-9b2b-e20917f9320a" Title="CollisionSkin Constructor " Url="html/a0e91b9c-95e8-6ad0-643a-d0c0ac021875.htm">
+        <HelpTOCNode Title="CollisionSkin Constructor " Url="html/8c60d19b-bb21-4f62-9848-0920228310b1.htm" />
+        <HelpTOCNode Title="CollisionSkin Constructor (Body)" Url="html/d18396fd-9397-ab63-254e-40f13d441b2f.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="e7a1572a-87c3-4c8e-badf-ee102ef5f55c" Title="CollisionSkin Fields" Url="html/59a09897-a474-a9e3-8462-04e4e421c7eb.htm">
+        <HelpTOCNode Title="WorldBoundingBox Field" Url="html/fe4fd221-7e2a-28b4-4ad6-d2038d389e2e.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="26c4918b-c7d5-476f-87c2-ad1e9fff8861" Title="CollisionSkin Methods" Url="html/6d2cd9b9-083a-9d73-f930-d2dc972ef4eb.htm">
+        <HelpTOCNode Id="a128b3a7-4522-464d-8109-a32d34a7e1e2" Title="AddPrimitive Method " Url="html/41e7eed3-23d4-8247-fa48-93fc00813451.htm">
+          <HelpTOCNode Title="AddPrimitive Method (Primitive, MaterialProperties)" Url="html/a82bd88f-abaa-5aed-3fdf-2dba98bb2f29.htm" />
+          <HelpTOCNode Title="AddPrimitive Method (Primitive, Int32)" Url="html/e7b306db-13d7-0f38-1344-9d713b5020b9.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ApplyLocalTransform Method " Url="html/be97e516-7178-fde4-cac1-998cbb396d40.htm" />
+        <HelpTOCNode Id="431599e2-d567-4695-bc91-967184dff552" Title="GetMassProperties Method " Url="html/718f4382-c5e4-32de-50ea-614295057da9.htm">
+          <HelpTOCNode Title="GetMassProperties Method (PrimitiveProperties, Single, , , )" Url="html/706f3857-8309-6054-3c34-0ba7235ad2d0.htm" />
+          <HelpTOCNode Title="GetMassProperties Method (PrimitiveProperties[], Single, , , )" Url="html/ff3d1e02-5e89-0451-394f-dc962894310f.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetMaterialID Method " Url="html/a0ae5da8-e384-f204-5f76-371d3a67b00d.htm" />
+        <HelpTOCNode Title="GetMaterialProperties Method " Url="html/85f830a8-d3c1-b74f-d4e2-974dbdddf3bc.htm" />
+        <HelpTOCNode Title="GetPrimitiveLocal Method " Url="html/da7b1b9d-c988-b09d-ce37-f62c8fc88dc0.htm" />
+        <HelpTOCNode Title="GetPrimitiveNewWorld Method " Url="html/19f3c59e-517a-5cba-1379-a101786658e7.htm" />
+        <HelpTOCNode Title="GetPrimitiveOldWorld Method " Url="html/c30f7d41-709b-d897-10ca-55b3bb2e5997.htm" />
+        <HelpTOCNode Title="GetSurfaceArea Method " Url="html/9674ab26-0602-d6de-2abd-a930862e7e9d.htm" />
+        <HelpTOCNode Title="GetVolume Method " Url="html/327ab17e-57b5-1af6-3e9b-5d36e943e801.htm" />
+        <HelpTOCNode Title="OnCollisionEvent Method " Url="html/eb017617-7821-5584-c6ef-47a27ae8e42c.htm" />
+        <HelpTOCNode Title="RemoveAllPrimitives Method " Url="html/122964c1-4b9e-bfec-2b76-1a10f951e7fe.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/d72700d3-bc9a-eeae-a90f-99c41495cfc8.htm" />
+        <HelpTOCNode Title="SetMaterialProperties Method " Url="html/33eeb75f-88f5-bf62-3ee4-a6df456f9002.htm" />
+        <HelpTOCNode Title="SetNewTransform Method " Url="html/9d01d3c4-9b01-db2d-4f8e-4dfcaf090f99.htm" />
+        <HelpTOCNode Title="SetOldTransform Method " Url="html/0b08f0f8-34cc-a296-0c7a-6bd585cd6bed.htm" />
+        <HelpTOCNode Title="SetTransform Method " Url="html/c4550ee5-34d3-fa3a-1096-43ee701284e0.htm" />
+        <HelpTOCNode Title="UpdateWorldBoundingBox Method " Url="html/c0cd8e61-d734-a9b0-e63f-689d6d8182ce.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="f74b2cb4-fb1c-434b-8016-356662bfe086" Title="CollisionSkin Properties" Url="html/43a99da5-2668-c843-60bd-712502629888.htm">
+        <HelpTOCNode Title="Collisions Property " Url="html/c0fd0b90-d934-131a-026d-633c6ef34760.htm" />
+        <HelpTOCNode Title="CollisionSystem Property " Url="html/d3ac8691-82a8-50d2-7c0f-a2aba6795adb.htm" />
+        <HelpTOCNode Title="NewOrient Property " Url="html/1d012db7-2af7-38d2-cff4-440c991245e8.htm" />
+        <HelpTOCNode Title="NewPosition Property " Url="html/02c7bb1c-823c-69ee-4cfd-4944d7a94569.htm" />
+        <HelpTOCNode Title="NewTransform Property " Url="html/9ad45390-779e-5c3e-19ad-77df00e31106.htm" />
+        <HelpTOCNode Title="NonCollidables Property " Url="html/6af40a8a-f518-a9f6-2910-39ee2cb3a567.htm" />
+        <HelpTOCNode Title="NumPrimitives Property " Url="html/040a3ed6-faae-aa47-5513-d48ae2d33985.htm" />
+        <HelpTOCNode Title="OldOrient Property " Url="html/88c93ef2-b867-bbca-b4ab-7ee767d393fe.htm" />
+        <HelpTOCNode Title="OldPosition Property " Url="html/9e3227c6-e83a-e00f-9cd0-b1242cb2cc5a.htm" />
+        <HelpTOCNode Title="OldTransform Property " Url="html/9b46849b-902b-4587-cd12-12260b934355.htm" />
+        <HelpTOCNode Title="Owner Property " Url="html/5d4efcee-56cc-b51f-4b17-8d87700763ca.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="5daad8e6-89c1-447d-9c3a-d2ef951099b4" Title="CollisionSkin Events" Url="html/5761ab49-672a-0bd9-e084-5a000c901a7f.htm">
+        <HelpTOCNode Title="callbackFn Event" Url="html/deff7027-cd39-c51b-5d0e-5365d42a26b3.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="4d9f3bf8-c046-47e8-8eef-b72b1dc40f2a" Title="CollisionSkinPredicate1 Class" Url="html/14f8871a-33a4-f63a-8ca9-b774d33d07eb.htm">
+      <HelpTOCNode Title="CollisionSkinPredicate1 Members" Url="html/c7004b7c-877a-f3d6-54aa-b5fe78b09603.htm" />
+      <HelpTOCNode Title="CollisionSkinPredicate1 Constructor " Url="html/9442e03e-d121-caf2-f254-67e6f87c7d2c.htm" />
+      <HelpTOCNode Id="04cc1fcb-018a-462c-89b2-cbf3ff0b3f61" Title="CollisionSkinPredicate1 Methods" Url="html/9bb550ef-8d37-dc4d-dbcf-4728884dc032.htm">
+        <HelpTOCNode Title="ConsiderSkin Method " Url="html/84280a95-172b-697c-3895-69254855de80.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="4c9c784d-caf7-4dd3-afee-bf2750f53c6f" Title="CollisionSkinPredicate2 Class" Url="html/e45dcd5b-28af-b51f-7786-c0c974433365.htm">
+      <HelpTOCNode Title="CollisionSkinPredicate2 Members" Url="html/04427079-7885-8ed7-4ff7-10e3b3fa03fc.htm" />
+      <HelpTOCNode Title="CollisionSkinPredicate2 Constructor " Url="html/caeec83f-f214-32c1-48e4-a255dcd4e53a.htm" />
+      <HelpTOCNode Id="8dede23d-595b-413f-9485-b4ecca55b85f" Title="CollisionSkinPredicate2 Methods" Url="html/a51fb1d5-b59f-c3b8-b105-b7b775e83625.htm">
+        <HelpTOCNode Title="ConsiderSkinPair Method " Url="html/684d9cbf-f556-5230-4fc1-23a347340bcd.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="813b6142-9aae-459e-b38e-44983663cd12" Title="CollisionSystem Class" Url="html/2792c0dd-ae7a-06aa-2603-93243b88a4b1.htm">
+      <HelpTOCNode Title="CollisionSystem Members" Url="html/959ecad3-63b6-0e00-4d57-751d44b0daf8.htm" />
+      <HelpTOCNode Title="CollisionSystem Constructor " Url="html/147dcc54-deec-e302-d83f-51a0cb1f534b.htm" />
+      <HelpTOCNode Id="c8bfecf9-4bdc-4d64-ad31-fc5c493c051c" Title="CollisionSystem Methods" Url="html/d99aa99e-507c-9bb5-c664-c29edf0f6f56.htm">
+        <HelpTOCNode Title="AddCollisionSkin Method " Url="html/965ba138-1618-78b3-3b4e-06bf5e5d9903.htm" />
+        <HelpTOCNode Title="CollisionSkinMoved Method " Url="html/451dce4c-030c-d4a7-d4c6-e4c50e47a163.htm" />
+        <HelpTOCNode Title="DetectAllCollisions Method " Url="html/67cac0cd-a6a0-13fb-8137-6221f7559847.htm" />
+        <HelpTOCNode Title="DetectCollisions Method " Url="html/d206cd76-ffa7-7b3b-d605-f93f6df27176.htm" />
+        <HelpTOCNode Title="GetCollDetectFunctor Method " Url="html/bbc50b2e-a168-ac31-d180-7f42b20c7fa4.htm" />
+        <HelpTOCNode Title="RegisterCollDetectFunctor Method " Url="html/2daa070d-7982-c043-9d03-4f2bf484cdec.htm" />
+        <HelpTOCNode Title="RemoveCollisionSkin Method " Url="html/3ba13299-52e3-bf66-9c8d-50a282dddd9d.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/e21a0b17-9966-9138-b580-d912dafd1aa0.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="6fbc9252-e9a6-4609-bf44-481afa7b6f55" Title="CollisionSystem Properties" Url="html/9b2d7bf0-9d88-ee3e-9f36-7d8c5836fd8b.htm">
+        <HelpTOCNode Title="CollisionSkins Property " Url="html/fc570f8e-8e08-62ce-98e1-65e905b2ff05.htm" />
+        <HelpTOCNode Title="MaterialTable Property " Url="html/0163b93e-d8b9-32e5-65d5-af1ea5c1317f.htm" />
+        <HelpTOCNode Title="UseSweepTests Property " Url="html/751ed701-0096-56ef-0e26-2f87a7f18c4f.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="baabfbec-03e2-43e9-9709-7ed54a833c41" Title="CollisionSystemBrute Class" Url="html/42eef4ef-067c-8a87-5b01-ee363b21ae2d.htm">
+      <HelpTOCNode Title="CollisionSystemBrute Members" Url="html/dd802496-9d2f-e68f-ae81-e7ad57e51359.htm" />
+      <HelpTOCNode Title="CollisionSystemBrute Constructor " Url="html/f76daa88-da6b-2c61-d06e-29c24c953385.htm" />
+      <HelpTOCNode Id="155b955f-e36c-4cf4-be15-1124aa010db2" Title="CollisionSystemBrute Methods" Url="html/56ad2463-26c5-dc0f-81f5-2e7b94250a2c.htm">
+        <HelpTOCNode Title="AddCollisionSkin Method " Url="html/32014f78-828f-04b7-ab53-c7503066e777.htm" />
+        <HelpTOCNode Title="CollisionSkinMoved Method " Url="html/113fcfa4-3c9a-9cfd-a8af-27a13c7c176d.htm" />
+        <HelpTOCNode Title="DetectAllCollisions Method " Url="html/f19f842b-e32c-94e8-1dbf-e0d6adf8a4dd.htm" />
+        <HelpTOCNode Title="DetectCollisions Method " Url="html/2de5c70a-3087-5d9e-6bfc-388bc5a1cd81.htm" />
+        <HelpTOCNode Title="RemoveCollisionSkin Method " Url="html/a6b6f442-b677-15c9-4837-f8dc72307f59.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/4905b7d4-4efd-d9d9-9a8a-33b537efffdc.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="ac907b35-5dbb-4703-b27a-a1a23b25f7d1" Title="CollisionSystemBrute Properties" Url="html/443854c0-8d4d-7907-db68-e1212c2d8cd3.htm">
+        <HelpTOCNode Title="CollisionSkins Property " Url="html/12dc8fc4-3bf4-5f80-c5e1-ec1275c485c5.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ba3006d2-0f79-4fba-9f97-a229b206b663" Title="CollisionSystemGrid Class" Url="html/1c47ac8b-5935-8b8c-5dfe-6db2675c6928.htm">
+      <HelpTOCNode Title="CollisionSystemGrid Members" Url="html/9ae53985-f369-d4e0-7526-a21788eed21c.htm" />
+      <HelpTOCNode Title="CollisionSystemGrid Constructor " Url="html/bc4fb455-dc54-9b32-0302-9551d7dc6d06.htm" />
+      <HelpTOCNode Id="6b02253f-7acf-4f76-bd1d-46bba5cbf879" Title="CollisionSystemGrid Methods" Url="html/3217e232-c955-6195-3a34-b1522b719e5c.htm">
+        <HelpTOCNode Title="AddCollisionSkin Method " Url="html/466ac457-318f-81a6-f37c-a06b7c0e22df.htm" />
+        <HelpTOCNode Title="CalcGridForSkin Method " Url="html/bd0441dc-1db9-8010-822c-dbb280d0b358.htm" />
+        <HelpTOCNode Title="CollisionSkinMoved Method " Url="html/4557720e-0fe6-328a-55b6-8e28499f28c8.htm" />
+        <HelpTOCNode Title="DetectAllCollisions Method " Url="html/972170b4-2aaf-b751-8ae5-8f2070dbbd4b.htm" />
+        <HelpTOCNode Title="DetectCollisions Method " Url="html/efd469ce-3985-f9b6-d3a5-1346a5a596ab.htm" />
+        <HelpTOCNode Title="RemoveCollisionSkin Method " Url="html/5de3bff0-bcb4-666a-bc4d-484c6a2d69a8.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/6659936b-2739-9de1-f8d9-7efbab292dbc.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="0d0801c3-1f8e-43b4-924e-4dbac530356f" Title="CollisionSystemGrid Properties" Url="html/cb48bf12-c4a6-9ee1-99b8-88159c2f5287.htm">
+        <HelpTOCNode Title="CollisionSkins Property " Url="html/05e3e953-e41a-acfa-72bf-396d4501154d.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="bcf7befb-c82a-4baa-b2db-6dc1581a4eed" Title="CollisionSystemSAP Class" Url="html/f2d65bf4-f82a-458d-59c6-6a2bd1adaf1e.htm">
+      <HelpTOCNode Title="CollisionSystemSAP Members" Url="html/bcde1f8c-f7b3-beb9-39da-90c8be53ecbb.htm" />
+      <HelpTOCNode Title="CollisionSystemSAP Constructor " Url="html/483ab4af-4340-e1e5-5f3c-390fab21078a.htm" />
+      <HelpTOCNode Id="3da0c852-f9f8-49df-80b1-3f26f341bea6" Title="CollisionSystemSAP Methods" Url="html/a9427416-a26c-88ff-3fa0-10bddda7ffa5.htm">
+        <HelpTOCNode Title="AddCollisionSkin Method " Url="html/1624f999-6ce6-3af0-3944-55d391f2ec8c.htm" />
+        <HelpTOCNode Title="CollisionSkinMoved Method " Url="html/8ef49ad9-05bb-c1a1-e53c-56184fb8b91a.htm" />
+        <HelpTOCNode Title="Compare Method " Url="html/162a26b3-1fac-d26f-b869-94a891ee5e97.htm" />
+        <HelpTOCNode Title="DetectAllCollisions Method " Url="html/4c25a091-36be-a2d5-0e6a-2390ba962dca.htm" />
+        <HelpTOCNode Title="DetectCollisions Method " Url="html/bc2a465f-c312-74be-9de2-0e65a4a20b7f.htm" />
+        <HelpTOCNode Title="RemoveCollisionSkin Method " Url="html/b57e0bc6-12b4-ed63-c413-7a3e10a4c6b2.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/66a9d9a6-af21-94e8-d70c-2b17380271d7.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="cf344a31-3e43-4c9c-9db5-a26a93dc20ee" Title="CollisionSystemSAP Properties" Url="html/195bc120-3107-0c20-2517-c731bfbcc3c3.htm">
+        <HelpTOCNode Title="CollisionSkins Property " Url="html/d0661194-8743-e165-f9f4-24483b6be7af.htm" />
+        <HelpTOCNode Title="LargestX Property " Url="html/689430dc-e587-75a1-8fb7-279457d8024f.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="42693a0c-2ccf-455f-b587-f675c193e58a" Title="CollPointInfo Class" Url="html/6f66a4f6-ba43-7fdb-4400-18bbfaf0d98d.htm">
+      <HelpTOCNode Title="CollPointInfo Members" Url="html/76b135ab-5b35-2f13-68ee-d7c0288bf545.htm" />
+      <HelpTOCNode Title="CollPointInfo Constructor " Url="html/2095774b-f214-79a2-52a9-0fe282b36cab.htm" />
+      <HelpTOCNode Id="f44e5ef7-0276-4818-bef9-ff88cea6889f" Title="CollPointInfo Fields" Url="html/f629dd6b-06d5-8de5-3c91-1ebd6f992087.htm">
+        <HelpTOCNode Title="AccumulatedFrictionImpulse Field" Url="html/2cfdb452-6a8e-4492-12da-6eb61861e03d.htm" />
+        <HelpTOCNode Title="AccumulatedNormalImpulse Field" Url="html/0d3b9070-0a3e-e917-9163-df204c3f1421.htm" />
+        <HelpTOCNode Title="AccumulatedNormalImpulseAux Field" Url="html/15f2920b-2c95-0b4c-6b28-5a860a72bb89.htm" />
+        <HelpTOCNode Title="Denominator Field" Url="html/6e81ddf2-a3c8-1796-f7ad-56dee2b91f10.htm" />
+        <HelpTOCNode Title="Info Field" Url="html/43286af0-7566-61ce-d328-67e23655cc61.htm" />
+        <HelpTOCNode Title="MinSeparationVel Field" Url="html/bd43b2e7-9e44-139c-12eb-875f1b2467a2.htm" />
+        <HelpTOCNode Title="Position Field" Url="html/8efcd584-687f-0878-8a6f-4cea1c15eeaf.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="90c74de6-5d82-4646-85eb-76e1cb0971c3" Title="CollPointInfo Methods" Url="html/f6b7f7ce-0bc1-c4dd-aa26-59743e511025.htm">
+        <HelpTOCNode Title="Init Method " Url="html/cfa5924f-409e-9e28-6f0b-8d672e7a6ba4.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="449064c3-ad52-49d8-bfa8-415a33fef2e5" Title="DetectFunctor Class" Url="html/af36869a-f50d-7e33-5bd0-5e4f1352210f.htm">
+      <HelpTOCNode Title="DetectFunctor Members" Url="html/f2516b21-8abf-46ca-72c7-314adb267c33.htm" />
+      <HelpTOCNode Title="DetectFunctor Constructor " Url="html/9e711707-57ef-4690-ec3c-00bf6bf9eb98.htm" />
+      <HelpTOCNode Id="42c57416-f4e4-4a62-906b-ae60e1b3812d" Title="DetectFunctor Fields" Url="html/34f0eeff-333f-59ac-c6c3-457d48bc6ce2.htm">
+        <HelpTOCNode Title="MaxLocalStackSCPI Field" Url="html/3bc8dfd7-019e-87c3-6e5b-f2579b8b0604.htm" />
+        <HelpTOCNode Title="MaxLocalStackTris Field" Url="html/4f3abd71-ecc5-775f-6032-c79b31b01d55.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="7ccd28aa-ed9e-4db2-978f-96168faa8d9f" Title="DetectFunctor Methods" Url="html/7acc5f52-88e4-7b70-d60f-4c009acd491d.htm">
+        <HelpTOCNode Title="CollDetect Method " Url="html/6d1c328d-9165-13cf-67dd-e052e5993a2b.htm" />
+        <HelpTOCNode Id="9c0ea067-3d34-4474-bb23-063cf8d3e541" Title="FreeStackAlloc Method " Url="html/12213b1d-b0b5-4e31-d9d7-054e8fad2ba9.htm">
+          <HelpTOCNode Title="FreeStackAlloc Method (Int32[])" Url="html/1fe6968a-bf2a-659a-3a00-3f6d741883a9.htm" />
+          <HelpTOCNode Title="FreeStackAlloc Method (SmallCollPointInfo[])" Url="html/62e0e1df-a7c5-ecf4-1a7c-69d70161e348.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="IntStackAlloc Method " Url="html/d5e691a9-2687-e754-cb61-f471a504cfd4.htm" />
+        <HelpTOCNode Title="SCPIStackAlloc Method " Url="html/965e80cb-7508-81bc-1930-2211ebabbe07.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="15a22b5a-4db3-4b5d-9741-9e959efd15e1" Title="DetectFunctor Properties" Url="html/4d28e51c-6cd9-53cc-a60f-e0fc79e82f26.htm">
+        <HelpTOCNode Title="Name Property " Url="html/f18b7c91-4d38-6716-17ce-4b23e8071fe6.htm" />
+        <HelpTOCNode Title="Type0 Property " Url="html/169b61e3-13c5-90f6-63a4-85e4220a179a.htm" />
+        <HelpTOCNode Title="Type1 Property " Url="html/6cb3cba2-63a7-fe67-9552-58fd7d5f3a11.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="7ef01a13-d4fd-4d4b-9e8c-c87124d44157" Title="MaterialPairProperties Structure" Url="html/0cc5831d-0c0e-2b4f-b880-46a5f301dba3.htm">
+      <HelpTOCNode Title="MaterialPairProperties Members" Url="html/33c39335-38e0-c51e-f171-bc240d4a9bdc.htm" />
+      <HelpTOCNode Title="MaterialPairProperties Constructor " Url="html/1e815cda-6869-078a-77d3-7a43b434cec0.htm" />
+      <HelpTOCNode Id="22f6f94f-26b5-4217-a2d7-02079e468164" Title="MaterialPairProperties Fields" Url="html/e6d09316-1fb3-8b20-4c80-4db510cd68ac.htm">
+        <HelpTOCNode Title="DynamicFriction Field" Url="html/511f5839-86eb-f402-768d-9caa5dccaeb9.htm" />
+        <HelpTOCNode Title="Restitution Field" Url="html/8eff2ca3-71ac-c2ca-edaa-da883b25ebf1.htm" />
+        <HelpTOCNode Title="StaticFriction Field" Url="html/45b95691-797b-4d52-ad36-65de3f4dc14b.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="MaterialPairProperties Methods" Url="html/601d75c9-47e8-a353-d4da-62c02cd54b24.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="d25ca220-0005-47f3-8244-34c28fda3f96" Title="MaterialProperties Structure" Url="html/f042b4df-9d93-93d4-fd7e-9ea1a0662ae0.htm">
+      <HelpTOCNode Title="MaterialProperties Members" Url="html/345218fd-9dd0-cdc3-e6fa-7edc80b2d2f3.htm" />
+      <HelpTOCNode Title="MaterialProperties Constructor " Url="html/2ad139bc-1454-b3d9-46c2-def7f5fbc57e.htm" />
+      <HelpTOCNode Id="0fb27559-931d-4a0a-8dc9-4975c7ae2fc0" Title="MaterialProperties Fields" Url="html/66d00518-a7b3-1786-3662-0571a7d41c99.htm">
+        <HelpTOCNode Title="DynamicRoughness Field" Url="html/dafd4af9-5277-7911-0160-31ecad5e5d22.htm" />
+        <HelpTOCNode Title="Elasticity Field" Url="html/8983f02a-5648-12ab-b05b-d05ae09cc50d.htm" />
+        <HelpTOCNode Title="StaticRoughness Field" Url="html/2e626d06-ae7f-4eeb-508d-c908b84587d6.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="MaterialProperties Methods" Url="html/f354b642-f780-2d01-e56a-31803ce27a04.htm" />
+      <HelpTOCNode Id="330251e2-279b-4b83-b38c-c5add65e07c4" Title="MaterialProperties Properties" Url="html/7834a3ca-d503-24d0-cc60-dc6fcc0c6bc9.htm">
+        <HelpTOCNode Title="Unset Property " Url="html/52ea1798-2d6d-57a9-b19c-3509630c6274.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ae2ecc7e-b502-4c4e-8c5c-c2c5cc623a1a" Title="MaterialTable Class" Url="html/6fd0c1dd-f904-6730-650e-9455abbb07e5.htm">
+      <HelpTOCNode Title="MaterialTable Members" Url="html/dbf0e858-bf7e-d5e7-74fc-669cbcd49eb6.htm" />
+      <HelpTOCNode Title="MaterialTable Constructor " Url="html/2a7f040e-2cd3-93da-dee1-36d43f41256d.htm" />
+      <HelpTOCNode Id="0f5adda2-e6dd-4c52-9409-8e6533bf249b" Title="MaterialTable Methods" Url="html/7d0a7253-b0ff-2f6b-5608-088c1dec4d61.htm">
+        <HelpTOCNode Title="Clear Method " Url="html/b8f4008d-6ee9-737a-1e95-040292b05a06.htm" />
+        <HelpTOCNode Title="GetMaterialProperties Method " Url="html/598c850d-f327-e3f5-1b93-4ec40d9bb4fc.htm" />
+        <HelpTOCNode Title="GetPairProperties Method " Url="html/88e0ddc4-009b-7ff6-92a3-1a2bfd3b675d.htm" />
+        <HelpTOCNode Title="Reset Method " Url="html/a07d6ab1-9f54-460a-2f13-8274e353c2ce.htm" />
+        <HelpTOCNode Title="SetMaterialPairProperties Method " Url="html/80aee427-33dd-1be6-437e-8503840561a8.htm" />
+        <HelpTOCNode Title="SetMaterialProperties Method " Url="html/fdb9321f-df09-fbb9-d05b-3cd5f16d8d43.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="MaterialTable.MaterialID Enumeration" Url="html/187e6f74-0db6-1ea5-7bac-444b68a0130a.htm" />
+    <HelpTOCNode Id="c55939b1-dae9-4709-b277-2db4a2eb1a7e" Title="SmallCollPointInfo Structure" Url="html/c0a1b197-8607-8277-1195-3f59ec97ed49.htm">
+      <HelpTOCNode Title="SmallCollPointInfo Members" Url="html/f8f018d4-21ae-40c8-0d59-a789144bbdf7.htm" />
+      <HelpTOCNode Id="ec731083-dd53-4e5f-b177-e13dec0a6aac" Title="SmallCollPointInfo Constructor " Url="html/9a3ddfda-05bd-ba9e-da9d-0a4c64eb4e90.htm">
+        <HelpTOCNode Title="SmallCollPointInfo Constructor (, , Single)" Url="html/e1b27947-ef41-83c9-e837-525d2e1b9cf1.htm" />
+        <HelpTOCNode Title="SmallCollPointInfo Constructor (, , Single)" Url="html/23f421fd-d6cd-aa95-918e-da15b79902cf.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="4901c26a-e3e2-492d-834d-847e143ce1dd" Title="SmallCollPointInfo Fields" Url="html/37246f3b-89bd-82e4-d327-ac3635c17a7e.htm">
+        <HelpTOCNode Title="InitialPenetration Field" Url="html/46fa1d8e-b09c-5b61-0b5d-3fbec51d783d.htm" />
+        <HelpTOCNode Title="R0 Field" Url="html/b979b5f9-dbbd-fcdc-bda9-8427754a2a17.htm" />
+        <HelpTOCNode Title="R1 Field" Url="html/0f233835-974e-d8df-3d57-c12a99ebdd6f.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="SmallCollPointInfo Methods" Url="html/f2fb685a-da95-9c66-a7be-68973c36da39.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="9d107c38-008d-49e4-b045-93aca5a6908f" Title="JigLibX.Geometry Namespace" Url="html/5e1d3efe-15ed-16f0-2413-1d140f2a7632.htm">
+    <HelpTOCNode Id="fabb26e5-26f1-427d-a740-1c34c77aac68" Title="AABox Class" Url="html/5aede19f-173c-1470-deba-c641d399ded5.htm">
+      <HelpTOCNode Title="AABox Members" Url="html/fb4b1b6f-c583-a346-90e3-382ba3a0d794.htm" />
+      <HelpTOCNode Id="a34f6837-af74-4e9e-856c-97634afa5854" Title="AABox Constructor " Url="html/bb1e9428-ee2a-c7a2-3524-e8a95a7ace36.htm">
+        <HelpTOCNode Title="AABox Constructor " Url="html/d18fba62-400e-cb20-6023-18673f72d465.htm" />
+        <HelpTOCNode Title="AABox Constructor (, )" Url="html/a537da56-c0bc-33b9-ec78-119c014e6a24.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="72354544-a755-4ee6-a999-cc6ccad19bf2" Title="AABox Methods" Url="html/9ae30803-57c9-0204-8af1-fcf0664d1b9c.htm">
+        <HelpTOCNode Id="8d18fff9-0275-4898-bdf7-f0104b1e4fc2" Title="AddPoint Method " Url="html/eecf4aa4-325c-079b-b252-03c192d756ae.htm">
+          <HelpTOCNode Title="AddPoint Method ()" Url="html/3cc68072-82e0-26fb-41bc-e1408b3cde65.htm" />
+          <HelpTOCNode Title="AddPoint Method ()" Url="html/1d12d298-ddc5-0a51-d451-48f6968833ca.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="Clear Method " Url="html/8612d91f-3963-3d3d-d7ba-3ec0e443abc3.htm" />
+        <HelpTOCNode Title="Clone Method " Url="html/2e2cb5fa-ce5d-72dc-7348-538a242ec22a.htm" />
+        <HelpTOCNode Title="GetBoundingBox Method " Url="html/da76c90e-509b-4e76-f719-c61c24fe1644.htm" />
+        <HelpTOCNode Title="GetCentre Method " Url="html/e6c0be06-1faf-0912-aa2a-e7b2eb83bb76.htm" />
+        <HelpTOCNode Title="GetMassProperties Method " Url="html/8320a829-7813-5323-90dd-3ed28a7a8cb3.htm" />
+        <HelpTOCNode Title="GetRadiusAboutCentre Method " Url="html/62fba82c-cd59-00ae-7213-ee8f8d037011.htm" />
+        <HelpTOCNode Title="GetRadiusSqAboutCentre Method " Url="html/17b0707d-8476-88ec-76b6-5768cc5c68e0.htm" />
+        <HelpTOCNode Title="GetSideLengths Method " Url="html/0bb7fd5e-5e9c-df44-81dd-10af0c43930c.htm" />
+        <HelpTOCNode Title="GetSurfaceArea Method " Url="html/ba63b8ab-27fe-8689-9a37-ba9d751c3e3c.htm" />
+        <HelpTOCNode Title="GetVolume Method " Url="html/9dbfdcee-833e-5697-6f28-0d050a346891.htm" />
+        <HelpTOCNode Title="IsPointInside Method " Url="html/a59f608e-9fd0-2412-e7d5-29c5850bc518.htm" />
+        <HelpTOCNode Title="Move Method " Url="html/37e8484e-b50b-8419-f43f-0506d721fb23.htm" />
+        <HelpTOCNode Id="5da1e945-0659-4172-a5e2-bcd11ee778cb" Title="OverlapTest Method " Url="html/cfb1870b-d422-eff0-5ac7-89da1e2c42c5.htm">
+          <HelpTOCNode Title="OverlapTest Method (AABox, AABox)" Url="html/0a08054e-c582-7b51-e257-b8e3d050b3b4.htm" />
+          <HelpTOCNode Title="OverlapTest Method (AABox, AABox, Single)" Url="html/dad4be1c-6b93-12cb-2178-d2b7bc3c6398.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/d41887ef-f591-0805-34dd-48412c6a85e4.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="0cf23987-8e08-4c7d-a0ef-a8838df80df8" Title="AABox Properties" Url="html/1e2dbe63-d432-782a-5dae-e04e7489ce78.htm">
+        <HelpTOCNode Title="HugeBox Property " Url="html/ceb86693-8944-d1a8-1485-a2273baf0b87.htm" />
+        <HelpTOCNode Title="MaxPos Property " Url="html/0c723b66-6c16-4972-bda6-356650e0d9df.htm" />
+        <HelpTOCNode Title="MinPos Property " Url="html/2894181d-94d2-227f-e4d3-9cccfc9bb765.htm" />
+        <HelpTOCNode Title="Transform Property " Url="html/693bc26b-0a03-bf62-a4c8-252fa9bb3c98.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="e151b0f7-6fa9-447f-8106-2d4c9ed6ea32" Title="BoundingBoxHelper Class" Url="html/ac1eef13-65b3-3151-a0e4-8e0faa22a038.htm">
+      <HelpTOCNode Title="BoundingBoxHelper Members" Url="html/276746bc-2f12-9207-aa53-c0dff0036d00.htm" />
+      <HelpTOCNode Title="BoundingBoxHelper Constructor " Url="html/f04da454-4872-ca0c-f575-6e7510f365fa.htm" />
+      <HelpTOCNode Id="a29c0264-a1fb-4300-9d72-a2783a468629" Title="BoundingBoxHelper Fields" Url="html/36e551e0-66df-bb7d-39d6-0232601c8032.htm">
+        <HelpTOCNode Title="InitialBox Field" Url="html/3a62c07d-4c90-a48c-db03-37d587e8cceb.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="46b8bfcc-60fa-43a2-839d-666750deb400" Title="BoundingBoxHelper Methods" Url="html/f407666a-344b-f6b5-4450-ccee500d5964.htm">
+        <HelpTOCNode Title="AddAABox Method " Url="html/01bca441-4ff4-8552-406e-572c3c786331.htm" />
+        <HelpTOCNode Title="AddBBox Method " Url="html/f205db17-294b-15b7-4ebe-91d8eec767d5.htm" />
+        <HelpTOCNode Title="AddBox Method " Url="html/4403cd39-c535-6124-66dc-7e01a77b018a.htm" />
+        <HelpTOCNode Title="AddCapsule Method " Url="html/511b5a78-393d-248a-0874-daf5cd6b3720.htm" />
+        <HelpTOCNode Id="47016590-88b3-404c-bcb8-ee79b7e1cc20" Title="AddPoint Method " Url="html/005f0023-26b6-485d-4dd7-1153e1adb69e.htm">
+          <HelpTOCNode Title="AddPoint Method (, )" Url="html/f34f67dd-fc41-94a8-baa8-4f0c7208fac6.htm" />
+          <HelpTOCNode Title="AddPoint Method (, )" Url="html/b0ed6541-d15c-45bb-e7d6-196f869ea2a3.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="AddPrimitive Method " Url="html/b6a337dd-3077-608c-7ae8-d7eda26f1575.htm" />
+        <HelpTOCNode Title="AddSegment Method " Url="html/53442351-b6b2-5227-5e57-11adda4f43eb.htm" />
+        <HelpTOCNode Id="fbaec5ea-f902-4c25-8fc6-4a4270ce2829" Title="AddSphere Method " Url="html/445f1ab4-3f57-5163-c3a1-c6a5f37d76aa.htm">
+          <HelpTOCNode Title="AddSphere Method (, )" Url="html/1aa28258-e7ff-98ab-2153-a562ed27a500.htm" />
+          <HelpTOCNode Title="AddSphere Method (Sphere, )" Url="html/665a3c9b-7517-bf94-832a-d71f14f8cf21.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="898e0e44-9dc5-404b-ade1-a8466f4b6159" Title="OverlapTest Method " Url="html/a90f60cf-8e7a-d644-7f6f-09bac8a47d4d.htm">
+          <HelpTOCNode Title="OverlapTest Method (, )" Url="html/f9d1422f-4c2f-ea4a-6f6b-37cefcf5864c.htm" />
+          <HelpTOCNode Title="OverlapTest Method (, , Single)" Url="html/d83b36c1-3cb9-03bc-b636-4b3344cf0e86.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ee6ee20d-08d0-4277-9f7b-f4f1a085a285" Title="Box Class" Url="html/724afaec-95c1-bd64-7696-170f07f52ff9.htm">
+      <HelpTOCNode Title="Box Members" Url="html/548a0e94-0a40-22ac-ff18-4b490a832f8f.htm" />
+      <HelpTOCNode Title="Box Constructor " Url="html/d2da8a11-e258-b9e7-b42b-dcadd26408d4.htm" />
+      <HelpTOCNode Id="b3a9a060-f5db-42be-98bc-a47da269e726" Title="Box Methods" Url="html/f284f773-7d80-f58f-228a-cf5963284a6f.htm">
+        <HelpTOCNode Title="Clone Method " Url="html/b83efb6d-27e8-9256-05ae-2634f9e61ae0.htm" />
+        <HelpTOCNode Title="Expand Method " Url="html/9bfd6d95-95eb-e138-6e63-aa4f7811a172.htm" />
+        <HelpTOCNode Title="GetBoundingBox Method " Url="html/fc9450de-a56b-f7f0-cbe9-820d128e83cb.htm" />
+        <HelpTOCNode Title="GetBoundingRadiusAroundCentre Method " Url="html/36051960-cdb9-0b62-6be7-303cd749c179.htm" />
+        <HelpTOCNode Id="42875cfe-87db-4685-96cc-b7db5365e21f" Title="GetCentre Method " Url="html/0eb1425b-63ad-3e09-e9aa-a7f5141feb2d.htm">
+          <HelpTOCNode Title="GetCentre Method " Url="html/c0144e2f-ee22-43a6-f7d1-1cce57f14c5b.htm" />
+          <HelpTOCNode Title="GetCentre Method ()" Url="html/7eeeabe0-1dff-110b-8034-7264d131dbb2.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetCornerPoints Method " Url="html/fdfb2534-214f-989c-6762-570375ac3bb6.htm" />
+        <HelpTOCNode Title="GetDistanceToPoint Method " Url="html/c975828d-5b01-ede2-db0c-b93d8fbe52fd.htm" />
+        <HelpTOCNode Title="GetEdges Method " Url="html/b71deea5-273b-36f5-28f7-eebfeb34686c.htm" />
+        <HelpTOCNode Title="GetEdgesAroundPoint Method " Url="html/505a4d1c-ee3f-ade7-3f03-63db8f5baa43.htm" />
+        <HelpTOCNode Title="GetHalfSideLengths Method " Url="html/af5b57ca-cb3c-ae0e-a635-4fbd10abfa34.htm" />
+        <HelpTOCNode Title="GetMassProperties Method " Url="html/769902d9-7086-2aae-3793-f958e85670ea.htm" />
+        <HelpTOCNode Title="GetSide Method " Url="html/88fb4ad8-79f8-bbdb-fc19-8dd67ea7a84f.htm" />
+        <HelpTOCNode Id="0fa1a64d-3317-4177-8861-0e474d5a4b63" Title="GetSpan Method " Url="html/aa982551-a751-1786-1bcb-2927eb8474e4.htm">
+          <HelpTOCNode Title="GetSpan Method (Single, Single, )" Url="html/d424a643-928c-a1d1-9288-62d5476001e3.htm" />
+          <HelpTOCNode Title="GetSpan Method (Single, Single, )" Url="html/53cd6b4d-b06f-489b-57a4-dcb76911b79a.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetSqDistanceToPoint Method " Url="html/eefe3f4e-1f01-ef57-2e44-c2a9810ec5c4.htm" />
+        <HelpTOCNode Title="GetSurfaceArea Method " Url="html/d075b6e7-cba7-05b9-4a9c-69f7f2633090.htm" />
+        <HelpTOCNode Title="GetVolume Method " Url="html/91d09fdd-1ec1-3a15-a280-d4d5316b7fd7.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/5a7ab2a7-8dbf-239a-8df8-e8a2604c8d16.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="b8c85599-fd83-49af-94ca-8cf02cdb6555" Title="Box Properties" Url="html/11d575cf-e337-8d6f-e536-32b0a22a67c8.htm">
+        <HelpTOCNode Title="Orientation Property " Url="html/562c01a2-eb10-3226-a221-0af899298028.htm" />
+        <HelpTOCNode Title="Position Property " Url="html/46dec474-cee5-a6d2-a9ba-f9c6601407a1.htm" />
+        <HelpTOCNode Title="SideLengths Property " Url="html/6ffdd8fb-9ea3-5f36-1616-65b7aec4c7a8.htm" />
+        <HelpTOCNode Title="Transform Property " Url="html/3c915269-f029-0041-8cee-389c9aab2d98.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="Box.BoxPointIndex Enumeration" Url="html/3cc85451-b9c6-2701-e4c1-171574d1df78.htm" />
+    <HelpTOCNode Id="0386dc3c-396c-4d04-8631-b67dbe58cbde" Title="Box.Edge Structure" Url="html/2de3c1d5-7bd1-d0be-b07a-b445f2f8175d.htm">
+      <HelpTOCNode Title="Box.Edge Members" Url="html/276986b7-cfd4-c685-da1b-52bb06dc8cd0.htm" />
+      <HelpTOCNode Title="Box.Edge Constructor " Url="html/78a8489c-a1f3-0df1-3f0d-f655004acb12.htm" />
+      <HelpTOCNode Id="5eafd825-f26b-42f4-a325-26054d5eb254" Title="Box.Edge Fields" Url="html/0f4dd434-e1c7-8d26-8330-06abf88d6903.htm">
+        <HelpTOCNode Title="Ind0 Field" Url="html/41c5bbd5-4664-d22a-81fb-94056cacf051.htm" />
+        <HelpTOCNode Title="Ind1 Field" Url="html/4240e736-e211-ce21-ca80-57ab0031c8c8.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="Box.Edge Methods" Url="html/1e6d5046-58ad-5fbc-286b-5f563238bb43.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="de95740b-9ccc-4de9-acc4-28676b0354b3" Title="Capsule Class" Url="html/fcd15f64-2306-8971-c549-2e27695d97ee.htm">
+      <HelpTOCNode Title="Capsule Members" Url="html/a23c9ffe-5848-85c1-08d4-46808a5b2554.htm" />
+      <HelpTOCNode Title="Capsule Constructor " Url="html/464b95e8-9402-2b02-3e42-0f3d7f0461f7.htm" />
+      <HelpTOCNode Id="809827d2-ffb2-45e8-90d9-8c93f47fdb2e" Title="Capsule Methods" Url="html/0cf40ea2-ab57-ae57-be65-0d9e9ec3a29e.htm">
+        <HelpTOCNode Title="Clone Method " Url="html/09c6eba4-6ed6-23d7-25f7-c19e559cd559.htm" />
+        <HelpTOCNode Title="GetBoundingBox Method " Url="html/d1eedf20-91d0-0cd5-ff69-637950bc0b1d.htm" />
+        <HelpTOCNode Title="GetEnd Method " Url="html/106b5d02-99e3-0fac-fe21-78e88f101d62.htm" />
+        <HelpTOCNode Title="GetMassProperties Method " Url="html/cf5fc127-b9e0-a3c1-b7a1-15f5970b969b.htm" />
+        <HelpTOCNode Title="GetSurfaceArea Method " Url="html/7b0ea306-be5c-6164-da0a-a3bdb3de5dc0.htm" />
+        <HelpTOCNode Title="GetVolume Method " Url="html/cf931956-3de1-3883-15b8-7b3e3774af22.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/2dd6e242-f771-4600-51d6-7532bfbf0fe6.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="861d83e9-59d3-4aca-b217-1bbd1b584c88" Title="Capsule Properties" Url="html/c994e369-b31f-217e-9864-6971bfd2d6d6.htm">
+        <HelpTOCNode Title="Length Property " Url="html/20807203-4802-c0a2-8a2d-76c4555ba555.htm" />
+        <HelpTOCNode Title="Orientation Property " Url="html/a3a89635-0c2c-570f-3056-b94bab62a10d.htm" />
+        <HelpTOCNode Title="Position Property " Url="html/98808351-ba1c-7434-2683-bdfa35e1b8c5.htm" />
+        <HelpTOCNode Title="Radius Property " Url="html/ab5c2c08-5138-ada6-25b3-66cd4dafeed3.htm" />
+        <HelpTOCNode Title="Transform Property " Url="html/11bd61c8-e4ad-cc38-ff04-c8f1ac1e331f.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="81da381c-1b22-49d8-9b69-c84cd96edf02" Title="Distance Class" Url="html/e6b5c481-fa1c-6ba8-34a9-8ddc82b70d36.htm">
+      <HelpTOCNode Title="Distance Members" Url="html/9ee0eee1-9df9-e521-1dfa-0a77e1aeeb03.htm" />
+      <HelpTOCNode Id="0bb3a9de-821f-4266-bc11-45f29c82ece7" Title="Distance Methods" Url="html/298c2e20-5c2a-c3c0-ead8-25fc9d83246c.htm">
+        <HelpTOCNode Id="8b745af9-2147-435b-a863-113c36749997" Title="PointPlaneDistance Method " Url="html/36d35f3c-926a-b469-b7c7-fc7288733f1a.htm">
+          <HelpTOCNode Title="PointPlaneDistance Method (, Plane)" Url="html/1ea2250f-795d-26a7-77a5-5567c04ba758.htm" />
+          <HelpTOCNode Title="PointPlaneDistance Method (, Plane)" Url="html/7ce7bed5-49cd-4cef-4e77-529ac37b4b16.htm" />
+          <HelpTOCNode Title="PointPlaneDistance Method (, , Single)" Url="html/b0e8ec96-49c5-9184-3ad2-c8e5aa52dfaa.htm" />
+          <HelpTOCNode Title="PointPlaneDistance Method (, , Single)" Url="html/dd3ec2ff-52fc-183b-e407-fc0deecd2ee6.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="0d229cdf-b83e-403b-8bac-55bf8c063ef0" Title="PointPointDistance Method " Url="html/3ec1a80b-ea4a-6059-7f34-bafb53825595.htm">
+          <HelpTOCNode Title="PointPointDistance Method (, )" Url="html/7fd510a6-9b27-b22a-6e1e-e642d7778f4b.htm" />
+          <HelpTOCNode Title="PointPointDistance Method (, , Single)" Url="html/478053fe-5f5c-6a0c-7f42-8d021aec04cf.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="e7d2696d-1fa8-435f-a29f-dc85d8be4f91" Title="PointPointDistanceSq Method " Url="html/a44ff847-b17f-c3cf-b8f7-291a0a7f9a8f.htm">
+          <HelpTOCNode Title="PointPointDistanceSq Method (, )" Url="html/e25806e8-99a1-e4fb-cc61-0463f54a4451.htm" />
+          <HelpTOCNode Title="PointPointDistanceSq Method (, , Single)" Url="html/8c88e002-930b-cdd6-1fd9-449eaff76563.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="0e395162-5366-428f-8b31-e38d0e7eee62" Title="PointSegmentDistance Method " Url="html/c6bbe593-0d59-f8b0-9d94-9076e4ccb747.htm">
+          <HelpTOCNode Title="PointSegmentDistance Method (, Segment)" Url="html/b445d9ca-8901-e629-96ee-8ce2173be7c7.htm" />
+          <HelpTOCNode Title="PointSegmentDistance Method (, Segment, Single)" Url="html/0c4369f2-d6b0-036a-5c32-00ee81880aa0.htm" />
+          <HelpTOCNode Title="PointSegmentDistance Method (Single, , Segment)" Url="html/a8584ec7-fdea-7428-25da-de54aacbe189.htm" />
+          <HelpTOCNode Title="PointSegmentDistance Method (Single, Single, , Segment)" Url="html/82fe1dcf-63d6-5461-8a28-51d03dca6e3b.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="4d7afba0-6ff2-4929-87e0-cf5be185ac5a" Title="PointSegmentDistanceSq Method " Url="html/839bb378-7572-7f2a-198f-f57adfdbe565.htm">
+          <HelpTOCNode Title="PointSegmentDistanceSq Method (, Segment)" Url="html/8a6db932-64e9-a26d-6900-d3ebbba1e2e9.htm" />
+          <HelpTOCNode Title="PointSegmentDistanceSq Method (, Segment, Single)" Url="html/34e304d9-37c3-c484-7821-52efdcbc9c41.htm" />
+          <HelpTOCNode Title="PointSegmentDistanceSq Method (Single, , Segment)" Url="html/deacf009-57ea-9bf7-faf3-bddd55998562.htm" />
+          <HelpTOCNode Title="PointSegmentDistanceSq Method (Single, Single, , Segment)" Url="html/c6e2fa2b-b7bf-8b7b-f099-3a40e920e254.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="PointTriangleDistanceSq Method " Url="html/c6ee1611-bf65-b6e9-5199-424b82f5dd89.htm" />
+        <HelpTOCNode Title="SegmentBoxDistanceSq Method " Url="html/40735d1e-c447-6fba-13f7-0b9f995a96a3.htm" />
+        <HelpTOCNode Title="SegmentSegmentDistanceSq Method " Url="html/77f339ab-ead1-d7aa-5f05-8e308cf64db3.htm" />
+        <HelpTOCNode Title="SegmentTriangleDistanceSq Method " Url="html/fe0a3d93-7dd5-ebc3-c9d6-ffcc3f55b9fd.htm" />
+        <HelpTOCNode Id="ea8767fc-9e91-41a0-8488-e6ee00168856" Title="SqrDistance Method " Url="html/8f89d28c-5e2c-e847-cfdd-dbf2686f5e47.htm">
+          <HelpTOCNode Title="SqrDistance Method (, Box, Single, Single, Single)" Url="html/e11e8bae-8f59-19c0-6dba-b87bd9774173.htm" />
+          <HelpTOCNode Title="SqrDistance Method (Line, Box, Single, Single, Single, Single)" Url="html/34ac4e41-6f1f-8856-088f-c3737a5f4bdb.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="faea15ee-7445-468e-a3d4-92e75ce33a88" Title="Heightmap Class" Url="html/da55e08c-f85e-2fae-5d5e-713d4dfeb19b.htm">
+      <HelpTOCNode Title="Heightmap Members" Url="html/64ad16d1-7022-4aba-e3d0-26e9ee7bb3f2.htm" />
+      <HelpTOCNode Title="Heightmap Constructor " Url="html/409eaa4f-0439-f08e-0eee-67889659a3c7.htm" />
+      <HelpTOCNode Id="001323be-40e2-4410-8251-5841d551a4a0" Title="Heightmap Methods" Url="html/066e6bec-b5e7-61e9-b86c-1079c2b578d7.htm">
+        <HelpTOCNode Title="Clone Method " Url="html/81670c79-3f97-dc95-d6e6-8101526ea783.htm" />
+        <HelpTOCNode Id="fc6b41a0-9b35-4b64-8d78-9e6de1a380e5" Title="GetBoundingBox Method " Url="html/2ea275ef-8a65-3569-1f91-b91ad34f226a.htm">
+          <HelpTOCNode Title="GetBoundingBox Method (AABox)" Url="html/8b2b17a0-5da6-57fc-cab4-50635ce356b8.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="6da91061-43d9-4459-8380-bbb727b4083b" Title="GetHeight Method " Url="html/20cd7aeb-e21c-9007-9ef9-dd82d6366dbe.htm">
+          <HelpTOCNode Title="GetHeight Method ()" Url="html/f48060cb-ad7d-334e-4e38-bf33fbfa9d82.htm" />
+          <HelpTOCNode Title="GetHeight Method (Int32, Int32)" Url="html/fde03c3e-ec51-b8c6-47a0-1ac52c469615.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="e4ceba08-e3f3-49b9-8766-dc9b8e8ca004" Title="GetHeightAndNormal Method " Url="html/52ac5c5b-2994-1ffb-feb3-a93b4c58c165.htm">
+          <HelpTOCNode Title="GetHeightAndNormal Method (Single, , )" Url="html/84606fec-1358-c148-734c-60f94385b2e6.htm" />
+          <HelpTOCNode Title="GetHeightAndNormal Method (Single, , Int32, Int32)" Url="html/1d94d92c-f503-7472-f3c3-0a872bd78eec.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetMassProperties Method " Url="html/181142d1-ee5f-4047-1ecf-30d61e49c78c.htm" />
+        <HelpTOCNode Id="ec0eeadd-e2d7-4541-ab87-61714e20af33" Title="GetNormal Method " Url="html/cad990b5-4f32-7a26-950c-d125d19407c1.htm">
+          <HelpTOCNode Title="GetNormal Method ()" Url="html/d420d23e-a8ee-3c14-b704-16fe0dce7ed3.htm" />
+          <HelpTOCNode Title="GetNormal Method (Int32, Int32)" Url="html/63447c36-cdbd-3cdc-9506-4b8b8ae86f7e.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetSurfaceArea Method " Url="html/81331bab-c8cd-3826-42b6-a0e0be4cfa5b.htm" />
+        <HelpTOCNode Id="7291423a-6c84-4d53-bb48-ad1dd8e843cb" Title="GetSurfacePos Method " Url="html/a0cb5384-cb8e-669e-1d3e-3f3a7cc3c87d.htm">
+          <HelpTOCNode Title="GetSurfacePos Method (, )" Url="html/123ac1b9-53b4-59e8-0fa4-43f4461fd173.htm" />
+          <HelpTOCNode Title="GetSurfacePos Method (, Int32, Int32)" Url="html/8e5a65be-56b0-a4c1-153b-ba92ba05c3d9.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="3180d716-c4a2-4e5e-85fe-1646b97a9c1e" Title="GetSurfacePosAndNormal Method " Url="html/582ed42e-b7b4-a6be-7ab9-b217c1e03c84.htm">
+          <HelpTOCNode Title="GetSurfacePosAndNormal Method (, , )" Url="html/44e22c44-5cae-133b-7334-896b0ee18d92.htm" />
+          <HelpTOCNode Title="GetSurfacePosAndNormal Method (, , Int32, Int32)" Url="html/25137718-ec61-63a6-eb94-149f72ef8cd7.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetVolume Method " Url="html/f50c2e07-b63c-d4d6-7289-9291bc1845c5.htm" />
+        <HelpTOCNode Title="RecalculateBoundingBox Method " Url="html/0443a874-f703-fc75-06b5-431877d8438f.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/f28fe4ba-1b9c-9ee7-9be4-4b86ec970488.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="1ac053f7-7eb8-410f-825f-707660d94483" Title="Heightmap Properties" Url="html/cd8f991b-6dbd-d26c-f752-f16164820f73.htm">
+        <HelpTOCNode Title="Heights Property " Url="html/9a5ab4d2-a1f5-e30c-0cac-41c1e147d1a2.htm" />
+        <HelpTOCNode Title="Max Property " Url="html/33b27e52-969e-0ac5-0b5d-01790a9ed454.htm" />
+        <HelpTOCNode Title="Min Property " Url="html/e9626dce-dc8b-bd22-d128-ddf961d9094b.htm" />
+        <HelpTOCNode Title="Transform Property " Url="html/ebef8105-54b4-fe9a-0d4e-8f8fdf09282b.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="48786e8b-da34-4904-8c1c-62df4240fb0f" Title="IndexedTriangle Structure" Url="html/67df54fa-07a5-39b3-c81f-54484ad9285e.htm">
+      <HelpTOCNode Title="IndexedTriangle Members" Url="html/ceae225b-1486-886b-3d56-d3afa0582d59.htm" />
+      <HelpTOCNode Id="360f1350-f6e1-4dfa-b352-f8a9d0bdcf6f" Title="IndexedTriangle Constructor " Url="html/3d65088c-8c12-5ea9-ac01-d095b6abbf28.htm">
+        <HelpTOCNode Title="IndexedTriangle Constructor (Int32, Int32, Int32, [])" Url="html/e8d9d109-b413-2ca7-b227-26b674599b51.htm" />
+        <HelpTOCNode Title="IndexedTriangle Constructor (Int32, Int32, Int32, List())" Url="html/e8423fbd-a81a-21ff-86e2-c7b666575ba8.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="d5fe6d69-d98f-41ad-af8e-4eff651a04dd" Title="IndexedTriangle Methods" Url="html/187d0fbc-7382-4b9d-602a-5866bd6bf942.htm">
+        <HelpTOCNode Title="GetVertexIndex Method " Url="html/63f00c6a-d9b1-77c2-cfa4-4729d14fd5b0.htm" />
+        <HelpTOCNode Title="GetVertexIndices Method " Url="html/4efe58c0-cb3f-d618-f1df-ca223347190e.htm" />
+        <HelpTOCNode Title="IsEdgeConvex Method " Url="html/b655c02b-d9f7-eeb3-b972-fb1ac27ea506.htm" />
+        <HelpTOCNode Title="IsPointConvex Method " Url="html/b664ef7e-4cce-a17f-3013-cee70427bfce.htm" />
+        <HelpTOCNode Title="SetEdgeConvex Method " Url="html/5ee86ab1-2fb8-ae76-6433-25d0d17a3e02.htm" />
+        <HelpTOCNode Title="SetPointConvex Method " Url="html/b0ecac3b-d674-85cd-f11a-1560d0932da7.htm" />
+        <HelpTOCNode Id="d8f26b19-ce61-4a45-b8cb-83bfdfe85d2a" Title="SetVertexIndices Method " Url="html/f057308d-f9b1-f3e3-44d0-654f94069725.htm">
+          <HelpTOCNode Title="SetVertexIndices Method (Int32, Int32, Int32, [])" Url="html/207a9561-0f6a-2109-1e4f-f5c1bc875864.htm" />
+          <HelpTOCNode Title="SetVertexIndices Method (Int32, Int32, Int32, List())" Url="html/975632a5-bfa0-beff-3565-d0bf6e9be72f.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="c7067bf5-97ca-4142-bfa9-388609066f7f" Title="IndexedTriangle Properties" Url="html/8e49658e-8af3-8421-45ed-14066a91522e.htm">
+        <HelpTOCNode Title="Plane Property " Url="html/2b3ba432-4e88-ba45-3c9e-d21c5bb03da7.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="47a2fd6a-9974-495b-9206-dd15f3f1a62e" Title="Intersection Class" Url="html/72f7274c-f36a-55c2-4302-08351a6dd0ab.htm">
+      <HelpTOCNode Title="Intersection Members" Url="html/158f0b1e-efd4-c504-9730-4d2657fedc4d.htm" />
+      <HelpTOCNode Id="bdf769d2-683b-4d42-97a9-6c1bffe7db62" Title="Intersection Methods" Url="html/0aa33be9-82d6-2302-7c7e-7e4b8d394cf4.htm">
+        <HelpTOCNode Title="LinePlaneIntersection Method " Url="html/9d89644b-6f64-c8a8-ecdc-e434cfe96f44.htm" />
+        <HelpTOCNode Title="RayPlaneIntersection Method " Url="html/5d205908-7cd4-520b-2657-a5f7b89d5c79.htm" />
+        <HelpTOCNode Title="SegmentCapsuleIntersection Method " Url="html/c88f0494-8c83-1470-38cd-86bb1bd80dc7.htm" />
+        <HelpTOCNode Title="SegmentInfiniteCylinderIntersection Method " Url="html/4fcff466-5795-8a79-2717-df2a06a91eb5.htm" />
+        <HelpTOCNode Title="SegmentPlaneIntersection Method " Url="html/2f803aeb-b482-a109-e86e-7e03f63d2351.htm" />
+        <HelpTOCNode Title="SegmentSphereIntersection Method " Url="html/1d8015fb-b352-3c14-2ca5-570f71f41b2f.htm" />
+        <HelpTOCNode Title="SegmentTriangleIntersection Method " Url="html/31d9cd47-fd0f-b452-5a9f-d5597c862768.htm" />
+        <HelpTOCNode Title="SweptSpherePlaneIntersection Method " Url="html/07ddd6fd-c83f-1c99-4110-bff91fa22c21.htm" />
+        <HelpTOCNode Title="SweptSphereTriangleIntersection Method " Url="html/4e15d05e-19a7-2c55-a783-a9a7487ef9f1.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="Intersection.CornersToTest Enumeration" Url="html/708e4ea8-48a0-d64b-09ed-3c72d9cdbce1.htm" />
+    <HelpTOCNode Title="Intersection.EdgesToTest Enumeration" Url="html/0df2e240-bb07-423b-bdb7-f5e5363715e8.htm" />
+    <HelpTOCNode Id="d7739359-5fdc-496b-8ddd-667a9664ca3e" Title="Line Structure" Url="html/078a13bf-c0b6-3512-2057-78fd521dcaf0.htm">
+      <HelpTOCNode Title="Line Members" Url="html/55b8643a-47ed-c9dc-ea9b-97f7e68a496c.htm" />
+      <HelpTOCNode Title="Line Constructor " Url="html/80d265e5-1d44-781e-39cc-ce9c78779e7d.htm" />
+      <HelpTOCNode Id="f85853e0-ac48-4b12-a8fa-ff4c43c3ed4e" Title="Line Fields" Url="html/ea58849b-1e1f-494e-977e-8f8a1ea070e0.htm">
+        <HelpTOCNode Title="Dir Field" Url="html/bdd49071-200b-fbbe-0820-730a142f4b8c.htm" />
+        <HelpTOCNode Title="Origin Field" Url="html/58de1f77-34e9-e3b5-d489-bd63a8afc91c.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="94c1d20f-99e0-4e24-91ff-5a6b5f548acf" Title="Line Methods" Url="html/74dde4c9-13a6-1601-e612-caa921016dd9.htm">
+        <HelpTOCNode Title="GetOrigin Method " Url="html/4d4ade84-ebff-33f2-5a1e-a411670422e2.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ecb8af04-c909-4bfe-be2f-cd53f79b36f8" Title="Octree Class" Url="html/d01fdf8e-0692-b3c9-3d1c-0af3c5eb3453.htm">
+      <HelpTOCNode Title="Octree Members" Url="html/c7ef804a-b471-5468-18f4-4a51dfdc0460.htm" />
+      <HelpTOCNode Id="ca3bf34c-3938-474c-98c7-a2e537cb298c" Title="Octree Constructor " Url="html/6cb08571-7186-d68e-2e2b-01192ed6ee57.htm">
+        <HelpTOCNode Title="Octree Constructor " Url="html/8ee32ab1-c6c2-5ae7-07a2-64ec45547d7c.htm" />
+        <HelpTOCNode Title="Octree Constructor (List(), List(TriangleVertexIndices))" Url="html/1ed42180-edb8-5b5a-ef6a-1f6973630eea.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="ca355e5f-9529-4742-b949-6c659398e6ba" Title="Octree Methods" Url="html/a0e394f4-e85e-c7e6-49ce-218355fdb629.htm">
+        <HelpTOCNode Title="AddTriangles Method " Url="html/5c5a02c8-5c08-3427-2277-5be936466a1e.htm" />
+        <HelpTOCNode Title="BuildOctree Method " Url="html/5ef559d8-e4a3-b47f-231b-41709b9eee0e.htm" />
+        <HelpTOCNode Title="Clear Method " Url="html/c78ae1ac-e0d9-3154-8c89-99a536d35034.htm" />
+        <HelpTOCNode Title="GetTriangle Method " Url="html/c73141e1-368a-dbf9-9dcb-908f8e4d8aa7.htm" />
+        <HelpTOCNode Title="GetTrianglesIntersectingtAABox Method " Url="html/abbaf697-f7a7-1660-b0f5-03afd9f90c4e.htm" />
+        <HelpTOCNode Id="fab66759-4c2c-47bc-b977-bd91e88b63e7" Title="GetVertex Method " Url="html/67100d33-5c35-ffc7-f507-8950aa6e0272.htm">
+          <HelpTOCNode Title="GetVertex Method (Int32)" Url="html/db7fb5ba-d92c-6ba0-f0d8-a45e9a63a6a6.htm" />
+          <HelpTOCNode Title="GetVertex Method (Int32, )" Url="html/ca7020f1-52b5-fd5c-ab7f-1b7aa5bef4d9.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="0f3e9449-dac9-4a93-8391-f5c0d046b01a" Title="Octree Properties" Url="html/af93bb50-83c4-e03c-7039-a67494415438.htm">
+        <HelpTOCNode Title="BoundingBox Property " Url="html/738847f0-26eb-33c1-be42-bb657fd976cc.htm" />
+        <HelpTOCNode Title="NumTriangles Property " Url="html/e19ac7e4-bb62-7d3e-ecf7-9751617e4d56.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="b405ee24-2ff3-4277-bed5-52f5f7b4e300" Title="Overlap Class" Url="html/f623f1b7-0e88-e9f5-1727-09047b7b6e3f.htm">
+      <HelpTOCNode Title="Overlap Members" Url="html/0df08038-995d-c615-82bb-33f66cf7c8f0.htm" />
+      <HelpTOCNode Title="Overlap Constructor " Url="html/6df0ef98-abef-d1ac-7f3d-c15a522fa8f8.htm" />
+      <HelpTOCNode Id="9f4fea6d-9d5e-45c7-a3e1-1f6a8faf1de4" Title="Overlap Methods" Url="html/5e16b5ca-74d6-a18b-6ce1-daa25555baa3.htm">
+        <HelpTOCNode Title="SegmentAABoxOverlap Method " Url="html/7f853cfa-317d-9d00-6b9a-2acf1db80f4b.htm" />
+        <HelpTOCNode Title="SegmentTriangleOverlap Method " Url="html/78fe8dbf-f0dd-7963-7216-071efb1f6105.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="b5caae8a-4663-405c-b2af-954fbb73c20e" Title="Plane Class" Url="html/f01c7e02-4d06-fd9f-6237-00a96ac3091c.htm">
+      <HelpTOCNode Title="Plane Members" Url="html/2573c32e-0f5e-73e0-8806-ccd8a082153b.htm" />
+      <HelpTOCNode Id="d2b163fd-1e11-4d98-9f71-8a37763fd432" Title="Plane Constructor " Url="html/75db4118-37cd-63c5-24a6-ea7b89f12f2f.htm">
+        <HelpTOCNode Title="Plane Constructor " Url="html/516654ca-2d5e-1196-f380-2a1e5dae2a26.htm" />
+        <HelpTOCNode Title="Plane Constructor (, )" Url="html/792b1190-e78a-1974-49f3-8078b144f7d7.htm" />
+        <HelpTOCNode Title="Plane Constructor (, Single)" Url="html/76ae79df-d4a3-313c-e598-60a241130d1d.htm" />
+        <HelpTOCNode Title="Plane Constructor (, , )" Url="html/98a81090-cdcb-f347-27ff-a4a8876499e9.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="670227df-5e1d-48dd-92ae-c0c06b5e60b0" Title="Plane Methods" Url="html/4cfaecd9-b9e7-3f52-bcce-b1b1697130e4.htm">
+        <HelpTOCNode Title="Clone Method " Url="html/2e1bc607-1477-4ab4-5d23-b1ee3cf2a99f.htm" />
+        <HelpTOCNode Title="GetBoundingBox Method " Url="html/55682da3-2e92-8bfe-8ec8-d294e52984d2.htm" />
+        <HelpTOCNode Title="GetInverse Method " Url="html/9be830b8-8314-bc12-bce8-5694a6528306.htm" />
+        <HelpTOCNode Title="GetMassProperties Method " Url="html/721ff99b-6836-234a-308f-75fa49f7bffb.htm" />
+        <HelpTOCNode Title="GetSurfaceArea Method " Url="html/6ef5d6be-e529-8c62-55f4-231a6000e92c.htm" />
+        <HelpTOCNode Title="GetVolume Method " Url="html/bcc801cd-65fd-9bd4-1833-a6bc756cab5f.htm" />
+        <HelpTOCNode Title="Invert Method " Url="html/108bfe5e-9f3a-ae37-d65f-2661f5499016.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/8c80f53e-557e-c6e8-b4ea-36d88a86b522.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="0839a986-8592-4e31-baf9-6038c5a0e6a5" Title="Plane Properties" Url="html/4e1956ba-ba17-dd84-6ae5-bf75aa093e61.htm">
+        <HelpTOCNode Title="D Property " Url="html/d711f470-0ddf-6728-3aa8-87f2a09a9f96.htm" />
+        <HelpTOCNode Title="InverseTransformMatrix Property " Url="html/ebe89f50-b139-fb65-4d28-87a36d09e181.htm" />
+        <HelpTOCNode Title="Normal Property " Url="html/6136bc70-dbc7-7dec-5b05-02d622325302.htm" />
+        <HelpTOCNode Title="Transform Property " Url="html/ab5580aa-e607-25c8-93fd-324ce93e6eac.htm" />
+        <HelpTOCNode Title="TransformMatrix Property " Url="html/c24da069-4169-18d6-8970-a12fd9edf1f8.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="4062a687-c001-46b1-ba6c-41455f990092" Title="Primitive Class" Url="html/2cde814d-044f-ad14-0fff-b46057328dea.htm">
+      <HelpTOCNode Title="Primitive Members" Url="html/0bb97462-eab1-6469-6559-e16fbef25cbb.htm" />
+      <HelpTOCNode Title="Primitive Constructor " Url="html/35275ef1-7ee0-4672-b0ec-6fb3e97ce296.htm" />
+      <HelpTOCNode Id="ced6b5f4-7eb8-408a-8dd9-e203580d3456" Title="Primitive Methods" Url="html/59585e01-27e1-3aaa-b036-9eba17376b53.htm">
+        <HelpTOCNode Title="Clone Method " Url="html/4e070f0b-39bc-dc44-17bc-06f51f7c4db8.htm" />
+        <HelpTOCNode Id="07eaff78-c569-426a-a894-7f7da39948d8" Title="GetBoundingBox Method " Url="html/7251aaae-bd20-06cc-cde4-096b66bb6675.htm">
+          <HelpTOCNode Title="GetBoundingBox Method " Url="html/b36ca1ac-c855-3b06-0674-f9750f17d771.htm" />
+          <HelpTOCNode Title="GetBoundingBox Method (AABox)" Url="html/7742436a-7f14-4be6-1d51-7fa7085e69ff.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetMassProperties Method " Url="html/e3a9e66b-67f2-3050-cd2e-175a424e4868.htm" />
+        <HelpTOCNode Title="GetSurfaceArea Method " Url="html/6de990ff-54e1-082b-970d-05e95f9abd14.htm" />
+        <HelpTOCNode Title="GetVolume Method " Url="html/d8a32781-ecd8-1d39-fb20-362584502fb4.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/9154d146-bf1a-3fc9-d807-850297a3f29a.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="fb2f3285-b4e7-4197-9858-462a8e644918" Title="Primitive Properties" Url="html/152c88e8-3e60-9806-00d4-7fa658b5af47.htm">
+        <HelpTOCNode Title="InverseTransformMatrix Property " Url="html/bc1f922e-ed04-bfeb-0a92-f48f3538b593.htm" />
+        <HelpTOCNode Title="Transform Property " Url="html/19a794b3-d44d-d718-210e-c8b593977aa2.htm" />
+        <HelpTOCNode Title="TransformMatrix Property " Url="html/4a706717-9918-3464-7d40-ee06b9ef19d0.htm" />
+        <HelpTOCNode Title="Type Property " Url="html/e4b07c5c-b376-a2c1-f731-fce5e53c4e4e.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="23384d39-8989-4c4f-95b9-d9c0698deed1" Title="PrimitiveProperties Structure" Url="html/caff4c13-6c47-349d-3df9-bca622515191.htm">
+      <HelpTOCNode Title="PrimitiveProperties Members" Url="html/c294febf-1624-e9d8-5e7c-95a635b4212a.htm" />
+      <HelpTOCNode Title="PrimitiveProperties Constructor " Url="html/4fc59ec1-f687-964e-93b6-e645094c3451.htm" />
+      <HelpTOCNode Id="ec60bc5d-a506-4494-9e61-9587d825c17f" Title="PrimitiveProperties Fields" Url="html/9be3ea7a-984d-34da-544a-70ef448976f3.htm">
+        <HelpTOCNode Title="MassDistribution Field" Url="html/26be14e2-3644-4e30-e143-db5c995f1e56.htm" />
+        <HelpTOCNode Title="MassOrDensity Field" Url="html/9c5b5636-d53b-04e2-3d51-5a4526f6d560.htm" />
+        <HelpTOCNode Title="MassType Field" Url="html/b138c035-332c-4cd2-9354-5a80f6d90caf.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="PrimitiveProperties Methods" Url="html/cb366467-c6f2-7e41-e043-c89bb7ab6e62.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Title="PrimitiveProperties.MassDistributionEnum Enumeration" Url="html/c6b2818f-6ba4-975d-75ee-1164a4819839.htm" />
+    <HelpTOCNode Title="PrimitiveProperties.MassTypeEnum Enumeration" Url="html/f20d8d51-8070-270b-5289-cbb6c071e5c1.htm" />
+    <HelpTOCNode Title="PrimitiveType Enumeration" Url="html/c12993ef-094a-8383-01e4-3bb39be24259.htm" />
+    <HelpTOCNode Id="04c14bd5-1a5a-432d-8daa-a6c7e0c4544e" Title="Ray Structure" Url="html/b7ce22ff-f028-1918-9536-ba3a6db47270.htm">
+      <HelpTOCNode Title="Ray Members" Url="html/e9a12ec0-bed3-f9de-02d5-511b38767155.htm" />
+      <HelpTOCNode Title="Ray Constructor " Url="html/640e4d5a-af92-9744-6f94-969b4a8e9367.htm" />
+      <HelpTOCNode Id="d059c9d7-937b-4655-bad4-0078979f6e16" Title="Ray Fields" Url="html/53768b74-f416-e654-cb9b-1dd9b2640343.htm">
+        <HelpTOCNode Title="Dir Field" Url="html/32cb713c-3f91-ca54-83b2-e869d7ac6981.htm" />
+        <HelpTOCNode Title="Origin Field" Url="html/df643a03-6a91-8a4c-35b4-dcc107c168f0.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="953bebc7-dda2-43a1-b710-a0849bd24bf8" Title="Ray Methods" Url="html/13cf4a3d-8676-a28f-d083-612649d64512.htm">
+        <HelpTOCNode Title="GetOrigin Method " Url="html/a63b09e8-3d61-d26b-f659-323855e670d9.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="153172c6-d483-407a-b6dd-fe19e020338a" Title="Rectangle Structure" Url="html/a15bc7be-b2ee-a439-99e1-5eac0fab6741.htm">
+      <HelpTOCNode Title="Rectangle Members" Url="html/f99ebb7f-d959-8691-9a81-243e5a6bfc0e.htm" />
+      <HelpTOCNode Title="Rectangle Constructor " Url="html/4a068dd9-c2db-3a9c-548b-64e058213c7a.htm" />
+      <HelpTOCNode Id="da4f9832-7939-4cd7-9147-df5795f010b8" Title="Rectangle Fields" Url="html/39ca19a3-89d2-1738-563a-8b64ad0fd31d.htm">
+        <HelpTOCNode Title="Edge0 Field" Url="html/fa8d380d-38bd-3d35-c420-b4258c939be2.htm" />
+        <HelpTOCNode Title="Edge1 Field" Url="html/9dde1502-a8c4-de40-c6de-16046dcb5940.htm" />
+        <HelpTOCNode Title="Origin Field" Url="html/b9a063d8-565c-fa4a-3810-c1a8edfe043a.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="40947826-8d90-43b6-8050-3de2213925be" Title="Rectangle Methods" Url="html/320850d2-7f46-402d-2a07-7c51ce334fef.htm">
+        <HelpTOCNode Title="GetPoint Method " Url="html/5fcedf90-ae64-7b63-538f-0c065d10ea01.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="d363a676-003f-48ff-b5e6-30d542c80d37" Title="Segment Structure" Url="html/59c132d9-152a-1516-47a9-e8c137dd6358.htm">
+      <HelpTOCNode Title="Segment Members" Url="html/78021965-b409-fa19-8488-c4db4d711b8d.htm" />
+      <HelpTOCNode Id="f4d46319-0d3e-446a-b072-f3ff6bdb82d6" Title="Segment Constructor " Url="html/666ec73a-5a5d-c7d2-6dd1-eaf3a9e2b0b1.htm">
+        <HelpTOCNode Title="Segment Constructor (, )" Url="html/2a1d94b9-7a79-d7e4-420d-e621ec988205.htm" />
+        <HelpTOCNode Title="Segment Constructor (, )" Url="html/af9c356e-4fd8-332d-33c6-0bcb3a4394dd.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="d2d1fc77-30ca-4e8b-99a2-517cb593a8c6" Title="Segment Fields" Url="html/9dac6340-5b6f-ac3b-be5b-c07eaccddeb6.htm">
+        <HelpTOCNode Title="Delta Field" Url="html/734d4d4e-fee2-c153-5bf3-b42f8095f70d.htm" />
+        <HelpTOCNode Title="Origin Field" Url="html/dbbbb7f7-d364-767c-8b84-8b7b03fa76bb.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="6d16d413-35fb-46a1-af8e-d3b259ddea92" Title="Segment Methods" Url="html/3f997e61-df9f-3012-073c-760b7cb83c14.htm">
+        <HelpTOCNode Title="GetEnd Method " Url="html/8dbb4cd7-5734-943d-d761-c6c68784cd93.htm" />
+        <HelpTOCNode Id="99c33be8-7064-42a1-aff3-91d763b65cb8" Title="GetPoint Method " Url="html/974bfac8-1c20-0070-ecd7-211220a51604.htm">
+          <HelpTOCNode Title="GetPoint Method (Single)" Url="html/84ac3947-0909-9efd-c263-321f9f5741b2.htm" />
+          <HelpTOCNode Title="GetPoint Method (, Single)" Url="html/51d89aee-6da0-368f-f1c1-b92d73c8bb64.htm" />
+          <HelpTOCNode Title="GetPoint Method (Single, )" Url="html/ea78d9d8-a7d0-a0dd-edc5-272cf02cd434.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="c8f3465c-5eb8-4b94-982b-33bf120e42b0" Title="Sphere Class" Url="html/e145fc5a-6dc5-738f-1484-a3c1bae3e663.htm">
+      <HelpTOCNode Title="Sphere Members" Url="html/48c29acd-a9f8-0f79-5ecd-8eb28345d381.htm" />
+      <HelpTOCNode Title="Sphere Constructor " Url="html/e802eb62-8ccf-a16d-cea3-01a18e8559d9.htm" />
+      <HelpTOCNode Id="aa5f3727-35de-45a5-a855-f6c3775bbb04" Title="Sphere Methods" Url="html/143fac3c-616d-b7ec-4e39-b822b22c63d4.htm">
+        <HelpTOCNode Title="Clone Method " Url="html/a891f58b-f39c-69fe-7560-2e77f784c55d.htm" />
+        <HelpTOCNode Title="GetBoundingBox Method " Url="html/d786c4d7-2b44-62d5-494c-48523a98e371.htm" />
+        <HelpTOCNode Title="GetMassProperties Method " Url="html/614820c7-71b0-d40d-99aa-87fedaa3076e.htm" />
+        <HelpTOCNode Title="GetSurfaceArea Method " Url="html/b6754bb6-8cda-453f-3d3c-384b40755fc9.htm" />
+        <HelpTOCNode Title="GetVolume Method " Url="html/2956d460-136f-63a0-63fb-930724ad4401.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/d5ccd79d-4604-ba3a-9846-152faceac054.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="02a7cecc-aa24-411a-9f87-d5db8c39f1f2" Title="Sphere Properties" Url="html/757e2551-764c-5498-07ca-7b7ddc2ca895.htm">
+        <HelpTOCNode Title="HugeSphere Property " Url="html/ec99e8bf-66ae-250a-7d71-bf50c6ae03bc.htm" />
+        <HelpTOCNode Title="Position Property " Url="html/f54991cb-e1ba-22cf-4904-4c49d5236813.htm" />
+        <HelpTOCNode Title="Radius Property " Url="html/696dba01-3b3e-6794-7aa9-4d4cdc67827a.htm" />
+        <HelpTOCNode Title="Transform Property " Url="html/aca02a88-22da-2b75-61a7-acd54e516154.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="34965331-2a18-4ef9-992a-c55ec0e1f766" Title="Triangle Structure" Url="html/9c5fc3e6-4cd8-2393-6fd9-58db71dd18c2.htm">
+      <HelpTOCNode Title="Triangle Members" Url="html/41101a97-dcc9-e17e-8efa-3001c1670205.htm" />
+      <HelpTOCNode Id="8bc7d43b-2fb3-4f73-bfd7-a4ff5ff4e307" Title="Triangle Constructor " Url="html/315eb367-1edb-ea02-9726-87e53a6f2e7a.htm">
+        <HelpTOCNode Title="Triangle Constructor (, , )" Url="html/45848a08-4559-8a9a-8022-c96de2a643c2.htm" />
+        <HelpTOCNode Title="Triangle Constructor (, , )" Url="html/aaf801cd-1377-f4bf-02bf-b902b3f78839.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="cb486ffe-57d5-4d1e-975f-00f506a58c2c" Title="Triangle Methods" Url="html/f5771edd-ae41-38c6-f520-3acdb1938d48.htm">
+        <HelpTOCNode Id="a72d7a2e-e0aa-4b8b-8720-6ff9827af8fa" Title="GetPoint Method " Url="html/7c8faff0-4f6a-f1c4-7ada-9fc10809f8b8.htm">
+          <HelpTOCNode Title="GetPoint Method (Int32)" Url="html/04ea85ec-ce9d-d045-1745-5644e971f772.htm" />
+          <HelpTOCNode Title="GetPoint Method (, Int32)" Url="html/211ab6dc-24e0-80f1-0629-0185d539b63b.htm" />
+          <HelpTOCNode Title="GetPoint Method (Int32, )" Url="html/354ebe8e-c2ab-4f4a-237a-d30e3dcc44a8.htm" />
+          <HelpTOCNode Title="GetPoint Method (Single, Single)" Url="html/c69d5804-cf54-d36d-c8c6-8ee6c7efee9a.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="767e78ea-cb9c-46bc-86b8-3da9a226186b" Title="GetSpan Method " Url="html/09850234-d1fd-b0a0-e1b3-ecc1a647fc68.htm">
+          <HelpTOCNode Title="GetSpan Method (Single, Single, )" Url="html/b88d881e-0fa3-4019-1217-e24a3b6fefe8.htm" />
+          <HelpTOCNode Title="GetSpan Method (Single, Single, )" Url="html/7e3056b9-19d1-aba6-17fd-eff55c694c88.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="c1ef8dc1-a631-48fa-b046-c0e923bcdb69" Title="Triangle Properties" Url="html/0a7161f2-5274-5b45-cea4-0f0739152e47.htm">
+        <HelpTOCNode Title="Centre Property " Url="html/703db289-2f33-731a-b737-e2322bba4b15.htm" />
+        <HelpTOCNode Title="Edge0 Property " Url="html/3ef12895-0655-49a5-94ed-ef09aa32f855.htm" />
+        <HelpTOCNode Title="Edge1 Property " Url="html/561779ae-e1ed-a815-7790-77288f384ff6.htm" />
+        <HelpTOCNode Title="Edge2 Property " Url="html/11514514-762b-20d4-df4d-6ec432972ae2.htm" />
+        <HelpTOCNode Title="Normal Property " Url="html/68567fa8-d4f8-4799-6fdc-eeb43d7f3835.htm" />
+        <HelpTOCNode Title="Origin Property " Url="html/d3c9cfb8-916f-9367-6042-5ab0f509e1f1.htm" />
+        <HelpTOCNode Title="Plane Property " Url="html/c6077a60-59fa-91de-0f66-d6b91d4237ad.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="1abf8248-ea16-44f8-8b3b-88541c456c25" Title="TriangleMesh Class" Url="html/68a26a73-d4ef-7232-0694-e33d267eee86.htm">
+      <HelpTOCNode Title="TriangleMesh Members" Url="html/85790342-e091-f619-639b-479885fc3cdf.htm" />
+      <HelpTOCNode Title="TriangleMesh Constructor " Url="html/c2ebee43-13be-c39e-e945-dd516de54aaf.htm" />
+      <HelpTOCNode Id="6d3a0bad-66ae-4db3-a166-c832bc60fd64" Title="TriangleMesh Methods" Url="html/091df5c3-5ed0-73b5-6e5a-45f982c3c011.htm">
+        <HelpTOCNode Title="Clone Method " Url="html/7a95a0ae-cf17-478b-15df-3e70df4b68e2.htm" />
+        <HelpTOCNode Title="CreateMesh Method " Url="html/0ed8c9ef-2a10-a6c1-a62e-da8d5743a04c.htm" />
+        <HelpTOCNode Id="e969e385-567d-4fdf-836e-baf98ecb1959" Title="GetBoundingBox Method " Url="html/28cef9be-e037-3e58-8ab3-fcbeb651098b.htm">
+          <HelpTOCNode Title="GetBoundingBox Method (AABox)" Url="html/ab5aed8c-1a88-4628-ed4c-7083d019778c.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetMassProperties Method " Url="html/e6ceb593-df27-eab7-a4a1-647ecdd43390.htm" />
+        <HelpTOCNode Title="GetNumTriangles Method " Url="html/50b8a76e-9014-9f72-84c0-9c0280e7b42b.htm" />
+        <HelpTOCNode Title="GetSurfaceArea Method " Url="html/3f6d9ab1-d9fd-d27a-99b5-c471d0fe5334.htm" />
+        <HelpTOCNode Title="GetTriangle Method " Url="html/895dd7fc-599d-aa19-224f-c0add9fe4b17.htm" />
+        <HelpTOCNode Title="GetTrianglesIntersectingtAABox Method " Url="html/c0013fa8-0aa3-ee55-d38a-f3db04ec056f.htm" />
+        <HelpTOCNode Id="34ab0457-236a-4a9d-85dd-c66a5bd74d07" Title="GetVertex Method " Url="html/c07fd729-1633-fe83-0bc9-fffaaa16acfb.htm">
+          <HelpTOCNode Title="GetVertex Method (Int32)" Url="html/74158435-bc8b-0e24-58af-290301f23249.htm" />
+          <HelpTOCNode Title="GetVertex Method (Int32, )" Url="html/1652c6bc-b7b8-9b4c-0ee7-b08a4b931046.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetVolume Method " Url="html/1d51c249-ec15-3a9a-18d7-ed91c79c58a8.htm" />
+        <HelpTOCNode Title="SegmentIntersect Method " Url="html/bbaab72f-db35-6ba0-13a7-8005661890e4.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="14c0d559-7718-49dd-97ff-e4cbd07ee3c5" Title="TriangleMesh Properties" Url="html/0fd406f3-89ef-4045-0972-7104a9afab6b.htm">
+        <HelpTOCNode Title="InverseTransformMatrix Property " Url="html/5e043a6e-ca0d-0e41-bf2c-aaab9a5b63fb.htm" />
+        <HelpTOCNode Title="Octree Property " Url="html/40966ee7-7c70-9396-1ef6-4f2ed8a5ca94.htm" />
+        <HelpTOCNode Title="Transform Property " Url="html/b9385fac-2283-4e22-9184-ea6a0b256472.htm" />
+        <HelpTOCNode Title="TransformMatrix Property " Url="html/863a4c2d-8f6d-879a-db91-dbec7ca1e5d2.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="c4a057d0-bf50-44eb-bf82-81f9f51789aa" Title="TriangleVertexIndices Structure" Url="html/c2d5da0e-8fca-da54-5718-f91678f7f661.htm">
+      <HelpTOCNode Title="TriangleVertexIndices Members" Url="html/0aac75bb-7a39-47a7-8b9a-b284be2bc0cd.htm" />
+      <HelpTOCNode Title="TriangleVertexIndices Constructor " Url="html/164f5380-5197-8fe1-083a-10e4cf4fec56.htm" />
+      <HelpTOCNode Id="882a8d6d-4757-4745-9346-c4907d69ab19" Title="TriangleVertexIndices Fields" Url="html/84748093-e433-289e-5e34-4a71da3ad136.htm">
+        <HelpTOCNode Title="I0 Field" Url="html/74cf459d-8d6d-8cb8-a160-3fd887713b14.htm" />
+        <HelpTOCNode Title="I1 Field" Url="html/3350c258-e819-40ec-60af-87eaba759c5b.htm" />
+        <HelpTOCNode Title="I2 Field" Url="html/1a8fc0a2-6647-97bf-1eec-77fe06f8c7f7.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="c9d921fe-6578-453d-9a6f-1174b6cc2a10" Title="TriangleVertexIndices Methods" Url="html/86054e35-09c5-c632-a3c3-b76d7a08eb18.htm">
+        <HelpTOCNode Title="Set Method " Url="html/4a3c098c-b927-54e8-2d20-d42dd8e29655.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="0ea4b1ce-510e-4edb-ad70-677b23b868d7" Title="JigLibX.Math Namespace" Url="html/d47f0ba1-a1d0-b8b6-91e2-9ceaf44b2f9c.htm">
+    <HelpTOCNode Id="6d938184-e3a7-4c7f-a498-58a1a11c5864" Title="JiggleMath Class" Url="html/df9b6470-59e1-544b-543e-e237145066d2.htm">
+      <HelpTOCNode Title="JiggleMath Members" Url="html/46cebca1-a6de-ec7e-5d07-c6b4a75dc9cf.htm" />
+      <HelpTOCNode Id="38e2bc24-e3a1-4af4-93f7-0068d6caa438" Title="JiggleMath Fields" Url="html/4cb14ac4-94d8-f016-c2d8-16d7eab65b3b.htm">
+        <HelpTOCNode Title="Epsilon Field" Url="html/a35c4a64-5b35-42d2-41e2-c0ab49116d95.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="f4647a92-a504-48e1-b90a-48c73725b156" Title="JiggleMath Methods" Url="html/70e1d539-1ccd-286b-376b-e396297af951.htm">
+        <HelpTOCNode Title="Max Method " Url="html/36670784-2463-591f-621a-bc5570818d9f.htm" />
+        <HelpTOCNode Title="Min Method " Url="html/c2e7633a-272c-69ae-0f4a-205c426e70f4.htm" />
+        <HelpTOCNode Id="3ae20c89-3d99-4363-95ab-2ea735ae6a09" Title="NormalizeSafe Method " Url="html/9b97dc97-89fa-bcf3-78de-d9e10c85e431.htm">
+          <HelpTOCNode Title="NormalizeSafe Method ()" Url="html/fcff637f-a235-6d1f-d7f6-b7c9d860efeb.htm" />
+          <HelpTOCNode Title="NormalizeSafe Method ()" Url="html/2782f782-963e-c9bc-cff0-07d7cb00eded.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="Orthonormalise Method " Url="html/54d51723-5339-e24e-cf8c-2af98a8d3b99.htm" />
+        <HelpTOCNode Title="RotationMatrix Method " Url="html/de9d21aa-4f04-aaa1-d392-c07df3f13c3b.htm" />
+        <HelpTOCNode Title="SafeInvScalar Method " Url="html/d47b231e-04e3-23cd-7b21-d62d6b8c7705.htm" />
+        <HelpTOCNode Title="Wrap Method " Url="html/4c3cfa64-d2c3-a6f6-f7ce-7376b8582ad9.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="d239da99-bd08-437b-9019-98dee2f48515" Title="Transform Structure" Url="html/b11e9c70-1fec-c1d8-7726-ad8c7188d426.htm">
+      <HelpTOCNode Title="Transform Members" Url="html/edf38a74-63bd-8d73-0d2b-69010e31b00f.htm" />
+      <HelpTOCNode Title="Transform Constructor " Url="html/a7ed78ab-3e48-cbdf-c37e-230d56ea7f09.htm" />
+      <HelpTOCNode Id="592b24cf-3b1d-4d21-8eae-1da7c67e540e" Title="Transform Fields" Url="html/a8ed3068-88ce-1075-8ea6-c5f4158cff34.htm">
+        <HelpTOCNode Title="Orientation Field" Url="html/73cf90db-8a9e-bdda-b90b-045dc383eb65.htm" />
+        <HelpTOCNode Title="Position Field" Url="html/8041e2a9-26ca-a161-9eb0-3507382e7a54.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="bf87737b-82d6-4c82-a5d3-7d053fa2b672" Title="Transform Methods" Url="html/9df98b44-3042-f7cb-c6a5-5689b67d5853.htm">
+        <HelpTOCNode Id="6a5b49ff-e4a4-4760-aab4-31a122b73d71" Title="ApplyTransformRate Method " Url="html/78a3bb8d-3f29-6c2d-2fa1-eae0fd226656.htm">
+          <HelpTOCNode Title="ApplyTransformRate Method (TransformRate, Single)" Url="html/7f21c7d6-3eea-e3a2-1051-5235b97dc66d.htm" />
+          <HelpTOCNode Title="ApplyTransformRate Method (TransformRate, Single)" Url="html/720d24f5-27b4-8fae-90a8-4b9dfa6a9648.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="b7b8a703-1f8a-4630-b32c-b44154fc7685" Title="Multiply Method " Url="html/c1af68b4-9b38-cfcf-4651-74e9d6d09b6d.htm">
+          <HelpTOCNode Title="Multiply Method (Transform, Transform)" Url="html/7aaa66f5-010b-14de-e7db-6154e18637bd.htm" />
+          <HelpTOCNode Title="Multiply Method (Transform, Transform, Transform)" Url="html/f1c26de9-532d-b2bd-a96d-6e8576c47079.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="72b7dad0-5615-4f0c-aa41-87a9a7c72af5" Title="Transform Operators" Url="html/28c917aa-f787-daf4-cd08-97a22e96c6d0.htm">
+        <HelpTOCNode Title="Multiply Operator " Url="html/91e3625b-3013-5aa8-c0ab-37467c009dd7.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="db818f3b-44f3-4eba-9e6b-ace90ec404a1" Title="Transform Properties" Url="html/776f930c-e3e3-1ed5-a7ec-5f11d30f9658.htm">
+        <HelpTOCNode Title="Identity Property " Url="html/778c6b49-da32-5ebf-7b9b-a610361b77ec.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="04b470e0-44bf-43c6-b596-8287d57e3ce2" Title="TransformRate Structure" Url="html/889d3e18-63c0-9ce6-41ba-2920fa1970fb.htm">
+      <HelpTOCNode Title="TransformRate Members" Url="html/f25de146-3000-15f3-dcc5-a30c031bbf84.htm" />
+      <HelpTOCNode Title="TransformRate Constructor " Url="html/b7c4bd4f-dbad-5484-5529-319503d301f8.htm" />
+      <HelpTOCNode Id="4b7a6053-9da3-414e-a49e-3a63754c25e1" Title="TransformRate Fields" Url="html/13e4bf45-12fa-8dfa-346f-d9f9630b6e50.htm">
+        <HelpTOCNode Title="AngularVelocity Field" Url="html/825704bd-ee02-1a93-535c-8919b0ca729a.htm" />
+        <HelpTOCNode Title="Velocity Field" Url="html/79aa90bd-3880-a7eb-e426-de956a1cd799.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="0eb369a5-5e35-40c2-b9ee-2f649b288be5" Title="TransformRate Methods" Url="html/eb0f79b0-769f-cf4e-f2e0-e1bc637457f9.htm">
+        <HelpTOCNode Id="d11ad661-d405-4e4f-8040-83479e30553c" Title="Add Method " Url="html/b312b043-ac62-8d57-3412-f105d41bef30.htm">
+          <HelpTOCNode Title="Add Method (TransformRate, TransformRate)" Url="html/1f179ee4-7146-41a0-f99d-f9495a4e7497.htm" />
+          <HelpTOCNode Title="Add Method (TransformRate, TransformRate, TransformRate)" Url="html/2ed1c2ce-5706-c364-4ec2-9f4e8a391eab.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="b072ff5d-d4a2-4a58-a8d6-08001f2a0897" Title="TransformRate Properties" Url="html/ca9c15b1-2108-a625-f529-ff0fb22e5b64.htm">
+        <HelpTOCNode Title="Zero Property " Url="html/5790fb24-9aa7-2d9e-e382-0110bff53ff7.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="1bcaf57e-764d-4fab-a0d9-6fa7ec4d374c" Title="JigLibX.Physics Namespace" Url="html/db247396-5da2-6a8a-9bcd-41e915236bb7.htm">
+    <HelpTOCNode Id="24379e27-77b1-40f0-81f9-25a25324b8c7" Title="BasicCollisionFunctor Class" Url="html/a1000393-1a15-2f18-dfbc-4502c1f69cdb.htm">
+      <HelpTOCNode Title="BasicCollisionFunctor Members" Url="html/7519598e-e84e-e0dd-ab0a-d4eddb4df30c.htm" />
+      <HelpTOCNode Title="BasicCollisionFunctor Constructor " Url="html/d589adc5-14c6-6d70-c02b-9ea7c061a6a2.htm" />
+      <HelpTOCNode Id="147fe94e-0e4b-4fd5-817e-f0b4cef903f1" Title="BasicCollisionFunctor Methods" Url="html/9036c5fe-db02-dde7-a1f2-07756256007a.htm">
+        <HelpTOCNode Title="CollisionNotify Method " Url="html/6cb6959b-e9df-32d8-6893-15b8f6bb37d0.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="a91b1b46-74e9-4ef4-9749-9ae21f52bde0" Title="Body Class" Url="html/c999cdfe-bac2-81c4-ee79-fe3c959a4bd6.htm">
+      <HelpTOCNode Title="Body Members" Url="html/40fbff2e-e5f4-81e4-0b28-e9d395ba6f42.htm" />
+      <HelpTOCNode Title="Body Constructor " Url="html/99797ac3-2d58-2951-0021-7f2f76dc8969.htm" />
+      <HelpTOCNode Id="cb6c32bc-2694-4d2e-854f-3a389fb784b2" Title="Body Fields" Url="html/78ff70cb-c438-c63f-baaa-a63044f7a6ca.htm">
+        <HelpTOCNode Title="ExternalData Field" Url="html/ac682e30-c9f1-d42f-2378-44d09c2b8b73.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="4a91ac99-624e-436b-b21a-330db203612a" Title="Body Methods" Url="html/e81b150e-e3f7-fcca-148f-af13f71bd700.htm">
+        <HelpTOCNode Id="efed3844-718b-4747-aff8-72c23dd7b5cd" Title="AddBodyForce Method " Url="html/08e7bc0f-49ae-d2b5-6301-b9cc03e12dfc.htm">
+          <HelpTOCNode Title="AddBodyForce Method ()" Url="html/9af5569f-f182-49a3-033f-7daccc7b8025.htm" />
+          <HelpTOCNode Title="AddBodyForce Method (, )" Url="html/caa6f588-0f36-890c-48cb-58d0ee9477b5.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="AddBodyTorque Method " Url="html/1dd0ea13-f117-1297-00fe-d5d5c0a5f32b.htm" />
+        <HelpTOCNode Title="AddConstraint Method " Url="html/b32d1f99-692f-ef35-0db7-4d5f817aafa2.htm" />
+        <HelpTOCNode Title="AddExternalForces Method " Url="html/5a92324d-3b93-91c5-ca9c-06cda7e5cf5a.htm" />
+        <HelpTOCNode Title="AddGravityToExternalForce Method " Url="html/863d3410-1a8d-51ad-788b-569039821044.htm" />
+        <HelpTOCNode Title="AddMovementActivation Method " Url="html/d772e768-3fa5-bb9d-898f-db0de04368b0.htm" />
+        <HelpTOCNode Id="42eb7691-255f-4e4c-87f1-558be69f9b48" Title="AddWorldForce Method " Url="html/3f9a6083-5524-9b52-b19c-2f6863dfbc3b.htm">
+          <HelpTOCNode Title="AddWorldForce Method ()" Url="html/5e204a84-d518-6b04-e691-d52fe8318074.htm" />
+          <HelpTOCNode Title="AddWorldForce Method (, )" Url="html/9f96b2cc-e5d2-481e-3d8b-502754a4e19a.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="AddWorldTorque Method " Url="html/5d2202b4-e060-c800-042b-3e333c794546.htm" />
+        <HelpTOCNode Title="ApplyBodyAngImpulse Method " Url="html/d7a763f9-e30b-d9bf-d1c7-849c6d0500bf.htm" />
+        <HelpTOCNode Id="4e9f057b-0330-4e79-8208-b4ede2ec0e73" Title="ApplyBodyImpulse Method " Url="html/b4079f65-e89d-fbce-ae9c-4169a984dac7.htm">
+          <HelpTOCNode Title="ApplyBodyImpulse Method ()" Url="html/261435b4-1a0d-127d-ea3d-9efb43b82633.htm" />
+          <HelpTOCNode Title="ApplyBodyImpulse Method (, )" Url="html/a29c29ac-f43b-34c1-23fd-5989068cddbe.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="0ccb6f8f-cca1-4497-8afa-1d247bf87569" Title="ApplyBodyWorldImpulse Method " Url="html/dfc08ad6-f6a0-5ef9-3d6a-97fb2be81cee.htm">
+          <HelpTOCNode Title="ApplyBodyWorldImpulse Method (, )" Url="html/48417b0e-e1b2-5123-381d-db194fc6539c.htm" />
+          <HelpTOCNode Title="ApplyBodyWorldImpulse Method (, )" Url="html/a7294720-0be5-b2ea-1ca1-38e4663cdd12.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ApplyBodyWorldImpulseAux Method " Url="html/2e1eccae-9cd6-8da0-83b8-5d8fb7e71780.htm" />
+        <HelpTOCNode Id="00681037-5696-400c-b063-5b64518e7b29" Title="ApplyNegativeBodyImpulse Method " Url="html/8157eb89-afb8-1a6f-8250-e270ef03068d.htm">
+          <HelpTOCNode Title="ApplyNegativeBodyImpulse Method ()" Url="html/b7773647-e9eb-9029-6081-ee8c5c058455.htm" />
+          <HelpTOCNode Title="ApplyNegativeBodyImpulse Method (, )" Url="html/be1894a9-355c-b135-daf3-218f796c449e.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="2473ca03-0498-49ee-adc8-0280d79bff47" Title="ApplyNegativeBodyWorldImpulse Method " Url="html/64eec283-5a3b-900b-c729-93f0614e7bff.htm">
+          <HelpTOCNode Title="ApplyNegativeBodyWorldImpulse Method (, )" Url="html/9fa224cc-e60a-dc98-ee58-79e25424f860.htm" />
+          <HelpTOCNode Title="ApplyNegativeBodyWorldImpulse Method (, )" Url="html/5c0b271b-b144-4984-cd3e-ad5a76a50ca0.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ApplyNegativeBodyWorldImpulseAux Method " Url="html/53a33d0b-c484-c65e-09ef-f50dcd0f6555.htm" />
+        <HelpTOCNode Id="b94d9c72-5f36-479a-80ed-8aaa20d3a93d" Title="ApplyNegativeWorldImpulse Method " Url="html/cc926e56-1017-7994-9a5f-d7e2b7347db0.htm">
+          <HelpTOCNode Title="ApplyNegativeWorldImpulse Method ()" Url="html/cb34621c-c188-04a5-c944-d8c514b3c5a4.htm" />
+          <HelpTOCNode Title="ApplyNegativeWorldImpulse Method (, )" Url="html/514b4401-fa02-df80-8e39-62fd17f8d201.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="c194d11f-27da-494d-9b5a-faa1eaeb9ee9" Title="ApplyNegativeWorldImpulseAux Method " Url="html/5616e87d-e24c-41e7-efea-30e9c9f5f427.htm">
+          <HelpTOCNode Title="ApplyNegativeWorldImpulseAux Method ()" Url="html/e24ad768-d885-66ce-2059-ed4c5c55d87e.htm" />
+          <HelpTOCNode Title="ApplyNegativeWorldImpulseAux Method (, )" Url="html/5fbaa96a-86a8-e066-7ea1-b126b605042b.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ApplyWorldAngImpulse Method " Url="html/e5eef6d3-3104-1668-a010-3a54a7721630.htm" />
+        <HelpTOCNode Id="854df51c-ccd7-4550-934f-a56551b4543f" Title="ApplyWorldImpulse Method " Url="html/ab8e34be-83b7-52af-a92d-92628513f02c.htm">
+          <HelpTOCNode Title="ApplyWorldImpulse Method ()" Url="html/9cd6d284-022f-6899-b676-97d48788407f.htm" />
+          <HelpTOCNode Title="ApplyWorldImpulse Method (, )" Url="html/9ad7644e-f6c2-a3b6-a978-bb56835f918c.htm" />
+          <HelpTOCNode Title="ApplyWorldImpulse Method (, )" Url="html/9272271c-7498-2c87-8a95-307cf4ff1698.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="fa2c098b-a183-4032-9c7c-9ac6abd05d84" Title="ApplyWorldImpulseAux Method " Url="html/1d0e2c38-2030-86a1-8b5c-fe214b611d25.htm">
+          <HelpTOCNode Title="ApplyWorldImpulseAux Method ()" Url="html/2e5160d5-0dc9-4533-025c-e5cd19df8f74.htm" />
+          <HelpTOCNode Title="ApplyWorldImpulseAux Method (, )" Url="html/e51a0db0-3435-2f0c-1d3d-df0c9bbb6a45.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ClearForces Method " Url="html/6f1cc729-e440-852b-02bd-9437d9c9db33.htm" />
+        <HelpTOCNode Title="ClearVelChanged Method " Url="html/27bc51fb-8771-6e60-986a-30fa39e3c285.htm" />
+        <HelpTOCNode Title="CopyCurrentStateToOld Method " Url="html/5245df10-0d32-554f-5688-53c37233c8fa.htm" />
+        <HelpTOCNode Title="DampForDeactivation Method " Url="html/77dc04f6-cf3b-d026-9ba3-c8ca9a5cde35.htm" />
+        <HelpTOCNode Title="DisableBody Method " Url="html/aa3cc2c7-8d67-7b1d-ff17-eb02524a748e.htm" />
+        <HelpTOCNode Title="EnableBody Method " Url="html/f9a642c8-978a-b7bd-a37b-586ef4d36cf5.htm" />
+        <HelpTOCNode Title="GetShouldBeActive Method " Url="html/4ff06013-29c6-e52e-6af3-5457b608f3b4.htm" />
+        <HelpTOCNode Title="GetShouldBeActiveAux Method " Url="html/8d22f8eb-b2b8-83f2-de11-5c8b990baf9f.htm" />
+        <HelpTOCNode Id="0e223280-631f-426d-bc80-516c2f060ce6" Title="GetVelocity Method " Url="html/4d6966e5-3ab4-7a08-dd1e-cb0787c5b3a0.htm">
+          <HelpTOCNode Title="GetVelocity Method ()" Url="html/24553aec-54b6-9c1c-224e-f3a368d2cedd.htm" />
+          <HelpTOCNode Title="GetVelocity Method (, )" Url="html/e4ac9511-6f17-b8d3-f77c-a9f29eabc6a3.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="94d13ec3-583a-4e6b-9384-bdcda3e83009" Title="GetVelocityAux Method " Url="html/73192b10-6096-6a4a-bcaa-7a2b805f7e93.htm">
+          <HelpTOCNode Title="GetVelocityAux Method ()" Url="html/a2de7c21-ea07-8cd6-c547-a4e351517a77.htm" />
+          <HelpTOCNode Title="GetVelocityAux Method (, )" Url="html/93fefdc5-169d-f60f-6604-8931f54d92b4.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="InternalSetImmovable Method " Url="html/f98950dc-6bd3-31f3-7c98-09cc371807ee.htm" />
+        <HelpTOCNode Title="LimitAngVel Method " Url="html/d42991cd-ebd9-ea7e-715b-ba5cff8a7f63.htm" />
+        <HelpTOCNode Title="LimitVel Method " Url="html/7d300fcb-e5be-f4d6-e7b5-4bf7236cbb8c.htm" />
+        <HelpTOCNode Title="MoveTo Method " Url="html/485ef7c5-22a8-2779-a200-681ed6d8ce9f.htm" />
+        <HelpTOCNode Title="PostPhysics Method " Url="html/44706ef7-dd31-4ccb-5cce-0d4fe52056df.htm" />
+        <HelpTOCNode Title="PrePhysics Method " Url="html/38247e5b-a03c-f7d0-addf-9ffec169c0bc.htm" />
+        <HelpTOCNode Title="RemoveConstraint Method " Url="html/7dec120d-07a7-9523-8957-0d237cc4fb3b.htm" />
+        <HelpTOCNode Title="RestoreState Method " Url="html/d50d0c2a-44f6-7e3f-4085-1e56fc8cbec4.htm" />
+        <HelpTOCNode Title="SetActive Method " Url="html/eeded534-1ef3-fd39-8c82-0fe9ed71d5b0.htm" />
+        <HelpTOCNode Title="SetActivityThreshold Method " Url="html/65c2dff3-65b4-8797-dc63-b9911a9e762f.htm" />
+        <HelpTOCNode Title="SetBodyInertia Method " Url="html/c930c31a-ed78-3a0c-f1e7-7886058d190b.htm" />
+        <HelpTOCNode Title="SetBodyInvInertia Method " Url="html/9f99d674-16c8-33c1-3efa-102454434e50.htm" />
+        <HelpTOCNode Title="SetConstraintsAndCollisionsUnsatisfied Method " Url="html/d727451c-0231-5ac4-d082-90b938e60362.htm" />
+        <HelpTOCNode Title="SetDeactivationTime Method " Url="html/076a2beb-68b9-e1ba-617f-bc8f50b8c041.htm" />
+        <HelpTOCNode Title="SetInactive Method " Url="html/4d02ae07-9a3e-2bbc-61c1-e5140527db92.htm" />
+        <HelpTOCNode Title="SetOrientation Method " Url="html/331ca318-29a3-1b8c-04e4-e42c011f6a7f.htm" />
+        <HelpTOCNode Title="StoreState Method " Url="html/587e7849-abb3-e147-6e27-cd87f1ca010d.htm" />
+        <HelpTOCNode Title="UpdateDeactivation Method " Url="html/40eae652-dab6-623a-78b0-35190d1774f7.htm" />
+        <HelpTOCNode Title="UpdatePosition Method " Url="html/c012ab2e-d0df-436d-0310-df0a2ccc6e25.htm" />
+        <HelpTOCNode Title="UpdatePositionWithAux Method " Url="html/c73500b4-fca4-0dce-21a2-dcbd5a3b25e1.htm" />
+        <HelpTOCNode Title="UpdateVelocity Method " Url="html/f92f79e3-4393-c1c9-9d1c-2eee3dd011a1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="2cce50c4-1299-4cf9-9abd-771fa85a1a42" Title="Body Properties" Url="html/3674e47a-1a01-698e-782d-8cef663b4d7a.htm">
+        <HelpTOCNode Title="AllowFreezing Property " Url="html/15b1bedc-024d-da01-e8b0-283631a6e899.htm" />
+        <HelpTOCNode Title="AngularVelocity Property " Url="html/6b8972e5-d73b-d55e-1835-787f5e7bcfb3.htm" />
+        <HelpTOCNode Title="AngularVelocityAux Property " Url="html/f7923a03-87be-b380-db9e-e57c9e2484e8.htm" />
+        <HelpTOCNode Title="ApplyGravity Property " Url="html/9a309a25-5900-33f7-282e-0b96236bec27.htm" />
+        <HelpTOCNode Title="BodyInertia Property " Url="html/3d80f78e-cf0d-59fd-883f-81b0bfbfeb41.htm" />
+        <HelpTOCNode Title="BodyInvInertia Property " Url="html/5c890525-fd7f-4a17-7f3e-c29c325ffd42.htm" />
+        <HelpTOCNode Title="CollisionSkin Property " Url="html/6dc96fc7-1674-6d81-de4b-f9e740ac3187.htm" />
+        <HelpTOCNode Title="DoShockProcessing Property " Url="html/30d5b1b9-7098-6158-8b53-bda246fa9000.htm" />
+        <HelpTOCNode Title="Force Property " Url="html/6c011253-2dbd-a2aa-aaf4-98e6745716d5.htm" />
+        <HelpTOCNode Title="Immovable Property " Url="html/5b68757f-9011-7c4e-fa4e-cc1f0d95f90e.htm" />
+        <HelpTOCNode Title="InverseMass Property " Url="html/4467fb99-b51f-3d2b-fb80-89257984d932.htm" />
+        <HelpTOCNode Title="IsActive Property " Url="html/beb1f71e-a090-c459-d310-dc50aed7e842.htm" />
+        <HelpTOCNode Title="IsBodyEnabled Property " Url="html/db505b47-4b14-7630-61a1-212e6b6f4d63.htm" />
+        <HelpTOCNode Title="Mass Property " Url="html/caa91e9c-ee1f-b264-6693-b77dad58d9c1.htm" />
+        <HelpTOCNode Title="OldAngVel Property " Url="html/e4e6da7f-736f-e99b-5b11-9020cd5bdc92.htm" />
+        <HelpTOCNode Title="OldOrientation Property " Url="html/e2ed833d-5f1a-3516-16bb-5c59f2f1343e.htm" />
+        <HelpTOCNode Title="OldPosition Property " Url="html/c9cf061c-b325-278e-6c13-9433860abde7.htm" />
+        <HelpTOCNode Title="OldTransform Property " Url="html/5b49710d-511a-7691-05c8-0cd969b91988.htm" />
+        <HelpTOCNode Title="OldTransformRate Property " Url="html/ce6b2591-1f30-1034-1880-a083ce0786d0.htm" />
+        <HelpTOCNode Title="OldVelocity Property " Url="html/2f8a8cde-21ab-8b61-7e3b-f696ee71f0c4.htm" />
+        <HelpTOCNode Title="Orientation Property " Url="html/8ca7b310-bf0e-5499-e8d0-84c2107f461d.htm" />
+        <HelpTOCNode Title="Position Property " Url="html/e449742f-636d-7391-b073-332c4f869797.htm" />
+        <HelpTOCNode Title="Torque Property " Url="html/7dd26888-af4f-a441-9a94-cc1d596659c3.htm" />
+        <HelpTOCNode Title="Transform Property " Url="html/3fdcd001-5068-53b9-4f1c-623cc7ad7d42.htm" />
+        <HelpTOCNode Title="TransformRate Property " Url="html/d514f270-9f79-1372-0df5-5ebf4c9c8682.htm" />
+        <HelpTOCNode Title="VelChanged Property " Url="html/3bab9722-8ab9-0d83-3a04-4d242b04db35.htm" />
+        <HelpTOCNode Title="Velocity Property " Url="html/e39e1db1-9c79-b8be-f2ef-53602bf03716.htm" />
+        <HelpTOCNode Title="VelocityAux Property " Url="html/5d04ffba-6789-7fe1-ceb3-57e8fe0d7356.htm" />
+        <HelpTOCNode Title="WorldInertia Property " Url="html/eb3868a0-c71b-ee8f-1cbc-16425169e4f8.htm" />
+        <HelpTOCNode Title="WorldInvInertia Property " Url="html/d138a710-0edb-5189-3320-e9db2652d56b.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="835d52da-dc89-414e-be80-a78dfff3b8c7" Title="BodyRenderExtensions Class" Url="html/aca00d77-7ed2-fc03-76c7-5f314a939ced.htm">
+      <HelpTOCNode Title="BodyRenderExtensions Members" Url="html/1183129d-78d1-8c11-cbf8-5fa50c32bcf9.htm" />
+      <HelpTOCNode Id="5d8360ac-47ae-4bd2-b9d0-bae14d523d1e" Title="BodyRenderExtensions Methods" Url="html/533c6626-30df-a3d3-41ae-502f8a1419a8.htm">
+        <HelpTOCNode Title="GetLocalSkinWireframe Method " Url="html/1621ae18-1606-2449-829c-8aecc4252c43.htm" />
+        <HelpTOCNode Title="TransformWireframe Method " Url="html/5b4b8cf5-fba2-208c-01dd-6d98f0566d3a.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="c2f23aa7-f988-4f5d-af99-4f969123cb63" Title="CollisionIsland Class" Url="html/ea6cf8c8-602e-31aa-a49a-e28f74303583.htm">
+      <HelpTOCNode Title="CollisionIsland Members" Url="html/71c4db8a-c84a-3409-87a8-41a45b318b75.htm" />
+      <HelpTOCNode Title="CollisionIsland Constructor " Url="html/6264acae-afc6-74b3-731d-5baf73161016.htm" />
+      <HelpTOCNode Id="8787081f-4cda-4a3d-828d-964f31aa52b0" Title="CollisionIsland Methods" Url="html/77e931fc-0ab2-a62f-c858-eeda7bea2da1.htm">
+        <HelpTOCNode Title="Activate Method " Url="html/b8230ccd-3f63-51aa-5531-22bf3045fb91.htm" />
+        <HelpTOCNode Title="BinarySearch Method " Url="html/37e6fc2d-ba12-be06-7eff-1f7b9bf2140d.htm" />
+        <HelpTOCNode Title="CopyTo Method " Url="html/906d4e47-80fb-ef42-e6d3-b4cf74817d00.htm" />
+        <HelpTOCNode Title="Deactivate Method " Url="html/3c490bdf-1680-810d-ab1d-b0b7f04f083b.htm" />
+        <HelpTOCNode Title="FindIndex Method " Url="html/6ed87fd5-cf9a-0203-882e-8bc2c505e013.htm" />
+        <HelpTOCNode Title="FindLastIndex Method " Url="html/42ced35e-7428-db2e-9d41-7382d50d2c0f.htm" />
+        <HelpTOCNode Title="IndexOf Method " Url="html/5ed27fca-504a-52e6-6787-e935e8dee320.htm" />
+        <HelpTOCNode Title="LastIndexOf Method " Url="html/c8bceef3-912e-15ca-5b4f-9cd8bb869e8e.htm" />
+        <HelpTOCNode Title="Reverse Method " Url="html/30964ad6-60f1-6e1c-1a2d-42afeca2e93a.htm" />
+        <HelpTOCNode Title="Sort Method " Url="html/a0a29283-6d3e-6863-b71f-80f93b7fbc28.htm" />
+        <HelpTOCNode Title="WantsDeactivation Method " Url="html/1b007ff5-ae2e-4f3a-961a-0bdfb565cbf1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="22d0defd-3d17-4c09-95a6-9364693446b2" Title="CollisionIsland Properties" Url="html/8f35af6e-f333-9a97-0a8b-eaa35a56c651.htm">
+        <HelpTOCNode Title="Empty Property " Url="html/662df472-21fa-9a63-dac2-d56e719a4bea.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="7796eeb1-211a-44d0-abb7-5c327dcf4088" Title="Constraint Class" Url="html/8470ad1d-4c49-eb89-aeaa-298b1cf4d573.htm">
+      <HelpTOCNode Title="Constraint Members" Url="html/bf177023-a015-b789-5233-11cb9564b06c.htm" />
+      <HelpTOCNode Title="Constraint Constructor " Url="html/1fc5220f-1dba-4979-3583-17197213d46c.htm" />
+      <HelpTOCNode Id="fd955d06-3f17-487a-8189-4bfe34e1028c" Title="Constraint Methods" Url="html/ca331e47-248f-a278-f596-dbd083db7e1a.htm">
+        <HelpTOCNode Title="Apply Method " Url="html/a05c9d45-b8b7-8202-b1cc-98af460b1e6f.htm" />
+        <HelpTOCNode Title="Destroy Method " Url="html/414ea6e4-efae-6c68-9148-bf720dc01723.htm" />
+        <HelpTOCNode Title="DisableConstraint Method " Url="html/dec30c1a-c10b-f0c2-5f0f-9b6562c4c1c8.htm" />
+        <HelpTOCNode Title="EnableConstraint Method " Url="html/1dda34bc-5b86-0c8f-3fa8-5d75e10c341b.htm" />
+        <HelpTOCNode Title="PreApply Method " Url="html/c7c71bc9-e035-5771-697a-0897427fd0f3.htm" />
+        <HelpTOCNode Title="SmoothCD Method " Url="html/6f525c60-6488-2f32-9294-57d0878bc053.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="e00565d9-c926-46b1-bfd6-b59a895f0a81" Title="Constraint Properties" Url="html/f26b5270-8237-abd1-01fc-0cdc05d85118.htm">
+        <HelpTOCNode Title="IsConstraintEnabled Property " Url="html/aba184a6-919d-1169-b259-da6d542e7d75.htm" />
+        <HelpTOCNode Title="Satisfied Property " Url="html/270db1fc-64c5-be1d-a4fd-01ac4423d3e6.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="d2a7c084-fef0-4ed8-97b5-8cb73938a15d" Title="ConstraintMaxDistance Class" Url="html/e611eabf-4134-059b-5c8c-e0d32747c30b.htm">
+      <HelpTOCNode Title="ConstraintMaxDistance Members" Url="html/e0ac1492-32ab-8549-6010-195015427589.htm" />
+      <HelpTOCNode Id="8b3b7582-6fa3-4023-a178-f5b528ed8ee7" Title="ConstraintMaxDistance Constructor " Url="html/5c331d59-8fce-c2a9-835e-b008a843de38.htm">
+        <HelpTOCNode Title="ConstraintMaxDistance Constructor " Url="html/671eb601-85b8-1f7c-a8f5-870f55f8694a.htm" />
+        <HelpTOCNode Title="ConstraintMaxDistance Constructor (Body, , Body, , Single)" Url="html/9b6f89e1-4ef6-e356-903a-41b6ab2be37c.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="086eea94-ec48-4f52-896d-fbdca49d9c60" Title="ConstraintMaxDistance Methods" Url="html/abba283b-6122-0323-806e-51b9e5e393b6.htm">
+        <HelpTOCNode Title="Apply Method " Url="html/29cb6555-6cb4-7b67-4a1c-3ea502e5b8bf.htm" />
+        <HelpTOCNode Title="Destroy Method " Url="html/0706ae7e-7f8e-bd5b-c222-2eeb22535bae.htm" />
+        <HelpTOCNode Title="Initialise Method " Url="html/03ae806b-31a5-71e5-746e-d4d73cb644f5.htm" />
+        <HelpTOCNode Title="PreApply Method " Url="html/d8fb4733-91e7-e934-187e-e2a827e0e24b.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="ConstraintMaxDistance Properties" Url="html/868c67d7-9d61-7906-bc24-673d0903c5f2.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="0e171a68-4c24-45ca-bf55-c53a036ff7da" Title="ConstraintPoint Class" Url="html/012598fc-3470-0ca2-d946-65064cdcc3a6.htm">
+      <HelpTOCNode Title="ConstraintPoint Members" Url="html/30bf0069-4ce5-9ed8-6f1b-054894782385.htm" />
+      <HelpTOCNode Id="819d5dbd-77fd-49ce-91a1-634c3c618f83" Title="ConstraintPoint Constructor " Url="html/24ecb52a-c9e2-b374-9fa0-6e0eec1dc646.htm">
+        <HelpTOCNode Title="ConstraintPoint Constructor " Url="html/c574bd4b-fe35-32e3-c54c-43eafaf2aedd.htm" />
+        <HelpTOCNode Title="ConstraintPoint Constructor (Body, , Body, , Single, Single)" Url="html/e19e45af-6c58-f04b-ce53-4b973a1a6b94.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="8824467c-1898-4842-9997-ac499c3bd2b0" Title="ConstraintPoint Methods" Url="html/ecf18f36-0d77-79ff-bd95-9fa57576eb25.htm">
+        <HelpTOCNode Title="Apply Method " Url="html/579758e3-3f62-c9e2-87c6-073506588603.htm" />
+        <HelpTOCNode Title="Destroy Method " Url="html/0bd9c3c8-614b-a34e-d400-4b46fa1c2701.htm" />
+        <HelpTOCNode Title="Initialise Method " Url="html/4a91273e-2cb0-056c-593c-e0d67ea816d7.htm" />
+        <HelpTOCNode Title="PreApply Method " Url="html/5e0eed18-006a-9e66-e34b-fee96c0a51ba.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="ConstraintPoint Properties" Url="html/2ce83193-7a20-2afc-0eb2-1c317dab81a3.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="8928833f-1120-4122-b87a-f9931db3393e" Title="ConstraintVelocity Class" Url="html/8b7bd979-b0ca-9fb8-a0b6-ac43ffc0e521.htm">
+      <HelpTOCNode Title="ConstraintVelocity Members" Url="html/91834644-ed83-1802-969f-94d2fb0ef080.htm" />
+      <HelpTOCNode Id="6c8b095f-62dc-4866-bc0d-f376a85b7f81" Title="ConstraintVelocity Constructor " Url="html/001dc7eb-735a-82c2-c8b9-f4a4ca4aa9f8.htm">
+        <HelpTOCNode Title="ConstraintVelocity Constructor " Url="html/5f1b0806-57f5-432d-a04c-785033fd16d4.htm" />
+        <HelpTOCNode Title="ConstraintVelocity Constructor (Body, ConstraintVelocity.ReferenceFrame, Nullable(), Nullable())" Url="html/b01aa8be-1ea1-e8c8-6ae8-5978fb52e4db.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="0118c907-c017-4036-a1f8-cd227db7dff8" Title="ConstraintVelocity Methods" Url="html/a0f746ce-9b52-bff7-8d82-fd3498bf9294.htm">
+        <HelpTOCNode Title="Apply Method " Url="html/58121a9e-f0a8-6217-f571-336747abacac.htm" />
+        <HelpTOCNode Title="Destroy Method " Url="html/59e9aad3-90f2-97c9-166f-7cbd15c7dabd.htm" />
+        <HelpTOCNode Title="Initialise Method " Url="html/e9e1bce6-60f0-cb48-b4cb-5403c9e04f81.htm" />
+        <HelpTOCNode Title="PreApply Method " Url="html/6d03e0e3-e764-8f9f-b893-e88d0b3935d3.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="ConstraintVelocity Properties" Url="html/8e52eb29-3d94-d98d-9610-17aa16968c63.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Title="ConstraintVelocity.ReferenceFrame Enumeration" Url="html/fa2a9744-d81a-be70-953a-26086e3a95d4.htm" />
+    <HelpTOCNode Id="c162c805-b4c7-4ac4-b685-99978458828b" Title="ConstraintWorldPoint Class" Url="html/116412f1-1a5e-e9ab-690b-1d0f5d1a03fc.htm">
+      <HelpTOCNode Title="ConstraintWorldPoint Members" Url="html/56515c09-c02f-700a-7b77-5cac7a98f360.htm" />
+      <HelpTOCNode Id="859360a0-5533-46d3-ac51-a5fdfef418f1" Title="ConstraintWorldPoint Constructor " Url="html/ee44bdb0-9c65-9b31-f64f-4665e732505c.htm">
+        <HelpTOCNode Title="ConstraintWorldPoint Constructor " Url="html/10432cd5-ac55-4fb2-13cb-a2e0e18a944b.htm" />
+        <HelpTOCNode Title="ConstraintWorldPoint Constructor (Body, , )" Url="html/83f657a1-d963-0a05-c8b5-069bae43ca2b.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="8143c049-3c6d-41b2-99aa-86ab007d7eef" Title="ConstraintWorldPoint Methods" Url="html/9c61de62-f244-d0a5-dcd9-8e8da4b42550.htm">
+        <HelpTOCNode Title="Apply Method " Url="html/53eaeaa1-e076-9117-4ea4-9609dffc2f44.htm" />
+        <HelpTOCNode Title="Destroy Method " Url="html/53660f6c-edd2-ad0b-d2a8-68c243346f8e.htm" />
+        <HelpTOCNode Title="Initialise Method " Url="html/6bcd519e-85a2-545a-a66c-6ee47546fabe.htm" />
+        <HelpTOCNode Title="PreApply Method " Url="html/6fb6c0a8-6235-434b-75e7-97f07115d2a0.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="fdb8cecd-a4b9-4130-892b-a8f0c4a31f6f" Title="ConstraintWorldPoint Properties" Url="html/267765f7-d3e5-f454-2979-d3d965ad6303.htm">
+        <HelpTOCNode Title="Body Property " Url="html/4e52b222-5d2f-6197-b59f-9718210d15d8.htm" />
+        <HelpTOCNode Title="WorldPosition Property " Url="html/5622a7bc-1331-0440-66ab-ba003dfce179.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="14ab2467-29bc-4b0f-8fa7-86f3a11d7d30" Title="Controller Class" Url="html/80c7cfc8-d6c5-ecc6-bfc9-6ae8abcbcb47.htm">
+      <HelpTOCNode Title="Controller Members" Url="html/0271ca12-26b6-85af-f8d1-e48127e243b7.htm" />
+      <HelpTOCNode Title="Controller Constructor " Url="html/5b8a7a68-74b5-4f7a-7012-031b52656ca8.htm" />
+      <HelpTOCNode Id="952482fe-f09b-4d47-a879-37d2580e0b8d" Title="Controller Methods" Url="html/c5fe57d3-8bcd-9f7a-c9c7-4bf28bec9dbb.htm">
+        <HelpTOCNode Title="DisableController Method " Url="html/ff1d3ea7-2e5e-3716-c5ef-1ab3ac29d71b.htm" />
+        <HelpTOCNode Title="EnableController Method " Url="html/21b206f1-75c4-4fa7-6fcc-da7fae89c96d.htm" />
+        <HelpTOCNode Title="UpdateController Method " Url="html/e37e49f5-e484-f35b-787c-479d725e0870.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="e9ffeee7-6a79-4773-a991-26427254d680" Title="Controller Properties" Url="html/a7029504-6749-ad99-500f-fe873f9eef3e.htm">
+        <HelpTOCNode Title="IsControllerEnabled Property " Url="html/d8ee619c-19b1-1a35-83c0-74d553292465.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="fccad2f9-d608-4e92-9b56-fc03cbf9ddaa" Title="FrozenCollisionPredicate Class" Url="html/e152ab30-ccb1-81a3-7921-1cb485f3e2d8.htm">
+      <HelpTOCNode Title="FrozenCollisionPredicate Members" Url="html/2d8bcdec-94d9-75dc-f44a-ec08c0004234.htm" />
+      <HelpTOCNode Title="FrozenCollisionPredicate Constructor " Url="html/f9506799-3d00-acd5-e1f9-c144296c2624.htm" />
+      <HelpTOCNode Id="3a7d5512-aa6b-4103-aae4-2e3af79e9122" Title="FrozenCollisionPredicate Methods" Url="html/e4183b1c-8344-ed80-56cc-10ee31f39a24.htm">
+        <HelpTOCNode Title="ConsiderSkinPair Method " Url="html/1f47c738-4db0-9b5f-71df-260392c14517.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="1994963a-606d-46fa-a220-718cac4573c4" Title="HingeJoint Class" Url="html/23b326cf-a090-e0a5-a66c-7b063d1d705f.htm">
+      <HelpTOCNode Title="HingeJoint Members" Url="html/8889db02-2c48-2ca1-08f2-0605e91e9c3c.htm" />
+      <HelpTOCNode Title="HingeJoint Constructor " Url="html/8f14ee8f-4673-4fb3-831b-fcbf0865bb48.htm" />
+      <HelpTOCNode Id="952cf8a8-f279-49b2-a263-b8ee22ed2a97" Title="HingeJoint Methods" Url="html/503ba594-bf1c-8760-928e-fcd1e805fa61.htm">
+        <HelpTOCNode Title="Break Method " Url="html/f878a600-fee6-7cb0-4b93-ac15d923a060.htm" />
+        <HelpTOCNode Title="DisableHinge Method " Url="html/134a0294-8d2b-39b7-6589-2be3e603dd9e.htm" />
+        <HelpTOCNode Title="EnableHinge Method " Url="html/90e81116-763c-0807-5360-5b24577f2592.htm" />
+        <HelpTOCNode Title="Initialise Method " Url="html/72c0b573-76d7-7ae6-115f-59446d4fc00b.htm" />
+        <HelpTOCNode Title="Mend Method " Url="html/3e718b07-779c-25cb-659f-d9e88c6ded73.htm" />
+        <HelpTOCNode Title="UpdateController Method " Url="html/671cd6db-985d-0f47-0982-d73fad3bb59e.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="4a53ce52-ac73-4ae1-b5ab-90d6d01db1e1" Title="HingeJoint Properties" Url="html/df35a29a-e94f-fd44-cbc0-662001e8b8a4.htm">
+        <HelpTOCNode Title="HingeEnabled Property " Url="html/5944ebb5-7737-7200-e6b5-2c254cf41fe7.htm" />
+        <HelpTOCNode Title="IsBroken Property " Url="html/92183294-ea1a-f301-c9ff-ec3af3ec3f18.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="cce68fc9-ac01-481f-9aac-7c91b388d6de" Title="Joint Class" Url="html/dff28478-bd02-111d-eb6f-45f49ecec24b.htm">
+      <HelpTOCNode Title="Joint Members" Url="html/27aea296-f8c4-e914-3e20-3302ace6b41d.htm" />
+      <HelpTOCNode Title="Joint Constructor " Url="html/576d2916-990e-3045-b1cc-002ef7a778bc.htm" />
+      <HelpTOCNode Title="Joint Methods" Url="html/dc3fa9b0-20ca-4ed7-2769-e2cfe215c01f.htm" />
+      <HelpTOCNode Title="Joint Properties" Url="html/6689cc93-e33a-3ad3-83cc-94ecd61b5a07.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="8b849d76-3a6c-4a67-9326-f96085d64248" Title="PhysicsSystem Class" Url="html/d23b7bb1-f50f-c777-893f-6e21cf9e9dca.htm">
+      <HelpTOCNode Title="PhysicsSystem Members" Url="html/4364984f-d45b-59a1-b77e-9c577277c081.htm" />
+      <HelpTOCNode Title="PhysicsSystem Constructor " Url="html/50ef1d4e-4916-8016-7792-e3bcd8b555a7.htm" />
+      <HelpTOCNode Id="63cefc91-f3d3-4fcf-a300-d7c58c9511ac" Title="PhysicsSystem Fields" Url="html/0f8a79c8-c383-88e4-cf7d-03c7e00faf9a.htm">
+        <HelpTOCNode Title="islands Field" Url="html/5b6f5eb9-dcbc-9ee2-1ebd-c714561941a4.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="afe4b6a7-2a1d-432a-8971-d96593a28a88" Title="PhysicsSystem Methods" Url="html/0ae111bd-2d38-c139-1897-fb3d79b5ac8f.htm">
+        <HelpTOCNode Title="AddBody Method " Url="html/86c740e0-4816-670b-3214-556eb0305cd5.htm" />
+        <HelpTOCNode Title="AddConstraint Method " Url="html/0e5c5786-854d-667d-bc48-c41b619c3400.htm" />
+        <HelpTOCNode Title="AddController Method " Url="html/4fe6e284-4f47-045c-9354-c9ca16981c0d.htm" />
+        <HelpTOCNode Title="Integrate Method " Url="html/a6dacaf8-aaa6-4534-033b-1a433b3c310e.htm" />
+        <HelpTOCNode Title="RemoveBody Method " Url="html/06084759-c50c-7ed8-6ddf-32c40e8109ff.htm" />
+        <HelpTOCNode Title="RemoveConstraint Method " Url="html/8c9cb499-3046-c804-28d8-8a22a3fa52aa.htm" />
+        <HelpTOCNode Title="RemoveController Method " Url="html/78c9fc67-3414-d563-be44-dce3d1e7805a.htm" />
+        <HelpTOCNode Title="ResetTime Method " Url="html/ba6d25f7-54b1-aa5d-bb0a-a60deadb976c.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="0a1254ea-efaa-45fe-8003-db751138e459" Title="PhysicsSystem Properties" Url="html/c153b46d-d29a-fc4f-ad89-aa2777538248.htm">
+        <HelpTOCNode Title="AllowedPenetration Property " Url="html/8ae9cf15-3d4d-8251-cba2-0800ba0f9d68.htm" />
+        <HelpTOCNode Title="Bodies Property " Url="html/d8112b18-c2cb-a62e-31fe-2a060e21f2d1.htm" />
+        <HelpTOCNode Title="Collisions Property " Url="html/0145a068-cf01-04ad-f53a-f664f03adf3c.htm" />
+        <HelpTOCNode Title="CollisionSystem Property " Url="html/2fa7c4ae-c42f-ed45-f265-955dc82efc5c.htm" />
+        <HelpTOCNode Title="CollisionTollerance Property " Url="html/c9aaef47-246a-58fa-6a1c-7b0b5c404f2e.htm" />
+        <HelpTOCNode Title="Constraints Property " Url="html/0cc25c30-96cd-c5bc-c53b-4625126e7707.htm" />
+        <HelpTOCNode Title="Controllers Property " Url="html/a87770b7-592c-a8c7-c767-42e29e99fa2f.htm" />
+        <HelpTOCNode Title="CurrentPhysicsSystem Property " Url="html/1509f79f-29bb-30c9-100c-08fc81291b66.htm" />
+        <HelpTOCNode Title="EnableFreezing Property " Url="html/cb8bb789-e29b-a863-f810-650d6da840b8.htm" />
+        <HelpTOCNode Title="Gravity Property " Url="html/9918c9e1-1e44-2eec-d1fb-edb7a572bf71.htm" />
+        <HelpTOCNode Title="GravityMagnitude Property " Url="html/8197654c-00f5-aa94-88ab-94195d1eee16.htm" />
+        <HelpTOCNode Title="IsFreezingEnabled Property " Url="html/4b88c22c-46c6-4bfb-b47f-e681b9f204f9.htm" />
+        <HelpTOCNode Title="IsShockStepEnabled Property " Url="html/fcbec341-ebeb-5861-fb4a-74ea32787be7.htm" />
+        <HelpTOCNode Title="MainGravityAxis Property " Url="html/101a8b19-829e-e56b-1ed9-981449cdcdbc.htm" />
+        <HelpTOCNode Title="NullUpdate Property " Url="html/ee19c350-713a-0d11-8396-42f973d7c75e.htm" />
+        <HelpTOCNode Title="NumCollisionIterations Property " Url="html/0512a4bb-d946-6635-d4f5-ca183ae84e2e.htm" />
+        <HelpTOCNode Title="NumContactIterations Property " Url="html/acb64042-202d-36bd-3729-258f30d867b9.htm" />
+        <HelpTOCNode Title="NumPenetrationRelaxtionTimesteps Property " Url="html/a841c220-c708-8025-fb20-f25115b2945a.htm" />
+        <HelpTOCNode Title="OldTime Property " Url="html/da11f5ae-4e2c-e77d-5cf9-959de426c82d.htm" />
+        <HelpTOCNode Title="SolverType Property " Url="html/5081cd3c-7785-a309-2b1c-cac94a16f483.htm" />
+        <HelpTOCNode Title="TargetTime Property " Url="html/cd5db191-6d33-6a67-8e46-3d19019b658c.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="PhysicsSystem.Solver Enumeration" Url="html/1235e5fc-edaf-fc53-7f89-5ec0f931469f.htm" />
+  </HelpTOCNode>
+  <HelpTOCNode Id="932157cd-eb49-4e3b-bb62-c5fc8711a045" Title="JigLibX.Utils Namespace" Url="html/856c5151-e061-2a5e-6ab2-4f8837b041de.htm">
+    <HelpTOCNode Id="59db38cb-87e7-4b64-a1b3-8e87d1391e3b" Title="Array2D Class" Url="html/716e1e12-05f6-f2a1-97e5-cf3c1c3cfc33.htm">
+      <HelpTOCNode Title="Array2D Members" Url="html/f4dc0917-bb92-d320-16f1-d304fd9dca98.htm" />
+      <HelpTOCNode Id="0af3b616-7807-422d-9eff-af1a367e40d5" Title="Array2D Constructor " Url="html/23bd3d82-7f53-0217-1dcf-da731427ac55.htm">
+        <HelpTOCNode Title="Array2D Constructor (Array2D)" Url="html/424ff49e-c5c8-b673-8171-7f19d89e516b.htm" />
+        <HelpTOCNode Title="Array2D Constructor (Int32, Int32)" Url="html/723d22d6-5824-8b22-bb91-42c4cb058960.htm" />
+        <HelpTOCNode Title="Array2D Constructor (Int32, Int32, Single)" Url="html/4bc32b93-d7e5-c1bc-2a98-d255bc8313b4.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="a2dda344-3960-4161-a666-e049964c9a02" Title="Array2D Fields" Url="html/03e599a4-7f76-60f7-5355-5d14cb515daf.htm">
+        <HelpTOCNode Title="Array Field" Url="html/404a0313-d367-65bd-390d-d82d61eb6b67.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="7cbe4ac2-2477-4015-acc8-9e22c9114d7f" Title="Array2D Methods" Url="html/6903b0ca-cf99-0870-5931-1266360aeb79.htm">
+        <HelpTOCNode Title="Abs Method " Url="html/73d99bee-8042-52f0-28bf-ac79ac5534f6.htm" />
+        <HelpTOCNode Title="CreateArray Method " Url="html/7e6178dc-f1b8-2332-28b8-cdd974369d0d.htm" />
+        <HelpTOCNode Title="GaussianFilter Method " Url="html/e9022549-f811-dbfd-eaf7-a0954e620332.htm" />
+        <HelpTOCNode Title="GetAt Method " Url="html/921e3294-2040-633d-ddae-2d608202a1e5.htm" />
+        <HelpTOCNode Title="Interpolate Method " Url="html/3ba241f9-d853-febc-5d3c-039d842613c8.htm" />
+        <HelpTOCNode Title="Pow Method " Url="html/aec988b4-1d65-feb4-a95b-314416cb3825.htm" />
+        <HelpTOCNode Title="Resize Method " Url="html/787343f2-d4f5-76e8-a420-38e851712803.htm" />
+        <HelpTOCNode Title="SetAt Method " Url="html/525bf97a-8234-313e-ac18-dea880613e86.htm" />
+        <HelpTOCNode Title="SetRange Method " Url="html/48458c64-c575-2eec-cb3d-a32f98167be7.htm" />
+        <HelpTOCNode Title="SetTo Method " Url="html/5ad0497e-6a0d-3ffb-b161-dcd0d27a0d93.htm" />
+        <HelpTOCNode Title="Shift Method " Url="html/7e7c9d29-eb89-ee70-b1dd-f4cafc107077.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="b87c091a-f772-4893-99df-89ea91b9c92b" Title="Array2D Properties" Url="html/153c385e-8390-505a-f10f-3e1978196bf3.htm">
+        <HelpTOCNode Title="Item Property " Url="html/335d38a1-ee67-9974-869d-bbc54f29d356.htm" />
+        <HelpTOCNode Title="Max Property " Url="html/1f33c85b-e29a-f943-c4a7-57235cef5edc.htm" />
+        <HelpTOCNode Title="Min Property " Url="html/fbcebb7e-e11c-d4cf-e9ac-6db22702c1f9.htm" />
+        <HelpTOCNode Title="Nx Property " Url="html/ebb8a7d0-a8b1-6cc7-dcf5-26d2b6f3a33c.htm" />
+        <HelpTOCNode Title="Nz Property " Url="html/e33ba5c4-0725-c373-8b05-f9a8f7ebf7e7.htm" />
+        <HelpTOCNode Title="Wrap Property " Url="html/6a03c966-1f1b-29d6-8f48-df40f7366d80.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="Array2D.Function Delegate" Url="html/aeb36a17-8190-f0ff-3aa5-1d9754185798.htm" />
+    <HelpTOCNode Id="74430ba3-f11f-4215-9aef-4dc3ee06e8b3" Title="JiggleUnsafe Class" Url="html/ba68718d-b547-9037-1be9-92887ceacc17.htm">
+      <HelpTOCNode Title="JiggleUnsafe Members" Url="html/79d01ee2-5b6a-3f6c-7166-089d6bd33127.htm" />
+      <HelpTOCNode Title="JiggleUnsafe Constructor " Url="html/0e86b363-83a4-8628-d7d0-63a059460f05.htm" />
+      <HelpTOCNode Id="8b52b067-665b-43b7-8013-422b0da8ccdd" Title="JiggleUnsafe Methods" Url="html/34494a54-711c-a1c6-6af7-c4dfeed3c857.htm">
+        <HelpTOCNode Id="1c45661a-3d5d-445d-a449-2b0afddafaa9" Title="Get Method " Url="html/da1bfb68-9650-358c-ade9-9dc29d06bf1f.htm">
+          <HelpTOCNode Title="Get Method (, Int32)" Url="html/f89fc4a4-159c-718c-1766-d74d99a7711b.htm" />
+          <HelpTOCNode Title="Get Method (, Int32)" Url="html/58cfad05-9c8e-bf20-647f-44fc0fab563b.htm" />
+          <HelpTOCNode Title="Get Method (, Int32)" Url="html/44a2a85f-a01f-cb86-19ce-0a878c5c4ba5.htm" />
+          <HelpTOCNode Title="Get Method (, Int32)" Url="html/684d8a33-01cc-53dd-211b-18cdbe2b9afb.htm" />
+          <HelpTOCNode Title="Get Method (, Int32, )" Url="html/9f842f4b-0e62-65c3-149e-ef7756eeb322.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="f832363c-3257-4048-b691-f5ef64800b37" Title="JigLibX.Vehicles Namespace" Url="html/8299e1dd-0422-1fe2-00a3-f6c35a637725.htm">
+    <HelpTOCNode Id="1f64693c-1a5d-4c01-bcb5-a0e08c2c6ea0" Title="Car Class" Url="html/9f070857-56d7-5d58-2598-053f68569ee7.htm">
+      <HelpTOCNode Title="Car Members" Url="html/c375f01d-eb4c-6c86-e5c7-00fa2c014f35.htm" />
+      <HelpTOCNode Title="Car Constructor " Url="html/db04d345-ec16-102f-f97c-49a1a9fa54b2.htm" />
+      <HelpTOCNode Id="4f4cb928-9a8e-4ebd-b35c-8804f57ce69a" Title="Car Methods" Url="html/01710e23-6480-50bb-3fdd-d4cc25295724.htm">
+        <HelpTOCNode Title="AddExternalForces Method " Url="html/e484ad07-f968-d2fe-1106-f627c500e391.htm" />
+        <HelpTOCNode Title="DisableCar Method " Url="html/e91c139c-fa10-91b4-a9e7-c13b30346537.htm" />
+        <HelpTOCNode Title="EnableCar Method " Url="html/cced5e51-c724-6da1-5c86-cd1b3e27bc99.htm" />
+        <HelpTOCNode Title="PostPhysics Method " Url="html/95be0a77-8001-c153-c85e-c8fce1408c7b.htm" />
+        <HelpTOCNode Title="SetupDefaultWheels Method " Url="html/aa36bd23-cf8f-650e-2aec-4cc864f292c8.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="6cc3cc9e-c010-4eec-8fa6-906866013561" Title="Car Properties" Url="html/ae5c8464-7e5e-dfa9-259d-e1e61baf45ae.htm">
+        <HelpTOCNode Title="Accelerate Property " Url="html/4174a1c6-68b7-b25e-0941-b95c8a6c774a.htm" />
+        <HelpTOCNode Title="BWDrive Property " Url="html/c0bedb4b-bce9-08cf-4fcc-cce6f84b06b2.htm" />
+        <HelpTOCNode Title="Chassis Property " Url="html/7c341b2a-6882-a2a0-5d97-d23d8592743a.htm" />
+        <HelpTOCNode Title="FWDrive Property " Url="html/4c2940a5-8a98-9437-f4a6-235d76ee26b1.htm" />
+        <HelpTOCNode Title="HBrake Property " Url="html/f4538406-20f8-61d1-7f32-5e275212d4f5.htm" />
+        <HelpTOCNode Title="NumWheelsOnFloor Property " Url="html/16386133-5ac6-edad-ba0b-0890a70022cc.htm" />
+        <HelpTOCNode Title="Steer Property " Url="html/5a4ac58c-d186-cc8d-2cda-c102e10bc178.htm" />
+        <HelpTOCNode Title="Wheels Property " Url="html/089e232a-17cb-5dea-908f-c98b1fa9bec4.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="a8682cef-3b32-4a41-8ac3-5abc68fe8c85" Title="Chassis Class" Url="html/3efa1fd9-3791-50ff-f028-bb6bc49fbe89.htm">
+      <HelpTOCNode Title="Chassis Members" Url="html/580465ea-8d31-66f4-ae79-78abfa53da63.htm" />
+      <HelpTOCNode Title="Chassis Constructor " Url="html/0b541929-77e1-a90c-52f4-7ea4885833d7.htm" />
+      <HelpTOCNode Id="e401d8fa-fc54-4bbb-9a4e-30d3aad181c1" Title="Chassis Methods" Url="html/30641d2c-6b26-5b6d-46fa-a51975c18900.htm">
+        <HelpTOCNode Title="DisableChassis Method " Url="html/010f7071-691d-ef9e-b9b3-0c462483706f.htm" />
+        <HelpTOCNode Title="EnableChassis Method " Url="html/8c0139df-76aa-f2f1-0c2d-0ddc267ffe9a.htm" />
+        <HelpTOCNode Title="GetDims Method " Url="html/9151d9c9-5b78-7929-ebaf-a8821a9b7e71.htm" />
+        <HelpTOCNode Title="SetDims Method " Url="html/7cd06e8d-3513-4c50-2415-87c998136720.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="ad1f7c34-5e6d-4657-b76b-bcff2e2542e2" Title="Chassis Properties" Url="html/6e262384-d326-7664-7867-6f3be7811835.htm">
+        <HelpTOCNode Title="Body Property " Url="html/95329801-a3c1-1355-5f2c-7716c5365fbf.htm" />
+        <HelpTOCNode Title="Skin Property " Url="html/eb24867b-5c9d-e2ef-3d16-7b14c0423e4e.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="197abd7a-43d8-4f86-ac84-cc407a0205b7" Title="ChassisBody Class" Url="html/1e774774-411e-d650-2baf-38678e28819c.htm">
+      <HelpTOCNode Title="ChassisBody Members" Url="html/bc48d909-326d-87b6-2373-105bf3919a44.htm" />
+      <HelpTOCNode Title="ChassisBody Constructor " Url="html/90111ecb-bc40-c31c-50a3-c1cc91a445e2.htm" />
+      <HelpTOCNode Title="ChassisBody Fields" Url="html/582b771d-84f2-e03b-e21b-b0af4f9194dc.htm" />
+      <HelpTOCNode Id="8c96901c-0122-4eb7-878f-7c59c68a8411" Title="ChassisBody Methods" Url="html/b20c88b0-8362-1b95-f0ff-20c3c67d1657.htm">
+        <HelpTOCNode Title="AddBodyForce Method " Url="html/fb833ef2-0c08-50ad-1912-fbe419713391.htm" />
+        <HelpTOCNode Title="AddExternalForces Method " Url="html/d52d6e1d-45d6-19fe-bb0b-555d2c3b241f.htm" />
+        <HelpTOCNode Title="AddWorldForce Method " Url="html/74998c45-376a-1a12-c063-f870df4526e1.htm" />
+        <HelpTOCNode Title="ApplyBodyImpulse Method " Url="html/043e8c78-d2ee-95a4-3946-929749f4665a.htm" />
+        <HelpTOCNode Title="ApplyBodyWorldImpulse Method " Url="html/86624a74-da22-0a2f-17e3-25ee111bc4ee.htm" />
+        <HelpTOCNode Title="ApplyNegativeBodyImpulse Method " Url="html/4d1ef548-d12e-2f9c-6516-24b921667076.htm" />
+        <HelpTOCNode Title="ApplyNegativeBodyWorldImpulse Method " Url="html/d85d5b2c-2b04-71e8-72fe-8b6fb4a238d0.htm" />
+        <HelpTOCNode Title="ApplyNegativeWorldImpulse Method " Url="html/b6d73d56-a9ba-eca4-ab23-ed688db9c722.htm" />
+        <HelpTOCNode Title="ApplyNegativeWorldImpulseAux Method " Url="html/0b33946b-e295-1da2-748e-ff692f11ec8d.htm" />
+        <HelpTOCNode Title="ApplyWorldImpulse Method " Url="html/4a7689e4-25e0-cf1a-df91-6a82e659c3c0.htm" />
+        <HelpTOCNode Title="ApplyWorldImpulseAux Method " Url="html/d074e528-1fdc-f09e-83f6-11361a3d39ec.htm" />
+        <HelpTOCNode Title="GetVelocity Method " Url="html/f703df8e-4004-0c73-9d5c-4e5e07539bf2.htm" />
+        <HelpTOCNode Title="GetVelocityAux Method " Url="html/553dc39a-d2f5-7d1a-05b0-ee0bfe88eabf.htm" />
+        <HelpTOCNode Title="PostPhysics Method " Url="html/38227bbe-2dd0-29e9-0a1d-698fbac0529d.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="a8a8b09b-e64a-49db-9f3f-dde63a755845" Title="ChassisBody Properties" Url="html/21c6fbc0-a889-1c0a-cb81-618526f0dcbe.htm">
+        <HelpTOCNode Title="Car Property " Url="html/1f07d56c-0bf2-4beb-2498-ed268cee5259.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="571fa474-8e55-4bfc-bd7a-fb640b90b068" Title="Wheel Class" Url="html/d68393ce-5eca-e90a-f2d8-e6cc10f1107f.htm">
+      <HelpTOCNode Title="Wheel Members" Url="html/9b515675-34ef-0d54-819a-64ddcc95959d.htm" />
+      <HelpTOCNode Title="Wheel Constructor " Url="html/7da59dd5-4f97-b8c5-0a01-d55584f06d1d.htm" />
+      <HelpTOCNode Id="02eed83f-9902-45d3-8f4a-82f83a2dff14" Title="Wheel Methods" Url="html/87c25f07-4d16-9aca-c136-df5b537106ea.htm">
+        <HelpTOCNode Title="AddForcesToCar Method " Url="html/03f81e84-517b-601e-9dd3-d887817ca217.htm" />
+        <HelpTOCNode Title="AddTorque Method " Url="html/46d4acf2-37dc-c9e5-c0e6-30921cfe86de.htm" />
+        <HelpTOCNode Title="Reset Method " Url="html/70c033b7-7ca7-a754-71fd-2013812f3fee.htm" />
+        <HelpTOCNode Title="Setup Method " Url="html/afc49c6d-0ff4-efb0-f30b-6016802a5c95.htm" />
+        <HelpTOCNode Title="Update Method " Url="html/a3b11e6d-2691-4d8b-d671-e135b7b8691e.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="6e3beb45-4e5c-46f1-a328-ba4b291d2783" Title="Wheel Properties" Url="html/e33da20e-9611-3f2d-faec-b0730482af9f.htm">
+        <HelpTOCNode Title="AxisAngle Property " Url="html/62a88eb0-c15b-772f-8cb4-f966bdcef132.htm" />
+        <HelpTOCNode Title="Displacement Property " Url="html/b795e3b1-6db0-b12a-4986-8c2ce294f9d8.htm" />
+        <HelpTOCNode Title="LocalAxisUp Property " Url="html/4bdbc75e-0cf1-4646-3935-0202f4719af7.htm" />
+        <HelpTOCNode Title="Lock Property " Url="html/024ab7d0-8b59-5342-f692-1b5d1c19cc63.htm" />
+        <HelpTOCNode Title="OnFloor Property " Url="html/a7f37977-4e66-2bc1-6c00-a5e86440548d.htm" />
+        <HelpTOCNode Title="Pos Property " Url="html/5b38c64c-2afb-88eb-ec37-324c7cc40257.htm" />
+        <HelpTOCNode Title="Radius Property " Url="html/833dbd48-a5bd-5a98-604d-76975cddb03c.htm" />
+        <HelpTOCNode Title="SteerAngle Property " Url="html/6f5d5fe4-1f20-e0b7-0428-f9124e3f2eb5.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+</HelpTOC>

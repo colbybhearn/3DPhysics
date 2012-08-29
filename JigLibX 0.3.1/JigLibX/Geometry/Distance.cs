@@ -9,12 +9,23 @@ using JigLibX.Geometry;
 
 namespace JigLibX.Geometry
 {
-
+    /// <summary>
+    /// Class Distance
+    /// </summary>
     public sealed class Distance
     {
         private Distance() { }
 
         #region SegmentTriangleDistanceSq
+        /// <summary>
+        /// SegmentTriangleDistanceSq
+        /// </summary>
+        /// <param name="segT"></param>
+        /// <param name="triT0"></param>
+        /// <param name="triT1"></param>
+        /// <param name="seg"></param>
+        /// <param name="triangle"></param>
+        /// <returns>float</returns>
         public static float SegmentTriangleDistanceSq(out float segT, out float triT0, out float triT1, Segment seg, Triangle triangle)
         {
             // compare segment to all three edges of the triangle
@@ -75,6 +86,14 @@ namespace JigLibX.Geometry
         #endregion
 
         #region PointTriangleDistanceSq
+        /// <summary>
+        /// PointTriangleDistanceSq
+        /// </summary>
+        /// <param name="pfSParam"></param>
+        /// <param name="pfTParam"></param>
+        /// <param name="rkPoint"></param>
+        /// <param name="rkTri"></param>
+        /// <returns>float</returns>
         public static float PointTriangleDistanceSq(out float pfSParam, out float pfTParam, Vector3 rkPoint, Triangle rkTri)
         {
             Vector3 kDiff = rkTri.Origin - rkPoint;
@@ -303,21 +322,64 @@ namespace JigLibX.Geometry
         #endregion
 
         #region PointPlaneDistance
+        /// <summary>
+        /// PointPlaneDistance
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="plane"></param>
+        /// <returns>float</returns>
         public static float PointPlaneDistance(Vector3 pt, Plane plane)
         {
             return Vector3.Dot(plane.Normal, pt) + plane.D;
         }
 
+        /// <summary>
+        /// PointPlaneDistance
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="plane"></param>
+        /// <returns>float</returns>
         public static float PointPlaneDistance(ref Vector3 pt, Plane plane)
         {
             float num0;
             Vector3.Dot(ref plane.normal, ref pt, out num0);
             return plane.D + num0;
         }
+
+        /// <summary>
+        /// PointPlaneDistance
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="planeNormal"></param>
+        /// <param name="planeD"></param>
+        /// <returns>float</returns>
+        public static float PointPlaneDistance(Vector3 pt, Vector3 planeNormal, float planeD)
+        {
+            return Vector3.Dot(planeNormal, pt) + planeD;
+        }
+
+        /// <summary>
+        /// PointPlaneDistance
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="planeNormal"></param>
+        /// <param name="planeD"></param>
+        /// <returns>float</returns>
+        public static float PointPlaneDistance(ref Vector3 pt,ref Vector3 planeNormal, float planeD)
+        {
+            float num0;
+            Vector3.Dot(ref planeNormal,ref pt,out num0);
+            return num0 + planeD;
+        }
         #endregion
 
         #region PointPointDistanceSq
-
+        /// <summary>
+        /// PointPointDistanceSq
+        /// </summary>
+        /// <param name="pt1"></param>
+        /// <param name="pt2"></param>
+        /// <returns>float</returns>
         public static float PointPointDistanceSq(Vector3 pt1, Vector3 pt2)
         {
             float num3 = pt1.X - pt2.X;
@@ -326,6 +388,12 @@ namespace JigLibX.Geometry
             return ((num3 * num3) + (num2 * num2)) + (num0 * num0);
         }
 
+        /// <summary>
+        /// PointPointDistanceSq
+        /// </summary>
+        /// <param name="pt1"></param>
+        /// <param name="pt2"></param>
+        /// <param name="result"></param>
         public static void PointPointDistanceSq(ref Vector3 pt1, ref Vector3 pt2, out float result)
         {
             float num3 = pt1.X - pt2.X;
@@ -337,7 +405,12 @@ namespace JigLibX.Geometry
         #endregion
 
         #region PointPointDistance
-
+        /// <summary>
+        /// PointPointDistance
+        /// </summary>
+        /// <param name="pt1"></param>
+        /// <param name="pt2"></param>
+        /// <returns>float</returns>
         public static float PointPointDistance(Vector3 pt1, Vector3 pt2)
         {
             float num3 = pt1.X - pt2.X;
@@ -346,7 +419,12 @@ namespace JigLibX.Geometry
             float num4 = ((num3 * num3) + (num2 * num2)) + (num0 * num0);
             return (float)System.Math.Sqrt((double)num4);
         }
-
+        /// <summary>
+        /// PointPointDistance
+        /// </summary>
+        /// <param name="pt1"></param>
+        /// <param name="pt2"></param>
+        /// <param name="result"></param>
         public static void PointPointDistance(ref Vector3 pt1, ref Vector3 pt2, out float result)
         {
             float num3 = pt1.X - pt2.X;
@@ -359,7 +437,13 @@ namespace JigLibX.Geometry
         #endregion
 
         #region PointSegmentDistanceSq
-
+        /// <summary>
+        /// PointSegmentDistanceSq
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="pt"></param>
+        /// <param name="seg"></param>
+        /// <returns>float</returns>
         public static float PointSegmentDistanceSq(out float t, Vector3 pt, Segment seg)
         {
             Vector3 kDiff;
@@ -392,6 +476,12 @@ namespace JigLibX.Geometry
             return kDiff.LengthSquared();
         }
 
+        /// <summary>
+        /// PointSegmentDistanceSq
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="seg"></param>
+        /// <returns>float</returns>
         public static float PointSegmentDistanceSq(Vector3 pt, Segment seg)
         {
             Vector3 kDiff;
@@ -422,6 +512,13 @@ namespace JigLibX.Geometry
             return kDiff.LengthSquared();
         }
 
+        /// <summary>
+        /// PointSegmentDistanceSq
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="result"></param>
+        /// <param name="pt"></param>
+        /// <param name="seg"></param>
         public static void PointSegmentDistanceSq(out float t, out float result, ref Vector3 pt, ref Segment seg)
         {
             Vector3 kDiff;
@@ -454,6 +551,12 @@ namespace JigLibX.Geometry
             result = kDiff.LengthSquared();
         }
 
+        /// <summary>
+        /// PointSegmentDistanceSq
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="seg"></param>
+        /// <param name="result"></param>
         public static void PointSegmentDistanceSq(ref Vector3 pt, ref Segment seg, out float result)
         {
             Vector3 kDiff;
@@ -487,7 +590,13 @@ namespace JigLibX.Geometry
         #endregion
 
         #region PointSegmentDistance
-
+        /// <summary>
+        /// PointSegmentDistance
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="pt"></param>
+        /// <param name="seg"></param>
+        /// <returns>float</returns>
         public static float PointSegmentDistance(out float t, Vector3 pt, Segment seg)
         {
             Vector3 kDiff;
@@ -520,6 +629,12 @@ namespace JigLibX.Geometry
             return kDiff.Length();
         }
 
+        /// <summary>
+        /// PointSegmentDistance
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="seg"></param>
+        /// <returns>float</returns>
         public static float PointSegmentDistance(Vector3 pt, Segment seg)
         {
             Vector3 kDiff;
@@ -550,6 +665,13 @@ namespace JigLibX.Geometry
             return kDiff.Length();
         }
 
+        /// <summary>
+        /// PointSegmentDistance
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="result"></param>
+        /// <param name="pt"></param>
+        /// <param name="seg"></param>
         public static void PointSegmentDistance(out float t, out float result, ref Vector3 pt, ref Segment seg)
         {
             Vector3 kDiff;
@@ -582,6 +704,12 @@ namespace JigLibX.Geometry
             result = kDiff.Length();
         }
 
+        /// <summary>
+        /// PointSegmentDistance
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="seg"></param>
+        /// <param name="result"></param>
         public static void PointSegmentDistance(ref Vector3 pt, ref Segment seg, out float result)
         {
             Vector3 kDiff;
@@ -615,6 +743,16 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SegmentBoxDistanceSq
+        /// <summary>
+        /// SegmentBoxDistanceSq
+        /// </summary>
+        /// <param name="pfLParam"></param>
+        /// <param name="pfBParam0"></param>
+        /// <param name="pfBParam1"></param>
+        /// <param name="pfBParam2"></param>
+        /// <param name="rkSeg"></param>
+        /// <param name="rkBox"></param>
+        /// <returns>float</returns>
         public static float SegmentBoxDistanceSq(out float pfLParam,
             out float pfBParam0, out float pfBParam1, out float pfBParam2,
             Segment rkSeg, Box rkBox)
@@ -659,6 +797,15 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SqrDistance
+        /// <summary>
+        /// SqrDistance
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="box"></param>
+        /// <param name="pfBParam0"></param>
+        /// <param name="pfBParam1"></param>
+        /// <param name="pfBParam2"></param>
+        /// <returns>float</returns>
         public static float SqrDistance(Vector3 point, Box box,
             out float pfBParam0, out float pfBParam1, out float pfBParam2)
         {
@@ -721,6 +868,16 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SqrDistance
+        /// <summary>
+        /// SqrDistance
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="box"></param>
+        /// <param name="pfLParam"></param>
+        /// <param name="pfBParam0"></param>
+        /// <param name="pfBParam1"></param>
+        /// <param name="pfBParam2"></param>
+        /// <returns>float</returns>
         public static float SqrDistance(Line line, Box box, out float pfLParam,
             out float pfBParam0, out float pfBParam1, out float pfBParam2)
         {
@@ -1223,6 +1380,15 @@ namespace JigLibX.Geometry
             return MathHelper.Max(sqrDistance, 0.0f);
         }
 
+        /// <summary>
+        /// FaceA
+        /// </summary>
+        /// <param name="kPnt"></param>
+        /// <param name="kDir"></param>
+        /// <param name="rkBox"></param>
+        /// <param name="kPmE"></param>
+        /// <param name="pfLParam"></param>
+        /// <param name="sqrDistance"></param>
         private static void FaceA(ref Vector3 kPnt,
                  Vector3 kDir, Box rkBox,
                  Vector3 kPmE,out float pfLParam,ref float sqrDistance)
@@ -1421,6 +1587,15 @@ namespace JigLibX.Geometry
             }
         }
 
+        /// <summary>
+        /// FaceB
+        /// </summary>
+        /// <param name="kPnt"></param>
+        /// <param name="kDir"></param>
+        /// <param name="rkBox"></param>
+        /// <param name="kPmE"></param>
+        /// <param name="pfLParam"></param>
+        /// <param name="sqrDistance"></param>
         private static void FaceB(ref Vector3 kPnt,
                Vector3 kDir, Box rkBox,
                Vector3 kPmE, out float pfLParam,ref float sqrDistance)
@@ -1619,6 +1794,15 @@ namespace JigLibX.Geometry
             }
         }
 
+        /// <summary>
+        /// FaceC
+        /// </summary>
+        /// <param name="kPnt"></param>
+        /// <param name="kDir"></param>
+        /// <param name="rkBox"></param>
+        /// <param name="kPmE"></param>
+        /// <param name="pfLParam"></param>
+        /// <param name="sqrDistance"></param>
         private static void FaceC(ref Vector3 kPnt,
               Vector3 kDir, Box rkBox,
               Vector3 kPmE,out float pfLParam, ref float sqrDistance)
@@ -1826,7 +2010,7 @@ namespace JigLibX.Geometry
         /// <param name="t1">Parametric representation of nearest point on seg0.</param>
         /// <param name="seg0">First segment to test.</param>
         /// <param name="seg1">Second segment to test.</param>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public static float SegmentSegmentDistanceSq(out float t0, out float t1, Segment seg0, Segment seg1)
         {
             Vector3 kDiff = seg0.Origin - seg1.Origin;

@@ -14,6 +14,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content.Pipeline;
 #endregion
 
 namespace HeightmapProcessor

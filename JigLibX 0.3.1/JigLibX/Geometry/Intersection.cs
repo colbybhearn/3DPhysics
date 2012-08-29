@@ -9,30 +9,75 @@ using JigLibX.Geometry;
 
 namespace JigLibX.Geometry
 {
+    /// <summary>
+    /// Class Intersection
+    /// </summary>
     public sealed class Intersection
     {
-
+        /// <summary>
+        /// enum EdgesToTest
+        /// </summary>
         public enum EdgesToTest
         {
+            /// <summary>
+            /// None
+            /// </summary>
             None = 0,
+            /// <summary>
+            /// edge0
+            /// </summary>
             Edge0 = 1 << 0,
+            /// <summary>
+            /// edge1
+            /// </summary>
             Edge1 = 1 << 1,
+            /// <summary>
+            /// edge2
+            /// </summary>
             Edge2 = 1 << 2,
+            /// <summary>
+            /// edgeAll
+            /// </summary>
             EdgeAll = Edge0 | Edge1 | Edge2
         }
 
+        /// <summary>
+        /// enum CornersToTest
+        /// </summary>
         public enum CornersToTest
         {
+            /// <summary>
+            /// None
+            /// </summary>
             None = 0,
+            /// <summary>
+            /// Corner0
+            /// </summary>
             Corner0 = 1 << 0,
+            /// <summary>
+            /// Corner1
+            /// </summary>
             Corner1 = 1 << 1,
+            /// <summary>
+            /// Corner2
+            /// </summary>
             Corner2 = 1 << 2,
+            /// <summary>
+            /// CornerAll
+            /// </summary>
             CornerAll = Corner0 | Corner1 | Corner2
         }
 
         private Intersection() { }
 
         #region LinePlaneIntersection
+        /// <summary>
+        /// LinePlaneIntersection
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="line"></param>
+        /// <param name="plane"></param>
+        /// <returns>bool</returns>
         public static bool LinePlaneIntersection(out float t, Line line, Plane plane)
         {
             float dot = Vector3.Dot(line.Dir, plane.Normal);
@@ -50,6 +95,13 @@ namespace JigLibX.Geometry
         #endregion
 
         #region RayPlaneIntersection
+        /// <summary>
+        /// RayPlaneIntersection
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="ray"></param>
+        /// <param name="plane"></param>
+        /// <returns>bool</returns>
         public static bool RayPlaneIntersection(out float t, Ray ray, Plane plane)
         {
             float dot = Vector3.Dot(ray.Dir, plane.Normal);
@@ -66,6 +118,13 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SegmentPlaneIntersection
+        /// <summary>
+        /// SegmentPlaneIntersection
+        /// </summary>
+        /// <param name="tS"></param>
+        /// <param name="seg"></param>
+        /// <param name="plane"></param>
+        /// <returns>bool</returns>
         public static bool SegmentPlaneIntersection(out float tS, Segment seg, Plane plane)
         {
             float denom = Vector3.Dot(plane.Normal, seg.Delta);
@@ -90,6 +149,17 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SweptSpherePlaneIntersection
+        /// <summary>
+        /// SweptSpherePlaneIntersection
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="finalPenetration"></param>
+        /// <param name="oldSphere"></param>
+        /// <param name="newSphere"></param>
+        /// <param name="planeNormal"></param>
+        /// <param name="pOldDistToPlane"></param>
+        /// <param name="pNewDistToPlane"></param>
+        /// <returns>bool</returns>
         public static bool SweptSpherePlaneIntersection(out Vector3 pt, out float finalPenetration, BoundingSphere oldSphere, BoundingSphere newSphere,
             Vector3 planeNormal, float pOldDistToPlane, float pNewDistToPlane)
         {
@@ -117,6 +187,20 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SweptSphereTriangleIntersection
+        /// <summary>
+        /// SweptSphereTriangleIntersection
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="N"></param>
+        /// <param name="depth"></param>
+        /// <param name="oldSphere"></param>
+        /// <param name="newSphere"></param>
+        /// <param name="triangle"></param>
+        /// <param name="oldCentreDistToPlane"></param>
+        /// <param name="newCentreDistToPlane"></param>
+        /// <param name="edgesToTest"></param>
+        /// <param name="cornersToTest"></param>
+        /// <returns>bool</returns>
         public static bool SweptSphereTriangleIntersection(out Vector3 pt, out Vector3 N, out float depth,
             BoundingSphere oldSphere, BoundingSphere newSphere, Triangle triangle,
             float oldCentreDistToPlane, float newCentreDistToPlane,
@@ -302,6 +386,13 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SegmentSphereIntersection
+        /// <summary>
+        /// SegmentSphereIntersection
+        /// </summary>
+        /// <param name="ts"></param>
+        /// <param name="seg"></param>
+        /// <param name="sphere"></param>
+        /// <returns>bool</returns>
         public static bool SegmentSphereIntersection(out float ts, Segment seg, Sphere sphere)
         {
             Vector3 r = seg.Delta;
@@ -336,6 +427,13 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SegmentCapsuleIntersection
+        /// <summary>
+        /// SegmentCapsuleIntersection
+        /// </summary>
+        /// <param name="tS"></param>
+        /// <param name="seg"></param>
+        /// <param name="capsule"></param>
+        /// <returns>bool</returns>
         public static bool SegmentCapsuleIntersection(out float tS, Segment seg, Capsule capsule)
         {
             float bestFrac = float.MaxValue;
@@ -377,6 +475,14 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SegmentInfiniteCylinderIntersection
+        /// <summary>
+        /// SegmentInfiniteCylinderIntersection
+        /// </summary>
+        /// <param name="tS"></param>
+        /// <param name="seg"></param>
+        /// <param name="cylinderAxis"></param>
+        /// <param name="radius"></param>
+        /// <returns>bool</returns>
         public static bool SegmentInfiniteCylinderIntersection(out float tS, Segment seg, Segment cylinderAxis, float radius)
         {
             Vector3 Ks = seg.Delta;
@@ -427,10 +533,19 @@ namespace JigLibX.Geometry
         #endregion
 
         #region SegmentTriangleIntersection
+        /// <summary>
+        /// SegmentTriangleIntersection
+        /// </summary>
+        /// <param name="tS"></param>
+        /// <param name="tT0"></param>
+        /// <param name="tT1"></param>
+        /// <param name="seg"></param>
+        /// <param name="triangle"></param>
+        /// <returns>bool</returns>
         public static bool SegmentTriangleIntersection(out float tS, out float tT0, out float tT1,
                                         Segment seg, Triangle triangle)
         {
-            /// the parameters - if hit then they get copied into the args
+            // the parameters - if hit then they get copied into the args
             float u, v, t;
 
             tS = 0;

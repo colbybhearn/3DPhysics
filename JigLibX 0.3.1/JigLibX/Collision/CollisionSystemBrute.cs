@@ -29,6 +29,12 @@ namespace JigLibX.Collision
         {
         }
 
+        /// <summary>
+        /// CheckCollidables
+        /// </summary>
+        /// <param name="skin0"></param>
+        /// <param name="skin1"></param>
+        /// <returns>bool</returns>
         private static bool CheckCollidables(CollisionSkin skin0,
             CollisionSkin skin1)
         {
@@ -54,11 +60,18 @@ namespace JigLibX.Collision
             return true;
         }
 
+        /// <summary>
+        /// Gets skins.AsReadOnly()
+        /// </summary>
         public override ReadOnlyCollection<CollisionSkin> CollisionSkins
         {
             get { return skins.AsReadOnly(); }
         }
 
+        /// <summary>
+        /// Adds a CollisionSkin
+        /// </summary>
+        /// <param name="skin"></param>
         public override void AddCollisionSkin(CollisionSkin skin)
         {
             if (skins.Contains(skin))
@@ -69,6 +82,11 @@ namespace JigLibX.Collision
             skin.CollisionSystem = this;
         }
 
+        /// <summary>
+        /// Removes a CollisionSkin
+        /// </summary>
+        /// <param name="skin"></param>
+        /// <returns>bool</returns>
         public override bool RemoveCollisionSkin(CollisionSkin skin)
         {
             if (!skins.Contains(skin)) return false;
@@ -76,11 +94,22 @@ namespace JigLibX.Collision
             return true;
         }
 
+        /// <summary>
+        /// Not needed
+        /// </summary>
+        /// <param name="skin"></param>
         public override void CollisionSkinMoved(CollisionSkin skin)
         {
             // not needed
         }
 
+        /// <summary>
+        /// DetectCollisions
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="collisionFunctor"></param>
+        /// <param name="collisionPredicate"></param>
+        /// <param name="collTolerance"></param>
         public override void DetectCollisions(Body body, CollisionFunctor collisionFunctor, CollisionSkinPredicate2 collisionPredicate, float collTolerance)
         {
             if (!body.IsActive)
@@ -115,6 +144,13 @@ namespace JigLibX.Collision
 
         }
 
+        /// <summary>
+        /// DetectAllCollisions
+        /// </summary>
+        /// <param name="bodies"></param>
+        /// <param name="collisionFunctor"></param>
+        /// <param name="collisionPredicate"></param>
+        /// <param name="collTolerance"></param>
         public override void DetectAllCollisions(List<Body> bodies, CollisionFunctor collisionFunctor, CollisionSkinPredicate2 collisionPredicate, float collTolerance)
         {
             int numSkins = skins.Count;
@@ -180,6 +216,16 @@ namespace JigLibX.Collision
 
         } // void
 
+        /// <summary>
+        /// SegmentIntersect
+        /// </summary>
+        /// <param name="fracOut"></param>
+        /// <param name="skinOut"></param>
+        /// <param name="posOut"></param>
+        /// <param name="normalOut"></param>
+        /// <param name="seg"></param>
+        /// <param name="collisionPredicate"></param>
+        /// <returns>bool</returns>
         public override bool SegmentIntersect(out float fracOut,out CollisionSkin skinOut,out Vector3 posOut,out Vector3 normalOut, Segment seg, CollisionSkinPredicate1 collisionPredicate)
         {
             int numSkins = skins.Count;

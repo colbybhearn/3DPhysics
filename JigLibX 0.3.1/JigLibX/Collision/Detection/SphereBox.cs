@@ -16,23 +16,23 @@ namespace JigLibX.Collision
     public class CollDetectSphereBox : DetectFunctor
     {
 
-        /// <summary>
-        /// 
-        /// </summary>
         #region public CollDetectSphereBox() 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public CollDetectSphereBox() 
             : base("SphereBox", (int)PrimitiveType.Sphere, (int)PrimitiveType.Box)
         {
         }
         #endregion
 
+        #region override CollDetect
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="infoOrig"></param>
         /// <param name="collTolerance"></param>
         /// <param name="collisionFunctor"></param>
-        #region public override void CollDetect(CollDetectInfo infoOrig, float collTolerance, CollisionFunctor collisionFunctor)
         public override void CollDetect(CollDetectInfo infoOrig, float collTolerance, CollisionFunctor collisionFunctor)
         {
            // get the skins in the order that we're expecting

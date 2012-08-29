@@ -17,7 +17,7 @@ namespace JigLibX.Collision
     {
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         public CollDetectSphereHeightmap()
             : base("SphereHeightmap", (int)PrimitiveType.Sphere, (int)PrimitiveType.Heightmap)
@@ -25,7 +25,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="infoOrig"></param>
         /// <param name="collTolerance"></param>

@@ -9,6 +9,9 @@ using JigLibX.Math;
 
 namespace JigLibX.Collision
 {
+    /// <summary>
+    /// Class CollDetectCapsulePlane
+    /// </summary>
     public class CollDetectCapsulePlane : DetectFunctor
     {
 
@@ -21,7 +24,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="info"></param>
         /// <param name="collTolerance"></param>
@@ -75,7 +78,11 @@ namespace JigLibX.Collision
                             float oldDepth = oldCapsule.Radius - oldDist;
                             // calc the world position based on the old position8(s)
                             Vector3 worldPos = oldCapsule.Position - oldCapsule.Radius * oldPlane.Normal;
-                            collPts[numCollPts++] = new SmallCollPointInfo(worldPos - body0Pos, worldPos - body1Pos, oldDepth);
+
+                            // BEN-OPTIMISATION: Now reuses existing collPts instead of reallocating.
+                            collPts[numCollPts].R0 = worldPos - body0Pos;
+                            collPts[numCollPts].R1 = worldPos - body1Pos;
+                            collPts[numCollPts++].InitialPenetration = oldDepth;
                         }
                     }
 
@@ -91,7 +98,11 @@ namespace JigLibX.Collision
                             float oldDepth = oldCapsule.Radius - oldDist;
                             // calc the world position based on the old position(s)
                             Vector3 worldPos = oldCapsule.GetEnd() - oldCapsule.Radius * oldPlane.Normal;
-                            collPts[numCollPts++] = new SmallCollPointInfo(worldPos - body0Pos, worldPos - body1Pos, oldDepth);
+
+                            // BEN-OPTIMISATION: Now reuses existing collPts instead of reallocating.
+                            collPts[numCollPts].R0 = worldPos - body0Pos;
+                            collPts[numCollPts].R1 = worldPos - body1Pos;
+                            collPts[numCollPts++].InitialPenetration = oldDepth;
                         }
 
                         if (numCollPts > 0)
