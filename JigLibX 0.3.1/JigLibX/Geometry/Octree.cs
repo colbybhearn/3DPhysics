@@ -9,10 +9,13 @@ using System.Diagnostics;
 
 namespace JigLibX.Geometry
 {
+    /// <summary>
+    /// Class Octree
+    /// </summary>
     public class Octree
     {
         /// <summary>
-        /// endices into the children - P means "plus" and M means "minus" and the
+        /// Endices into the children - P means "plus" and M means "minus" and the
         /// letters are xyz. So PPM means +ve x, +ve y, -ve z
         /// </summary>
         [Flags]
@@ -53,9 +56,17 @@ namespace JigLibX.Geometry
         UInt16[]                nodeStack;
 
         // to make compat with old Octree interface
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Octree()
         {
         }
+
+        /// <summary>
+        /// Clear
+        /// </summary>
+        /// <param name="NOTUSED"></param>
         public void Clear( bool NOTUSED )
         {
             positions = null;
@@ -64,6 +75,12 @@ namespace JigLibX.Geometry
             nodes = null;
             boundingBox = null;
         }
+
+        /// <summary>
+        /// AddTriangles
+        /// </summary>
+        /// <param name="_positions"></param>
+        /// <param name="_tris"></param>
         public void AddTriangles(List<Vector3> _positions, List<TriangleVertexIndices> _tris)
         {
             // copy the position data into a array
@@ -75,6 +92,11 @@ namespace JigLibX.Geometry
             _tris.CopyTo(tris);
         }
 
+        /// <summary>
+        /// BuildOctree
+        /// </summary>
+        /// <param name="_maxTrisPerCellNOTUSED"></param>
+        /// <param name="_minCellSizeNOTUSED"></param>
         public void BuildOctree( int _maxTrisPerCellNOTUSED, float _minCellSizeNOTUSED)
         {
             // create tri and tri bounding box arrays
@@ -183,6 +205,11 @@ namespace JigLibX.Geometry
 
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="_positions"></param>
+        /// <param name="_tris"></param>
         public Octree(List<Vector3> _positions, List<TriangleVertexIndices> _tris)
         {
             AddTriangles(_positions, _tris);
@@ -193,7 +220,7 @@ namespace JigLibX.Geometry
         /// </summary>
         /// <param name="aabb"></param>
         /// <param name="child"></param>
-        /// <returns></returns>
+        /// <returns>BoundingBox</returns>
         private BoundingBox CreateAABox(BoundingBox aabb, EChild child)
         {
             Vector3 dims = 0.5f * (aabb.Max - aabb.Min);
@@ -229,6 +256,12 @@ namespace JigLibX.Geometry
 
             return result;
         }
+
+        /// <summary>
+        /// GatherTriangles
+        /// </summary>
+        /// <param name="_nodeIndex"></param>
+        /// <param name="_tris"></param>
         private void GatherTriangles(int _nodeIndex, ref List<int> _tris)
         {
             // add this nodes triangles
@@ -243,7 +276,13 @@ namespace JigLibX.Geometry
             }
         }
 
-
+        /// <summary>
+        /// GetTrianglesIntersectingAABox
+        /// </summary>
+        /// <param name="triangles"></param>
+        /// <param name="maxTriangles"></param>
+        /// <param name="testBox"></param>
+        /// <returns>int</returns>
         public unsafe int GetTrianglesIntersectingtAABox(int* triangles, int maxTriangles, ref BoundingBox testBox)
         {
             if (nodes.Length == 0)
@@ -281,6 +320,9 @@ namespace JigLibX.Geometry
             return triCount;
         }
 
+        /// <summary>
+        /// Gets boundingBox
+        /// </summary>
         public AABox BoundingBox
         {
             get
@@ -288,6 +330,12 @@ namespace JigLibX.Geometry
                 return boundingBox;
             }
         }
+
+        /// <summary>
+        /// GetTriangle
+        /// </summary>
+        /// <param name="_index"></param>
+        /// <returns>IndexedTriangle</returns>
         public IndexedTriangle GetTriangle(int _index)
         {
             return new IndexedTriangle(tris[_index].I0, tris[_index].I1, tris[_index].I2, positions);
@@ -296,12 +344,17 @@ namespace JigLibX.Geometry
         /// Get a vertex
         /// </summary>
         /// <param name="iVertex"></param>
-        /// <returns></returns>
+        /// <returns>Vector3</returns>
         public Vector3 GetVertex(int iVertex)
         {
             return positions[iVertex];
         }
 
+        /// <summary>
+        /// GetVertex
+        /// </summary>
+        /// <param name="iVertex"></param>
+        /// <param name="result"></param>
         public void GetVertex(int iVertex, out Vector3 result)
         {
             result = positions[iVertex];

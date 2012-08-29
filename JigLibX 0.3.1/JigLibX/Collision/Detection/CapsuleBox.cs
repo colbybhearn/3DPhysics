@@ -18,7 +18,7 @@ namespace JigLibX.Collision
         private Random random = new Random();
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         public CollDetectCapsuleBox()
             : base("CapsuleBox", (int)PrimitiveType.Capsule, (int)PrimitiveType.Box)
@@ -26,7 +26,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="infoOrig"></param>
         /// <param name="collTolerance"></param>

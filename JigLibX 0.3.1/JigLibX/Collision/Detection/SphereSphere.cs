@@ -19,7 +19,7 @@ namespace JigLibX.Collision
         private Random random = new Random();
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         public CollDetectSphereSphere()
             : base("SphereSphere", (int)PrimitiveType.Sphere, (int)PrimitiveType.Sphere)
@@ -27,7 +27,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="info"></param>
         /// <param name="collTolerance"></param>
@@ -63,7 +63,7 @@ namespace JigLibX.Collision
                 else
                 {
                     // TODO - make this not random...!
-                    oldDelta = Vector3.Transform(Vector3.Backward, Matrix.CreateFromAxisAngle(Vector3.Up,MathHelper.ToRadians(random.Next(360))));
+                    oldDelta = Vector3.TransformNormal(Vector3.Backward, Matrix.CreateFromAxisAngle(Vector3.Up,MathHelper.ToRadians(random.Next(360))));
                 }
 
                 Vector3 worldPos = oldSphere1.Position +

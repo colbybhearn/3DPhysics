@@ -17,7 +17,7 @@ namespace JigLibX.Collision
     {
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         public CollDetectSpherePlane()
             : base("SpherePlane", (int)PrimitiveType.Sphere, (int)PrimitiveType.Plane)
@@ -25,7 +25,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="info"></param>
         /// <param name="collTolerance"></param>

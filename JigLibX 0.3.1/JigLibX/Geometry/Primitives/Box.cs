@@ -9,7 +9,9 @@ using JigLibX.Utils;
 
 namespace JigLibX.Geometry
 {
-
+    /// <summary>
+    /// Class Box
+    /// </summary>
     public class Box : Primitive
     {
 
@@ -19,9 +21,20 @@ namespace JigLibX.Geometry
         /// </summary>
         public struct Edge
         {
+            /// <summary>
+            /// Ind0
+            /// </summary>
             public BoxPointIndex Ind0;
+            /// <summary>
+            /// Ind1
+            /// </summary>
             public BoxPointIndex Ind1;
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="ind0"></param>
+            /// <param name="ind1"></param>
             public Edge(BoxPointIndex ind0, BoxPointIndex ind1)
             {
                 this.Ind0 = ind0;
@@ -36,14 +49,46 @@ namespace JigLibX.Geometry
         /// </summary>
         public enum BoxPointIndex
         {
-            BRD, BRU, BLD, BLU,
-            FRD, FRU, FLD, FLU
+            /// <summary>
+            /// BRD
+            /// </summary>
+            BRD, 
+            /// <summary>
+            /// BRU
+            /// </summary>
+            BRU, 
+            /// <summary>
+            /// BLD
+            /// </summary>
+            BLD, 
+            /// <summary>
+            /// BLU
+            /// </summary>
+            BLU,
+            /// <summary>
+            /// FRD
+            /// </summary>
+            FRD, 
+            /// <summary>
+            /// FRU
+            /// </summary>
+            FRU, 
+            /// <summary>
+            /// FLD
+            /// </summary>
+            FLD, 
+            /// <summary>
+            /// FLU
+            /// </summary>
+            FLU
         }
         #endregion
 
         internal Vector3 sideLengths;
 
-        // must match with GetCornerPoints!
+        /// <summary>
+        /// Must match with GetCornerPoints
+        /// </summary>
         private static Edge[] edges = new Edge[12]
             { 
                 new Edge(BoxPointIndex.BRD,BoxPointIndex.BRU), // origin-up
@@ -75,13 +120,17 @@ namespace JigLibX.Geometry
             this.sideLengths = sideLengths;
         }
 
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <returns>Primitive</returns>
         public override Primitive Clone()
         {
             return new Box(transform.Position, transform.Orientation, sideLengths);
         }
 
         /// <summary>
-        /// Get/set the box corner/origin position
+        /// Gets or Sets the box corner/origin position
         /// </summary>
         public Vector3 Position
         {
@@ -90,9 +139,9 @@ namespace JigLibX.Geometry
         }
 
         /// <summary>
-        /// Get the box centre position
+        /// Gets the box centre position
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Vector3</returns>
         public Vector3 GetCentre()
         {
             Vector3 result = new Vector3(
@@ -100,34 +149,36 @@ namespace JigLibX.Geometry
                     sideLengths.Y * 0.5f,
                     sideLengths.Z * 0.5f);
 
-            Vector3.Transform(ref result, ref transform.Orientation, out result);
+            Vector3.TransformNormal(ref result, ref transform.Orientation, out result);
             Vector3.Add(ref result, ref transform.Position, out result);
 
             return result;
         }
 
+        /// <summary>
+        /// GetCentre
+        /// </summary>
+        /// <param name="centre"></param>
         public void GetCentre(out Vector3 centre)
         {
-            centre = new Vector3(
-                sideLengths.X * 0.5f,
-                sideLengths.Y * 0.5f,
-                sideLengths.Z * 0.5f);
-
-            Vector3.Transform(ref centre, ref transform.Orientation, out centre);
-            Vector3.Add(ref centre, ref transform.Position, out centre);
+            // BEN-OPTIMISATION: Inlined transforms, multiplication and addition.
+            centre = new Vector3();
+            centre.X = (sideLengths.X * 0.5f * transform.Orientation.M11) + (sideLengths.Y * 0.5f * transform.Orientation.M21) + (sideLengths.Z * 0.5f * transform.Orientation.M31) + transform.Orientation.M41 + transform.Position.X;
+            centre.Y = (sideLengths.X * 0.5f * transform.Orientation.M12) + (sideLengths.Y * 0.5f * transform.Orientation.M22) + (sideLengths.Z * 0.5f * transform.Orientation.M32) + transform.Orientation.M42 + transform.Position.Y;
+            centre.Z = (sideLengths.X * 0.5f * transform.Orientation.M13) + (sideLengths.Y * 0.5f * transform.Orientation.M23) + (sideLengths.Z * 0.5f * transform.Orientation.M33) + transform.Orientation.M43 + transform.Position.Z;
         }
 
         /// <summary>
         /// Get bounding radius around the centre
         /// </summary>
-        /// <returns></returns>
+        /// <returns><c>0.5f * sideLengths.Length()</c></returns>
         public float GetBoundingRadiusAroundCentre()
         {
             return 0.5f * sideLengths.Length();
         }
 
         /// <summary>
-        /// Get/Set the box orientation
+        /// Gets or Sets the box orientation
         /// </summary>
         public Matrix Orientation
         {
@@ -136,10 +187,8 @@ namespace JigLibX.Geometry
         }
 
         /// <summary>
-        /// Get the three side lengths of the box
+        /// Gets or Sets the three side lengths of the box
         /// </summary>
-        /// <param name="sideLengths"></param>
-        /// <returns></returns>
         public Vector3 SideLengths
         {
             get { return this.sideLengths; }
@@ -152,14 +201,14 @@ namespace JigLibX.Geometry
         /// <param name="amount"></param>
         public void Expand(Vector3 amount)
         {
-            transform.Position -= Vector3.Transform(amount, transform.Orientation);
+            transform.Position -= Vector3.TransformNormal(amount, transform.Orientation);
             sideLengths += sideLengths + 2.0f * amount;
         }
 
         /// <summary>
         /// Returns the half-side lengths.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Vector3</returns>
         public Vector3 GetHalfSideLengths()
         {
             Vector3 result = new Vector3(
@@ -174,7 +223,7 @@ namespace JigLibX.Geometry
         /// Returns the vector representing the edge direction 
         /// </summary>
         /// <param name="i"></param>
-        /// <returns></returns>
+        /// <returns>Vector3</returns>
         public Vector3 GetSide(int i)
         {
             return JiggleUnsafe.Get(transform.Orientation, i) * 
@@ -187,10 +236,10 @@ namespace JigLibX.Geometry
         /// </summary>
         /// <param name="closestBoxPoint"></param>
         /// <param name="point"></param>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public float GetSqDistanceToPoint(out Vector3 closestBoxPoint, Vector3 point)
         {
-            closestBoxPoint = Vector3.Transform(point - transform.Position, Matrix.Transpose(transform.Orientation));
+            closestBoxPoint = Vector3.TransformNormal(point - transform.Position, Matrix.Transpose(transform.Orientation));
 
             float sqDistance = 0.0f;
             float delta;
@@ -231,7 +280,7 @@ namespace JigLibX.Geometry
                 closestBoxPoint.Z = sideLengths.Z;
             }
 
-            Vector3.Transform(ref closestBoxPoint, ref transform.Orientation, out closestBoxPoint);
+            Vector3.TransformNormal(ref closestBoxPoint, ref transform.Orientation, out closestBoxPoint);
             Vector3.Add(ref transform.Position, ref closestBoxPoint, out closestBoxPoint);
 
             return sqDistance;
@@ -246,7 +295,7 @@ namespace JigLibX.Geometry
         /// </summary>
         /// <param name="closestBoxPoint"></param>
         /// <param name="point"></param>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public float GetDistanceToPoint(out Vector3 closestBoxPoint,
              Vector3 point)
         {
@@ -279,6 +328,37 @@ namespace JigLibX.Geometry
             GetCentre(out right);
             float p;
             Vector3.Dot(ref right,ref axis,out p);
+            min = p - r;
+            max = p + r;
+        }
+
+        // BEN-OPTIMISATION: Added this method which takes axis by reference.
+        /// <summary>
+        /// Gets the minimum and maximum extents of the box along the
+        /// axis, relative to the centre of the box.
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="axis"></param>
+        public void GetSpan(out float min, out float max, ref Vector3 axis)
+        {
+            float s, u, d;
+            Vector3 right = transform.Orientation.Right;
+            Vector3 up = transform.Orientation.Up;
+            Vector3 back = transform.Orientation.Backward;
+
+            Vector3.Dot(ref axis, ref right, out s);
+            Vector3.Dot(ref axis, ref up, out u);
+            Vector3.Dot(ref axis, ref back, out d);
+
+            s = System.Math.Abs(s * 0.5f * sideLengths.X);
+            u = System.Math.Abs(u * 0.5f * sideLengths.Y);
+            d = System.Math.Abs(d * 0.5f * sideLengths.Z);
+
+            float r = s + u + d;
+            GetCentre(out right);
+            float p;
+            Vector3.Dot(ref right, ref axis, out p);
             min = p - r;
             max = p + r;
         }
@@ -315,7 +395,6 @@ namespace JigLibX.Geometry
         /// {FRU, FLU}, // upfwdorigin-left
         /// {FLD, FLU}, // fwdleftorigin-up
         /// </summary>
-        /// <returns></returns>
         public void GetEdges(out Edge[] edg)
         {
             edg = edges;
@@ -339,22 +418,41 @@ namespace JigLibX.Geometry
             }
         }
 
+        /// <summary>
+        /// GetSurfaceArea
+        /// </summary>
+        /// <returns>float</returns>
         public override float GetSurfaceArea()
         {
             return 2.0f * (sideLengths.X * sideLengths.Y + sideLengths.X * sideLengths.Z + sideLengths.Y * sideLengths.Z);
         }
 
+        /// <summary>
+        /// GetVolume
+        /// </summary>
+        /// <returns>float</returns>
         public override float GetVolume()
         {
             return sideLengths.X * sideLengths.Y * sideLengths.Z;
         }
 
+        /// <summary>
+        /// Gets or Sets transform
+        /// </summary>
         public override Transform Transform
         {
             get{return this.transform;}
             set{this.transform = value;}
         }
 
+        /// <summary>
+        /// SegmentIntersect
+        /// </summary>
+        /// <param name="fracOut"></param>
+        /// <param name="posOut"></param>
+        /// <param name="normalOut"></param>
+        /// <param name="seg"></param>
+        /// <returns>bool</returns>
         public override bool SegmentIntersect(out float fracOut, out Vector3 posOut, out Vector3 normalOut, Segment seg)
         {
             fracOut = float.MaxValue;
@@ -365,7 +463,10 @@ namespace JigLibX.Geometry
             float min = float.MinValue;
             float max = float.MaxValue;
 
-            Vector3 p = GetCentre() - seg.Origin;
+            // BEN-OPTIMISATION: Faster code.
+            Vector3 centre = GetCentre();
+            Vector3 p;
+            Vector3.Subtract(ref centre, ref seg.Origin, out p);
             Vector3 h;
             h.X = sideLengths.X * 0.5f;
             h.Y = sideLengths.Y * 0.5f;
@@ -375,6 +476,9 @@ namespace JigLibX.Geometry
             int dirMin = 0;
             int dir = 0;
 
+            // BEN-OPTIMISATIOIN: Ugly inlining and variable reuse for marginal speed increase.
+            #region "Original Code"
+            /*
             Vector3[] matrixVec = new Vector3[3];
             matrixVec[0] = transform.Orientation.Right;
             matrixVec[1] = transform.Orientation.Up;
@@ -384,7 +488,7 @@ namespace JigLibX.Geometry
             vectorFloat[0] = h.X;
             vectorFloat[1] = h.Y;
             vectorFloat[2] = h.Z;
-  
+
             for (dir = 0; dir < 3; dir++)
             {
                 float e = Vector3.Dot(matrixVec[dir], p);
@@ -395,7 +499,7 @@ namespace JigLibX.Geometry
                     float t1 = (e + vectorFloat[dir]) / f;
                     float t2 = (e - vectorFloat[dir]) / f;
 
-                    if (t1 > t2){float tmp = t1;t1 = t2; t2 = tmp;}
+                    if (t1 > t2) { float tmp = t1; t1 = t2; t2 = tmp; }
 
                     if (t1 > min)
                     {
@@ -414,12 +518,113 @@ namespace JigLibX.Geometry
                     if (max < 0.0f)
                         return false;
                 }
-                else if((-e-vectorFloat[dir] > 0.0f) ||
+                else if ((-e - vectorFloat[dir] > 0.0f) ||
                     (-e + vectorFloat[dir] < 0.0f))
                 {
                     return false;
                 }
             }
+            */
+            #endregion
+
+            #region "Faster code albeit scarier code!"
+            
+            float e = Vector3.Dot(transform.Orientation.Right, p);
+            float f = Vector3.Dot(transform.Orientation.Right, seg.Delta);
+
+            if (System.Math.Abs(f) > JiggleMath.Epsilon)
+            {
+                float t1 = (e + h.X) / f;
+                float t2 = (e - h.X) / f;
+
+                if (t1 > t2) { float tmp = t1; t1 = t2; t2 = tmp; }
+
+                if (t1 > min)
+                {
+                    min = t1;
+                    dirMin = 0;
+                }
+                if (t2 < max)
+                {
+                    max = t2;
+                    dirMax = 0;
+                }
+
+                if (min > max)
+                    return false;
+
+                if (max < 0.0f)
+                    return false;
+            }
+            else if ((-e - h.X > 0.0f) || (-e + h.X < 0.0f))
+            {
+                return false;
+            }
+
+            e = Vector3.Dot(transform.Orientation.Up, p);
+            f = Vector3.Dot(transform.Orientation.Up, seg.Delta);
+
+            if (System.Math.Abs(f) > JiggleMath.Epsilon)
+            {
+                float t1 = (e + h.Y) / f;
+                float t2 = (e - h.Y) / f;
+
+                if (t1 > t2) { float tmp = t1; t1 = t2; t2 = tmp; }
+
+                if (t1 > min)
+                {
+                    min = t1;
+                    dirMin = 1;
+                }
+                if (t2 < max)
+                {
+                    max = t2;
+                    dirMax = 1;
+                }
+
+                if (min > max)
+                    return false;
+
+                if (max < 0.0f)
+                    return false;
+            }
+            else if ((-e - h.Y > 0.0f) || (-e + h.Y < 0.0f))
+            {
+                return false;
+            }
+
+            e = Vector3.Dot(transform.Orientation.Backward, p);
+            f = Vector3.Dot(transform.Orientation.Backward, seg.Delta);
+
+            if (System.Math.Abs(f) > JiggleMath.Epsilon)
+            {
+                float t1 = (e + h.Z) / f;
+                float t2 = (e - h.Z) / f;
+
+                if (t1 > t2) { float tmp = t1; t1 = t2; t2 = tmp; }
+
+                if (t1 > min)
+                {
+                    min = t1;
+                    dirMin = 2;
+                }
+                if (t2 < max)
+                {
+                    max = t2;
+                    dirMax = 2;
+                }
+
+                if (min > max)
+                    return false;
+
+                if (max < 0.0f)
+                    return false;
+            }
+            else if ((-e - h.Z > 0.0f) || (-e + h.Z < 0.0f))
+            {
+                return false;
+            }
+            #endregion
 
             if (min > 0.0f)
             {
@@ -432,16 +637,44 @@ namespace JigLibX.Geometry
                 fracOut = max;
             }
 
-            fracOut = MathHelper.Clamp(fracOut, 0.0f, 1.0f);
-            posOut = seg.GetPoint(fracOut);
-            if (Vector3.Dot(matrixVec[dir], seg.Delta) > 0.0f)
-                normalOut = -matrixVec[dir];
+            if (dir == 0)
+            {
+                fracOut = MathHelper.Clamp(fracOut, 0.0f, 1.0f);
+                posOut = seg.GetPoint(fracOut);
+                if (Vector3.Dot(transform.Orientation.Right, seg.Delta) > 0.0f)
+                    normalOut = -transform.Orientation.Right;
+                else
+                    normalOut = transform.Orientation.Right;
+            }
+            else if (dir == 1)
+            {
+                fracOut = MathHelper.Clamp(fracOut, 0.0f, 1.0f);
+                posOut = seg.GetPoint(fracOut);
+                if (Vector3.Dot(transform.Orientation.Up, seg.Delta) > 0.0f)
+                    normalOut = -transform.Orientation.Up;
+                else
+                    normalOut = transform.Orientation.Up;
+            }
             else
-                normalOut = matrixVec[dir];
+            {
+                fracOut = MathHelper.Clamp(fracOut, 0.0f, 1.0f);
+                posOut = seg.GetPoint(fracOut);
+                if (Vector3.Dot(transform.Orientation.Backward, seg.Delta) > 0.0f)
+                    normalOut = -transform.Orientation.Backward;
+                else
+                    normalOut = transform.Orientation.Backward;
+            }
 
             return true;
         }
 
+        /// <summary>
+        /// GetMassProperties
+        /// </summary>
+        /// <param name="primitiveProperties"></param>
+        /// <param name="mass"></param>
+        /// <param name="centerOfMass"></param>
+        /// <param name="inertiaTensor"></param>
         public override void GetMassProperties(PrimitiveProperties primitiveProperties, out float mass, out Vector3 centerOfMass, out Matrix inertiaTensor)
         {
 

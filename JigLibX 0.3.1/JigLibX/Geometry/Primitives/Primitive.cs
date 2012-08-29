@@ -10,23 +10,60 @@ namespace JigLibX.Geometry
 {
 
     #region PrimitiveProperties
+    /// <summary>
+    /// Struct PrimitiveProperties
+    /// </summary>
     public struct PrimitiveProperties
     {
+        /// <summary>
+        /// enum MassDistribution
+        /// </summary>
         public enum MassDistributionEnum
         {
-            Solid,Shell
+            /// <summary>
+            /// Solid
+            /// </summary>
+            Solid,
+            /// <summary>
+            /// Shell
+            /// </summary>
+            Shell
         }
 
-        // density is mass per volume of SOLID, otherwise mass per surface area
+        /// <summary>
+        /// enum MassTypeEnum (density is mass per volume SOLID, otherwise pass per surface area
+        /// </summary>
         public enum MassTypeEnum
         {
-            Mass,Density
+            /// <summary>
+            /// Mass
+            /// </summary>
+            Mass,
+            /// <summary>
+            /// Density
+            /// </summary>
+            Density
         }
 
+        /// <summary>
+        /// MassType
+        /// </summary>
         public MassTypeEnum MassType;
+        /// <summary>
+        /// MassDistribution
+        /// </summary>
         public MassDistributionEnum MassDistribution;
+        /// <summary>
+        /// MassOrDensity
+        /// </summary>
         public float MassOrDensity;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="massDistribution"></param>
+        /// <param name="massType"></param>
+        /// <param name="massOrDensity"></param>
         public PrimitiveProperties(MassDistributionEnum massDistribution,
             MassTypeEnum massType, float massOrDensity)
         {
@@ -45,15 +82,42 @@ namespace JigLibX.Geometry
     /// </summary>
     public enum PrimitiveType
     {
+        /// <summary>
+        /// AABox
+        /// </summary>
         AABox,
+        /// <summary>
+        /// Box
+        /// </summary>
         Box,
+        /// <summary>
+        /// Capsule
+        /// </summary>
         Capsule,
+        /// <summary>
+        /// Heightmap
+        /// </summary>
         Heightmap,
+        /// <summary>
+        /// Plane
+        /// </summary>
         Plane,
+        /// <summary>
+        /// Sphere
+        /// </summary>
         Sphere,
+        /// <summary>
+        /// TriangleMesh
+        /// </summary>
         TriangleMesh,
+        /// <summary>
+        /// Cylinder
+        /// </summary>
         Cylinder,
-        NumTypes // can add more user-defined types
+        /// <summary>
+        /// NumTypes - can add more user defined types
+        /// </summary>
+        NumTypes 
     }
 
     #endregion
@@ -72,6 +136,10 @@ namespace JigLibX.Geometry
 
         internal Transform transform = Transform.Identity;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="type"></param>
         public Primitive(int type)
         {
             this.type = type;
@@ -80,9 +148,12 @@ namespace JigLibX.Geometry
         /// <summary>
         /// Returns a copy
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Primitive</returns>
         public abstract Primitive Clone();
 
+        /// <summary>
+        /// Gets or Sets transform
+        /// </summary>
         public virtual Transform Transform 
         { 
             get 
@@ -95,6 +166,9 @@ namespace JigLibX.Geometry
             } 
         }
 
+        /// <summary>
+        /// Gets transform matrix
+        /// </summary>
         public virtual Matrix TransformMatrix
         {
             get
@@ -105,6 +179,9 @@ namespace JigLibX.Geometry
             }
         }
 
+        /// <summary>
+        /// Gets invert transform matrix
+        /// </summary>
         public virtual Matrix InverseTransformMatrix
         {
             get
@@ -119,22 +196,23 @@ namespace JigLibX.Geometry
         /// Must support intersection with a segment (ray cast)
         /// </summary>
         /// <param name="frac"></param>
+        /// <param name="pos"></param>
         /// <param name="normal"></param>
         /// <param name="seg"></param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         public abstract bool SegmentIntersect(out float frac,out Vector3 pos,
             out Vector3 normal,Segment seg);
 
         /// <summary>
         /// Calculate and return the volume
         /// </summary>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public abstract float GetVolume();
 
         /// <summary>
         /// Calculate and return the surface area
         /// </summary>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public abstract float GetSurfaceArea();
 
         /// <summary>
@@ -151,7 +229,6 @@ namespace JigLibX.Geometry
         /// Returns a bounding box that covers this primitive. Default returns a huge box, so
         /// implement this in the derived class for efficiency
         /// </summary>
-        /// <returns></returns>
         public virtual void GetBoundingBox(out AABox box)
         {
             box = AABox.HugeBox;
@@ -161,7 +238,6 @@ namespace JigLibX.Geometry
         /// Returns a bounding box that covers this primitive. Default returns a huge box, so
         /// implement this in the derived class for efficiency
         /// </summary>
-        /// <returns></returns>
         public AABox GetBoundingBox()
         {
             AABox result;
@@ -169,6 +245,9 @@ namespace JigLibX.Geometry
             return result;
         }
 
+        /// <summary>
+        /// Gets type
+        /// </summary>
         public int Type
         {
             get { return this.type; }

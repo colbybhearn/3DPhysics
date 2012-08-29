@@ -35,6 +35,9 @@ namespace JigLibX.Geometry
             this.maxPos = maxPos;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public AABox() : 
             base((int)PrimitiveType.AABox)
         {
@@ -42,6 +45,9 @@ namespace JigLibX.Geometry
         }
 
         private Vector3 offset = Vector3.Zero;
+        /// <summary>
+        /// Gets new Transform or Sets offset to value.Position
+        /// </summary>
         public override Transform Transform
         {
             get
@@ -56,7 +62,9 @@ namespace JigLibX.Geometry
             }
         }
 
-        // adding points etc.
+        /// <summary>
+        /// Adding points etc.
+        /// </summary>
         public void Clear()
         {
             minPos.X = minPos.Y = minPos.Z = float.MaxValue;
@@ -84,6 +92,10 @@ namespace JigLibX.Geometry
             if (pos.Z > maxPos.Z) maxPos.Z = pos.Z + JiggleMath.Epsilon;
         }
 
+        /// <summary>
+        /// Adds a point to the AABB
+        /// </summary>
+        /// <param name="pos"></param>
         public void AddPoint(Vector3 pos)
         {
             if (pos.X < minPos.X) minPos.X = pos.X - JiggleMath.Epsilon;
@@ -166,12 +178,21 @@ namespace JigLibX.Geometry
             }
         }
 */
+        /// <summary>
+        /// Move minPos and maxPos += delta
+        /// </summary>
+        /// <param name="delta"></param>
         public void Move(Vector3 delta)
         {
             minPos += delta;
             maxPos += delta;
         }
 
+        /// <summary>
+        /// IsPointInside
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns>bool</returns>
         public bool IsPointInside(Vector3 pos)
         {
             return ((pos.X >= minPos.X) &&
@@ -182,6 +203,12 @@ namespace JigLibX.Geometry
                 (pos.Z <= maxPos.Z));
         }
 
+        /// <summary>
+        /// OverlapTest
+        /// </summary>
+        /// <param name="box0"></param>
+        /// <param name="box1"></param>
+        /// <returns>bool</returns>
         public static bool OverlapTest(AABox box0, AABox box1)
         {
             return ((box0.minPos.Z >= box1.maxPos.Z) ||
@@ -192,6 +219,13 @@ namespace JigLibX.Geometry
                 (box0.maxPos.X <= box1.minPos.X)) ? false : true;
         }
 
+        /// <summary>
+        /// OverlapTest
+        /// </summary>
+        /// <param name="box0"></param>
+        /// <param name="box1"></param>
+        /// <param name="tol"></param>
+        /// <returns>bool</returns>
         public static bool OverlapTest(AABox box0, AABox box1, float tol)
         {
             return ((box0.minPos.Z >= box1.maxPos.Z + tol) ||
@@ -202,49 +236,87 @@ namespace JigLibX.Geometry
                 (box0.maxPos.X <= box1.minPos.X - tol)) ? false : true;
         }
 
+        /// <summary>
+        /// GetCentre
+        /// </summary>
+        /// <returns><c>0.5f * (minPos + maxPos)</c></returns>
         public Vector3 GetCentre()
         {
             return 0.5f * (minPos + maxPos);
         }
 
+        /// <summary>
+        /// Gets or Sets minPos
+        /// </summary>
         public Vector3 MinPos
         {
             get { return this.minPos; }
             set { this.minPos = value; }
         }
 
+        /// <summary>
+        /// Gets or Sets maxPos
+        /// </summary>
         public Vector3 MaxPos
         {
             get { return this.maxPos; }
             set { this.maxPos = value; }
         }
 
+        /// <summary>
+        /// GetSideLengths
+        /// </summary>
+        /// <returns>maxPos - minPos</returns>
         public Vector3 GetSideLengths()
         {
             return maxPos - minPos;
         }
 
+        /// <summary>
+        /// GetRadiusAboutCentre
+        /// </summary>
+        /// <returns><c>0.5f * (maxPos - minPos).Length()</c></returns>
         public float GetRadiusAboutCentre()
         {
             return 0.5f * (maxPos - minPos).Length();
         }
 
+        /// <summary>
+        /// GetRadiusSqAboutCentre
+        /// </summary>
+        /// <returns>float</returns>
         public float GetRadiusSqAboutCentre()
         {
             float result = this.GetRadiusAboutCentre();
             return result * result;
         }
 
+        /// <summary>
+        /// Gets hugeBox
+        /// </summary>
         public static AABox HugeBox
         {
             get { return hugeBox; }
         }
 
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <returns>new AABox</returns>
         public override Primitive Clone()
         {
             return new AABox(this.minPos, this.maxPos);
         }
 
+        /// <summary>
+        /// SegmentIntersect
+        /// </summary>
+        /// <remarks>This is not implemented. It will throw an exception.</remarks>
+        /// <param name="frac"></param>
+        /// <param name="pos"></param>
+        /// <param name="normal"></param>
+        /// <param name="seg"></param>
+        /// <returns>bool</returns>
         public override bool SegmentIntersect(out float frac, out Vector3 pos, out Vector3 normal, Segment seg)
         {
             // todo implement
@@ -252,17 +324,32 @@ namespace JigLibX.Geometry
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// GetVolume
+        /// </summary>
+        /// <returns><c>(this.maxPos - this.minPos).LengthSquared()</c></returns>
         public override float GetVolume()
         {
             return (this.maxPos - this.minPos).LengthSquared();
         }
 
+        /// <summary>
+        /// GetSurfaceArea
+        /// </summary>
+        /// <returns>float</returns>
         public override float GetSurfaceArea()
         {
             Vector3 sl = this.maxPos - this.minPos;
             return 2.0f * (sl.X * sl.Y + sl.X * sl.Z + sl.Y * sl.Z);
         }
 
+        /// <summary>
+        /// GetMassProperties
+        /// </summary>
+        /// <param name="primitiveProperties"></param>
+        /// <param name="mass"></param>
+        /// <param name="centerOfMass"></param>
+        /// <param name="inertiaTensor"></param>
         public override void GetMassProperties(PrimitiveProperties primitiveProperties, out float mass, out Vector3 centerOfMass, out Matrix inertiaTensor)
         {
             mass = 0.0f;
@@ -271,14 +358,30 @@ namespace JigLibX.Geometry
         }
     }
 
+    /// <summary>
+    /// Class BoundingBoxHelper
+    /// </summary>
     public class BoundingBoxHelper
     {
+        /// <summary>
+        /// InitialBox
+        /// </summary>
         static public BoundingBox InitialBox = new BoundingBox( new Vector3(float.PositiveInfinity),new Vector3(float.NegativeInfinity));
+        /// <summary>
+        /// AddPoint
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="bb"></param>
         static public void AddPoint(ref Vector3 pos, ref BoundingBox bb)
         {
             Vector3.Min(ref bb.Min, ref pos, out bb.Min);
             Vector3.Max(ref bb.Max, ref pos, out bb.Max);
         }
+        /// <summary>
+        /// AddPoint
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="bb"></param>
         static public void AddPoint(Vector3 pos, ref BoundingBox bb)
         {
             Vector3.Min(ref bb.Min, ref pos, out bb.Min);
@@ -286,7 +389,12 @@ namespace JigLibX.Geometry
         }
 
         static Vector3[] pts = new Vector3[8];
-
+        /// <summary>
+        /// AddBox
+        /// </summary>
+        /// <remarks>Note: Not thread safe or re-entrant as it uses pts</remarks>
+        /// <param name="box"></param>
+        /// <param name="bb"></param>
         static public void AddBox(Box box, ref BoundingBox bb)
         {
             // NOTE Not thread safe or rentrant as its uses pts
@@ -301,18 +409,44 @@ namespace JigLibX.Geometry
             AddPoint(ref pts[6],ref bb);
             AddPoint(ref pts[7],ref bb);
         }
+        /// <summary>
+        /// AddSegment
+        /// </summary>
+        /// <param name="seg"></param>
+        /// <param name="bb"></param>
         static public void AddSegment(Segment seg, ref BoundingBox bb)
         {
             AddPoint(seg.Origin,ref bb);
             AddPoint(seg.GetEnd(), ref bb);
         }
 
+        /// <summary>
+        /// AddAABox
+        /// </summary>
+        /// <param name="aabox"></param>
+        /// <param name="bb"></param>
         static public void AddAABox(AABox aabox, ref BoundingBox bb)
         {
-            AddPoint(aabox.MaxPos, ref bb);
-            AddPoint(aabox.MinPos, ref bb);
+            bb.Min = Vector3.Min(aabox.MinPos, bb.Min);
+            bb.Max = Vector3.Max(aabox.MaxPos, bb.Max);
         }
 
+        /// <summary>
+        /// AddBBox
+        /// </summary>
+        /// <param name="bbox"></param>
+        /// <param name="bb"></param>
+        static public void AddBBox(BoundingBox bbox, ref BoundingBox bb)
+        {
+            bb.Min = Vector3.Min(bbox.Min, bb.Min);
+            bb.Max = Vector3.Max(bbox.Max, bb.Max);
+        }
+
+        /// <summary>
+        /// AddSphere
+        /// </summary>
+        /// <param name="sphere"></param>
+        /// <param name="bb"></param>
         static public void AddSphere(Sphere sphere, ref BoundingBox bb)
         {
             Vector3 radius = new Vector3(sphere.Radius);
@@ -326,6 +460,11 @@ namespace JigLibX.Geometry
             Vector3.Max(ref bb.Max, ref maxSphere, out bb.Max);
         }
 
+        /// <summary>
+        /// AddSphere
+        /// </summary>
+        /// <param name="sphere"></param>
+        /// <param name="bb"></param>
         static public void AddSphere(Microsoft.Xna.Framework.BoundingSphere sphere, ref BoundingBox bb)
         {
             Vector3 radius = new Vector3(sphere.Radius);
@@ -339,12 +478,22 @@ namespace JigLibX.Geometry
             Vector3.Max(ref bb.Max, ref maxSphere, out bb.Max);
         }
 
+        /// <summary>
+        /// AddCapsule
+        /// </summary>
+        /// <param name="capsule"></param>
+        /// <param name="bb"></param>
         static public void AddCapsule(Capsule capsule, ref BoundingBox bb)
         {
             AddSphere(new Microsoft.Xna.Framework.BoundingSphere(capsule.Position, capsule.Radius), ref bb);
             AddSphere(new Microsoft.Xna.Framework.BoundingSphere(capsule.Position + capsule.Length * capsule.Orientation.Backward, capsule.Radius), ref bb);
         }
 
+        /// <summary>
+        /// AddPrimitive
+        /// </summary>
+        /// <param name="prim"></param>
+        /// <param name="bb"></param>
         static public void AddPrimitive(Primitive prim, ref BoundingBox bb)
         {
             switch ((PrimitiveType)prim.Type)
@@ -363,6 +512,13 @@ namespace JigLibX.Geometry
                     break;
             }
         }
+
+        /// <summary>
+        /// OverlapTest
+        /// </summary>
+        /// <param name="box0"></param>
+        /// <param name="box1"></param>
+        /// <returns>bool</returns>
         public static bool OverlapTest(ref BoundingBox box0, ref BoundingBox box1)
         {
             return ((box0.Min.Z >= box1.Max.Z) ||
@@ -373,6 +529,13 @@ namespace JigLibX.Geometry
                 (box0.Max.X <= box1.Min.X)) ? false : true;
         }
 
+        /// <summary>
+        /// OverlapTest
+        /// </summary>
+        /// <param name="box0"></param>
+        /// <param name="box1"></param>
+        /// <param name="tol"></param>
+        /// <returns>bool</returns>
         public static bool OverlapTest(ref BoundingBox box0, ref BoundingBox box1, float tol)
         {
             return ((box0.Min.Z >= box1.Max.Z + tol) ||

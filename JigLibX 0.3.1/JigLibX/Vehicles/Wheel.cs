@@ -11,6 +11,9 @@ using JigLibX.Collision;
 
 namespace JigLibX.Vehicles
 {
+    /// <summary>
+    /// Class Wheel
+    /// </summary>
     public class Wheel
     {
         #region private fields
@@ -45,12 +48,26 @@ namespace JigLibX.Vehicles
         private float angVelForGrip;
         #endregion
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="car"></param>
+        /// <param name="pos"></param>
+        /// <param name="axisUp"></param>
+        /// <param name="spring"></param>
+        /// <param name="travel"></param>
+        /// <param name="inertia"></param>
+        /// <param name="radius"></param>
+        /// <param name="sideFriction"></param>
+        /// <param name="fwdFriction"></param>
+        /// <param name="damping"></param>
+        /// <param name="numRays"></param>
         public void Setup(Car car,
-              Vector3 pos, ///< position relative to car, in car's space
-              Vector3 axisUp, ///< in car's space
-              float spring,  ///< force per suspension offset
-              float travel,  ///< suspension travel upwards
-              float inertia, ///< inertia about the axel
+              Vector3 pos, //< position relative to car, in car's space
+              Vector3 axisUp, //< in car's space
+              float spring,  //< force per suspension offset
+              float travel,  //< suspension travel upwards
+              float inertia, //< inertia about the axel
               float radius,
               float sideFriction,
               float fwdFriction,
@@ -75,7 +92,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// sets everything that varies to a default
+        /// Sets everything that varies to a default
         /// </summary>
         public void Reset()
         {
@@ -116,12 +133,12 @@ namespace JigLibX.Vehicles
 
             Body carBody = car.Chassis.Body;
 
-            Vector3 worldPos = carBody.Position + Vector3.Transform(pos, carBody.Orientation);// *mPos;
-            Vector3 worldAxis = Vector3.Transform(axisUp, carBody.Orientation);// *mAxisUp;
+            Vector3 worldPos = carBody.Position + Vector3.TransformNormal(pos, carBody.Orientation);// *mPos;
+            Vector3 worldAxis = Vector3.TransformNormal(axisUp, carBody.Orientation);// *mAxisUp;
             
             //Vector3 wheelFwd = RotationMatrix(mSteerAngle, worldAxis) * carBody.Orientation.GetCol(0);
             // OpenGl has differnet row/column order for matrixes than XNA has ..
-            Vector3 wheelFwd = Vector3.Transform(carBody.Orientation.Right, JiggleMath.RotationMatrix(steerAngle, worldAxis));
+            Vector3 wheelFwd = Vector3.TransformNormal(carBody.Orientation.Right, JiggleMath.RotationMatrix(steerAngle, worldAxis));
             //Vector3 wheelFwd = RotationMatrix(mSteerAngle, worldAxis) * carBody.GetOrientation().GetCol(0);
             Vector3 wheelUp = worldAxis;
             Vector3 wheelLeft = Vector3.Cross(wheelUp, wheelFwd);
@@ -137,7 +154,7 @@ namespace JigLibX.Vehicles
             //Assert(PhysicsSystem.CurrentPhysicsSystem);
             CollisionSystem collSystem = PhysicsSystem.CurrentPhysicsSystem.CollisionSystem;
 
-            ///Assert(collSystem);
+            //Assert(collSystem);
             int numRaysUse = System.Math.Min(numRays, maxNumRays);
 
             // adjust the start position of the ray - divide the wheel into numRays+2 
@@ -234,7 +251,7 @@ namespace JigLibX.Vehicles
             Vector3 groundFwd = Vector3.Cross(groundLeft, groundUp);
 
             Vector3 wheelPointVel = carBody.Velocity +
-             Vector3.Cross(carBody.AngularVelocity, Vector3.Transform( pos, carBody.Orientation));// * mPos);
+             Vector3.Cross(carBody.AngularVelocity, Vector3.TransformNormal( pos, carBody.Orientation));// * mPos);
 
             Vector3 rimVel = angVel * Vector3.Cross(wheelLeft, groundPos - worldPos);
             wheelPointVel += rimVel;
@@ -305,7 +322,7 @@ namespace JigLibX.Vehicles
 
             // fwd force also spins the wheel
             Vector3 wheelCentreVel = carBody.Velocity +
-             Vector3.Cross(carBody.AngularVelocity, Vector3.Transform(pos, carBody.Orientation));// * mPos);
+             Vector3.Cross(carBody.AngularVelocity, Vector3.TransformNormal(pos, carBody.Orientation));// * mPos);
 
             angVelForGrip = Vector3.Dot(wheelCentreVel, groundFwd) / radius;
             torque += -fwdForce * radius;
@@ -373,7 +390,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// get steering angle in degrees
+        /// Get steering angle in degrees
         /// </summary>
         public float SteerAngle
         {
@@ -382,7 +399,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// lock/unlock the wheel
+        /// Lock/unlock the wheel
         /// </summary>
         public bool Lock
         {
@@ -391,7 +408,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// power
+        /// Power
         /// </summary>
         /// <param name="torque"></param>
         public void AddTorque(float torque)
@@ -400,7 +417,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// the basic origin position
+        /// The basic origin position
         /// </summary>
         public Vector3 Pos
         {
@@ -408,7 +425,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// the suspension axis in the car's frame
+        /// The suspension axis in the car's frame
         /// </summary>
         public Vector3 LocalAxisUp
         {
@@ -416,7 +433,7 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// wheel radius
+        /// Wheel radius
         /// </summary>
         public float Radius
         {
@@ -424,20 +441,24 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// the displacement along our up axis
+        /// The displacement along our up axis
         /// </summary>
         public float Displacement
         {
             get { return displacement; }
         }
 
+        /// <summary>
+        /// Gets axisAngle
+        /// </summary>
         public float AxisAngle
         {
             get { return axisAngle; }
         }
 
-
-
+        /// <summary>
+        /// Gets lastOnFloor
+        /// </summary>
         public bool OnFloor
         {
             get { return lastOnFloor; }
@@ -449,11 +470,20 @@ namespace JigLibX.Vehicles
     {
         CollisionSkin mSkin;
 
+        /// <summary>
+        /// WheelPred
+        /// </summary>
+        /// <param name="carSkin"></param>
         public  WheelPred(CollisionSkin carSkin)
         {
             mSkin = carSkin;
         }
 
+        /// <summary>
+        /// ConsiderSkin
+        /// </summary>
+        /// <param name="skin"></param>
+        /// <returns>bool</returns>
         public override bool ConsiderSkin(CollisionSkin skin)
         {
             return (skin.ID != mSkin.ID);

@@ -17,7 +17,7 @@ namespace JigLibX.Collision
     {
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         public CollDetectCapsuleStaticMesh()
             : base("CapsuleStaticMesh", (int)PrimitiveType.Capsule, (int)PrimitiveType.TriangleMesh)
@@ -25,7 +25,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="info"></param>
         /// <param name="collTolerance"></param>
@@ -49,6 +49,15 @@ namespace JigLibX.Collision
                 CollDetectOverlap(info, collTolerance, collisionFunctor);
         }
 
+        /// <summary>
+        /// CollDetectCapsuleStaticMeshOverlap
+        /// </summary>
+        /// <param name="oldCapsule"></param>
+        /// <param name="newCapsule"></param>
+        /// <param name="mesh"></param>
+        /// <param name="info"></param>
+        /// <param name="collTolerance"></param>
+        /// <param name="collisionFunctor"></param>
         private void CollDetectCapsuleStaticMeshOverlap(Capsule oldCapsule, Capsule newCapsule,
             TriangleMesh mesh, CollDetectInfo info, float collTolerance, CollisionFunctor collisionFunctor)
         {
@@ -98,9 +107,9 @@ namespace JigLibX.Collision
                             float distToStart = meshTriangle.Plane.DotCoordinate(meshSpaceCapsuleStart);
                             float distToEnd = meshTriangle.Plane.DotCoordinate(meshSpaceCapsuleEnd);
 
-                            if (distToStart > capsuleTolR && distToEnd > capsuleTolR)
-                                continue;
-                            if (distToStart < 0.0f && distToEnd < 0.0f)
+                            // BEN-BUG-FIX: Fixed by replacing 0.0F with -capsuleTolR.
+                            if ((distToStart > capsuleTolR && distToEnd > capsuleTolR)
+                                || (distToStart < -capsuleTolR && distToEnd < -capsuleTolR))
                                 continue;
 
                             // we now transform the triangle into world space (we could keep leave the mesh alone
@@ -141,7 +150,10 @@ namespace JigLibX.Collision
                                     meshTriangle.Plane.Normal;
                                 if (numCollPts < MaxLocalStackSCPI)
                                 {
-                                    collPts[numCollPts++] = new SmallCollPointInfo(pt - body0Pos, pt - body1Pos, depth);
+                                    // BEN-OPTIMISATION: Reused existing collPts.
+                                    collPts[numCollPts].R0 = pt - body0Pos;
+                                    collPts[numCollPts].R1 = pt - body1Pos;
+                                    collPts[numCollPts++].InitialPenetration = depth;
                                 }
                                 collNormal += collisionN;
                             }
@@ -163,6 +175,12 @@ namespace JigLibX.Collision
             }
         }
 
+        /// <summary>
+        /// CollDetectOverlap
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="collTolerance"></param>
+        /// <param name="collisionFunctor"></param>
         private void CollDetectOverlap(CollDetectInfo info, float collTolerance, CollisionFunctor collisionFunctor)
         {
             Capsule oldCapsule = info.Skin0.GetPrimitiveOldWorld(info.IndexPrim0) as Capsule;
@@ -175,6 +193,15 @@ namespace JigLibX.Collision
             CollDetectCapsuleStaticMeshOverlap(oldCapsule, newCapsule, mesh, info, collTolerance, collisionFunctor);
         }
 
+        /// <summary>
+        /// CollDetectCapsulseStaticMeshSweep
+        /// </summary>
+        /// <param name="oldCapsule"></param>
+        /// <param name="newCapsule"></param>
+        /// <param name="mesh"></param>
+        /// <param name="info"></param>
+        /// <param name="collTolerance"></param>
+        /// <param name="collisionFunctor"></param>
         private void CollDetectCapsulseStaticMeshSweep(Capsule oldCapsule, Capsule newCapsule,
             TriangleMesh mesh, CollDetectInfo info, float collTolerance, CollisionFunctor collisionFunctor)
         {
@@ -200,6 +227,12 @@ namespace JigLibX.Collision
             }
         }
 
+        /// <summary>
+        /// CollDetectSweep
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="collTolerance"></param>
+        /// <param name="collisionFunctor"></param>
         private void CollDetectSweep(CollDetectInfo info, float collTolerance, CollisionFunctor collisionFunctor)
         {
             Capsule oldCapsule = info.Skin0.GetPrimitiveOldWorld(info.IndexPrim0) as Capsule;

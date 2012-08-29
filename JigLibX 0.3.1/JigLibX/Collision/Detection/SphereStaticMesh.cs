@@ -18,13 +18,22 @@ namespace JigLibX.Collision
     {
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         public CollDetectSphereStaticMesh()
             : base("SphereStaticMesh", (int)PrimitiveType.Sphere, (int)PrimitiveType.TriangleMesh)
         {
         }
 
+        /// <summary>
+        /// CollDetectSphereStaticMeshOverlap
+        /// </summary>
+        /// <param name="oldSphere"></param>
+        /// <param name="newSphere"></param>
+        /// <param name="mesh"></param>
+        /// <param name="info"></param>
+        /// <param name="collTolerance"></param>
+        /// <param name="collisionFunctor"></param>
         public static void CollDetectSphereStaticMeshOverlap(BoundingSphere oldSphere, BoundingSphere newSphere,
             TriangleMesh mesh, CollDetectInfo info, float collTolerance, CollisionFunctor collisionFunctor)
         {
@@ -66,10 +75,10 @@ namespace JigLibX.Collision
                             IndexedTriangle meshTriangle = mesh.GetTriangle(potentialTriangles[iTriangle]);
                             float distToCentre = meshTriangle.Plane.DotCoordinate(newSphereCen);
 
-                            if (distToCentre <= 0.0f)
+                            // BEN-BUG-FIX: Replaced 0.0f with -sphereTolR.
+                            if (distToCentre < -sphereTolR || distToCentre > sphereTolR)
                                 continue;
-                            if (distToCentre >= sphereTolR)
-                                continue;
+
                             int i0, i1, i2;
                             meshTriangle.GetVertexIndices(out i0, out i1, out i2);
 
@@ -95,7 +104,10 @@ namespace JigLibX.Collision
 
                                 if (numCollPts < MaxLocalStackSCPI)
                                 {
-                                    collPts[numCollPts++] = new SmallCollPointInfo(pt - body0Pos, pt - body1Pos, depth);
+                                    // BEN-OPTIMISATION: Reuse existing collPts.
+                                    collPts[numCollPts].R0 = pt - body0Pos;
+                                    collPts[numCollPts].R1 = pt - body1Pos;
+                                    collPts[numCollPts++].InitialPenetration = depth;
                                 }
                                 collNormal += collisionN;
                             }
@@ -110,15 +122,21 @@ namespace JigLibX.Collision
                     }
                }
 #else
-
                         FreeStackAlloc(potTriArray);
                     }
+
                     FreeStackAlloc(collPtArray);
                 }
 #endif
             }
         }
 
+        /// <summary>
+        /// CollDetectOverlap
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="collTolerance"></param>
+        /// <param name="collisionFunctor"></param>
         private void CollDetectOverlap(CollDetectInfo info, float collTolerance, CollisionFunctor collisionFunctor)
         {
             // todo - proper swept test
@@ -134,10 +152,18 @@ namespace JigLibX.Collision
             CollDetectSphereStaticMeshOverlap(oldBSphere, newBSphere, mesh, info, collTolerance, collisionFunctor);
         }
 
+        /// <summary>
+        /// CollDetectSphereStaticMeshSweep
+        /// </summary>
+        /// <param name="oldSphere"></param>
+        /// <param name="newSphere"></param>
+        /// <param name="mesh"></param>
+        /// <param name="info"></param>
+        /// <param name="collTolerance"></param>
+        /// <param name="collisionFunctor"></param>
         internal static void CollDetectSphereStaticMeshSweep(BoundingSphere oldSphere, BoundingSphere newSphere, TriangleMesh mesh,
             CollDetectInfo info, float collTolerance, CollisionFunctor collisionFunctor)
         {
-
             // really use a swept test - or overlap?
             Vector3 delta = newSphere.Center - oldSphere.Center;
             if (delta.LengthSquared() < (0.25f * newSphere.Radius * newSphere.Radius))
@@ -218,7 +244,10 @@ namespace JigLibX.Collision
                                     Vector3 pt = oldSphere.Center - oldSphere.Radius * collisionN;
                                     if (numCollPts < MaxLocalStackSCPI)
                                     {
-                                        collPts[numCollPts++] = new SmallCollPointInfo(pt - body0Pos, pt - body1Pos, depth);
+                                        // BEN-OPTIMISATION: Reuse existing collPts.
+                                        collPts[numCollPts].R0 = pt - body0Pos;
+                                        collPts[numCollPts].R1 = pt - body1Pos;
+                                        collPts[numCollPts++].InitialPenetration = depth;
                                     }
                                     collNormal += collisionN;
                                 }
@@ -243,7 +272,10 @@ namespace JigLibX.Collision
                                         Vector3 pt2 = oldSphere.Center - oldSphere.Radius * collisionN;
                                         if (numCollPts < MaxLocalStackSCPI)
                                         {
-                                            collPts[numCollPts++] = new SmallCollPointInfo(pt2 - body0Pos, pt2 - body1Pos, depth);
+                                            // BEN-OPTIMISATION: Reuse existing collPts.
+                                            collPts[numCollPts].R0 = pt2 - body0Pos;
+                                            collPts[numCollPts].R1 = pt2 - body1Pos;
+                                            collPts[numCollPts++].InitialPenetration = depth;
                                         }
                                         collNormal += collisionN;
                                     }
@@ -259,15 +291,21 @@ namespace JigLibX.Collision
                     }
                }
 #else
-
                         FreeStackAlloc(potTriArray);
                     }
+
                     FreeStackAlloc(collPtArray);
                 }
 #endif
             }
         }
 
+        /// <summary>
+        /// CollDetectSweep
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="collTolerance"></param>
+        /// <param name="collisionFunctor"></param>
         private void CollDetectSweep(CollDetectInfo info, float collTolerance,
                                                   CollisionFunctor collisionFunctor)
         {
@@ -285,7 +323,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="info"></param>
         /// <param name="collTolerance"></param>

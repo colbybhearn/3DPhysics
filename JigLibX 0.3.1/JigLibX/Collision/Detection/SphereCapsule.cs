@@ -19,7 +19,7 @@ namespace JigLibX.Collision
 
 
         /// <summary>
-        /// 
+        /// Constructor
         /// </summary>
         public CollDetectSphereCapsule()
             : base("SphereCapsule", (int)PrimitiveType.Sphere, (int)PrimitiveType.Capsule)
@@ -27,7 +27,7 @@ namespace JigLibX.Collision
         }
 
         /// <summary>
-        /// 
+        /// CollDetect
         /// </summary>
         /// <param name="infoOrig"></param>
         /// <param name="collTolerance"></param>
@@ -81,7 +81,7 @@ namespace JigLibX.Collision
                 else
                 {
                     // todo - make this not random
-                    delta = Vector3.Transform(Vector3.Backward, Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(random.Next(360))));
+                    delta = Vector3.TransformNormal(Vector3.Backward, Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(random.Next(360))));
                 }
 
                 Vector3 worldPos = segPos +

@@ -10,8 +10,16 @@ using JigLibX.Collision;
 
 namespace JigLibX.Physics
 {
+    /// <summary>
+    /// Class BodyRenderExtensions
+    /// </summary>
     public static class BodyRenderExtensions
     {
+        /// <summary>
+        /// calcCirclePoints
+        /// </summary>
+        /// <param name="radius"></param>
+        /// <returns>List</returns>
         private static List<Vector3> calcCirclePoints(float radius)
         {
             int elementsToCalc = 24;
@@ -33,6 +41,13 @@ namespace JigLibX.Physics
             return l;
         }
 
+        /// <summary>
+        /// AddShapeToWirefram
+        /// </summary>
+        /// <param name="shape"></param>
+        /// <param name="wireframe"></param>
+        /// <param name="orientation"></param>
+        /// <param name="color"></param>
         private static void AddShapeToWireframe( List<Vector3> shape, List<VertexPositionColor> wireframe, Matrix orientation, Color color )
         {
             if (wireframe.Count > 0)
@@ -48,6 +63,14 @@ namespace JigLibX.Physics
             }
         }
 
+        /// <summary>
+        /// AddLineToWireframe
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="wireframe"></param>
+        /// <param name="orientation"></param>
+        /// <param name="color"></param>
         private static void AddLineToWireframe(Vector3 from, Vector3 to, List<VertexPositionColor> wireframe, Matrix orientation, Color color)
         {
             if (wireframe.Count > 0)
@@ -61,6 +84,13 @@ namespace JigLibX.Physics
             wireframe.Add(new VertexPositionColor(Vector3.Transform(to, orientation), color));
         }
 
+        /// <summary>
+        /// AddLinesToWireframe
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="wireframe"></param>
+        /// <param name="orientation"></param>
+        /// <param name="color"></param>
         private static void AddLinesToWireframe(List<Vector3> points, List<VertexPositionColor> wireframe, Matrix orientation, Color color)
         {
             for (int i = 0; i < points.Count; i += 2)
@@ -69,6 +99,11 @@ namespace JigLibX.Physics
             }
         }
 
+        /// <summary>
+        /// GetLocalSkinWireframe
+        /// </summary>
+        /// <param name="skin"></param>
+        /// <returns>VertexPositionColor[]</returns>
         public static VertexPositionColor[] GetLocalSkinWireframe(this CollisionSkin skin)
         {
             List<VertexPositionColor> wireframe = new List<VertexPositionColor>();
@@ -223,6 +258,11 @@ namespace JigLibX.Physics
             return wireframe.ToArray();
         }
 
+        /// <summary>
+        /// TransformWireframe
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="wireframe"></param>
         public static void TransformWireframe(this Body body, VertexPositionColor[] wireframe)
         {
             

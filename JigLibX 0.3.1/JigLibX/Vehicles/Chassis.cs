@@ -11,7 +11,7 @@ using JigLibX.Geometry;
 namespace JigLibX.Vehicles
 {
     /// <summary>
-    /// basic rigid body to represent a single chassis - at the moment 
+    /// Basic rigid body to represent a single chassis - at the moment 
     /// no moving components. You can inherit from this and pass your 
     /// own version to Car (TODO - tidy up this)
     /// </summary>
@@ -23,6 +23,10 @@ namespace JigLibX.Vehicles
         private Vector3 dimsMin;
         private Vector3 dimsMax;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="car"></param>
         public Chassis(Car car)
         {
             body = new ChassisBody(car);
@@ -101,18 +105,24 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// remove from the physics system
+        /// Remove from the physics system
         /// </summary>
         public void DisableChassis()
         {
             body.DisableBody();
         }
 
+        /// <summary>
+        /// Gets body
+        /// </summary>
         public Body Body
         {
             get { return body; }
         }
 
+        /// <summary>
+        /// Gets collisionSkin
+        /// </summary>
         public CollisionSkin Skin
         {
             get { return collisionSkin; }
@@ -121,7 +131,7 @@ namespace JigLibX.Vehicles
     }
 
     /// <summary>
-    /// extend tBody to allow for adding on car-specific forces (e.g.
+    /// Extend tBody to allow for adding on car-specific forces (e.g.
     /// wheel/drive forces) - i.e. when we get asked to add on forces
     /// give the car the opportunity to do stuff
     /// </summary>
@@ -129,12 +139,19 @@ namespace JigLibX.Vehicles
     {
         private Car mCar;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="car"></param>
         public ChassisBody(Car car)
         {
             mCar = car;
         }
 
-        /// inherited from tBody
+        /// <summary>
+        /// Inherited from tBody
+        /// </summary>
+        /// <param name="dt"></param>
         public override void AddExternalForces(float dt)
         {
             if (mCar == null)
@@ -145,6 +162,11 @@ namespace JigLibX.Vehicles
             mCar.AddExternalForces(dt);
 
         }
+
+        /// <summary>
+        /// PostPhysics
+        /// </summary>
+        /// <param name="dt"></param>
         public override void PostPhysics(float dt)
         {
             if (mCar == null)
@@ -154,6 +176,9 @@ namespace JigLibX.Vehicles
 
         }
 
+        /// <summary>
+        /// Gets mCar
+        /// </summary>
         public Car Car
         {
             get { return mCar; }

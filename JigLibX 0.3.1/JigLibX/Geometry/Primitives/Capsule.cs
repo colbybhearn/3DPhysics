@@ -11,7 +11,7 @@ namespace JigLibX.Geometry
 {
 
     /// <summary>
-    /// defines a capsule that is orientated along its body x direction, with
+    /// Defines a capsule that is orientated along its body x direction, with
     /// its start at its position.
     /// </summary>
     public class Capsule : Primitive 
@@ -20,6 +20,13 @@ namespace JigLibX.Geometry
         private float length;
         private float radius;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="orient"></param>
+        /// <param name="radius"></param>
+        /// <param name="length"></param>
         public Capsule(Vector3 pos,Matrix orient,float radius, float length)
             : base((int)PrimitiveType.Capsule)
         {
@@ -28,6 +35,14 @@ namespace JigLibX.Geometry
             this.radius = radius;
         }
 
+        /// <summary>
+        /// SegmentIntersect
+        /// </summary>
+        /// <param name="frac"></param>
+        /// <param name="pos"></param>
+        /// <param name="normal"></param>
+        /// <param name="seg"></param>
+        /// <returns>bool</returns>
         public override bool SegmentIntersect(out float frac, out Vector3 pos, out Vector3 normal, Segment seg)
         {
             bool result = Intersection.SegmentCapsuleIntersection(out frac, seg, this);
@@ -47,57 +62,95 @@ namespace JigLibX.Geometry
             return result;
         }
 
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <returns>Primitive</returns>
         public override Primitive Clone()
         {
             return new Capsule(this.transform.Position, this.transform.Orientation,
                 this.radius, this.length);
         }
 
+        /// <summary>
+        /// Gets or Sets transform
+        /// </summary>
         public override Transform Transform
         {
             get{return this.transform;}
             set{this.transform = value;}
         }
 
+        /// <summary>
+        /// Gets or Sets transform.Position
+        /// </summary>
         public Vector3 Position
         {
             get { return transform.Position; }
             set { transform.Position = value; }
         }
 
+        /// <summary>
+        /// GetEnd
+        /// </summary>
+        /// <returns>Vector3</returns>
         public Vector3 GetEnd()
         {
             return transform.Position + length * transform.Orientation.Backward;
         }
 
+        /// <summary>
+        /// Gets or Sets transform.Orientation
+        /// </summary>
         public Matrix Orientation
         {
             get { return transform.Orientation; }
             set { transform.Orientation = value; }
         }
 
+        /// <summary>
+        /// Gets or Sets length
+        /// </summary>
         public float Length
         {
             get { return this.length; }
             set { this.length = value; }
         }
 
+        /// <summary>
+        /// Gets or Sets radius
+        /// </summary>
         public float Radius
         {
             get { return this.radius; }
             set { this.radius = value; }
         }
 
+        /// <summary>
+        /// GetVolume
+        /// </summary>
+        /// <returns>float</returns>
         public override float GetVolume()
         {
             return (4.0f / 3.0f) * MathHelper.Pi * radius * radius * radius + length * MathHelper.Pi * radius * radius;
         }
 
+        /// <summary>
+        /// GetSurfaceArea
+        /// </summary>
+        /// <returns>float</returns>
         public override float GetSurfaceArea()
         {
             return 4.0f * MathHelper.Pi * radius * radius + length * 2.0f * MathHelper.Pi * radius;
         }
 
+        /// <summary>
+        /// GetMassPropertiees
+        /// </summary>
+        /// <param name="primitiveProperties"></param>
+        /// <param name="mass"></param>
+        /// <param name="centerOfMass"></param>
+        /// <param name="inertiaTensor"></param>
         public override void GetMassProperties(PrimitiveProperties primitiveProperties, out float mass, out Vector3 centerOfMass, out Matrix inertiaTensor)
         {
             if (primitiveProperties.MassType == PrimitiveProperties.MassTypeEnum.Mass)
@@ -114,7 +167,7 @@ namespace JigLibX.Geometry
 
             centerOfMass = transform.Position + 0.5f * length * transform.Orientation.Backward;
 
-            /// todo check solid/shell
+            // todo check solid/shell
             // first cylinder
             float cylinderMass = mass * MathHelper.Pi * radius * radius * length / GetVolume();
             float Ixx = 0.5f * cylinderMass * radius * radius;
@@ -122,7 +175,7 @@ namespace JigLibX.Geometry
             float Izz = Iyy;
             // add ends
             float endMass = mass - cylinderMass;
-            Ixx += 0.2f * endMass * radius * radius;
+            Ixx += 0.4f * endMass * radius * radius;
             Iyy += 0.4f * endMass * radius * radius + endMass * (0.5f * length) * (0.5f * length);
             Izz += 0.4f * endMass * radius * radius + endMass * (0.5f * length) * (0.5f * length);
 

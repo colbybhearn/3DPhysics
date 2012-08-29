@@ -10,15 +10,32 @@ using JigLibX.Collision;
 namespace JigLibX.Physics
 {
     #region CollisionIsland
+    /// <summary>
+    /// Class CollisionIsland
+    /// </summary>
     public class CollisionIsland : List<Body>
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public CollisionIsland()
             : base(64)
         {
         }
+        /// <summary>
+        /// Empry CollisionIsland
+        /// </summary>
         private static CollisionIsland empty = new CollisionIsland();
+        /// <summary>
+        /// Gets empty
+        /// </summary>
         public static CollisionIsland Empty { get { return empty; } }
 
+        /// <summary>
+        /// WantsDeactivation
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns>bool</returns>
         public bool WantsDeactivation(float dt)
         {
             for (int i = 0; i < this.Count; i++)
@@ -26,12 +43,18 @@ namespace JigLibX.Physics
             return true;
         }
 
+        /// <summary>
+        /// Deactivate
+        /// </summary>
         public void Deactivate()
         {
             int count = this.Count;
             for (int i = 0; i < count; i++) this[i].SetInactive();
         }
 
+        /// <summary>
+        /// Activate
+        /// </summary>
         public void Activate()
         {
             int count = this.Count;
@@ -68,6 +91,7 @@ namespace JigLibX.Physics
         /// <param name="collDetectInfo"></param>
         /// <param name="dirToBody0"></param>
         /// <param name="pointInfos"></param>
+        /// <param name="numCollPts"></param>
         public override unsafe void CollisionNotify(ref CollDetectInfo collDetectInfo, ref Vector3 dirToBody0, SmallCollPointInfo* pointInfos, int numCollPts)
         {
             CollisionInfo info;

@@ -17,11 +17,20 @@ namespace JigLibX.Collision
     {
         private Random random = new Random();
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public CollDetectCapsuleCapsule()
             : base("CapsuleCapsule", (int)PrimitiveType.Capsule, (int)PrimitiveType.Capsule)
         {
         }
 
+        /// <summary>
+        /// CollDetect
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="collTolerance"></param>
+        /// <param name="collisionFunctor"></param>
         public override void CollDetect(CollDetectInfo info, float collTolerance, CollisionFunctor collisionFunctor)
         {
             Vector3 body0Pos = (info.Skin0.Owner != null) ? info.Skin0.Owner.OldPosition : Vector3.Zero;
@@ -62,7 +71,7 @@ namespace JigLibX.Collision
                 else
                 {
                     // todo - make this not random
-                    delta = Vector3.Transform(Vector3.Backward, Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(random.Next(360))));
+                    delta = Vector3.TransformNormal(Vector3.Backward, Matrix.CreateFromAxisAngle(Vector3.Up, MathHelper.ToRadians(random.Next(360))));
                 }
 
                 Vector3 worldPos = pos1 +

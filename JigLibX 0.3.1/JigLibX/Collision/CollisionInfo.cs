@@ -15,13 +15,31 @@ namespace JigLibX.Collision
     /// </summary>
     public struct CollDetectInfo
     {
+        /// <summary>
+        /// Index into skin0 primitive
+        /// </summary>
+        public int IndexPrim0;
+        /// <summary>
+        /// Index into skin1 primitive
+        /// </summary>
+        public int IndexPrim1;
 
-        public int IndexPrim0; // index into skin0 primitive
-        public int IndexPrim1; // index into skin1 primitive
-
+        /// <summary>
+        /// CollisionSkin 0
+        /// </summary>
         public CollisionSkin Skin0;
+        /// <summary>
+        /// CollisionSkin 1
+        /// </summary>
         public CollisionSkin Skin1;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="skin0"></param>
+        /// <param name="skin1"></param>
+        /// <param name="indexPrim0"></param>
+        /// <param name="indexPrim1"></param>
         public CollDetectInfo(CollisionSkin skin0, CollisionSkin skin1, int indexPrim0, int indexPrim1)
         {
             this.IndexPrim0 = indexPrim0;
@@ -30,6 +48,9 @@ namespace JigLibX.Collision
             this.Skin1 = skin1;
         }
 
+        /// <summary>
+        /// Gets new CollDetectInfo
+        /// </summary>
         public static CollDetectInfo Empty
         {
             get { return new CollDetectInfo(null, null, 0, 0); }
@@ -38,6 +59,9 @@ namespace JigLibX.Collision
     }
     #endregion
 
+    /// <summary>
+    /// Struct SmallCollPointInfo
+    /// </summary>
     public struct SmallCollPointInfo
     {
         /// <summary>
@@ -55,6 +79,12 @@ namespace JigLibX.Collision
         /// </summary>
         public Vector3 R1;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="R0"></param>
+        /// <param name="R1"></param>
+        /// <param name="initialPenetration"></param>
         public SmallCollPointInfo(ref Vector3 R0, ref Vector3 R1, float initialPenetration)
         {
             this.R0 = R0;
@@ -62,6 +92,12 @@ namespace JigLibX.Collision
             this.InitialPenetration = initialPenetration;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="R0"></param>
+        /// <param name="R1"></param>
+        /// <param name="initialPenetration"></param>
         public SmallCollPointInfo(Vector3 R0, Vector3 R1, float initialPenetration)
         {
             this.R0 = R0;
@@ -71,42 +107,48 @@ namespace JigLibX.Collision
     }
 
     #region public class CollPointInfo
+    /// <summary>
+    /// Class CollPointInfo
+    /// </summary>
     public class CollPointInfo
     {
-        public SmallCollPointInfo info;
-
         /// <summary>
-        /// Estimated Penetration before the objects collide (can be -ve)
+        /// SmallCollPointInfo
         /// </summary>
-        public float InitialPenetration
-        {
-            get
-            {
-                return info.InitialPenetration;
-            }
-        }
+        public SmallCollPointInfo Info;
 
-        /// <summary>
-        /// Positions relative to body 0 (in world space)
-        /// </summary>
-        public Vector3 R0
-        {
-            get
-            {
-                return info.R0;
-            }
-        }
+        // <summary>
+        // Estimated Penetration before the objects collide (can be -ve)
+        // </summary>
+        //public float InitialPenetration
+        //{
+        //    get
+        //    {
+        //        return Info.InitialPenetration;
+        //    }
+        //}
 
-        /// <summary>
-        /// positions relative to body 1 (if there is a body1)
-        /// </summary>
-        public Vector3 R1
-        {
-            get
-            {
-                return info.R1;
-            }
-        }
+        // <summary>
+        // Positions relative to body 0 (in world space)
+        // </summary>
+        //public Vector3 R0
+        //{
+        //    get
+        //    {
+        //        return Info.R0;
+        //    }
+        //}
+
+        // <summary>
+        // positions relative to body 1 (if there is a body1)
+        // </summary>
+        //public Vector3 R1
+        //{
+        //    get
+        //    {
+        //        return Info.R1;
+        //    }
+        //}
 
         /// <summary>
         /// Used by physics to cache desired minimum separation velocity
@@ -140,9 +182,13 @@ namespace JigLibX.Collision
         /// </summary>
         public Vector3 Position;
 
+        /// <summary>
+        /// Init
+        /// </summary>
+        /// <param name="info"></param>
         public void Init(ref SmallCollPointInfo info)
         {
-            this.info = info;
+            this.Info = info;
             this.Denominator = 0.0f;
             this.AccumulatedNormalImpulse = 0.0f;
             this.AccumulatedNormalImpulseAux = 0.0f;
@@ -160,16 +206,28 @@ namespace JigLibX.Collision
     /// </summary>
     public class CollisionInfo
     {
+        /// <summary>
+        /// Set at 10
+        /// </summary>
         public const int MaxCollisionPoints = 10;
-
+        /// <summary>
+        /// MatPairProperties 
+        /// </summary>
         public MaterialPairProperties MatPairProperties;
-
+        /// <summary>
+        /// SkinInfo
+        /// </summary>
         public CollDetectInfo SkinInfo;
         internal Vector3 dirToBody0; // hack
         private bool satisfied;
 
-
+        /// <summary>
+        /// Set at 64
+        /// </summary>
         public const int InitialCollisionInfoStack = 64;
+        /// <summary>
+        /// Set at 4096
+        /// </summary>
         public const int InitialCollisionPointInfoStack = 4096;
         private static Stack<CollisionInfo> freeInfos = new Stack<CollisionInfo>(InitialCollisionInfoStack);
         private static Stack<CollPointInfo> freePtInfos = new Stack<CollPointInfo>(InitialCollisionPointInfoStack);
@@ -188,24 +246,42 @@ namespace JigLibX.Collision
             }
         }
         #region Properties
-
+        /// <summary>
+        /// Gets or Sets satisfied
+        /// </summary>
         public bool Satisfied
         {
             get { return satisfied; }
             set { satisfied = value; }
         }
 
+        /// <summary>
+        /// Gets or Sets dirToBody0
+        /// </summary>
         public Vector3 DirToBody0
         {
             get { return dirToBody0; }
             set { dirToBody0 = value; }
         }
 
+        /// <summary>
+        /// New CollPointInfo[]
+        /// </summary>
         public CollPointInfo[] PointInfo = new CollPointInfo[MaxCollisionPoints];
+        /// <summary>
+        /// Value set at 0
+        /// </summary>
         public int NumCollPts = 0;
 
         #endregion
 
+        /// <summary>
+        /// Init
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="dirToBody0"></param>
+        /// <param name="pointInfos"></param>
+        /// <param name="numPointInfos"></param>
         private unsafe void Init(CollDetectInfo info, Vector3 dirToBody0, SmallCollPointInfo* pointInfos, int numPointInfos)
         {
             this.SkinInfo = info;
@@ -254,7 +330,9 @@ namespace JigLibX.Collision
         }
 
         // public List<CollPointInfo>
-
+        /// <summary>
+        /// Destroy - sets SkinInfo.Skin0(1) to null. Calls freePtInfos.Push(...) on PointInfo[i]
+        /// </summary>
         private void Destroy()
         {
             for (int i = 0; i < NumCollPts; ++i)
@@ -273,8 +351,8 @@ namespace JigLibX.Collision
         /// <param name="info"></param>
         /// <param name="dirToBody0"></param>
         /// <param name="pointInfos"></param>
-        /// <param name="numPointInfos"></param>
-        /// <returns></returns>
+        /// <param name="numCollPts"></param>
+        /// <returns>CollisionInfo</returns>
         public static unsafe CollisionInfo GetCollisionInfo(CollDetectInfo info,
             Vector3 dirToBody0, SmallCollPointInfo* pointInfos, int numCollPts)
         {

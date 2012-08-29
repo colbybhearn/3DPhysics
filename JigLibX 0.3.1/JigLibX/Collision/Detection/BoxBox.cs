@@ -14,15 +14,27 @@ namespace JigLibX.Collision
     /// <summary>
     /// DetectFunctor for BoxBox Collisions.
     /// </summary>
-    class CollDetectBoxBox : DetectFunctor
+    public class CollDetectBoxBox : DetectFunctor
     {
 
         #region private struct ContactPoint
+        /// <summary>
+        /// Struct ContactPoint
+        /// </summary>
         private struct ContactPoint
         {
+            /// <summary>
+            /// Position
+            /// </summary>
             public Vector3 Pos;
+            /// <summary>
+            /// Count
+            /// </summary>
             public int Count;
-
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="pos"></param>
             public ContactPoint(ref Vector3 pos) { this.Pos = pos; this.Count = 1; }
         }
         #endregion
@@ -40,12 +52,19 @@ namespace JigLibX.Collision
         /// Disjoint Returns true if disjoint. Returns false if intersecting,
         /// and sets the overlap depth, d scaled by the axis length.
         /// </summary>
+        /// <param name="d"></param>
+        /// <param name="axis"></param>
+        /// <param name="box0"></param>
+        /// <param name="box1"></param>
+        /// <param name="collTolerance"></param>
+        /// <returns>bool</returns>
         private static bool Disjoint(out float d, ref Vector3 axis, Box box0, Box box1, float collTolerance)
         {
             float min0, max0, min1, max1;
 
-            box0.GetSpan(out min0, out max0, axis);
-            box1.GetSpan(out min1, out max1, axis);
+            // BEN-OPTIMISATION: Used new GetSpan() with referenced axis.
+            box0.GetSpan(out min0, out max0, ref axis);
+            box1.GetSpan(out min1, out max1, ref axis);
 
             if (min0 > (max1 + collTolerance + JiggleMath.Epsilon) ||
                 min1 > (max0 + collTolerance + JiggleMath.Epsilon))
@@ -74,27 +93,35 @@ namespace JigLibX.Collision
             return false;
         }
 
+        /// <summary>
+        /// GetSupportPoint
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="box"></param>
+        /// <param name="axis"></param>
         private static void GetSupportPoint(out Vector3 p, Box box,Vector3 axis)
         {
+            // BEN-OPTIMISATION: Replaced following inlines with actual inlined code.
             #region INLINE: Vector3 orient0 = box.Orientation.Right;
-            Vector3 orient0 = new Vector3(
-                box.transform.Orientation.M11,
-                box.transform.Orientation.M12,    
-                box.transform.Orientation.M13);
+            
+            Vector3 orient0 = new Vector3();
+            orient0.X = box.transform.Orientation.M11;
+            orient0.Y = box.transform.Orientation.M12;
+            orient0.Z = box.transform.Orientation.M13;
             #endregion
 
             #region INLINE: Vector3 orient1 = box.Orientation.Up;
-            Vector3 orient1 = new Vector3(
-                box.transform.Orientation.M21,
-                box.transform.Orientation.M22,
-                box.transform.Orientation.M23);
+            Vector3 orient1 = new Vector3();
+            orient1.X = box.transform.Orientation.M21;
+            orient1.Y = box.transform.Orientation.M22;
+            orient1.Z = box.transform.Orientation.M23;
             #endregion
 
             #region INLINE: Vector3 orient2 = box.Orientation.Backward;
-            Vector3 orient2 = new Vector3(
-                box.transform.Orientation.M31,
-                box.transform.Orientation.M32,
-                box.transform.Orientation.M33);
+            Vector3 orient2 = new Vector3();
+            orient2.X = box.transform.Orientation.M31;
+            orient2.Y = box.transform.Orientation.M32;
+            orient2.Z = box.transform.Orientation.M33;
             #endregion
 
             #region INLINE: float ass = Vector3.Dot(axis,orient0);
@@ -172,6 +199,10 @@ namespace JigLibX.Collision
         /// and pt, and false is returned. true means that pt was
         /// added to pts
         /// </summary>
+        /// <param name="pts"></param>
+        /// <param name="pt"></param>
+        /// <param name="combinationDistanceSq"></param>
+        /// <returns>bool</returns>
         private static bool AddPoint(List<ContactPoint> pts, ref Vector3 pt, float combinationDistanceSq)
         {
             for (int i = pts.Count; i-- != 0; )
@@ -200,6 +231,15 @@ namespace JigLibX.Collision
         /// <summary>
         /// The AABox has a corner at the origin and size sides.
         /// </summary>
+        /// <param name="pts"></param>
+        /// <param name="sides"></param>
+        /// <param name="box"></param>
+        /// <param name="edgePt0"></param>
+        /// <param name="edgePt1"></param>
+        /// <param name="origBoxOrient"></param>
+        /// <param name="origBoxPos"></param>
+        /// <param name="combinationDistanceSq"></param>
+        /// <returns>int</returns>
         private static int GetAABox2EdgeIntersectionPoints(List<ContactPoint> pts,
             ref Vector3 sides, Box box, ref Vector3 edgePt0, ref Vector3 edgePt1,
             ref Matrix origBoxOrient, ref Vector3 origBoxPos,
@@ -215,6 +255,9 @@ namespace JigLibX.Collision
             #endregion
 
             int num = 0;
+
+            // BEN-OPTIMISATION: Reuse the one Vector3
+            Vector3 pt = new Vector3();
 
             for (int idir = 3; idir-- != 0; )
             {
@@ -242,14 +285,15 @@ namespace JigLibX.Collision
                         frac = 0.0f;
                     else if (System.Math.Abs(dist1) < JiggleMath.Epsilon)
                         frac = 1.0f;
-
+                    
                     if (frac >= 0.0f)
                     {
                         #region REFERENCE: Vector3 pt = (1.0f - frac) * edgePt0 + frac * edgePt1
-                        Vector3 tmp; Vector3 pt;
-                        Vector3.Multiply(ref edgePt1, frac, out tmp);
-                        Vector3.Multiply(ref edgePt0, 1.0f - frac, out pt);
-                        Vector3.Add(ref pt, ref tmp, out pt);
+                        // BEN-OPTIMISATION: Reusing pt and inlined.
+                        float tempFrac = 1.0f - frac;
+                        pt.X = tempFrac * edgePt0.X + frac * edgePt1.X;
+                        pt.Y = tempFrac * edgePt0.Y + frac * edgePt1.Y;
+                        pt.Z = tempFrac * edgePt0.Z + frac * edgePt1.Z;
                         #endregion
 
                         // check the point is within the face rectangle
@@ -263,9 +307,12 @@ namespace JigLibX.Collision
                         {
                             // woohoo got a point
                             #region REFERENCE: Vector3 pos = origBoxPos + Vector3.Transform(pt, origBoxOrient);
+                            // BEN-OPTIMISATION: Inlined add because this function can be called very often! 
                             Vector3 pos;
-                            Vector3.Transform(ref pt, ref origBoxOrient, out pos);
-                            Vector3.Add(ref origBoxPos, ref pos, out pos);
+                            Vector3.TransformNormal(ref pt, ref origBoxOrient, out pos);
+                            pos.X += origBoxPos.X;
+                            pos.Y += origBoxPos.Y;
+                            pos.Z += origBoxPos.Z;
                             #endregion
 
                             AddPoint(pts, ref pos, combinationDistanceSq);
@@ -285,7 +332,14 @@ namespace JigLibX.Collision
         /// edges. orient and pos are used to transform the points from the
         /// AABox frame back into the original frame.
         /// </summary>
-        private static int GetAABox2BoxEdgesIntersectionPoints(List<ContactPoint> pts, ref Vector3 sides,
+        /// <param name="pts"></param>
+        /// <param name="sides"></param>
+        /// <param name="box"></param>
+        /// <param name="origBoxOrient"></param>
+        /// <param name="origBoxPos"></param>
+        /// <param name="combinationDistanceSq"></param>
+        /// <returns>int</returns>
+        private static unsafe int GetAABox2BoxEdgesIntersectionPoints(List<ContactPoint> pts, ref Vector3 sides,
             Box box, ref Matrix origBoxOrient, ref Vector3 origBoxPos, float combinationDistanceSq)
         {
             int num = 0;
@@ -319,6 +373,12 @@ namespace JigLibX.Collision
         /// combinationDistance) get combined
         /// dirToBody0 is the collision normal towards box0
         /// </summary>
+        /// <param name="pts"></param>
+        /// <param name="box0"></param>
+        /// <param name="box1"></param>
+        /// <param name="combinationDistance"></param>
+        /// <param name="collTolerance"></param>
+        /// <returns>int</returns>
         private static int GetBoxBoxIntersectionPoints(List<ContactPoint> pts,
             Box box0, Box box1, float combinationDistance,
             float collTolerance)
@@ -346,7 +406,7 @@ namespace JigLibX.Collision
                 #region REFERENCE: Vector3 pos = Vector3.Transform(boxB.Position - boxA.Position,boxAInvOrient)
                 Vector3 pos;
                 Vector3.Subtract(ref boxB.transform.Position, ref boxA.transform.Position, out pos);
-                Vector3.Transform(ref pos, ref boxAInvOrient, out pos);
+                Vector3.TransformNormal(ref pos, ref boxAInvOrient, out pos);
                 #endregion
 
                 #region REFERENCE: Matrix boxOrient = boxB.Orientation * boxAInvOrient;
@@ -381,7 +441,7 @@ namespace JigLibX.Collision
         /// </summary>
         /// <param name="info"></param>
         /// <param name="collTolerance"></param>
-        /// <param name="collisionFunctor"></param
+        /// <param name="collisionFunctor"></param>
         public override void CollDetect(CollDetectInfo info, float collTolerance, CollisionFunctor collisionFunctor)
         {
             Box box0 = info.Skin0.GetPrimitiveNewWorld(info.IndexPrim0) as Box;
@@ -393,8 +453,188 @@ namespace JigLibX.Collision
             Matrix dirs0 = box0.Orientation;
             Matrix dirs1 = box1.Orientation;
 
+            Vector3 box0_Right = dirs0.Right;
+            Vector3 box0_Up = dirs0.Up;
+            Vector3 box0_Backward = dirs0.Backward;
 
-            seperatingAxes[0] = dirs0.Right;
+            Vector3 box1_Right = dirs1.Right;
+            Vector3 box1_Up = dirs1.Up;
+            Vector3 box1_Backward = dirs1.Backward;
+
+            float testDepth;
+
+            if (Disjoint(out testDepth, ref box0_Right, box0, box1, collTolerance))
+                return;
+
+            float depth = testDepth;
+            Vector3 N = box0_Right;
+            int minAxis = 0;
+
+            if (Disjoint(out testDepth, ref box0_Up, box0, box1, collTolerance))
+                return;
+
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = box0_Up;
+                minAxis = 1;
+            }
+
+            if (Disjoint(out testDepth, ref box0_Backward, box0, box1, collTolerance))
+                return;
+
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = box0_Backward;
+                minAxis = 2;
+            }
+
+            if (Disjoint(out testDepth, ref box1_Right, box0, box1, collTolerance))
+                return;
+
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = box1_Right;
+                minAxis = 3;
+            }
+
+            if (Disjoint(out testDepth, ref box1_Up, box0, box1, collTolerance))
+                return;
+
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = box1_Up;
+                minAxis = 4;
+            }
+
+            if (Disjoint(out testDepth, ref box1_Backward, box0, box1, collTolerance))
+                return;
+
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = box1_Backward;
+                minAxis = 5;
+            }
+
+            Vector3 axis;
+
+            Vector3.Cross(ref box0_Right, ref box1_Right, out axis);
+            if (Disjoint(out testDepth, ref axis, box0, box1, collTolerance))
+                return;
+
+            testDepth *= 1.0f / (float)System.Math.Sqrt(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = axis;
+                minAxis = 6;
+            }
+
+            Vector3.Cross(ref box0_Right, ref box1_Up, out axis);
+            if (Disjoint(out testDepth, ref axis, box0, box1, collTolerance))
+                return;
+
+            testDepth *= 1.0f / (float)System.Math.Sqrt(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = axis;
+                minAxis = 7;
+            }
+
+            Vector3.Cross(ref box0_Right, ref box1_Backward, out axis);
+            if (Disjoint(out testDepth, ref axis, box0, box1, collTolerance))
+                return;
+
+            testDepth *= 1.0f / (float)System.Math.Sqrt(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = axis;
+                minAxis = 8;
+            }
+
+            Vector3.Cross(ref box0_Up, ref box1_Right, out axis);
+            if (Disjoint(out testDepth, ref axis, box0, box1, collTolerance))
+                return;
+
+            testDepth *= 1.0f / (float)System.Math.Sqrt(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = axis;
+                minAxis = 9;
+            }
+
+            Vector3.Cross(ref box0_Up, ref box1_Up, out axis);
+            if (Disjoint(out testDepth, ref axis, box0, box1, collTolerance))
+                return;
+
+            testDepth *= 1.0f / (float)System.Math.Sqrt(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = axis;
+                minAxis = 10;
+            }
+
+            Vector3.Cross(ref box0_Up, ref box1_Backward, out axis);
+            if (Disjoint(out testDepth, ref axis, box0, box1, collTolerance))
+                return;
+
+            testDepth *= 1.0f / (float)System.Math.Sqrt(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = axis;
+                minAxis = 11;
+            }
+
+            Vector3.Cross(ref box0_Backward, ref box1_Right, out axis);
+            if (Disjoint(out testDepth, ref axis, box0, box1, collTolerance))
+                return;
+
+            testDepth *= 1.0f / (float)System.Math.Sqrt(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = axis;
+                minAxis = 12;
+            }
+
+            Vector3.Cross(ref box0_Backward, ref box1_Up, out axis);
+            if (Disjoint(out testDepth, ref axis, box0, box1, collTolerance))
+                return;
+
+            testDepth *= 1.0f / (float)System.Math.Sqrt(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = axis;
+                minAxis = 13;
+            }
+
+            Vector3.Cross(ref box0_Backward, ref box1_Backward, out axis);
+            if (Disjoint(out testDepth, ref axis, box0, box1, collTolerance))
+                return;
+
+            testDepth *= 1.0f / (float)System.Math.Sqrt(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+            if (testDepth < depth)
+            {
+                depth = testDepth;
+                N = axis;
+                minAxis = 14;
+            }
+
+            Vector3 D = box1.GetCentre() - box0.GetCentre();
+            N.Normalize();
+            int i;
+
+            /*seperatingAxes[0] = dirs0.Right;
             seperatingAxes[1] = dirs0.Up;
             seperatingAxes[2] = dirs0.Backward;
             seperatingAxes[3] = dirs1.Right;
@@ -457,7 +697,7 @@ namespace JigLibX.Collision
             // if not, invert it
             Vector3 D = box1.GetCentre() - box0.GetCentre();
             Vector3 N = seperatingAxes[minAxis];
-            float depth = overlapDepth[minAxis];
+            float depth = overlapDepth[minAxis];*/
 
             if (Vector3.Dot(D, N) > 0.0f)
                 N *= -1.0f;
@@ -480,6 +720,7 @@ namespace JigLibX.Collision
                 contactPointsFromOld = false;
                 GetBoxBoxIntersectionPoints(contactPts, box0, box1, combinationDist, collTolerance);
             }
+
             numPts = contactPts.Count;
 
             Vector3 body0OldPos = (info.Skin0.Owner != null) ? info.Skin0.Owner.OldPosition : Vector3.Zero;
@@ -535,7 +776,8 @@ namespace JigLibX.Collision
                                 break;
                             }
                         // We have an edge/edge collision
-                        case 6:
+                        default:
+                        /*case 6:
                         case 7:
                         case 8:
                         case 9:
@@ -543,7 +785,7 @@ namespace JigLibX.Collision
                         case 11:
                         case 12:
                         case 13:
-                        case 14:
+                        case 14:*/
                             {
                                 {
                                     // Retrieve which edges collided.
@@ -595,8 +837,8 @@ namespace JigLibX.Collision
                                 }
                                 break;
                             }
-                        default:
-                            throw new Exception("Impossible switch");
+                        /*default:
+                            throw new Exception("Impossible switch");*/
 
                     }
 
@@ -632,14 +874,20 @@ namespace JigLibX.Collision
                             {
                                 if (numCollPts < MaxLocalStackSCPI)
                                 {
-                                    collPts[numCollPts++] = new SmallCollPointInfo(contactPts[i].Pos - body0OldPos, contactPts[i].Pos - body1OldPos, depth);
+                                    // BEN-OPTIMISATION: Instead of allocating a new SmallCollPointInfo we reuse the existing one.
+                                    collPts[numCollPts].R0 = contactPts[i].Pos - body0OldPos;
+                                    collPts[numCollPts].R1 = contactPts[i].Pos - body1OldPos;
+                                    collPts[numCollPts++].InitialPenetration = depth;
                                 }
                             }
                             else
                             {
                                 if (numCollPts < MaxLocalStackSCPI)
                                 {
-                                    collPts[numCollPts++] = new SmallCollPointInfo(contactPts[i].Pos - body0NewPos, contactPts[i].Pos - body1NewPos, depth);
+                                    // BEN-OPTIMISATION: Instead of allocating a new SmallCollPointInfo we reuse the existing one.
+                                    collPts[numCollPts].R0 = contactPts[i].Pos - body0NewPos;
+                                    collPts[numCollPts].R1 = contactPts[i].Pos - body1NewPos;
+                                    collPts[numCollPts++].InitialPenetration = depth;
                                 }
                             }
 
@@ -657,7 +905,10 @@ namespace JigLibX.Collision
 
                         if (numCollPts < MaxLocalStackSCPI)
                         {
-                            collPts[numCollPts++] = new SmallCollPointInfo(ref cp0, ref cp1, oldDepth);
+                            // BEN-OPTIMISATION: Instead of allocating a new SmallCollPointInfo we reuse the existing one.
+                            collPts[numCollPts].R0 = cp0;
+                            collPts[numCollPts].R1 = cp1;
+                            collPts[numCollPts++].InitialPenetration = oldDepth;
                         }
                         #endregion
                     }

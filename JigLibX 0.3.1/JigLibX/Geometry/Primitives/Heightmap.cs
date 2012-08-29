@@ -11,10 +11,10 @@ using JigLibX.Geometry;
 namespace JigLibX.Geometry
 {
     /// <summary>
-    /// Defines a heightmap that has up in the "y" direction 
+    /// Defines a heightmap that has up in the "Y" direction 
     /// </summary>
     /// <remarks>
-    /// indexs go from "bottom right" - i.e. (0, 0) -> (xmin, ymin)
+    /// Indicies go from "bottom right" - i.e. (0, 0) -> (xmin, ymin)
     /// heights/normals are obtained by interpolation over triangles,
     /// with each quad being divided up in the same way - the diagonal
     /// going from (i, j) to (i+1, j+1)    
@@ -28,19 +28,24 @@ namespace JigLibX.Geometry
         private float xMin, zMin;
         private float xMax, zMax;
         private float yMax, yMin;
-
+        /// <summary>
+        /// Get new Vector3
+        /// </summary>
         public Vector3 Min { get { return new Vector3(xMin, yMin, zMin); } }
+        /// <summary>
+        /// Get new Vector3
+        /// </summary>
         public Vector3 Max { get { return new Vector3(xMax, yMax, zMax); } }
 
         /// <summary>
-        /// pass in an array of heights, and the axis that represents up
+        /// Pass in an array of heights, and the axis that represents up
         /// Also the centre of the heightmap (assuming z is up), and the grid size
         /// </summary>
         /// <param name="heights"></param>
         /// <param name="x0"></param>
-        /// <param name="y0"></param>
+        /// <param name="z0"></param>
         /// <param name="dx"></param>
-        /// <param name="dy"></param>
+        /// <param name="dz"></param>
         public Heightmap(Array2D heights, float x0, float z0, float dx, float dz)
             : base((int)PrimitiveType.Heightmap)
         {
@@ -74,6 +79,10 @@ namespace JigLibX.Geometry
             this.yMax = mHeights.Max;
         }
 
+        /// <summary>
+        /// GetBoundingBox
+        /// </summary>
+        /// <param name="box"></param>
         public override void GetBoundingBox(out AABox box)
         {
             box = new AABox(this.Min, this.Max);
@@ -84,7 +93,7 @@ namespace JigLibX.Geometry
         /// </summary>
         /// <param name="i"></param>
         /// <param name="j"></param>
-        /// <returns></returns>
+        /// <returns>float</returns>
         public float GetHeight(int i, int j)
         {
             i = (int)MathHelper.Clamp(i, 0, mHeights.Nx - 1);
@@ -98,7 +107,7 @@ namespace JigLibX.Geometry
         /// </summary>
         /// <param name="i"></param>
         /// <param name="j"></param>
-        /// <returns></returns>
+        /// <returns>Vector3</returns>
         public Vector3 GetNormal(int i, int j)
         {
             int i0 = i - 1;
@@ -136,7 +145,7 @@ namespace JigLibX.Geometry
         }
 
         /// <summary>
-        /// get height and normal (quicker than calling both)
+        /// Get height and normal (quicker than calling both)
         /// </summary>
         /// <param name="h"></param>
         /// <param name="normal"></param>
@@ -148,12 +157,25 @@ namespace JigLibX.Geometry
             normal = GetNormal(i, j);
         }
 
+        /// <summary>
+        /// GetSurfacePos
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
         public void GetSurfacePos(out Vector3 pos, int i, int j)
         {
             float h = GetHeight(i, j);
             pos = new Vector3(xMin + i * dx, h, zMin + j * dz);
         }
 
+        /// <summary>
+        /// GetSurfacePosAndNormal
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="normal"></param>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
         public void GetSurfacePosAndNormal(out Vector3 pos, out Vector3 normal, int i, int j)
         {
             float h = GetHeight(i, j);
@@ -161,6 +183,11 @@ namespace JigLibX.Geometry
             normal = GetNormal(i, j);
         }
 
+        /// <summary>
+        /// GetHeight
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns>float</returns>
         public float GetHeight(Vector3 point)
         {
             // todo - optimise
@@ -170,6 +197,11 @@ namespace JigLibX.Geometry
             return h;
         }
 
+        /// <summary>
+        /// GetNormal
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns>Vector3</returns>
         public Vector3 GetNormal(Vector3 point)
         {
             // todo - optimise
@@ -179,6 +211,12 @@ namespace JigLibX.Geometry
             return normal;
         }
 
+        /// <summary>
+        /// GetHeightAndNormal
+        /// </summary>
+        /// <param name="h"></param>
+        /// <param name="normal"></param>
+        /// <param name="point"></param>
         public void GetHeightAndNormal(out float h, out Vector3 normal,Vector3 point)
         {
             float x = point.X;
@@ -243,11 +281,16 @@ namespace JigLibX.Geometry
              // get the plane equation
              // h00 is in all the triangles
              JiggleMath.NormalizeSafe(ref normal);
-             Plane plane = new Plane(normal, new Vector3((i0 * dx + xMin), h00, (j0 * dz + zMin)));
-            
-             h = Distance.PointPlaneDistance(point,plane);
+             Vector3 pos = new Vector3((i0 * dx + xMin), h00, (j0 * dz + zMin));
+             float d; Vector3.Dot(ref normal, ref pos, out d); d = -d;
+             h = Distance.PointPlaneDistance(ref point,ref normal, d);
         }
 
+        /// <summary>
+        /// GetSurfacePos
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="point"></param>
         public void GetSurfacePos(out Vector3 pos, Vector3 point)
         {
             // todo - optimise
@@ -255,6 +298,12 @@ namespace JigLibX.Geometry
             pos = new Vector3(point.X,h, point.Z);
         }
 
+        /// <summary>
+        /// GetSurfacePosAndNormal
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="normal"></param>
+        /// <param name="point"></param>
         public void GetSurfacePosAndNormal(out Vector3 pos, out Vector3 normal, Vector3 point)
         {
             float h;
@@ -262,17 +311,32 @@ namespace JigLibX.Geometry
             pos = new Vector3(point.X,h, point.Z);
         }
 
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <returns>new Heightmap</returns>
         public override Primitive Clone()
         {
             return new Heightmap(new Array2D(mHeights), x0, z0, dx, dz);
         }
 
+        /// <summary>
+        /// Gets Transform.Identity
+        /// </summary>
         public override Transform Transform
         {
             get {return Transform.Identity;}
             set {}
         }
 
+        /// <summary>
+        /// SegmentIntersect
+        /// </summary>
+        /// <param name="frac"></param>
+        /// <param name="pos"></param>
+        /// <param name="normal"></param>
+        /// <param name="seg"></param>
+        /// <returns>bool</returns>
         public override bool SegmentIntersect(out float frac, out Vector3 pos, out Vector3 normal,Segment seg)
         {
             frac = 0;
@@ -315,16 +379,31 @@ namespace JigLibX.Geometry
             return true;
         }
 
+        /// <summary>
+        /// GetVolume
+        /// </summary>
+        /// <returns>0.0f</returns>
         public override float GetVolume()
         {
             return 0.0f;
         }
 
+        /// <summary>
+        /// GetSurfaceArea
+        /// </summary>
+        /// <returns>0.0f</returns>
         public override float GetSurfaceArea()
         {
             return 0.0f;
         }
 
+        /// <summary>
+        /// GetMassProperties
+        /// </summary>
+        /// <param name="primitiveProperties"></param>
+        /// <param name="mass"></param>
+        /// <param name="centerOfMass"></param>
+        /// <param name="inertiaTensor"></param>
         public override void GetMassProperties(PrimitiveProperties primitiveProperties, out float mass, out Vector3 centerOfMass, out Matrix inertiaTensor)
         {
             mass = 0.0f;
@@ -332,6 +411,9 @@ namespace JigLibX.Geometry
             inertiaTensor = Matrix.Identity;
         }
 
+        /// <summary>
+        /// Get mHeights
+        /// </summary>
         public Array2D Heights
         {
             get

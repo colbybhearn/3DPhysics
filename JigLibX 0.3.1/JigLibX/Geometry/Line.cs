@@ -16,15 +16,31 @@ namespace JigLibX.Geometry
     /// </summary>
     public struct Line
     {
+        /// <summary>
+        /// Origin
+        /// </summary>
         public Vector3 Origin;
+        /// <summary>
+        /// Direction
+        /// </summary>
         public Vector3 Dir;
 
+        /// <summary>
+        /// Consructor
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="dir"></param>
         public Line(Vector3 origin, Vector3 dir)
         {
             this.Origin = origin;
             this.Dir = dir;
         }
 
+        /// <summary>
+        /// GetOrigin
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns>Vector3</returns>
         public Vector3 GetOrigin(float t)
         {
             return new Vector3(
@@ -42,15 +58,31 @@ namespace JigLibX.Geometry
     /// </summary>
     public struct Ray
     {
+        /// <summary>
+        /// Origin
+        /// </summary>
         public Vector3 Origin;
+        /// <summary>
+        /// Direction
+        /// </summary>
         public Vector3 Dir;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="dir"></param>
         public Ray(Vector3 origin,Vector3 dir)
         {
             this.Origin = origin;
             this.Dir = dir;
         }
 
+        /// <summary>
+        /// GetOrigin
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns>Vector3</returns>
         public Vector3 GetOrigin(float t)
         {
             return new Vector3(
@@ -70,15 +102,43 @@ namespace JigLibX.Geometry
     /// </summary>
     public struct Segment
     {
+        /// <summary>
+        /// Origin
+        /// </summary>
         public Vector3 Origin;
+        /// <summary>
+        /// Direction
+        /// </summary>
         public Vector3 Delta;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="delta"></param>
         public Segment(Vector3 origin, Vector3 delta)
         {
             this.Origin = origin;
             this.Delta = delta;
         }
 
+        // BEN-OPTIMISATION: New method, ref origin and ref delta
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="delta"></param>
+        public Segment(ref Vector3 origin, ref Vector3 delta)
+        {
+            this.Origin = origin;
+            this.Delta = delta;
+        }
+
+        /// <summary>
+        /// GetPoint
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="point"></param>
         public void GetPoint(float t, out Vector3 point)
         {
             point = new Vector3(
@@ -91,6 +151,11 @@ namespace JigLibX.Geometry
             point.Z += Origin.Z;
         }
 
+        /// <summary>
+        /// GetPoint
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public Vector3 GetPoint(float t)
         {
             Vector3 result = new Vector3(
@@ -105,6 +170,23 @@ namespace JigLibX.Geometry
             return result;
         }
 
+        // BEN-OPTIMISATION: New method, ref point.
+        /// <summary>
+        /// GetPoint
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="t"></param>
+        public void GetPoint(ref Vector3 point, float t)
+        {
+            point.X = t * Delta.X + Origin.X;
+            point.Y = t * Delta.Y + Origin.Y;
+            point.Z = t * Delta.Z + Origin.Z;
+        }
+
+        /// <summary>
+        /// GetEnd
+        /// </summary>
+        /// <returns>Vector3</returns>
         public Vector3 GetEnd()
         {
             return new Vector3(

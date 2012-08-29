@@ -20,15 +20,34 @@ namespace JigLibX.Collision
     /// </summary>
     internal class GridEntry
     {
+        /// <summary>
+        /// Skin
+        /// </summary>
         public CollisionSkin Skin;
+        /// <summary>
+        /// Previous
+        /// </summary>
         public GridEntry Previous;
+        /// <summary>
+        /// Next
+        /// </summary>
         public GridEntry Next;
+        /// <summary>
+        /// GridIndex
+        /// </summary>
         public int GridIndex;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public GridEntry()
         {
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="skin"></param>
         public GridEntry(CollisionSkin skin)
         {
             this.Skin = skin;
@@ -157,12 +176,21 @@ namespace JigLibX.Collision
             }
         }
 
-
+        /// <summary>
+        /// Gets skins.AsReadOnly()
+        /// </summary>
         public override ReadOnlyCollection<CollisionSkin> CollisionSkins
         {
             get { return skins.AsReadOnly(); }
         }
 
+        /// <summary>
+        /// CalcIndex
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <param name="k"></param>
+        /// <returns>int</returns>
         private int CalcIndex(int i, int j, int k)
         {
             int I = i % nx;
@@ -171,6 +199,13 @@ namespace JigLibX.Collision
             return I + nx * J + (nx + ny) * K;
         }
 
+        /// <summary>
+        /// CalcGridForSkin
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <param name="k"></param>
+        /// <param name="skin"></param>
         private void CalcGridForSkin(out int i, out int j, out int k, CollisionSkin skin)
         {
             Vector3 sides = skin.WorldBoundingBox.Max - skin.WorldBoundingBox.Min;
@@ -192,6 +227,16 @@ namespace JigLibX.Collision
             k = (int)(min.Z / dz) % nz;
         }
 
+        /// <summary>
+        /// CalcGridForSkin
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <param name="k"></param>
+        /// <param name="fi"></param>
+        /// <param name="fj"></param>
+        /// <param name="fk"></param>
+        /// <param name="skin"></param>
         public void CalcGridForSkin(out int i, out int j, out int k, out float fi,
             out float fj, out float fk, CollisionSkin skin)
         {
@@ -232,6 +277,11 @@ namespace JigLibX.Collision
             else fk -= (float)k;
         }
 
+        /// <summary>
+        /// CalcGridIndexForSkin
+        /// </summary>
+        /// <param name="skin"></param>
+        /// <returns>int</returns>
         private int CalcGridIndexForSkin(CollisionSkin skin)
         {
             int i, j, k;
@@ -240,6 +290,10 @@ namespace JigLibX.Collision
             return CalcIndex(i, j, k);
         }
 
+        /// <summary>
+        /// Adds a CollisionSkin
+        /// </summary>
+        /// <param name="skin"></param>
         public override void AddCollisionSkin(CollisionSkin skin)
         {
             if (skins.Contains(skin))
@@ -263,6 +317,11 @@ namespace JigLibX.Collision
             CollisionSkinMoved(skin);
         }
 
+        /// <summary>
+        /// Removes a CollisionSkin
+        /// </summary>
+        /// <param name="skin"></param>
+        /// <returns>bool</returns>
         public override bool RemoveCollisionSkin(CollisionSkin skin)
         {
             GridEntry entry = (GridEntry)skin.ExternalData;
@@ -284,6 +343,10 @@ namespace JigLibX.Collision
             return true;
         }
 
+        /// <summary>
+        /// CollisionSkin moved
+        /// </summary>
+        /// <param name="skin"></param>
         public override void CollisionSkinMoved(CollisionSkin skin)
         {
             GridEntry entry = (GridEntry)skin.ExternalData;
@@ -309,6 +372,11 @@ namespace JigLibX.Collision
             GridEntry.InsertGridEntryAfter(entry, start);
         }
 
+        /// <summary>
+        /// GetListsToCheck
+        /// </summary>
+        /// <param name="entries"></param>
+        /// <param name="skin"></param>
         private void GetListsToCheck(List<GridEntry> entries, CollisionSkin skin)
         {
             entries.Clear();
@@ -369,6 +437,12 @@ namespace JigLibX.Collision
             }
         }
 
+        /// <summary>
+        /// CheckCollidables
+        /// </summary>
+        /// <param name="skin0"></param>
+        /// <param name="skin1"></param>
+        /// <returns>bool</returns>
         private static bool CheckCollidables(CollisionSkin skin0, CollisionSkin skin1)
         {
             List<CollisionSkin> nonColl0 = skin0.NonCollidables;
@@ -393,6 +467,13 @@ namespace JigLibX.Collision
             return true;
         }
 
+        /// <summary>
+        /// DetectCollisions
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="collisionFunctor"></param>
+        /// <param name="collisionPredicate"></param>
+        /// <param name="collTolerance"></param>
         public override void DetectCollisions(Body body, CollisionFunctor collisionFunctor, CollisionSkinPredicate2 collisionPredicate, float collTolerance)
         {
             if (!body.IsActive)
@@ -429,6 +510,13 @@ namespace JigLibX.Collision
             }
         }
 
+        /// <summary>
+        /// DetectAllCollisions
+        /// </summary>
+        /// <param name="bodies"></param>
+        /// <param name="collisionFunctor"></param>
+        /// <param name="collisionPredicate"></param>
+        /// <param name="collTolerance"></param>
         public override void DetectAllCollisions(List<Body> bodies, CollisionFunctor collisionFunctor, CollisionSkinPredicate2 collisionPredicate, float collTolerance)
         {
             int numBodies = bodies.Count;
@@ -500,6 +588,16 @@ namespace JigLibX.Collision
             } // loop over bodies
         }
 
+        /// <summary>
+        /// SegmentIntersect
+        /// </summary>
+        /// <param name="fracOut"></param>
+        /// <param name="skinOut"></param>
+        /// <param name="posOut"></param>
+        /// <param name="normalOut"></param>
+        /// <param name="seg"></param>
+        /// <param name="collisionPredicate"></param>
+        /// <returns>bool</returns>
         public override bool SegmentIntersect(out float fracOut, out CollisionSkin skinOut, out Vector3 posOut, out Vector3 normalOut, Segment seg, CollisionSkinPredicate1 collisionPredicate)
         {
             int numSkins = skins.Count;

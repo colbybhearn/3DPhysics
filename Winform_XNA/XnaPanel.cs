@@ -140,7 +140,7 @@ namespace Winform_XNA
             PhysicsSystem.AllowedPenetration = 0.001f;
 
             PhysicsSystem.NumCollisionIterations = 8;
-            PhysicsSystem.NumContactIterations = 8;
+            //PhysicsSystem.NumContactIterations = 8;
             PhysicsSystem.NumPenetrationRelaxtionTimesteps = 15;
         }
         private void InitializeCameras()
@@ -179,7 +179,7 @@ namespace Winform_XNA
             try
             {
                 terrain = new Terrain(new Vector3(0, 0, 0), // position
-                                        new Vector3(5.5f, .01f, 5.5f),  // X with, possible y range, Z depth 
+                                        new Vector3(100f, .5f, 100f),  // X with, possible y range, Z depth 
                                         100, 100,  this.GraphicsDevice, moon);
                 newObjects.Add(terrain);
             }

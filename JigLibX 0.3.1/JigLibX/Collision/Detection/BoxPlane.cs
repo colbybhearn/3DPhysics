@@ -90,7 +90,10 @@ namespace JigLibX.Collision
                         {
                             if (numCollPts < MaxLocalStackSCPI)
                             {
-                                collPts[numCollPts++] = new SmallCollPointInfo(oldPts[i] - body0Pos, oldPts[i] - body1Pos, oldDepth);
+                                // BEN-OPTIMISATION: Now reuses instead of reallocating.
+                                collPts[numCollPts].R0 = oldPts[i] - body0Pos;
+                                collPts[numCollPts].R1 = oldPts[i] - body1Pos;
+                                collPts[numCollPts++].InitialPenetration = oldDepth;
                             }
                         }
                     }

@@ -8,17 +8,28 @@ using JigLibX.Math;
 
 namespace JigLibX.Geometry
 {
+    /// <summary>
+    /// Class Plane
+    /// </summary>
     public class Plane : Primitive
     {
 
         internal Vector3 normal = Vector3.Zero;
         private float d = 0.0f;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Plane()
             : base((int)PrimitiveType.Plane)
         {
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="d"></param>
         public Plane(Vector3 n, float d)
             : base((int)PrimitiveType.Plane)
         {
@@ -27,6 +38,11 @@ namespace JigLibX.Geometry
             this.d = d;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="pos"></param>
         public Plane(Vector3 n, Vector3 pos)
             : base((int)PrimitiveType.Plane)
         {
@@ -35,6 +51,12 @@ namespace JigLibX.Geometry
             this.d = -Vector3.Dot(n, pos);
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="pos0"></param>
+        /// <param name="pos1"></param>
+        /// <param name="pos2"></param>
         public Plane(Vector3 pos0,Vector3 pos1,Vector3 pos2)
             : base((int)PrimitiveType.Plane)
         {
@@ -55,18 +77,28 @@ namespace JigLibX.Geometry
             }
         }
 
+        /// <summary>
+        /// Gets or Set normal
+        /// </summary>
         public Vector3 Normal
         {
             get { return this.normal; }
             set { this.normal = value; }
         }
 
+        /// <summary>
+        /// Gets or Sets d
+        /// </summary>
         public float D
         {
             get { return this.d; }
             set { this.d = value; }
         }
 
+        /// <summary>
+        /// Clone
+        /// </summary>
+        /// <returns>Primitive</returns>
         public override Primitive Clone()
         {
             Plane newPlane = new Plane(this.Normal, this.D);
@@ -75,6 +107,9 @@ namespace JigLibX.Geometry
         }
         private Matrix transformMatrix;
         private Matrix invTransform;
+        /// <summary>
+        /// Gets Transform or Sets transformMatrix and invTransform
+        /// </summary>
         public override Transform Transform
         {
             get
@@ -90,7 +125,9 @@ namespace JigLibX.Geometry
             }
         }
 
-        // use a cached version 
+        /// <summary>
+        /// Use a cached version. Gets transformMatrix
+        /// </summary>
         public override Matrix TransformMatrix
         {
             get
@@ -98,7 +135,10 @@ namespace JigLibX.Geometry
                 return transformMatrix;
             }
         }
-        // use a cached version 
+
+        /// <summary>
+        /// Use a cached version. Gets invTransform
+        /// </summary>
         public override Matrix InverseTransformMatrix
         {
             get
@@ -106,6 +146,15 @@ namespace JigLibX.Geometry
                 return invTransform;
             }
         }
+
+        /// <summary>
+        /// SegmentIntersect
+        /// </summary>
+        /// <param name="frac"></param>
+        /// <param name="pos"></param>
+        /// <param name="normal"></param>
+        /// <param name="seg"></param>
+        /// <returns>bool</returns>
         public override bool SegmentIntersect(out float frac, out Vector3 pos, out Vector3 normal, Segment seg)
         {
             bool result;
@@ -123,16 +172,31 @@ namespace JigLibX.Geometry
             return result;
         }
 
+        /// <summary>
+        /// GetVolume
+        /// </summary>
+        /// <returns>0.0f</returns>
         public override float GetVolume()
         {
             return 0.0f;
         }
 
+        /// <summary>
+        /// GetSurfaceArea
+        /// </summary>
+        /// <returns>0.0f</returns>
         public override float GetSurfaceArea()
         {
             return 0.0f;
         }
 
+        /// <summary>
+        /// GetMassProperties
+        /// </summary>
+        /// <param name="primitiveProperties"></param>
+        /// <param name="mass"></param>
+        /// <param name="centerOfMass"></param>
+        /// <param name="inertiaTensor"></param>
         public override void GetMassProperties(PrimitiveProperties primitiveProperties, out float mass, out Vector3 centerOfMass, out Matrix inertiaTensor)
         {
             mass = 0.0f;
@@ -140,11 +204,18 @@ namespace JigLibX.Geometry
             inertiaTensor = Matrix.Identity;
         }
 
+        /// <summary>
+        /// Invert
+        /// </summary>
         public void Invert()
         {
             Vector3.Negate(ref normal, out normal);
         }
 
+        /// <summary>
+        /// GetInverse
+        /// </summary>
+        /// <returns>Plane</returns>
         public Plane GetInverse()
         {
             Plane plane = new Plane(this.normal, this.d);

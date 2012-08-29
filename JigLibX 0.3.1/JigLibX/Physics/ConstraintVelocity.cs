@@ -9,14 +9,23 @@ using JigLibX.Collision;
 namespace JigLibX.Physics
 {
     /// <summary>
-    /// constraints a velocity to be a certain value - either in world 
+    /// Constrains a velocity to be a certain value - either in world 
     /// or body (by transforming the velocity direction) coordinates
     /// </summary>
     public class ConstraintVelocity : Constraint
     {
+        /// <summary>
+        /// enum ReferenceFrame
+        /// </summary>
         public enum ReferenceFrame
         {
+            /// <summary>
+            /// World
+            /// </summary>
             World,
+            /// <summary>
+            /// Body
+            /// </summary>
             Body
         }
 
@@ -31,16 +40,33 @@ namespace JigLibX.Physics
         private bool doVel;
         private bool doAngVel;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="frame"></param>
+        /// <param name="vel"></param>
+        /// <param name="angVel"></param>
         public ConstraintVelocity(Body body, ReferenceFrame frame, Vector3? vel, Vector3? angVel)
         {
             Initialise(body, frame, vel, angVel);
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ConstraintVelocity()
         {
             Initialise(null, ReferenceFrame.World, Vector3.Zero, Vector3.Zero);
         }
 
+        /// <summary>
+        /// Initialise
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="frame"></param>
+        /// <param name="vel"></param>
+        /// <param name="angVel"></param>
         public void Initialise(Body body, ReferenceFrame frame, Vector3? vel, Vector3? angVel)
         {
             this.body = body;
@@ -70,7 +96,10 @@ namespace JigLibX.Physics
                 body.AddConstraint(this);
         }
 
-        /// apply impulses to satisfy the constraint.
+        /// <summary>
+        /// Apply impulses to satisfy the constraint
+        /// </summary>
+        /// <param name="dt"></param>
         public override void PreApply(float dt)
         {
             Satisfied = false;
@@ -119,6 +148,11 @@ namespace JigLibX.Physics
             }
         }
 
+        /// <summary>
+        /// Apply
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns>bool</returns>
         public override bool Apply(float dt)
         {
             Satisfied = true;
@@ -133,7 +167,7 @@ namespace JigLibX.Physics
                 {
                     #region REFERENCE: Vector3 velBodyFrame = Vector3.Transform(vel, body.Orientation);
                     Vector3 velBodyFrame;
-                    Vector3.Transform(ref vel, ref body.transform.Orientation, out velBodyFrame);
+                    Vector3.TransformNormal(ref vel, ref body.transform.Orientation, out velBodyFrame);
                     #endregion
 
                     #region REFERENCE: body.Velocity = (frac * velBodyFrame + (1.0f - frac) * body.Velocity);
@@ -148,7 +182,7 @@ namespace JigLibX.Physics
                 {
                     #region REFERENCE: Vector3 angVelBodyFrame = Vector3.Transform(angVel, body.Orientation);
                     Vector3 angVelBodyFrame;
-                    Vector3.Transform(ref angVel, ref body.transform.Orientation, out angVelBodyFrame);
+                    Vector3.TransformNormal(ref angVel, ref body.transform.Orientation, out angVelBodyFrame);
                     #endregion
 
                     #region REFERENCE: body.AngVel = (frac * angVelBodyFrame + (1.0f - frac) * body.AngVel);
@@ -181,7 +215,7 @@ namespace JigLibX.Physics
                     #endregion
                 }
             }
-            /// todo return false if we were already there...
+            // todo return false if we were already there...
 
             body.SetConstraintsAndCollisionsUnsatisfied();
             Satisfied = true;
@@ -189,6 +223,9 @@ namespace JigLibX.Physics
             return true;
         }
 
+        /// <summary>
+        /// Destroy - sets body = null; calls DisableConstraint()
+        /// </summary>
         public override void Destroy()
         {
             // this is moved here from ConstraintVelocity destructor..
