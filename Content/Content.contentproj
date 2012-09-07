@@ -91,6 +91,33 @@
       <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="StaticMesh.x">
+      <Name>StaticMesh</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="plane.x">
+      <Name>plane</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="terrain.bmp">
+      <Name>terrain</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TerrainProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HeightmapProcessor\HeightmapProcessor\HeightmapProcessor.csproj">
+      <Project>{C77F18AB-7EC8-4F87-A88F-3506CABE701A}</Project>
+      <Name>HeightmapProcessor</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -120,8 +120,6 @@ namespace Winform_XNA
                 Body.MoveTo(Position, Matrix.Identity);
                 Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
                 Body.EnableBody(); // adds to CurrentPhysicsSystem
-                // EnableBody adds it
-                //PhysicsSystem.CurrentPhysicsSystem.AddBody(Body);
             }
             catch (Exception E)
             {
@@ -154,7 +152,9 @@ namespace Winform_XNA
             Matrix[] transforms = new Matrix[Model.Bones.Count];
 
             Model.CopyAbsoluteBoneTransformsTo(transforms);
-
+            if (this is PhysicObjects.PlaneObject)
+            {
+            }
             Matrix worldMatrix = GetWorldMatrix();
 
             foreach (ModelMesh mesh in Model.Meshes)
@@ -173,8 +173,17 @@ namespace Winform_XNA
             }
         }
 
-        public void DrawWireframe(GraphicsDevice Graphics, Matrix View, Matrix Projection)
+        public virtual void DrawWireframe(GraphicsDevice Graphics, Matrix View, Matrix Projection)
         {
+            if (this is PhysicObjects.PlaneObject)
+            {
+            }
+            if (this is PhysicObjects.HeightmapObject)
+            {
+            }
+            if (this is Terrain)
+            {
+            }
             try
             {
                 VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe();

@@ -31,29 +31,26 @@ namespace Winform_XNA.PhysicObjects
                        float gravity)
             : base()
         {
-            Position = pos;
             car = new Car(FWDrive, RWDrive, maxSteerAngle, steerRate,
                 wheelSideFriction, wheelFwdFriction, wheelTravel, wheelRadius,
                 wheelZOffset, wheelRestingFrac, wheelDampingFrac,
                 wheelNumRays, driveTorque, gravity);
 
             this.Body = car.Chassis.Body;
-            //car.Chassis.Body.Position = new Vector3(0, 1, 0);
-            //car.Chassis.DisableChassis();
-            
             this.Skin= car.Chassis.Skin;
             Body.CollisionSkin = Skin;
             Body.ExternalData = this;
             this.wheel = wheels;
             CommonInit(pos, new Vector3(1, 1, 1), model, true);
-            SetCarMass(100.0f);
+            SetCarMass(1.0f);
         }
 
         public override void FinalizeBody()
         {
             try
             {
-                //Vector3 com = SetMass(1.0f);
+                Vector3 com = SetMass(1.0f);
+                //Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
                 Body.MoveTo(Position, Matrix.Identity);
                 Body.EnableBody(); // adds to CurrentPhysicsSystem
             }
@@ -139,10 +136,5 @@ namespace Winform_XNA.PhysicObjects
             car.Chassis.Body.BodyInertia = inertia;
             car.SetupDefaultWheels();
         }
-        /*
-        public override void ApplyEffects(BasicEffect effect)
-        {
-            //
-        }*/
     }
 }

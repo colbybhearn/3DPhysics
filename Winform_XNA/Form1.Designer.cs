@@ -31,9 +31,9 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tbStep = new System.Windows.Forms.TrackBar();
             this.chkPhysics = new System.Windows.Forms.CheckBox();
-            this.chkDrawing = new System.Windows.Forms.CheckBox();
+            this.chkDraw = new System.Windows.Forms.CheckBox();
             this.chkDebugPhysics = new System.Windows.Forms.CheckBox();
-            this.chkDebug = new System.Windows.Forms.CheckBox();
+            this.chkDebugText = new System.Windows.Forms.CheckBox();
             this.XnaPanelMain = new Winform_XNA.XnaPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -53,9 +53,9 @@
             // 
             this.splitContainer1.Panel1.Controls.Add(this.tbStep);
             this.splitContainer1.Panel1.Controls.Add(this.chkPhysics);
-            this.splitContainer1.Panel1.Controls.Add(this.chkDrawing);
+            this.splitContainer1.Panel1.Controls.Add(this.chkDraw);
             this.splitContainer1.Panel1.Controls.Add(this.chkDebugPhysics);
-            this.splitContainer1.Panel1.Controls.Add(this.chkDebug);
+            this.splitContainer1.Panel1.Controls.Add(this.chkDebugText);
             // 
             // splitContainer1.Panel2
             // 
@@ -89,19 +89,19 @@
             this.chkPhysics.UseVisualStyleBackColor = true;
             this.chkPhysics.CheckedChanged += new System.EventHandler(this.chkPhysics_CheckedChanged);
             // 
-            // chkDrawing
+            // chkDraw
             // 
-            this.chkDrawing.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkDrawing.AutoSize = true;
-            this.chkDrawing.Checked = true;
-            this.chkDrawing.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDrawing.Location = new System.Drawing.Point(12, 482);
-            this.chkDrawing.Name = "chkDrawing";
-            this.chkDrawing.Size = new System.Drawing.Size(101, 17);
-            this.chkDrawing.TabIndex = 3;
-            this.chkDrawing.Text = "Enable Drawing";
-            this.chkDrawing.UseVisualStyleBackColor = true;
-            this.chkDrawing.CheckedChanged += new System.EventHandler(this.chkDrawing_CheckedChanged);
+            this.chkDraw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkDraw.AutoSize = true;
+            this.chkDraw.Checked = true;
+            this.chkDraw.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDraw.Location = new System.Drawing.Point(12, 482);
+            this.chkDraw.Name = "chkDraw";
+            this.chkDraw.Size = new System.Drawing.Size(101, 17);
+            this.chkDraw.TabIndex = 3;
+            this.chkDraw.Text = "Enable Drawing";
+            this.chkDraw.UseVisualStyleBackColor = true;
+            this.chkDraw.CheckedChanged += new System.EventHandler(this.chkDrawing_CheckedChanged);
             // 
             // chkDebugPhysics
             // 
@@ -115,17 +115,19 @@
             this.chkDebugPhysics.UseVisualStyleBackColor = true;
             this.chkDebugPhysics.CheckedChanged += new System.EventHandler(this.chkDebugPhysics_CheckedChanged);
             // 
-            // chkDebug
+            // chkDebugText
             // 
-            this.chkDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkDebug.AutoSize = true;
-            this.chkDebug.Location = new System.Drawing.Point(12, 528);
-            this.chkDebug.Name = "chkDebug";
-            this.chkDebug.Size = new System.Drawing.Size(82, 17);
-            this.chkDebug.TabIndex = 0;
-            this.chkDebug.Text = "Debug Text";
-            this.chkDebug.UseVisualStyleBackColor = true;
-            this.chkDebug.CheckedChanged += new System.EventHandler(this.cbDebug_CheckedChanged);
+            this.chkDebugText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkDebugText.AutoSize = true;
+            this.chkDebugText.Checked = true;
+            this.chkDebugText.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDebugText.Location = new System.Drawing.Point(12, 528);
+            this.chkDebugText.Name = "chkDebugText";
+            this.chkDebugText.Size = new System.Drawing.Size(82, 17);
+            this.chkDebugText.TabIndex = 0;
+            this.chkDebugText.Text = "Debug Text";
+            this.chkDebugText.UseVisualStyleBackColor = true;
+            this.chkDebugText.CheckedChanged += new System.EventHandler(this.cbDebug_CheckedChanged);
             // 
             // XnaPanelMain
             // 
@@ -170,9 +172,9 @@
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private XnaPanel XnaPanelMain;
-        private System.Windows.Forms.CheckBox chkDebug;
+        private System.Windows.Forms.CheckBox chkDebugText;
         private System.Windows.Forms.CheckBox chkDebugPhysics;
-        private System.Windows.Forms.CheckBox chkDrawing;
+        private System.Windows.Forms.CheckBox chkDraw;
         private System.Windows.Forms.CheckBox chkPhysics;
         private System.Windows.Forms.TrackBar tbStep;
     }

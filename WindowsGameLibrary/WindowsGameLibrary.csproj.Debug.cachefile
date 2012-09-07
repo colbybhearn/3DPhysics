@@ -4,7 +4,11 @@ Content\rifle.xnb
 Content\stickman.xnb
 Content\Cube.xnb
 Content\Sphere.xnb
-Content\Moon.xnb
-Content\wheel.xnb
-Content\car_0.xnb
 Content\car.xnb
+Content\wheel.xnb
+Content\Moon.xnb
+Content\terrain.xnb
+Content\StaticMesh.xnb
+Content\plane.xnb
+Content\car_0.xnb
+Content\Checker_0.xnb

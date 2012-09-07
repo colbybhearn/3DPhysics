@@ -127,6 +127,6 @@ namespace Winform_XNA.PhysicObjects
         }
 
         VertexPositionColor[] wf;
-
+    
     }*/
 }

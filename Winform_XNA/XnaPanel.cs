@@ -32,6 +32,10 @@ namespace Winform_XNA
         float SimFactor = 1.0f;
         Gobject currentSelectedObject = null;
         Terrain terrain;
+        Model terrainModel;
+        Model planeModel;
+        Model staticFloatObjects;
+
         enum CameraModes
         {
             Fixed,
@@ -80,6 +84,7 @@ namespace Winform_XNA
         double TIME_STEP = .01; // Recommended timestep
         #endregion
         #endregion
+        PlaneObject planeObj;
 
         #region Init
         protected override void Initialize()
@@ -113,7 +118,7 @@ namespace Winform_XNA
             }
             catch (Exception e)
             {
-                System.Console.WriteLine(e.Message);
+                System.Diagnostics.Trace.WriteLine(e.Message);
             }
             
         }
@@ -123,6 +128,9 @@ namespace Winform_XNA
             cubeModel = Content.Load<Model>("Cube");
             sphereModel = Content.Load<Model>("Sphere");
             moon = Content.Load<Texture2D>("Moon");
+            staticFloatObjects = Content.Load<Model>("StaticMesh");
+            planeModel = Content.Load<Model>("plane");
+            
         }
         private void InitializePhysics()
         {
@@ -141,15 +149,15 @@ namespace Winform_XNA
             PhysicsSystem.CollisionTollerance = 0.01f;
             PhysicsSystem.AllowedPenetration = 0.001f;
 
-            PhysicsSystem.NumCollisionIterations = 8;
+            //PhysicsSystem.NumCollisionIterations = 8;
             //PhysicsSystem.NumContactIterations = 8;
             PhysicsSystem.NumPenetrationRelaxtionTimesteps = 15;
         }
         private void InitializeCameras()
         {
 
-            cam = new Camera(new Vector3(0, 1.25f, 15.7f));
-            cam.AdjustOrientation(-.05f, 0);
+            cam = new Camera(new Vector3(0-50, 1.25f, 80.7f));
+            cam.AdjustOrientation(-.47f, 0);
             cam.lagFactor = .07f;
             objectCam = new Camera(new Vector3(0, 0, 0));
             objectCam.lagFactor = 1.0f;
@@ -172,22 +180,53 @@ namespace Winform_XNA
 
             // Giant Floor
             //AddBox(new Vector3(0, -1, 0), new Vector3(50f, 1f, 50f), Matrix.Identity, cubeModel, false);
-
-            AddNewObjects();
-        }
-        private void InitializeEnvironment()
-        {
             try
             {
-                terrain = new Terrain(new Vector3(0, 0, 0), // position
-                                        //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
-                                        new Vector3(10f, .1f, 10f),  // X with, possible y range, Z depth 
-                                        100, 100,  this.GraphicsDevice, moon);
-                AddCar();
-                newObjects.Add(terrain);
+                //TriangleMeshObject triObj = new TriangleMeshObject(staticFloatObjects, Matrix.Identity, Vector3.Zero);
+                //newObjects.Add(triObj);
             }
             catch (Exception E)
             {
+            }
+            AddNewObjects();
+        }
+        
+        private void InitializeEnvironment()
+        {
+            AddCar();
+            bool useCustomTerrain = true;
+
+            //if (useCustomTerrain)
+            {
+                try
+                {
+                    terrain = new Terrain(new Vector3(0, -5, 0), // position
+                        //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
+                                            new Vector3(50f, .55f, 50f),  // X with, possible y range, Z depth 
+                                            100, 100, this.GraphicsDevice, moon);
+
+                    newObjects.Add(terrain);
+                }
+                catch (Exception E)
+                {
+                }
+            }
+           // else
+            {
+
+                try
+                {
+                    // some video cards can't handle the >16 bit index type of the terrain
+                    terrainModel = Content.Load<Model>("terrain");
+                    HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
+                    newObjects.Add(heightmapObj);
+                }
+                catch (Exception E)
+                {
+                    // if that happens just create a ground plane 
+                   // planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, 0, 0));
+                    //newObjects.Add(planeObj);
+                }
             }
         }
         
@@ -247,7 +286,10 @@ namespace Winform_XNA
             {
                 carModel = Content.Load<Model>("car");
                 wheelModel = Content.Load<Model>("wheel");
-                carObject = new CarObject(new Vector3(0, 1, 0), carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.15f, 0.45f, 0.3f, 1, 520.0f, PhysicsSystem.Gravity.Length());
+                carObject = new CarObject(
+                    //new Vector3(-60, 0.5f, 8), // camera's left
+                    new Vector3(0, 2.5f, 0),
+                    carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 20, 520.0f, PhysicsSystem.Gravity.Length());
                 carObject.Car.EnableCar();
                 carObject.Car.Chassis.Body.AllowFreezing = false;
                 newObjects.Add(carObject);
@@ -357,6 +399,17 @@ namespace Winform_XNA
             if (lv != null)
                 lv.ProcessInputKeyUp(e);
 
+
+            Keys key = e.KeyCode;
+
+            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
+                carObject.Car.Accelerate = 0.0f;
+
+            if (key == Keys.Left || key == Keys.Right)
+                carObject.Car.Steer = 0.0f;
+
+            if (key == Keys.B)
+                carObject.Car.HBrake = 0.0f;
             
         }
         public void ProcessKeyDown(KeyEventArgs e)
@@ -380,6 +433,35 @@ namespace Winform_XNA
                 else
                     inputMode = InputModes.Object;
             }
+        }
+        internal void ProcessKeyDown(PreviewKeyDownEventArgs e)
+        {
+            Keys key = e.KeyCode;
+
+            if (key == Keys.Up || key == Keys.Down)
+            {
+                if (e.KeyCode == Keys.Up)
+                    carObject.Car.Accelerate = 1.0f;
+                else
+                    carObject.Car.Accelerate = -1.0f;
+            }
+            //else
+            //    carObject.Car.Accelerate = 0.0f;
+
+            if (key == Keys.Left || key == Keys.Right)
+            {
+                if (key == Keys.Left)
+                    carObject.Car.Steer = 1.0f;
+                else
+                    carObject.Car.Steer = -1.0f;
+            }
+            //else
+            //    carObject.Car.Steer = 0.0f;
+
+            if (key == Keys.B)
+                carObject.Car.HBrake = 1.0f;
+            //else
+            //    carObject.Car.HBrake = 0.0f;
         }
         internal void ProcessKeyUp(KeyEventArgs e)
         {
@@ -411,6 +493,8 @@ namespace Winform_XNA
                 if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
                 {
                     Body b = cs.Owner;
+                    if (b == null)
+                        return;
                     Gobject go = b.ExternalData as Gobject;
                     SelectGameObject(go);
                 }
@@ -502,9 +586,12 @@ namespace Winform_XNA
                 }
                 
                 if(DrawingEnabled)
-                    terrain.Draw(GraphicsDevice, v, p);
-                //if(DebugPhysics)
-                    //terrain.DrawWireframe(GraphicsDevice, v, p);
+                    if(terrain!=null)
+                        terrain.Draw(GraphicsDevice, v, p);
+                /*if(DebugPhysics)
+                    if (terrain != null)
+                        terrain.DrawWireframe(GraphicsDevice, v, p);*/
+                //planeObj.DrawWireframe(GraphicsDevice, v,p);
 
                 
                 if (Debug)
@@ -512,18 +599,19 @@ namespace Winform_XNA
                     double time = tmrDrawElapsed.ElapsedMilliseconds;
                     spriteBatch.Begin();
                     Vector2 position = new Vector2(5, 5);
-                    spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, Color.LightGray);
+                    Color debugfontColor = Color.Black;
+                    spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, debugfontColor);
                     position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "TPS: " + (1000.0 / lastPhysicsElapsed), position, Color.LightGray); // physics Ticks Per Second
+                    spriteBatch.DrawString(debugFont, "TPS: " + (1000.0 / lastPhysicsElapsed), position, debugfontColor); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.TargetPosition);
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
                     position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "Objects Drawn: " + gameObjects.Count + "/" + ObjectsDrawn, position, Color.LightGray);
+                    spriteBatch.DrawString(debugFont, "Objects Drawn: " + gameObjects.Count + "/" + ObjectsDrawn, position, debugfontColor);
                     position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "Cam Mode: " + cameraMode.ToString(), position, Color.LightGray); // physics Ticks Per Second
+                    spriteBatch.DrawString(debugFont, "Cam Mode: " + cameraMode.ToString(), position, debugfontColor); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "Input Mode: " + inputMode.ToString(), position, Color.LightGray); // physics Ticks Per Second
+                    spriteBatch.DrawString(debugFont, "Input Mode: " + inputMode.ToString(), position, debugfontColor); // physics Ticks Per Second
 
                     spriteBatch.End();
 
@@ -696,35 +784,7 @@ namespace Winform_XNA
         }
         #endregion
 
-        internal void ProcessKeyDown(PreviewKeyDownEventArgs e)
-        {
-            Keys key = e.KeyCode;
-
-            if (key == Keys.Up || key == Keys.Down)
-            {
-                if (e.KeyCode == Keys.Up)
-                    carObject.Car.Accelerate = 1.0f;
-                else
-                    carObject.Car.Accelerate = -1.0f;
-            }
-            else
-                carObject.Car.Accelerate = 0.0f;
-
-            if (key == Keys.Left || key == Keys.Right)
-            {
-                if (key == Keys.Left)
-                    carObject.Car.Steer = 1.0f;
-                else
-                    carObject.Car.Steer = -1.0f;
-            }
-            else
-                carObject.Car.Steer = 0.0f;
-
-            if (key == Keys.B)
-                carObject.Car.HBrake = 1.0f;
-            else
-                carObject.Car.HBrake = 0.0f;
-        }
+        
     }
 
     public class MyCollisionPredicate : CollisionSkinPredicate1

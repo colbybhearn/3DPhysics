@@ -18,7 +18,7 @@ namespace Winform_XNA
 
         private void cbDebug_CheckedChanged(object sender, EventArgs e)
         {
-            XnaPanelMain.Debug = chkDebug.Checked;
+            XnaPanelMain.Debug = chkDebugText.Checked;
             XnaPanelMain.Focus();
         }
 
@@ -67,11 +67,12 @@ namespace Winform_XNA
 
         private void chkDrawing_CheckedChanged(object sender, EventArgs e)
         {
-            XnaPanelMain.DrawingEnabled = chkDrawing.Checked;
+            XnaPanelMain.DrawingEnabled = chkDraw.Checked;
         }
 
         private void XnaPanelMain_MouseClick(object sender, MouseEventArgs e)
-        {            
+        {  
+          
         }
 
         private void chkPhysics_CheckedChanged(object sender, EventArgs e)

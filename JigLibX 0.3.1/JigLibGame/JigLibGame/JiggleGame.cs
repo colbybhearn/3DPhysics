@@ -117,7 +117,7 @@ namespace JiggleGame
             pinModel = content.Load<Model>("content/pin");
             compoundModel = content.Load<Model>("content/compound");
             cylinderModel = content.Load<Model>("content/cylinder");
-
+            /*
             try
             {
                 // some video card can't handle the >16 bit index type of the terrain
@@ -126,11 +126,11 @@ namespace JiggleGame
                 this.Components.Add(heightmapObj);
             }
             catch (Exception)
-            {
+            {*/
                 // if that happens just createa a ground plane 
                 PlaneObject planeObj = new PlaneObject(this, planeModel, 15.0f);
                 this.Components.Add(planeObj);
-            }
+            //}
 
             TriangleMeshObject triObj = new TriangleMeshObject(this, staticModel, Matrix.Identity, Vector3.Zero);
             this.Components.Add(triObj);

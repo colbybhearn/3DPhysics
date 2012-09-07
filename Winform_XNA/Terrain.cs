@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using JigLibX.Geometry;
 using JigLibX.Physics;
 using JigLibX.Collision;
+using JigLibX.Utils;
 
 namespace Winform_XNA
 {
@@ -24,8 +25,9 @@ namespace Winform_XNA
         int numTris = 0;        
         List<TriangleVertexIndices> meshIndices = new List<TriangleVertexIndices>();
         List<Vector3> meshVertices = new List<Vector3>();// overlapping verts
+        List<Vector3> heightVertices = new List<Vector3>();// overlapping verts
 
-        public Terrain( Vector3 posCenter,Vector3 size, int cellsX, int cellsZ, GraphicsDevice g, Texture2D tex)
+        public Terrain( Vector3 posCenter,Vector3 size, int cellsX, int cellsZ, GraphicsDevice g, Texture2D tex) : base()
         {
             numVertsX = cellsX + 1;
             numVertsZ = cellsZ + 1;
@@ -46,36 +48,55 @@ namespace Winform_XNA
             double currentHeight = 0;
             // Fill in the vertices
             int count = 0;
+            //float edgeHeigh = 0;
             //float worldZPosition = posCenter.Z - (size.Z / 2);
             float worldZPosition = - (size.Z / 2);
             float height;
+            float stair = 0;
+            float diff = .5f;
             for (int z = 0; z < numVertsZ; z++)
             {
                 //float worldXPosition = posCenter.X - (size.X / 2);
                 float worldXPosition = - (size.X / 2);
                 for (int x = 0; x < numVertsX; x++)
                 {
-                    if (count % 50 == 0)
+
+                    if (count % numVertsX == 0)
                         targetHeight = r2.NextDouble();
                     //targetHeight += Math.Abs(worldZPosition);// +worldXPosition * 1.0f;
                     
-                    currentHeight += (targetHeight - currentHeight) * .05f;
-                    height = (float)((r.NextDouble() + currentHeight) * size.Y);
+                    currentHeight += (targetHeight - currentHeight) * .009f;
+                    //if(x!=0)
+                    //currentHeight = (targetHeight) / ((float)x / (float)(numVertsX+1));
+                    //height = (float)((r.NextDouble() + currentHeight) * size.Y);
+
+                    
                     //height = 1;
+                    
+                    //stair += diff;
+                    //if (z + x == 17)
+                        //stair += 10;
 
-
-                    verts[count].Position = new Vector3(worldXPosition, height, worldZPosition);
+                    //height += stair;
+                    verts[count].Position = new Vector3(worldXPosition,(float)currentHeight, worldZPosition);
                     verts[count].Normal = Vector3.Zero;
                     verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
                     verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);
-                    
+
+                    //if (z + x == 17)
+                        //stair -= 10;
                     count++;
 
                     // Advance in x
                     worldXPosition += cellSizeX;
                 }
+
+                currentHeight = 0;
                 // Advance in z
                 worldZPosition += cellSizeZ;
+                //diff *= -1;
+                //if (diff < 1)
+                   // stair += numVertsX * diff;
             }
 
             int index = 0;
@@ -113,19 +134,54 @@ namespace Winform_XNA
             {
                 Effect = new BasicEffect(g);
                 mesh = new TriangleMesh();
-                mesh.CreateMesh(meshVertices, meshIndices, 4, cellSizeX);
+                //mesh.CreateMesh(meshVertices, meshIndices, 2, cellSizeX);
             }
             catch (Exception E)
             {
             }
+
             this.Body = new Body();
             Skin = new CollisionSkin(Body);
             Body.CollisionSkin = Skin;
             Body.ExternalData = this;
-            Skin.AddPrimitive(GetMesh(), new MaterialProperties(0.7f, 0.7f, 0.6f));
-            VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe(); // 1200 across before Z changes to from -7.5/-7.35 to -7.35/-7.2
+            float heightf = 0;
+            try
+            {
+            Array2D field = new Array2D(numVertsX, numVertsZ);
+
+            int i = 0;
+            for (int c = 0; c < verts.Length; c++)
+            {
+                int x = c / numVertsX;
+                int z = c % numVertsX;
                 
-            CommonInit(posCenter, new Vector3(1,1,1), null, false);
+                if (i >= verts.Length)
+                    i = (i % verts.Length)+1;
+                heightf = verts[i].Position.Y + posCenter.Y;
+                //heightf = verts[i].Position.Y;
+                i += numVertsX;
+                
+                field.SetAt(x,z, heightf);
+            }
+
+               // Body.MoveTo(Position, Matrix.Identity);
+
+                Heightmap hm = new Heightmap(field, 
+                                                    (-size.X / 2) / (cellsX+0) + cellSizeX/2,
+                                                    (-size.Z / 2) / (cellsZ + 0) + cellSizeZ/2, 
+                                                    size.X / (cellsX+0), 
+                                                    size.Z / (cellsZ+0));
+                Skin.AddPrimitive(hm, new MaterialProperties(0.7f, 0.7f, 0.6f));
+                //Skin.AddPrimitive(GetMesh(), new MaterialProperties(0.7f, 0.7f, 0.6f));
+                //VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe(); // 1200 across before Z changes to from -7.5/-7.35 to -7.35/-7.2
+                
+                PhysicsSystem.CurrentPhysicsSystem.CollisionSystem.AddCollisionSkin(Skin);
+                CommonInit(posCenter, new Vector3(0,0,0), null, false);
+            }
+            catch(Exception E)
+            {
+            }
+
         }
 
         private Triangle GetTriangleOfFirstVert(int startVertex)
@@ -194,7 +250,8 @@ namespace Winform_XNA
             return tverts;
         }
 
-        public void DrawWireframe(GraphicsDevice Graphics, Matrix View, Matrix Projection)
+        /*
+        public override void DrawWireframe(GraphicsDevice Graphics, Matrix View, Matrix Projection)
         {
             try
             {
@@ -223,6 +280,7 @@ namespace Winform_XNA
                         VertexPositionColor[] normal = new VertexPositionColor[2];
                         normal[0].Position = vpc.Position;
                         normal[1].Position = vpc.Position+vpc.Normal;
+                        Body.TransformWireframe(normal);
 
                         Graphics.DrawUserPrimitives<VertexPositionColor>(
                             Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
@@ -234,7 +292,7 @@ namespace Winform_XNA
             {
                 System.Console.WriteLine(e.Message);
             }
-        }
+        }*/
 
         public TriangleMesh GetMesh()
         {
