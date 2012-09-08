@@ -104,7 +104,6 @@ namespace Winform_XNA
                 spriteBatch = new SpriteBatch(GraphicsDevice);
                 
                 new Game();
-                debugFont = Content.Load<SpriteFont>("DebugFont");
                 
                 // From the example code, should this be a timer instead?
                 Application.Idle += delegate { Invalidate(); };
@@ -130,6 +129,7 @@ namespace Winform_XNA
             moon = Content.Load<Texture2D>("Moon");
             staticFloatObjects = Content.Load<Model>("StaticMesh");
             planeModel = Content.Load<Model>("plane");
+            debugFont = Content.Load<SpriteFont>("DebugFont");
             
         }
         private void InitializePhysics()
@@ -196,7 +196,7 @@ namespace Winform_XNA
             AddCar();
             bool useCustomTerrain = true;
 
-            //if (useCustomTerrain)
+            if (useCustomTerrain)
             {
                 try
                 {
@@ -211,21 +211,21 @@ namespace Winform_XNA
                 {
                 }
             }
-           // else
+            else
             {
 
-                try
+                //try
                 {
                     // some video cards can't handle the >16 bit index type of the terrain
-                    terrainModel = Content.Load<Model>("terrain");
-                    HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
-                    newObjects.Add(heightmapObj);
+                    ///terrainModel = Content.Load<Model>("terrain");
+                    //HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
+                    //newObjects.Add(heightmapObj);
                 }
-                catch (Exception E)
+                //catch (Exception E)
                 {
                     // if that happens just create a ground plane 
-                   // planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, 0, 0));
-                    //newObjects.Add(planeObj);
+                    planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0));
+                    newObjects.Add(planeObj);
                 }
             }
         }
@@ -289,7 +289,7 @@ namespace Winform_XNA
                 carObject = new CarObject(
                     //new Vector3(-60, 0.5f, 8), // camera's left
                     new Vector3(0, 2.5f, 0),
-                    carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 20, 520.0f, PhysicsSystem.Gravity.Length());
+                    carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 320.0f, PhysicsSystem.Gravity.Length());
                 carObject.Car.EnableCar();
                 carObject.Car.Chassis.Body.AllowFreezing = false;
                 newObjects.Add(carObject);

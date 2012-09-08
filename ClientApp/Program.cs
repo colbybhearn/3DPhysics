@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Winform_XNA
+namespace ClientApp
 {
     static class Program
     {
@@ -15,7 +15,7 @@ namespace Winform_XNA
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
+            Application.Run(new Client());
         }
     }
 }

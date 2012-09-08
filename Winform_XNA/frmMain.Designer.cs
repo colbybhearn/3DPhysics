@@ -1,6 +1,6 @@
 ﻿namespace Winform_XNA
 {
-    partial class Form1
+    partial class frmMain
     {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label1 = new System.Windows.Forms.Label();
             this.tbStep = new System.Windows.Forms.TrackBar();
             this.chkPhysics = new System.Windows.Forms.CheckBox();
             this.chkDraw = new System.Windows.Forms.CheckBox();
@@ -51,6 +52,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.tbStep);
             this.splitContainer1.Panel1.Controls.Add(this.chkPhysics);
             this.splitContainer1.Panel1.Controls.Add(this.chkDraw);
@@ -61,27 +63,35 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.XnaPanelMain);
             this.splitContainer1.Size = new System.Drawing.Size(923, 557);
-            this.splitContainer1.SplitterDistance = 207;
+            this.splitContainer1.SplitterDistance = 132;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 119);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(72, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Physics Rate:";
             // 
             // tbStep
             // 
-            this.tbStep.Location = new System.Drawing.Point(12, 110);
+            this.tbStep.Location = new System.Drawing.Point(3, 135);
             this.tbStep.Maximum = 20;
             this.tbStep.Name = "tbStep";
-            this.tbStep.Size = new System.Drawing.Size(171, 45);
+            this.tbStep.Size = new System.Drawing.Size(126, 45);
             this.tbStep.TabIndex = 5;
             this.tbStep.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.tbStep.Value = 1;
+            this.tbStep.Value = 10;
             this.tbStep.Scroll += new System.EventHandler(this.tbStep_Scroll);
             // 
             // chkPhysics
             // 
-            this.chkPhysics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkPhysics.AutoSize = true;
             this.chkPhysics.Checked = true;
             this.chkPhysics.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkPhysics.Location = new System.Drawing.Point(12, 459);
+            this.chkPhysics.Location = new System.Drawing.Point(12, 12);
             this.chkPhysics.Name = "chkPhysics";
             this.chkPhysics.Size = new System.Drawing.Size(98, 17);
             this.chkPhysics.TabIndex = 4;
@@ -91,11 +101,10 @@
             // 
             // chkDraw
             // 
-            this.chkDraw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkDraw.AutoSize = true;
             this.chkDraw.Checked = true;
             this.chkDraw.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDraw.Location = new System.Drawing.Point(12, 482);
+            this.chkDraw.Location = new System.Drawing.Point(12, 35);
             this.chkDraw.Name = "chkDraw";
             this.chkDraw.Size = new System.Drawing.Size(101, 17);
             this.chkDraw.TabIndex = 3;
@@ -105,9 +114,8 @@
             // 
             // chkDebugPhysics
             // 
-            this.chkDebugPhysics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkDebugPhysics.AutoSize = true;
-            this.chkDebugPhysics.Location = new System.Drawing.Point(12, 505);
+            this.chkDebugPhysics.Location = new System.Drawing.Point(12, 58);
             this.chkDebugPhysics.Name = "chkDebugPhysics";
             this.chkDebugPhysics.Size = new System.Drawing.Size(97, 17);
             this.chkDebugPhysics.TabIndex = 2;
@@ -117,11 +125,8 @@
             // 
             // chkDebugText
             // 
-            this.chkDebugText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkDebugText.AutoSize = true;
-            this.chkDebugText.Checked = true;
-            this.chkDebugText.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDebugText.Location = new System.Drawing.Point(12, 528);
+            this.chkDebugText.Location = new System.Drawing.Point(12, 81);
             this.chkDebugText.Name = "chkDebugText";
             this.chkDebugText.Size = new System.Drawing.Size(82, 17);
             this.chkDebugText.TabIndex = 0;
@@ -138,7 +143,7 @@
             this.XnaPanelMain.Location = new System.Drawing.Point(0, 0);
             this.XnaPanelMain.Name = "XnaPanelMain";
             this.XnaPanelMain.PhysicsEnabled = true;
-            this.XnaPanelMain.Size = new System.Drawing.Size(712, 557);
+            this.XnaPanelMain.Size = new System.Drawing.Size(787, 557);
             this.XnaPanelMain.TabIndex = 0;
             this.XnaPanelMain.Text = "XnaPanel";
             this.XnaPanelMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyDown);
@@ -149,14 +154,14 @@
             this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
             this.XnaPanelMain.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.XnaPanelMain_PreviewKeyDown);
             // 
-            // Form1
+            // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(923, 557);
             this.Controls.Add(this.splitContainer1);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "frmMain";
+            this.Text = "inFormed XNA Physics";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
@@ -177,6 +182,7 @@
         private System.Windows.Forms.CheckBox chkDraw;
         private System.Windows.Forms.CheckBox chkPhysics;
         private System.Windows.Forms.TrackBar tbStep;
+        private System.Windows.Forms.Label label1;
     }
 }
 

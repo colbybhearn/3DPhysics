@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{485FC2F7-3BA9-4046-AB91-919B74F2F03C}</ProjectGuid>
+    <ProjectGuid>{2FC5D1C9-20EA-4124-A503-2A02EFE5D1C5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Winform_XNA</RootNamespace>
-    <AssemblyName>Winform_XNA</AssemblyName>
+    <RootNamespace>ClientApp</RootNamespace>
+    <AssemblyName>ClientApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -34,10 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="Microsoft.Xna.Framework.Input.Touch, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,42 +46,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoostController.cs" />
-    <Compile Include="Camera.cs" />
-    <Compile Include="frmMain.cs">
+    <Compile Include="Client.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmMain.Designer.cs">
-      <DependentUpon>frmMain.cs</DependentUpon>
+    <Compile Include="Client.designer.cs">
+      <DependentUpon>Client.cs</DependentUpon>
     </Compile>
-    <Compile Include="Game.cs" />
-    <Compile Include="Gobject.cs" />
-    <Compile Include="GraphicsDeviceService.cs" />
-    <Compile Include="HeightMapInfo.cs" />
-    <Compile Include="LunarVehicle.cs" />
-    <Compile Include="PhysicObjects\CarObject.cs" />
-    <Compile Include="PhysicObjects\HeightmapObject.cs" />
-    <Compile Include="PhysicObjects\PhysicObject.cs" />
-    <Compile Include="PhysicObjects\PlaneObject.cs" />
-    <Compile Include="PhysicObjects\RagdollObject.cs" />
-    <Compile Include="PhysicObjects\TriangleMeshObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Server.designer.cs">
-      <DependentUpon>Server.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Terrain.cs" />
-    <Compile Include="XnaPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="XnaControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <EmbeddedResource Include="frmMain.resx">
-      <DependentUpon>frmMain.cs</DependentUpon>
+    <EmbeddedResource Include="Client.resx">
+      <DependentUpon>Client.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -96,9 +66,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Server.resx">
-      <DependentUpon>Server.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -110,17 +77,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JigLibX 0.3.1\JigLibX\JigLibX.csproj">
-      <Project>{8A7CEF45-3501-491D-AEDA-0164060F5348}</Project>
-      <Name>JigLibX</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NetHelper\NetHelper.csproj">
       <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
       <Name>NetHelper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WindowsGameLibrary\WindowsGameLibrary.csproj">
-      <Project>{080DD9B6-4867-457A-9B9B-2400CCD30AAD}</Project>
-      <Name>WindowsGameLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
