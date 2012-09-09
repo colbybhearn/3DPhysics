@@ -25,6 +25,10 @@ namespace Input
          *  - [DONE]a keyEvent type (Down, Up, PressDown, PressUp)
          *  
          * [DONE]Static methods to handle Reading/Writing KeyMaps
+         * 
+         * Todo
+         *  add a form for showing, editing bindings.
+         *  [DONE] add a class to read and write a keymap file, per user and per game name.
          */
         public String Game { get; set; }
         public List<KeyBinding> KeyBindings { get; set; }
@@ -39,13 +43,6 @@ namespace Input
         {
             KeyMap.SaveKeyMap(this);
         }
-
-
-        //Todo
-        // add a form for showing, editing bindings.
-        // add a class to read and write a keymap file, per user and per game name.
-        // ^ can be handled via static methods in KeyMap
-
         public class KeyBinding
         {
             public Keys Keys { get; set; }
