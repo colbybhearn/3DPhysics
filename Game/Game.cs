@@ -201,5 +201,10 @@ namespace Game
         }
 
 
+
+        public void UpdateInput()
+        {
+            inputManager.Update();
+        }
     }
 }

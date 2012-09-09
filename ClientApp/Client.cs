@@ -77,6 +77,12 @@ namespace ClientApp
             // Give the xna panel a reference to game.
             // Xna Panel will initialize the game with its graphicsDevice the moment it is ready.
             AddXnaPanel(ref game);
+            Application.Idle += new EventHandler(Application_Idle);
+        }
+
+        void Application_Idle(object sender, EventArgs e)
+        {
+            game.UpdateInput();
         }
 
         private void InitializeScene()

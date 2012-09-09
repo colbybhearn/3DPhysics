@@ -18,8 +18,8 @@ namespace Input
         {
             tmr = new Timer();
             tmr.Interval = interval;
-            tmr.Elapsed += new ElapsedEventHandler(tmr_Elapsed);
-            tmr.Start();
+            //tmr.Elapsed += new ElapsedEventHandler(tmr_Elapsed);
+            //tmr.Start();
             tmr.AutoReset = false;
         }
 
@@ -33,14 +33,6 @@ namespace Input
         public void Update()
         {
             currentState = Keyboard.GetState();
-            if (currentState.IsKeyDown(Keys.W))
-            {
-                
-            }
-            lastPressed = currentState.GetPressedKeys();
-            if (lastPressed.Length != 0)
-            {
-            }
             foreach (KeyWatch kw in watches)
                 kw.Check(lastPressed, currentState);
 

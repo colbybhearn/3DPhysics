@@ -108,12 +108,15 @@ namespace ServerApp
                     Packet p = InputQueue.Dequeue();
                     switch (p.info)
                     {
-                        case Packet.pInfo.CLIENT_LIST_REFRESH:                            
-                            int iClients = Convert.ToInt32(p.GetFieldValue("CLIENT COUNT"));
+                        case Packet.pInfo.CLIENT_LIST_REFRESH:
+                            if (p.Fields.ContainsKey("CLIENT COUNT"))
+                            {
+                                int iClients = Convert.ToInt32(p.GetFieldValue("CLIENT COUNT"));
 
-                            lstClients.Clear();
-                            for (int i = 0; i < iClients; i++)
-                                lstClients.Items.Add(p.GetFieldValue("CLIENT ALIAS "+i.ToString()));
+                                lstClients.Clear();
+                                for (int i = 0; i < iClients; i++)
+                                    lstClients.Items.Add(p.GetFieldValue("CLIENT ALIAS " + i.ToString()));
+                            }
                             break;
 
                         case Packet.pInfo.STATUS_MESSAGE:

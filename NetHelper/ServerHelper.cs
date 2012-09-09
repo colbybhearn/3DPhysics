@@ -119,7 +119,7 @@ namespace ServerHelper
                         StatusMsgQueue.Enqueue("Receiving New Client");
                         int iNewPort = (int)(iBasePort + Clients.Count);
                         //Debug.WriteLine("Server: Creating Special Listener");
-
+                       
                         string sKey = System.Guid.NewGuid().ToString();
 
                         Packet p1 = new Packet(Packet.pType.TO_CLIENT,
@@ -475,7 +475,8 @@ namespace ServerHelper
             }
             catch (Exception ex)
             {
-                //lblStatus.Text = "Error: " + ex.StackTrace;
+                string s = "Error: " + ex.StackTrace;
+                System.Diagnostics.Debug.WriteLine(s);
                 return false;
             }
         }
@@ -535,6 +536,8 @@ namespace ServerHelper
                     }
                     catch (Exception e)
                     {
+                        System.Diagnostics.Debug.WriteLine(e.Message);
+
                         //MessageBox.Show(e.Message);
                         //s.ReceiveTimeout = 1001;
                     }
