@@ -30,7 +30,7 @@ namespace ServerApp
         #endregion
         
         #region Constructor
-        Game.PhysGame game;
+        Game.BaseGame game;
         public Server()
         {
             InitializeComponent();
@@ -42,11 +42,11 @@ namespace ServerApp
             ProcessPacketTimer.Tick += new EventHandler(ProcessPacketsTimer_Tick);
             ProcessPacketTimer.Start();
             
-            game = new Game.PhysGame();
+            game = new Game.BaseGame();
             AddXnaPanel(ref game);
         }
         Winform_XNA.XnaPanel XnaPanelMain;
-        private void AddXnaPanel(ref Game.PhysGame game)
+        private void AddXnaPanel(ref Game.BaseGame game)
         {
             // 
             // XnaPanelMain

@@ -46,7 +46,7 @@ namespace ClientApp
         Queue<Packet> InputQueue = new Queue<Packet>();
         Queue<Packet> OutputQueue = new Queue<Packet>();
 
-        Game.PhysGame game;
+        Game.BaseGame game;
         #endregion
 
         #region Constructor
@@ -63,7 +63,6 @@ namespace ClientApp
             sKey = "";// System.Guid.NewGuid().ToString();
             iPort = (int)numLobbyPort.Value;
             tStatus.Start();
-            TrayIcon.ShowBalloonTip(5000);
             btnDisconnect.Enabled = false;
             btnSendChat.Enabled = false;
                         
@@ -73,7 +72,7 @@ namespace ClientApp
             ProcessPacketTimer.Start();
 
             // Create an instance of the game
-            game = new Game.PhysGame();
+            game = new Game.CarGame();
             // Give the xna panel a reference to game.
             // Xna Panel will initialize the game with its graphicsDevice the moment it is ready.
             AddXnaPanel(ref game);
@@ -82,14 +81,14 @@ namespace ClientApp
 
         void Application_Idle(object sender, EventArgs e)
         {
-            game.UpdateInput();
+            game.ProcessInput();
         }
 
         private void InitializeScene()
         {            
         }
 
-        private void AddXnaPanel(ref Game.PhysGame game)
+        private void AddXnaPanel(ref Game.BaseGame game)
         {
             // 
             // XnaPanelMain
@@ -106,12 +105,9 @@ namespace ClientApp
             this.XnaPanelMain.Size = new System.Drawing.Size(596, 366);
             this.XnaPanelMain.TabIndex = 46;
             this.XnaPanelMain.Text = "XnaPanel";
-            this.XnaPanelMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.pnlKeyDown);
-            this.XnaPanelMain.KeyUp += new System.Windows.Forms.KeyEventHandler(this.pnlKeyUp);
             this.XnaPanelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlMouseDown);
             this.XnaPanelMain.MouseEnter += new System.EventHandler(this.pnlMouseEnter);
             this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlMouseMove);
-            this.XnaPanelMain.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.pnlPreviewKeyDown);
             this.spMain.Panel2.Controls.Add(this.XnaPanelMain);
             //this.Controls.Add(this.XnaPanelMain);
         }
@@ -218,7 +214,6 @@ namespace ClientApp
 
         private void Client_FormClosed(object sender, FormClosedEventArgs e)
         {
-            TrayIcon.Dispose();
         }
 
         #endregion
@@ -300,9 +295,6 @@ namespace ClientApp
 
 
 
-
-
-
         #region Mouse Input
         private void pnlMouseEnter(object sender, EventArgs e)
         {
@@ -327,21 +319,6 @@ namespace ClientApp
         private void pnlMouseDown(object sender, MouseEventArgs e)
         {
             XnaPanelMain.ProcessMouseDown(e, XnaPanelMain.Bounds);
-        }
-        #endregion
-
-        #region Key Input
-        private void pnlKeyDown(object sender, KeyEventArgs e)
-        {
-            XnaPanelMain.ProcessKeyDown(e);
-        }
-        private void pnlKeyUp(object sender, KeyEventArgs e)
-        {
-            XnaPanelMain.ProcessKeyUp(e);
-        }
-        private void pnlPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            XnaPanelMain.ProcessKeyDown(e);
         }
         #endregion
                       

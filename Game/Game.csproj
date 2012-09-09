@@ -71,7 +71,8 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game.cs" />
+    <Compile Include="CarGame.cs" />
+    <Compile Include="BaseGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -82,6 +83,10 @@
     <ProjectReference Include="..\Input\Input.csproj">
       <Project>{772FD185-366C-40C8-8190-ABB71ED5263A}</Project>
       <Name>Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetHelper\Helper.csproj">
+      <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
+      <Name>Helper</Name>
     </ProjectReference>
     <ProjectReference Include="..\WindowsGameLibrary\WindowsGameLibrary.csproj">
       <Project>{080DD9B6-4867-457A-9B9B-2400CCD30AAD}</Project>

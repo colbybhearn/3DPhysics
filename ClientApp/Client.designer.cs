@@ -29,7 +29,6 @@ namespace ClientApp
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Client));
             this.numLobbyPort = new System.Windows.Forms.NumericUpDown();
             this.btnConnect = new System.Windows.Forms.Button();
             this.btnDisconnect = new System.Windows.Forms.Button();
@@ -46,7 +45,6 @@ namespace ClientApp
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.txtChatBox = new System.Windows.Forms.TextBox();
-            this.TrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.spMain = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).BeginInit();
@@ -222,15 +220,6 @@ namespace ClientApp
             this.txtChatBox.TabIndex = 0;
             this.txtChatBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtChatBox_KeyPress);
             // 
-            // TrayIcon
-            // 
-            this.TrayIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-            this.TrayIcon.BalloonTipText = "Amy Client has been started.";
-            this.TrayIcon.BalloonTipTitle = "Amy Client";
-            this.TrayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("TrayIcon.Icon")));
-            this.TrayIcon.Text = "Amy Gaming Client";
-            this.TrayIcon.Visible = true;
-            // 
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -305,7 +294,6 @@ namespace ClientApp
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatus;
         private System.Windows.Forms.TextBox txtChatBox;
         private System.Windows.Forms.Timer tStatus;
-        private System.Windows.Forms.NotifyIcon TrayIcon;
         private System.Windows.Forms.GroupBox groupBox2;
         private Winform_XNA.XnaPanel XnaPanelMain;
         private System.Windows.Forms.SplitContainer spMain;

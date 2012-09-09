@@ -42,14 +42,14 @@ namespace Physics.PhysicsObjects
             Body.ExternalData = this;
             this.wheel = wheels;
             CommonInit(pos, new Vector3(1, 1, 1), model, true);
-            SetCarMass(1.0f);
+            SetCarMass(100.1f);
         }
 
         public override void FinalizeBody()
         {
             try
             {
-                Vector3 com = SetMass(1.0f);
+                //Vector3 com = SetMass(2.0f);
                 //Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
                 Body.MoveTo(Position, Matrix.Identity);
                 Body.EnableBody(); // adds to CurrentPhysicsSystem
@@ -135,6 +135,21 @@ namespace Physics.PhysicsObjects
             inertia.M11 = Ixx; inertia.M22 = Iyy; inertia.M33 = Izz;
             car.Chassis.Body.BodyInertia = inertia;
             car.SetupDefaultWheels();
+        }
+
+        public void SetAcceleration(float p)
+        {
+            car.Accelerate = p;
+        }
+
+        public void SetSteering(float p)
+        {
+            car.Steer = p;
+        }
+
+        public void setHandbrake(float p)
+        {
+            car.HBrake = p;
         }
     }
 }

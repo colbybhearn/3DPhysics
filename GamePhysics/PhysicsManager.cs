@@ -26,18 +26,15 @@ namespace Physics
         double TIME_STEP = .01; // Recommended timestep
         float SimFactor = 1.0f;
 
-        public PhysicsManager(ref List<Gobject> gObjects, ref List<Gobject> nObjects)
+        public PhysicsManager(ref List<Gobject> gObjects, ref List<Gobject> nObjects, double updateInterval=10)
         {
             gameObjects = gObjects;
             newObjects= nObjects;
-            InitializePhysics();
+            InitializePhysics(updateInterval);
         }
 
-        private void InitializePhysics()
+        private void InitializePhysics(double updateInterval)
         {
-            //gameObjects = new List<Gobject>();
-            //newObjects = new List<Gobject>();
-
             PhysicsSystem = new PhysicsSystem();
             PhysicsSystem.CollisionSystem = new CollisionSystemSAP();
             PhysicsSystem.EnableFreezing = true;
@@ -58,9 +55,10 @@ namespace Physics
             tmrPhysicsUpdate = new System.Timers.Timer();
             tmrPhysicsUpdate.AutoReset = false;
             tmrPhysicsUpdate.Enabled = false;
-            tmrPhysicsUpdate.Interval = 10;
+            tmrPhysicsUpdate.Interval = updateInterval;
             tmrPhysicsUpdate.Elapsed += new System.Timers.ElapsedEventHandler(tmrPhysicsUpdate_Elapsed);
             tmrPhysicsUpdate.Start();
+            PhysicsEnabled = true;
         }
 
         void tmrPhysicsUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -99,7 +97,6 @@ namespace Physics
                     Debug.WriteLine("Car object moved from new to main");
                 }
                 newObjects.RemoveAt(i);
-
             }
         }
         public void ResetTimer()
@@ -110,7 +107,7 @@ namespace Physics
             tmrPhysicsUpdate.Start();
         }
 
-        public Gobject AddCar(Model carModel, Model wheelModel)
+        public CarObject AddCar(Model carModel, Model wheelModel)
         {
             CarObject carObject = null;
             try
@@ -118,7 +115,7 @@ namespace Physics
                 carObject = new CarObject(
                     //new Vector3(-60, 0.5f, 8), // camera's left
                     new Vector3(0, 2.5f, 0),
-                    carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 320.0f, PhysicsSystem.Gravity.Length());
+                    carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 520.0f, PhysicsSystem.Gravity.Length());
                 carObject.Car.EnableCar();
                 carObject.Car.Chassis.Body.AllowFreezing = false;
                 newObjects.Add(carObject);
@@ -149,7 +146,7 @@ namespace Physics
             return box;
         }
 
-        private void AddSpheres(int n, Model s)
+        public void AddSpheres(int n, Model s)
         {
             Random r = new Random();
             for (int i = 0; i < n; i++)
@@ -166,7 +163,7 @@ namespace Physics
         {
             AddSphere(new Vector3(0, 3, 0), .5f, s, true);
         }
-        private Gobject AddSphere(Vector3 pos, float radius, Model model, bool moveable)
+        public Gobject AddSphere(Vector3 pos, float radius, Model model, bool moveable)
         {
             Sphere spherePrimitive = new Sphere(pos, radius);
             Gobject sphere = new Gobject(
@@ -179,7 +176,7 @@ namespace Physics
             newObjects.Add(sphere);
             return sphere;
         }
-        private LunarVehicle AddLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
+        public LunarVehicle AddLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
         {
             Box boxPrimitive = new Box(-.5f * size, orient, size); // this is relative to the Body!
             LunarVehicle lander = new LunarVehicle(

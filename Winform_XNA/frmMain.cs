@@ -78,15 +78,12 @@ namespace Winform_XNA
         #region Key Input
         private void test_XNAControl_KeyDown(object sender, KeyEventArgs e)
         {
-            XnaPanelMain.ProcessKeyDown(e);
         }
         private void test_XNAControl_KeyUp(object sender, KeyEventArgs e)
         {
-            XnaPanelMain.ProcessKeyUp(e);
         }
         private void XnaPanelMain_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            XnaPanelMain.ProcessKeyDown(e);
         }
         #endregion
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
 using System.Timers;
+using System.ComponentModel;
 
 namespace Input
 {
@@ -11,28 +12,16 @@ namespace Input
     {
         Keys[] lastPressed;
         KeyboardState currentState = new KeyboardState();
-        Timer tmr;
         List<KeyWatch> watches = new List<KeyWatch>();
 
-        public InputManager(int interval)
+        public InputManager()
         {
-            tmr = new Timer();
-            tmr.Interval = interval;
-            //tmr.Elapsed += new ElapsedEventHandler(tmr_Elapsed);
-            //tmr.Start();
-            tmr.AutoReset = false;
-        }
-
-        void tmr_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            tmr.Stop();
-            Update();
-            tmr.Start();
         }
 
         public void Update()
         {
             currentState = Keyboard.GetState();
+            
             foreach (KeyWatch kw in watches)
                 kw.Check(lastPressed, currentState);
 
@@ -49,10 +38,10 @@ namespace Input
     {
         public enum keyEvent
         {
-            PressUp,
-            PressDown,
-            Down,
-            Up,
+            [Description("While Not Pressed")]      Up, // happens to be up right now            
+            [Description("While Pressed")]          Down, // happens to be down right now
+            [Description("On Press")]           Pressed, // just pressed since last update
+            [Description("On Release")]          Released, // just released since last update
         }
         public Keys key;
         public keyEvent kEvent;
@@ -81,15 +70,17 @@ namespace Input
 
         public void Check(Keys[] last, KeyboardState curr)
         {
+            if (last == null)
+                return;
             if (!matchMods(curr))
                 return;
             switch (kEvent)
             {
-                case KeyWatch.keyEvent.PressUp:
+                case KeyWatch.keyEvent.Released:
                     if (!(wasDown(key, last) && isUp(key, curr)))
                         return;                    
                     break;
-                case KeyWatch.keyEvent.PressDown:
+                case KeyWatch.keyEvent.Pressed:
                     if (!(wasUp(key, last) && isDown(key, curr)))
                         return;
                     break;
@@ -127,10 +118,6 @@ namespace Input
         }
         public bool isDown(Keys key, KeyboardState curr)
         {
-            if (key == Keys.Down)
-            {
-                //System.Diagnostics.Debug.WriteLine("Down");
-            }
             return curr.IsKeyDown(key);
         }
         public bool isUp(Keys key, KeyboardState curr)

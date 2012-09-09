@@ -109,7 +109,20 @@ namespace Physics
             //FinalizeBody();
         }
 
+        public Vector3 BodyPosition()
+        {
+            return Body.Position;
+        }
 
+        public Matrix BodyOrientation()
+        {
+            return Body.Orientation;
+        }
+
+        public Vector3 BodyVelocity()
+        {
+            return Body.Velocity;
+        }
 
         public virtual void FinalizeBody()
         {

@@ -16,7 +16,10 @@ namespace Helper
         public float Speed = 10;
         public float SpeedChangeRate = 1.2f;
         public Vector3 CurrentPosition;
-        public float lagFactor = 1.0f;
+        public float positionLagFactor = 1.0f;
+        public Vector3 TargetLookAt;
+        Vector3 CurrentLookAt;
+        float lookAtLagFactor = .1f;
 
         public Camera(Vector3 pos)
         {
@@ -81,13 +84,19 @@ namespace Helper
 
         public void UpdatePosition()
         {
-            CurrentPosition += (TargetPosition - CurrentPosition) * lagFactor;
+            CurrentPosition += (TargetPosition - CurrentPosition) * positionLagFactor;
+        }
+        
+        public void UpdateLookAt()
+        {
+            CurrentLookAt += (TargetLookAt - CurrentLookAt) * lookAtLagFactor;
+            LookAtLocation(CurrentLookAt);
         }
 
         public Matrix LhsLevelViewMatrix
         {
             get
-            {               
+            {
                 return Matrix.Invert(RhsLevelViewMatrix);
             }
         }
