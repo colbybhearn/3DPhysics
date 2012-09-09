@@ -14,6 +14,8 @@ using MultiplayerHelper;
 using System.Diagnostics;
 using ClientHelper;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
 
 namespace ClientApp
 {
@@ -49,8 +51,13 @@ namespace ClientApp
 
         #region Constructor
 
+        
+
         public Client()
         {
+            Mouse.WindowHandle = this.Handle;
+            //Microsoft.Xna.Framework.Input.Keyboard.
+
             InitializeComponent();
             InitializeScene();
             sKey = "";// System.Guid.NewGuid().ToString();
