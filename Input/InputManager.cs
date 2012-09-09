@@ -48,7 +48,7 @@ namespace Input
         public delegate void myCallbackDelegate();
         myCallbackDelegate dCallback;
         bool Ctrl;
-        bool Shift;        
+        bool Shift;
         bool Alt;
 
         public KeyWatch(Keys k, bool ctrl, bool shift, bool alt, keyEvent kevent, myCallbackDelegate callback)
