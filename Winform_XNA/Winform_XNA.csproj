@@ -50,34 +50,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoostController.cs" />
-    <Compile Include="Camera.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Game.cs" />
-    <Compile Include="Gobject.cs" />
     <Compile Include="GraphicsDeviceService.cs" />
-    <Compile Include="HeightMapInfo.cs" />
-    <Compile Include="LunarVehicle.cs" />
-    <Compile Include="PhysicObjects\CarObject.cs" />
-    <Compile Include="PhysicObjects\HeightmapObject.cs" />
-    <Compile Include="PhysicObjects\PhysicObject.cs" />
-    <Compile Include="PhysicObjects\PlaneObject.cs" />
-    <Compile Include="PhysicObjects\RagdollObject.cs" />
-    <Compile Include="PhysicObjects\TriangleMeshObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Server.designer.cs">
-      <DependentUpon>Server.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Terrain.cs" />
     <Compile Include="XnaPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -96,9 +77,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Server.resx">
-      <DependentUpon>Server.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -110,13 +88,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GamePhysics\Physics.csproj">
+      <Project>{557BDDF4-7ACB-45D7-8792-CC9F4FB760E3}</Project>
+      <Name>Physics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Game\Game.csproj">
+      <Project>{5F52A970-F0E8-468F-BF24-20DC5E081C96}</Project>
+      <Name>Game</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JigLibX 0.3.1\JigLibX\JigLibX.csproj">
       <Project>{8A7CEF45-3501-491D-AEDA-0164060F5348}</Project>
       <Name>JigLibX</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NetHelper\NetHelper.csproj">
+    <ProjectReference Include="..\NetHelper\Helper.csproj">
       <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
-      <Name>NetHelper</Name>
+      <Name>Helper</Name>
     </ProjectReference>
     <ProjectReference Include="..\WindowsGameLibrary\WindowsGameLibrary.csproj">
       <Project>{080DD9B6-4867-457A-9B9B-2400CCD30AAD}</Project>

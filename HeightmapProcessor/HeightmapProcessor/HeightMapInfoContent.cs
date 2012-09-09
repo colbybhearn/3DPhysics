@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
+using Physics;
 #endregion
 
 namespace HeightmapProcessor
@@ -99,8 +100,8 @@ namespace HeightmapProcessor
         /// </summary>
         public override string GetRuntimeType(TargetPlatform targetPlatform)
         {
-            return "Winform_XNA.HeightMapInfo, " +
-                "Winform_XNA, Version=1.0.0.0, Culture=neutral";
+            return "Physics.HeightMapInfo, " +
+                "Physics, Version=1.0.0.0, Culture=neutral";
         }
         
 
@@ -110,8 +111,8 @@ namespace HeightmapProcessor
         /// </summary>
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "Winform_XNA.HeightMapInfoReader, " +
-                "Winform_XNA, Version=1.0.0.0, Culture=neutral";
+            return "Physics.HeightMapInfoReader, " +
+                "Physics, Version=1.0.0.0, Culture=neutral";
         }
     }
 }

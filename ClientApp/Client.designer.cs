@@ -45,14 +45,17 @@ namespace ClientApp
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.label7 = new System.Windows.Forms.Label();
             this.txtChatBox = new System.Windows.Forms.TextBox();
             this.TrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.spMain = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spMain)).BeginInit();
+            this.spMain.Panel1.SuspendLayout();
+            this.spMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // numLobbyPort
@@ -143,7 +146,7 @@ namespace ClientApp
             // 
             this.txtChat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtChat.Location = new System.Drawing.Point(6, 194);
+            this.txtChat.Location = new System.Drawing.Point(6, 321);
             this.txtChat.Multiline = true;
             this.txtChat.Name = "txtChat";
             this.txtChat.Size = new System.Drawing.Size(212, 40);
@@ -155,7 +158,7 @@ namespace ClientApp
             // 
             this.btnSendChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSendChat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSendChat.Location = new System.Drawing.Point(224, 194);
+            this.btnSendChat.Location = new System.Drawing.Point(224, 321);
             this.btnSendChat.Name = "btnSendChat";
             this.btnSendChat.Size = new System.Drawing.Size(48, 40);
             this.btnSendChat.TabIndex = 2;
@@ -183,7 +186,7 @@ namespace ClientApp
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.btnConnect);
             this.groupBox1.Controls.Add(this.btnDisconnect);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(278, 102);
             this.groupBox1.TabIndex = 41;
@@ -194,9 +197,9 @@ namespace ClientApp
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 372);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 483);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(892, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(855, 22);
             this.statusStrip1.TabIndex = 42;
             this.statusStrip1.Text = "Status";
             // 
@@ -206,25 +209,16 @@ namespace ClientApp
             this.toolStripStatus.Size = new System.Drawing.Size(42, 17);
             this.toolStripStatus.Text = "Status:";
             // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 178);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(53, 13);
-            this.label7.TabIndex = 43;
-            this.label7.Text = "Message:";
-            // 
             // txtChatBox
             // 
-            this.txtChatBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtChatBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtChatBox.Location = new System.Drawing.Point(6, 19);
             this.txtChatBox.Multiline = true;
             this.txtChatBox.Name = "txtChatBox";
             this.txtChatBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtChatBox.Size = new System.Drawing.Size(266, 154);
+            this.txtChatBox.Size = new System.Drawing.Size(266, 296);
             this.txtChatBox.TabIndex = 0;
             this.txtChatBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtChatBox_KeyPress);
             // 
@@ -242,24 +236,37 @@ namespace ClientApp
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox2.Controls.Add(this.txtChatBox);
-            this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.txtChat);
             this.groupBox2.Controls.Add(this.btnSendChat);
-            this.groupBox2.Location = new System.Drawing.Point(12, 120);
+            this.groupBox2.Location = new System.Drawing.Point(3, 111);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(278, 242);
+            this.groupBox2.Size = new System.Drawing.Size(278, 369);
             this.groupBox2.TabIndex = 45;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Chat";
+            // 
+            // spMain
+            // 
+            this.spMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.spMain.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.spMain.Location = new System.Drawing.Point(0, 0);
+            this.spMain.Name = "spMain";
+            // 
+            // spMain.Panel1
+            // 
+            this.spMain.Panel1.Controls.Add(this.groupBox1);
+            this.spMain.Panel1.Controls.Add(this.groupBox2);
+            this.spMain.Size = new System.Drawing.Size(855, 483);
+            this.spMain.SplitterDistance = 285;
+            this.spMain.TabIndex = 46;
             // 
             // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(892, 394);
-            this.Controls.Add(this.groupBox2);
+            this.ClientSize = new System.Drawing.Size(855, 505);
+            this.Controls.Add(this.spMain);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.groupBox1);
             this.MinimumSize = new System.Drawing.Size(673, 425);
             this.Name = "Client";
             this.Text = "Connection";
@@ -272,6 +279,9 @@ namespace ClientApp
             this.statusStrip1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.spMain.Panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.spMain)).EndInit();
+            this.spMain.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -292,12 +302,13 @@ namespace ClientApp
         private System.Windows.Forms.Timer tAliasChange;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatus;
         private System.Windows.Forms.TextBox txtChatBox;
         private System.Windows.Forms.Timer tStatus;
         private System.Windows.Forms.NotifyIcon TrayIcon;
         private System.Windows.Forms.GroupBox groupBox2;
+        private Winform_XNA.XnaPanel XnaPanelMain;
+        private System.Windows.Forms.SplitContainer spMain;
 
     }
 }

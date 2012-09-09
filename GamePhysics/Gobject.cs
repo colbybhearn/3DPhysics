@@ -5,8 +5,9 @@ using Microsoft.Xna.Framework;
 using JigLibX.Geometry;
 using System.Collections.Generic;
 using System;
+using Physics.PhysicsObjects;
 
-namespace Winform_XNA
+namespace Physics
 {
     public class Gobject
     {
@@ -152,7 +153,7 @@ namespace Winform_XNA
             Matrix[] transforms = new Matrix[Model.Bones.Count];
 
             Model.CopyAbsoluteBoneTransformsTo(transforms);
-            if (this is PhysicObjects.PlaneObject)
+            if (this is PlaneObject)
             {
             }
             Matrix worldMatrix = GetWorldMatrix();

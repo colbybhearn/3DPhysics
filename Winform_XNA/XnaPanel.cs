@@ -1,20 +1,27 @@
 ﻿using System;
-using System.Windows.Forms;
-using Microsoft.Xna.Framework;
-using System.Diagnostics;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Content;
-using JigLibX.Physics;
-using JigLibX.Geometry;
+using System.Diagnostics;
+using System.Windows.Forms;
 using JigLibX.Collision;
-using JigLibX.Math;
-using JigLibX.Vehicles;
-using Winform_XNA.PhysicObjects;
+using JigLibX.Geometry;
+using JigLibX.Physics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Physics;
+using Physics.PhysicsObjects;
+using Helper;
+
 
 namespace Winform_XNA
 {
-    class XnaPanel : XnaControl
+
+    /*
+     * I had to reference the WindowsGameLibrary from Clientapp in order for the ContentManager to load any models when invoked from the client (it worked fine in XNA_Panel and the missing reference was the only difference)
+     * 
+     * 
+     */
+    public class XnaPanel : XnaControl
     {
         #region Todo
         /* Refactor Physics Controllers
@@ -26,15 +33,7 @@ namespace Winform_XNA
 
         #region Fields
         Camera cam;
-        LunarVehicle lv;
-        Texture2D moon;
         Camera objectCam;
-        float SimFactor = 1.0f;
-        Gobject currentSelectedObject = null;
-        Terrain terrain;
-        Model terrainModel;
-        Model planeModel;
-        Model staticFloatObjects;
 
         enum CameraModes
         {
@@ -52,9 +51,7 @@ namespace Winform_XNA
         InputModes inputMode = InputModes.Object;
 
         #region Content
-        public ContentManager Content { get; private set; }
-        Model cubeModel;
-        Model sphereModel;
+        //public ContentManager Content { get; private set; }
         #endregion
 
         #region Debug
@@ -78,42 +75,45 @@ namespace Winform_XNA
         private Stopwatch tmrDrawElapsed;
         private Stopwatch tmrPhysicsElapsed;
         private double lastPhysicsElapsed;
-        private List<Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
-        private List<Gobject> newObjects;
+        private List<Physics.Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
+        private List<Physics.Gobject> newObjects;
         
         double TIME_STEP = .01; // Recommended timestep
         #endregion
+        Game.PhysGame game;
         #endregion
-        PlaneObject planeObj;
 
         #region Init
+
+        public XnaPanel() 
+        {
+            gameObjects = new List<Gobject>();
+            newObjects = new List<Gobject>();
+            InitializeCameras();
+        }
+
+        public XnaPanel(ref Game.PhysGame g)
+        {
+            game = g;
+            PhysicsSystem = g.physicsManager.PhysicsSystem;
+            gameObjects = g.gameObjects;
+            newObjects = g.newObjects;
+            
+            InitializeCameras();
+        }
+
         protected override void Initialize()
         {
-            Content = new ContentManager(Services, "content");
-
             try
             {
-                InitializeContent();                
-                InitializePhysics();
-                InitializeCameras();
-                InitializeObjects();
-                InitializeEnvironment();
+                game.Initialize(Services, GraphicsDevice);
 
                 tmrDrawElapsed = Stopwatch.StartNew();
-                tmrPhysicsElapsed = new Stopwatch();
+                //
                 spriteBatch = new SpriteBatch(GraphicsDevice);
-                
-                new Game();
                 
                 // From the example code, should this be a timer instead?
                 Application.Idle += delegate { Invalidate(); };
-
-                tmrPhysicsUpdate = new System.Timers.Timer();
-                tmrPhysicsUpdate.AutoReset = false;
-                tmrPhysicsUpdate.Enabled = false;
-                tmrPhysicsUpdate.Interval = 10;
-                tmrPhysicsUpdate.Elapsed += new System.Timers.ElapsedEventHandler(tmrPhysicsUpdate_Elapsed);
-                tmrPhysicsUpdate.Start();
             }
             catch (Exception e)
             {
@@ -122,182 +122,18 @@ namespace Winform_XNA
             
         }
         
-        private void InitializeContent()
-        {
-            cubeModel = Content.Load<Model>("Cube");
-            sphereModel = Content.Load<Model>("Sphere");
-            moon = Content.Load<Texture2D>("Moon");
-            staticFloatObjects = Content.Load<Model>("StaticMesh");
-            planeModel = Content.Load<Model>("plane");
-            debugFont = Content.Load<SpriteFont>("DebugFont");
-            
-        }
-        private void InitializePhysics()
-        {
-            gameObjects = new List<Gobject>();
-            newObjects = new List<Gobject>();
-
-            PhysicsSystem = new PhysicsSystem();
-            PhysicsSystem.CollisionSystem = new CollisionSystemSAP();
-            PhysicsSystem.EnableFreezing = true;
-            PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
-
-            PhysicsSystem.CollisionSystem.UseSweepTests = true;
-            //PhysicsSystem.Gravity = new Vector3(0, -2f, 0);
-            // CollisionTOllerance and Allowed Penetration
-            // changed because our objects were "too small"
-            PhysicsSystem.CollisionTollerance = 0.01f;
-            PhysicsSystem.AllowedPenetration = 0.001f;
-
-            //PhysicsSystem.NumCollisionIterations = 8;
-            //PhysicsSystem.NumContactIterations = 8;
-            PhysicsSystem.NumPenetrationRelaxtionTimesteps = 15;
-        }
         private void InitializeCameras()
         {
-
-            cam = new Camera(new Vector3(0-50, 1.25f, 80.7f));
-            cam.AdjustOrientation(-.47f, 0);
+            cam = new Camera(new Vector3(0, 10.25f, 80.7f));
+            cam.AdjustOrientation(-.07f, 0);
             cam.lagFactor = .07f;
             objectCam = new Camera(new Vector3(0, 0, 0));
             objectCam.lagFactor = 1.0f;
-        }
-        private void InitializeObjects()
-        {            
-            //AddSphere(new Vector3(0, 0, .2f), 1f, sphereModel, false);
-            //AddSphere(new Vector3(0, -3, 0), 2f, sphereModel, true);
-            /*
-            AddBox(new Vector3(0, 10, 0), new Vector3(1f, 1f, 1f), Matrix.Identity, cubeModel, true);
-            AddBox(new Vector3(0, -5, 0), new Vector3(50f, 5f, 50f), Matrix.CreateFromAxisAngle(Vector3.UnitX, (float)(10 * Math.PI / 180)), cubeModel, false);
-            AddBox(new Vector3(0, 1.25f, 27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
-            AddBox(new Vector3(0, 1.25f, -27.5f), new Vector3(50f, 7.5f, 5f), Matrix.Identity, cubeModel, false);
-            AddBox(new Vector3(27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
-            AddBox(new Vector3(-27.5f, 1.25f, 0), new Vector3(5f, 7.5f, 60f), Matrix.Identity, cubeModel, false);
-            */
-            //AddBox(new Vector3(0, 0, 0), new Vector3(.5f, .5f, .5f),  Matrix.Identity, cubeModel, false);
-            //AddBox(new Vector3(-1, .5f, 1), new Vector3(.5f, .5f, .5f),  Matrix.Identity, cubeModel, false);
-            //AddBox(new Vector3(0, .4f, -5), new Vector3(.5f, .5f, .5f), Matrix.Identity, cubeModel, false);
-
-            // Giant Floor
-            //AddBox(new Vector3(0, -1, 0), new Vector3(50f, 1f, 50f), Matrix.Identity, cubeModel, false);
-            try
-            {
-                //TriangleMeshObject triObj = new TriangleMeshObject(staticFloatObjects, Matrix.Identity, Vector3.Zero);
-                //newObjects.Add(triObj);
-            }
-            catch (Exception E)
-            {
-            }
-            AddNewObjects();
-        }
-        
-        private void InitializeEnvironment()
-        {
-            AddCar();
-            bool useCustomTerrain = true;
-
-            if (useCustomTerrain)
-            {
-                try
-                {
-                    terrain = new Terrain(new Vector3(0, -5, 0), // position
-                        //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
-                                            new Vector3(50f, .55f, 50f),  // X with, possible y range, Z depth 
-                                            100, 100, this.GraphicsDevice, moon);
-
-                    newObjects.Add(terrain);
-                }
-                catch (Exception E)
-                {
-                }
-            }
-            else
-            {
-
-                //try
-                {
-                    // some video cards can't handle the >16 bit index type of the terrain
-                    ///terrainModel = Content.Load<Model>("terrain");
-                    //HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
-                    //newObjects.Add(heightmapObj);
-                }
-                //catch (Exception E)
-                {
-                    // if that happens just create a ground plane 
-                    planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0));
-                    newObjects.Add(planeObj);
-                }
-            }
         }
         
         #endregion
 
         #region Methods
-        private Gobject AddBox(Vector3 pos, Vector3 size, Matrix orient, Model model, bool moveable)
-        {
-            // position of box was upper leftmost corner
-            // body has world position
-            // skin is relative to the body
-            Box boxPrimitive = new Box(-.5f*size, orient, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
-
-            Gobject box = new Gobject(
-                pos,
-                size/2,
-                boxPrimitive,
-                model,
-                moveable
-                );
-
-            newObjects.Add(box);
-            return box;
-        }
-        private Gobject AddSphere(Vector3 pos, float radius, Model model, bool moveable)
-        {
-            Sphere spherePrimitive = new Sphere(pos, radius);
-            Gobject sphere = new Gobject(
-                pos,
-                Vector3.One * radius,
-                spherePrimitive,
-                model,
-                moveable);
-
-            newObjects.Add(sphere);
-            return sphere;
-        }
-        private LunarVehicle AddLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
-        {
-            Box boxPrimitive = new Box(-.5f*size, orient, size); // this is relative to the Body!
-            LunarVehicle lander = new LunarVehicle(
-                pos,
-                size/2,
-                boxPrimitive,
-                model
-                );            
-
-            newObjects.Add(lander);
-            return lander;
-
-        }
-        Model carModel, wheelModel;
-        CarObject carObject;
-        private void AddCar()
-        {
-            try
-            {
-                carModel = Content.Load<Model>("car");
-                wheelModel = Content.Load<Model>("wheel");
-                carObject = new CarObject(
-                    //new Vector3(-60, 0.5f, 8), // camera's left
-                    new Vector3(0, 2.5f, 0),
-                    carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 320.0f, PhysicsSystem.Gravity.Length());
-                carObject.Car.EnableCar();
-                carObject.Car.Chassis.Body.AllowFreezing = false;
-                newObjects.Add(carObject);
-            }
-            catch(Exception E)
-            {
-            }
-        }
         private void AddNewObjects()
         {
             while (newObjects.Count > 0)
@@ -309,22 +145,13 @@ namespace Winform_XNA
                 newObjects.RemoveAt(i);
             }
         }
-        private void SelectGameObject(Gobject go)
-        {
-            if (go == null)
-                return;
-            if (currentSelectedObject != null)
-                currentSelectedObject.Selected = false;
-            currentSelectedObject = go;
-            currentSelectedObject.Selected = true;
-            objectCam.TargetPosition = currentSelectedObject.Position;
-        }
+
 
         #endregion
 
         #region User Input
         private void ProcessCameraControl(KeyEventArgs e)
-        {
+        {/*
             if (e.KeyCode == Keys.Q)
             {
                 cam.IncreaseSpeed();
@@ -356,11 +183,11 @@ namespace Winform_XNA
                     AddSpheres(5);
                 else
                     AddSphere();
-            }
+            }*/
         }
 
         private void ProcessObjectControlKeyDown(KeyEventArgs e)
-        {
+        {/*
             Keys key = e.KeyCode;
 
             if (e.KeyCode == Keys.L)
@@ -392,10 +219,10 @@ namespace Winform_XNA
                     default:
                         break;
                 }
-            }
+            }*/
         }
         private void ProcessObjectControlKeyUp(KeyEventArgs e)
-        {
+        {/*
             if (lv != null)
                 lv.ProcessInputKeyUp(e);
 
@@ -410,7 +237,7 @@ namespace Winform_XNA
 
             if (key == Keys.B)
                 carObject.Car.HBrake = 0.0f;
-            
+            */
         }
         public void ProcessKeyDown(KeyEventArgs e)
         {
@@ -434,8 +261,8 @@ namespace Winform_XNA
                     inputMode = InputModes.Object;
             }
         }
-        internal void ProcessKeyDown(PreviewKeyDownEventArgs e)
-        {
+        public void ProcessKeyDown(PreviewKeyDownEventArgs e)
+        {/*
             Keys key = e.KeyCode;
 
             if (key == Keys.Up || key == Keys.Down)
@@ -461,9 +288,9 @@ namespace Winform_XNA
             if (key == Keys.B)
                 carObject.Car.HBrake = 1.0f;
             //else
-            //    carObject.Car.HBrake = 0.0f;
+            //    carObject.Car.HBrake = 0.0f;*/
         }
-        internal void ProcessKeyUp(KeyEventArgs e)
+        public void ProcessKeyUp(KeyEventArgs e)
         {
             switch (inputMode)
             {
@@ -476,8 +303,8 @@ namespace Winform_XNA
                     break;
             }
         }
-        internal void ProcessMouseDown(MouseEventArgs e, System.Drawing.Rectangle bounds)
-        {
+        public void ProcessMouseDown(MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {/*
             Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
             Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
             Microsoft.Xna.Framework.Ray r = cam.GetMouseRay(mouse, view);
@@ -498,36 +325,21 @@ namespace Winform_XNA
                     Gobject go = b.ExternalData as Gobject;
                     SelectGameObject(go);
                 }
-            }
+            }*/
         }
-        private void AddSphere()
-        {
-            AddSphere(new Vector3(0, 3, 0), .5f, sphereModel, true);
-        }
-        private void AddSpheres(int n)
-        {
-            Random r = new Random();
-            for (int i = 0; i < n; i++)
-            {
-                AddSphere(
-                    new Vector3(
-                        (float)(10 - r.NextDouble() * 20),
-                        (float)(40 - r.NextDouble() * 20),
-                        (float)(10 - r.NextDouble() * 20)),
-                    (float)(.5f + r.NextDouble()), sphereModel, true);
-            }
-        }
-        internal void PanCam(float dX, float dY)
+       
+        public void PanCam(float dX, float dY)
         {
             cam.AdjustOrientation(-dY*.001f,-dX*.001f);
         }
         #endregion
-
+        /*
         #region Physics
         internal void SetSimFactor(float value)
         {
             SimFactor = value;
         }
+        
         public void ResetTimer()
         {
             tmrPhysicsElapsed.Restart();
@@ -555,7 +367,7 @@ namespace Winform_XNA
 
             ResetTimer();
         }
-        #endregion
+        #endregion*/
 
         #region Draw
         protected override void Draw()
@@ -584,10 +396,11 @@ namespace Winform_XNA
                     default:
                         break;
                 }
-                
+
+                /*
                 if(DrawingEnabled)
                     if(terrain!=null)
-                        terrain.Draw(GraphicsDevice, v, p);
+                        terrain.Draw(GraphicsDevice, v, p);*/
                 /*if(DebugPhysics)
                     if (terrain != null)
                         terrain.DrawWireframe(GraphicsDevice, v, p);*/
@@ -648,6 +461,10 @@ namespace Winform_XNA
                 ObjectsDrawn = 0;
                 foreach (Gobject go in gameObjects)
                 {
+                    if (go is CarObject)
+                    { 
+
+                    }
                     Matrix view, proj;
                     GetCameraViewProjection(out view, out proj);
                     BoundingFrustum frustum = new BoundingFrustum(view * proj);
@@ -673,25 +490,32 @@ namespace Winform_XNA
                     proj = cam._projection;
                     break;
                 case CameraModes.ObjectFirstPerson:
+                    /*
                     objectCam.SetOrientation(currentSelectedObject.Body.Orientation);
                     objectCam.TargetPosition = currentSelectedObject.Body.Position;
-
+                    */
                     view = objectCam.RhsViewMatrix;
                     proj = objectCam._projection;
                     break;
                 case CameraModes.ObjectChase:
+                
                     Vector3 ThirdPersonRef = new Vector3(0, 1, 5);
+                    /*
                     Vector3 TransRef = Vector3.Transform(ThirdPersonRef, currentSelectedObject.Body.Orientation);
                     objectCam.TargetPosition = TransRef + currentSelectedObject.Body.Position;
                     objectCam.LookAtLocation(currentSelectedObject.Body.Position);
+                 */
 
                     view = objectCam.RhsViewMatrix;
                     proj = objectCam._projection;
                     break;
                 case CameraModes.ObjectWatch:
+                    /*
                     cam.LookAtLocation(currentSelectedObject.Body.Position);
+                     */
                     view = cam.RhsLevelViewMatrix;
                     proj = cam._projection;
+                     
                     break;
                 default:
                     view = Matrix.Identity;
@@ -701,90 +525,6 @@ namespace Winform_XNA
         }
 
         #endregion
-
-        #region Terrain
-        VertexPositionNormalTexture[] verts;
-        int[] indices;
-        private void InitTerrain(int lenX, int lenZ, int cellsX, int cellsZ, Vector3 posCenter)
-        {
-            int numVertsX = cellsX + 1;
-            int numVertsZ = cellsZ + 1;
-            int numVerts = numVertsX * numVertsZ;
-            int numTriX = cellsX * 2;
-            int numTriZ = cellsZ;
-            int numTris = numTriX * numTriZ;
-            verts = new VertexPositionNormalTexture[numVerts];
-            int numIndices = numTris * 3;
-            indices = new int[numIndices];
-            float cellSizeX = (float)lenX / cellsX;
-            float cellSizeZ = (float)lenZ / cellsZ;
-
-            Random r = new Random();
-
-            // Fill in the vertices
-            int count = 0;
-            float worldZPosition = posCenter.Z - lenZ / 2;
-            for (int z = 0; z < numVertsZ; z++)
-            {
-                float worldXPosition = posCenter.X - lenX / 2;
-                for (int x = 0; x < numVertsX; x++)
-                {
-                    verts[count].Position = new Vector3(worldXPosition, (float)r.NextDouble()/10, worldZPosition);
-                    verts[count].Normal = Vector3.Zero;
-                    verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
-                    verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);
-
-                    count++;
-
-                    // Advance in x
-                    worldXPosition += cellSizeX;
-                }
-                // Advance in z
-                worldZPosition += cellSizeZ;
-            }
-
-            int index = 0;
-            int startVertex = 0;
-            for (int cellZ = 0; cellZ < cellsZ; cellZ++)
-            {
-                for (int cellX = 0; cellX < cellsX; cellX++)
-                {
-                    indices[index] = startVertex + 0;
-                    indices[index + 1] = startVertex + 1;
-                    indices[index + 2] = startVertex + numVertsX;
-                    SetNormalOfTriangleAtIndices(indices[index], indices[index + 1], indices[index + 2]);
-
-                    index += 3;
-
-                    indices[index] = startVertex + 1;
-                    indices[index + 1] = startVertex + numVertsX + 1;
-                    indices[index + 2] = startVertex + numVertsX;
-                    SetNormalOfTriangleAtIndices(indices[index], indices[index + 1], indices[index + 2]);
-
-                    index += 3;
-
-                    startVertex++;
-                }
-                startVertex++;
-            }
-        }
-
-        private void SetNormalOfTriangleAtIndices(int a, int b, int c)
-        {
-            Vector3 vA = verts[a].Position;
-            Vector3 vB = verts[b].Position;
-            Vector3 vC = verts[c].Position;
-            Triangle t = new Triangle(vA, vC, vB);
-            
-
-            Vector3 n = t.Normal;
-            verts[a].Normal += n;
-            verts[b].Normal += n;
-            verts[c].Normal += n;
-        }
-        #endregion
-
-        
     }
 
     public class MyCollisionPredicate : CollisionSkinPredicate1
