@@ -114,16 +114,14 @@ namespace Input
                         if (saved.Alias.Equals(kb.Alias))
                         {
                             kb.Alt = saved.Alt;
-                            kb.Callback = saved.Callback;
+                            //kb.Callback = saved.Callback;
                             kb.Ctrl = saved.Ctrl;
                             kb.Key = saved.Key;
                             kb.KeyEvent = saved.KeyEvent;
                             kb.Shift = saved.Shift;
                         }
-
                     }
                 }
-
             }
             catch (Exception e)
             {
