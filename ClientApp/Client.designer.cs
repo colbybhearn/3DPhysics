@@ -274,7 +274,7 @@ namespace ClientApp
             // tsmiSettings
             // 
             this.tsmiSettings.Name = "tsmiSettings";
-            this.tsmiSettings.Size = new System.Drawing.Size(152, 22);
+            this.tsmiSettings.Size = new System.Drawing.Size(116, 22);
             this.tsmiSettings.Text = "Settings";
             this.tsmiSettings.Click += new System.EventHandler(this.tsmiSettings_Click);
             // 
@@ -290,6 +290,7 @@ namespace ClientApp
             this.MinimumSize = new System.Drawing.Size(673, 425);
             this.Name = "Client";
             this.Text = "Connection";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Client_FormClosed);
             this.Load += new System.EventHandler(this.Client_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).EndInit();

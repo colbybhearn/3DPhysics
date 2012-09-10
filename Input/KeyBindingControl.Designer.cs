@@ -35,7 +35,7 @@
             // lblAlias
             // 
             this.lblAlias.AutoSize = true;
-            this.lblAlias.Location = new System.Drawing.Point(3, 9);
+            this.lblAlias.Location = new System.Drawing.Point(3, 5);
             this.lblAlias.Name = "lblAlias";
             this.lblAlias.Size = new System.Drawing.Size(29, 13);
             this.lblAlias.TabIndex = 0;
@@ -43,7 +43,7 @@
             // 
             // txtBinding
             // 
-            this.txtBinding.Location = new System.Drawing.Point(191, 6);
+            this.txtBinding.Location = new System.Drawing.Point(191, 0);
             this.txtBinding.Name = "txtBinding";
             this.txtBinding.ReadOnly = true;
             this.txtBinding.Size = new System.Drawing.Size(122, 20);
@@ -57,7 +57,7 @@
             this.Controls.Add(this.txtBinding);
             this.Controls.Add(this.lblAlias);
             this.Name = "KeyBindingControl";
-            this.Size = new System.Drawing.Size(316, 32);
+            this.Size = new System.Drawing.Size(316, 21);
             this.ResumeLayout(false);
             this.PerformLayout();
 

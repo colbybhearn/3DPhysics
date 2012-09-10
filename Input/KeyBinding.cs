@@ -102,5 +102,18 @@ namespace Input
         {
             return ks.IsKeyUp(key);
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            if (Ctrl)
+                sb.Append("Ctrl + ");
+            if (Shift)
+                sb.Append("Shift + ");
+            if (Alt)
+                sb.Append("Alt + ");
+            sb.Append(Key.ToString());
+            return sb.ToString();
+        }
     }
 }

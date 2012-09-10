@@ -42,27 +42,31 @@ namespace Input
          *  [DONE] add a class to read and write a keymap file, per user and per game name.
          */
         public string Game { get; set; }
-        public List<KeyBinding> KeyBindings { get; set; }
+        public SortedList<string, KeyBinding> KeyBindings { get; set; }
 
-        [XmlIgnore]
-        public SortedList<String, KeyBindingDelegate> KeyBindingMap { get; set; }
+        //[XmlIgnore]
+        //public SortedList<String, KeyBindingDelegate> KeyBindingMap { get; set; }
 
         public KeyMap()
         {
         }
 
-        public KeyMap(string game, List<KeyBinding> defaultBindings)
+        public KeyMap(string game, List<KeyBinding> bindings)
         {
             this.Game = game;
-            KeyBindings = defaultBindings;
-            KeyBindingMap = new SortedList<string,KeyBindingDelegate>();
-            foreach (KeyBinding kb in KeyBindings)
-                KeyBindingMap.Add(kb.Alias, kb.Callback);
+            KeyBindings = new SortedList<string, KeyBinding>();
+            foreach (KeyBinding b in bindings)
+                AddBinding(b);
+        }
+
+        public void AddBinding(KeyBinding kb)
+        {
+            KeyBindings.Add(kb.Alias, kb);
         }
 
         public void Check(KeyboardState last, KeyboardState current)
         {
-            foreach (KeyBinding kb in KeyBindings)
+            foreach (KeyBinding kb in KeyBindings.Values)
             {
                 kb.Check(last, current);
             }
@@ -97,24 +101,23 @@ namespace Input
         public static KeyMap LoadKeyMap(string game, KeyMap defaultKeyMap)
         {
             XmlSerializer x = new XmlSerializer(typeof(KeyMap));
-            KeyMap km = null;
+            KeyMap loadedMap = null;
             StreamReader stm = null;
             try
             {
                 string filepath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + game + ".xml";
                 stm = new StreamReader(filepath);
-                km = (KeyMap)x.Deserialize(stm);
+                loadedMap = (KeyMap)x.Deserialize(stm);
 
-                km.KeyBindingMap = defaultKeyMap.KeyBindingMap;
-
-                foreach (KeyBinding kb in km.KeyBindings)
+                foreach (string alias in defaultKeyMap.KeyBindings.Keys)
                 {
-                    KeyBindingDelegate d;
-                    bool success = km.KeyBindingMap.TryGetValue(kb.Alias, out d);
+                    KeyBinding loadedBinding;
+                    bool success = loadedMap.KeyBindings.TryGetValue(alias, out loadedBinding);
                     if (success)
-                        kb.Callback = d;
-                    else
-                        System.Diagnostics.Debug.WriteLine("Error loading keybinding delegate for " + kb.Alias);
+                    {
+                        defaultKeyMap.KeyBindings[alias] = loadedBinding;
+                        System.Diagnostics.Debug.WriteLine("Overriding keybinding for " + alias);
+                    }
                 }
 
             }
@@ -127,7 +130,7 @@ namespace Input
                 if (stm != null)
                     stm.Close();
             }
-            return km;
+            return loadedMap;
         }
     }
 }

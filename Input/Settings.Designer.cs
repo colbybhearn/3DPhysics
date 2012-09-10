@@ -40,12 +40,15 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tpControls);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(598, 416);
+            this.tabControl1.Size = new System.Drawing.Size(639, 416);
             this.tabControl1.TabIndex = 0;
             // 
             // tpControls
@@ -54,17 +57,18 @@
             this.tpControls.Location = new System.Drawing.Point(4, 22);
             this.tpControls.Name = "tpControls";
             this.tpControls.Padding = new System.Windows.Forms.Padding(3);
-            this.tpControls.Size = new System.Drawing.Size(590, 390);
+            this.tpControls.Size = new System.Drawing.Size(631, 390);
             this.tpControls.TabIndex = 0;
             this.tpControls.Text = "Controls";
             this.tpControls.UseVisualStyleBackColor = true;
             // 
             // flpBindings
             // 
+            this.flpBindings.AutoScroll = true;
             this.flpBindings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flpBindings.Location = new System.Drawing.Point(3, 3);
             this.flpBindings.Name = "flpBindings";
-            this.flpBindings.Size = new System.Drawing.Size(584, 384);
+            this.flpBindings.Size = new System.Drawing.Size(625, 384);
             this.flpBindings.TabIndex = 0;
             // 
             // tabPage2

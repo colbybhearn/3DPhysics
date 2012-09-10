@@ -45,9 +45,13 @@ namespace Input
         public InputManager(String gameName, KeyMap defaultKeyMap)
         {
             game = gameName;
-            keyMap = KeyMap.LoadKeyMap(game, defaultKeyMap);
-            if (keyMap == null)
-                keyMap = defaultKeyMap;
+            
+            KeyMap loadedKeyMap = KeyMap.LoadKeyMap(game, defaultKeyMap);
+            //
+            //foreach(KeyBinding kb in loadedKeyMap.KeyBindings)
+                //if(keyMap.
+                
+                
         }
 
         public void Update()
