@@ -51,6 +51,10 @@ namespace Input
         {
             this.Game = game;
             KeyBindings = defaultBindings;
+            KeyBindingMap = new SortedList<string,KeyBindingDelegate>();
+
+            foreach (KeyBinding kb in KeyBindings)
+                KeyBindingMap.Add(kb.Alias, kb.Callback);
         }
 
         public void Check(KeyboardState last, KeyboardState current)
