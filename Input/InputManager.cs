@@ -37,44 +37,46 @@ namespace Input
 
         bool SetupMode = false;
 
-        Microsoft.Xna.Framework.Input.Keys[] lastPressed;
+        KeyboardState lastState = new KeyboardState();
         KeyboardState currentState = new KeyboardState();
-        List<KeyWatch> watches = new List<KeyWatch>();
+        //List<KeyWatch> watches = new List<KeyWatch>();
+        public KeyMap keyMap;
+        public String game;
 
-        public InputManager()
+        public InputManager(String gameName, KeyMap defaultKeyMap)
         {
+            game = gameName;
+            keyMap = KeyMap.LoadKeyMap(game, defaultKeyMap);
+            if (keyMap == null)
+                keyMap = defaultKeyMap;
         }
 
         public void Update()
-        {
-            
+        {            
             currentState = Keyboard.GetState();
-
             if (SetupMode)
             {
                 frmSettings.ProcessKey(currentState);                
             }
             else
             {
-
-                foreach (KeyWatch kw in watches)
-                    kw.Check(lastPressed, currentState);
-
-                lastPressed = currentState.GetPressedKeys();
+                keyMap.Check(lastState, currentState);
+                lastState = currentState;
             }
         }
-
-        public void AddWatch(KeyWatch watch)
+        
+        public void Save()
         {
-            watches.Add(watch);
+            KeyMap.SaveKeyMap(keyMap);
         }
-
+        
         Settings frmSettings;
         public void EditSettings()
         {
             //HUGE BUG POTENTIAL here
-            KeyMap keyMap = new KeyMap("whatever", new List<KeyMap.KeyBinding>());
-            keyMap.KeyBindings.Add(new KeyMap.KeyBinding("CameraMoveForward", Microsoft.Xna.Framework.Input.Keys.W, false, false, false, Input.KeyWatch.keyEvent.Down));
+            //KeyMap keyMap = new KeyMap("whatever",  
+
+            //keyMap.KeyBindings.Add(new KeyBinding("CameraMoveForward", Microsoft.Xna.Framework.Input.Keys.W, false, false, false, Input.KeyWatch.keyEvent.Down));
             frmSettings = new Settings(keyMap);
             SetupMode = true;            
             DialogResult dr = frmSettings.ShowDialog();
@@ -87,73 +89,9 @@ namespace Input
         }
     }
 
-    public class KeyWatch
-    {
-        public enum keyEvent
+        /*public void AddWatch(KeyWatch watch)
         {
-            [Description("While Not Pressed")]      Up, // happens to be up right now            
-            [Description("While Pressed")]          Down, // happens to be down right now
-            [Description("On Press")]           Pressed, // just pressed since last update
-            [Description("On Release")]          Released, // just released since last update
-        }
-        public Microsoft.Xna.Framework.Input.Keys key;
-        public keyEvent kEvent;
-        public delegate void myCallbackDelegate();
-        myCallbackDelegate dCallback;
-        bool Ctrl;
-        bool Shift;
-        bool Alt;
 
-        public KeyWatch(Microsoft.Xna.Framework.Input.Keys k, bool ctrl, bool shift, bool alt, keyEvent kevent, myCallbackDelegate callback)
-        {
-            key = k;
-            Ctrl = ctrl;
-            Shift = shift;
-            Alt = alt;
-            kEvent = kevent;
-            dCallback = callback;
-        }
-
-        private void CallDelegate()
-        {
-            if (dCallback == null)
-                return;
-            dCallback();
-        }
-
-        public void Check(Microsoft.Xna.Framework.Input.Keys[] last, KeyboardState curr)
-        {
-            if (last == null)
-                return;
-            if (!matchMods(curr))
-                return;
-            switch (kEvent)
-            {
-                case KeyWatch.keyEvent.Released:
-                    if (!(wasDown(key, last) && isUp(key, curr)))
-                        return;                    
-                    break;
-                case KeyWatch.keyEvent.Pressed:
-                    if (!(wasUp(key, last) && isDown(key, curr)))
-                        return;
-                    break;
-                case KeyWatch.keyEvent.Down:
-                    if (!(isDown(key, curr)))
-                        return;
-                    break;
-                case KeyWatch.keyEvent.Up:
-                    if (!(isUp(key, curr)))
-                        return;
-                    break;
-                default:
-                    return;
-            }
-            // we made it through! Do something freakin' awesome
-            CallDelegate();
-        }
-
-        private bool matchMods(KeyboardState curr)
-        {
             if(Ctrl)
                 if (!(curr.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) || curr.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl)))
                     return false;
@@ -185,6 +123,8 @@ namespace Input
         {
             return !last.Contains(key);
         }
+            watches.Add(watch);
+        }*/
 
-    }
+    
 }

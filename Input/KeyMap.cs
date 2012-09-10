@@ -5,15 +5,26 @@ using System.Text;
 using Microsoft.Xna.Framework.Input;
 using System.Xml.Serialization;
 using System.IO;
+using System.ComponentModel;
 
 namespace Input
 {
+    public enum KeyEvent
+    {
+        [Description("While Not Pressed")]  Up, // happens to be up right now           
+        [Description("While Pressed")]      Down, // happens to be down right now
+        [Description("On Press")]           Pressed, // just pressed since last update
+        [Description("On Release")]         Released, // just released since last update
+    }
+
+    public delegate void KeyBindingDelegate();
+
     /// <summary>
     /// Stores a set of keys, mapped to a set of possible bindings
     /// </summary>
-    [Serializable]
     public class KeyMap
     {
+
         /*
          * Keymap Has
          *  - [DONE]A game that it is tied to
@@ -33,36 +44,22 @@ namespace Input
         public string Game { get; set; }
         public List<KeyBinding> KeyBindings { get; set; }
 
+        [XmlIgnore]
+        public SortedList<String, KeyBindingDelegate> KeyBindingMap { get; set; }
+
         public KeyMap(string game, List<KeyBinding> defaultBindings)
         {
             this.Game = game;
             KeyBindings = defaultBindings;
         }
 
-        public void Save()
+        public void Check(KeyboardState last, KeyboardState current)
         {
-            KeyMap.SaveKeyMap(this);
-        }
-        public class KeyBinding
-        {
-            public Keys Key { get; set; }
-            public Input.KeyWatch.keyEvent KeyEvent { get; set; }
-            public string Alias { get; set; }
-            public bool Ctrl { get; set; }
-            public bool Shift { get; set; }
-            public bool Alt { get; set; }
-
-            public KeyBinding(string alias, Keys k, bool ctrl, bool shift, bool alt, KeyWatch.keyEvent kevent)
+            foreach (KeyBinding kb in KeyBindings)
             {
-                Alias = alias;
-                Key = k;
-                Ctrl = ctrl;
-                Shift = shift;
-                Alt = alt;
-                KeyEvent = kevent;
+                kb.Check(last, current);
             }
         }
-
 
         public static void SaveKeyMap(KeyMap km)
         {
@@ -84,7 +81,7 @@ namespace Input
             }
         }
 
-        public static KeyMap LoadKeyMap(string game)
+        public static KeyMap LoadKeyMap(string game, KeyMap defaultKeyMap)
         {
             XmlSerializer x = new XmlSerializer(typeof(KeyMap));
             KeyMap km = null;
@@ -93,6 +90,19 @@ namespace Input
             {
                 stm = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + game + ".xml");
                 km = (KeyMap)x.Deserialize(stm);
+
+                km.KeyBindingMap = defaultKeyMap.KeyBindingMap;
+
+                foreach (KeyBinding kb in km.KeyBindings)
+                {
+                    KeyBindingDelegate d;
+                    bool success = km.KeyBindingMap.TryGetValue(kb.Alias, out d);
+                    if (success)
+                        kb.Callback = d;
+                    else
+                        System.Diagnostics.Debug.WriteLine("Error loading keybinding delegate for " + kb.Alias);
+                }
+
             }
             catch (Exception e)
             {
@@ -103,24 +113,7 @@ namespace Input
                 if (stm != null)
                     stm.Close();
             }
-
             return km;
-        }
-
-        public static List<KeyWatch> LoadKeyWatches(KeyMap km, SortedList<string, Input.KeyWatch.myCallbackDelegate> map)
-        {
-            List<KeyWatch> watches = new List<KeyWatch>();
-            foreach (KeyBinding kb in km.KeyBindings)
-            {
-                Input.KeyWatch.myCallbackDelegate d;
-                bool success = map.TryGetValue(kb.Alias, out d);
-                if (success)
-                    watches.Add(new KeyWatch(kb.Key, kb.Ctrl, kb.Shift, kb.Alt, kb.KeyEvent, d));
-                else
-                    System.Diagnostics.Debug.WriteLine("Error loading keybinding delegate for " + kb.Alias);
-            }
-
-            return watches;
         }
     }
 }

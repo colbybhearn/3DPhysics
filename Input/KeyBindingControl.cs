@@ -11,7 +11,7 @@ namespace Input
 {
     public partial class KeyBindingControl : UserControl
     {
-        public Input.KeyMap.KeyBinding binding;
+        public Input.KeyBinding binding;
         public bool Editing;
         public KeyBindingControl(Input.KeyMap.KeyBinding kb)
         {

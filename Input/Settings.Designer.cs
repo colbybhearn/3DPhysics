@@ -30,8 +30,9 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpControls = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.flpBindings = new System.Windows.Forms.FlowLayoutPanel();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnSave = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tpControls.SuspendLayout();
             this.SuspendLayout();
@@ -57,6 +58,14 @@
             this.tpControls.Text = "Controls";
             this.tpControls.UseVisualStyleBackColor = true;
             // 
+            // flpBindings
+            // 
+            this.flpBindings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flpBindings.Location = new System.Drawing.Point(3, 3);
+            this.flpBindings.Name = "flpBindings";
+            this.flpBindings.Size = new System.Drawing.Size(584, 384);
+            this.flpBindings.TabIndex = 0;
+            // 
             // tabPage2
             // 
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
@@ -67,19 +76,21 @@
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // flpBindings
+            // btnSave
             // 
-            this.flpBindings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flpBindings.Location = new System.Drawing.Point(3, 3);
-            this.flpBindings.Name = "flpBindings";
-            this.flpBindings.Size = new System.Drawing.Size(584, 384);
-            this.flpBindings.TabIndex = 0;
+            this.btnSave.Location = new System.Drawing.Point(576, 433);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 1;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
             // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(663, 468);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.tabControl1);
             this.Name = "Settings";
             this.Text = "Settings";
@@ -95,5 +106,6 @@
         private System.Windows.Forms.TabPage tpControls;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.FlowLayoutPanel flpBindings;
+        private System.Windows.Forms.Button btnSave;
     }
 }
