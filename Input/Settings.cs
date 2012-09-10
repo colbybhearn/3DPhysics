@@ -22,7 +22,7 @@ namespace Input
 
         public void AddKeys()
         {
-            foreach (Input.KeyMap.KeyBinding kb in keyMap.KeyBindings)
+            foreach (Input.KeyBinding kb in keyMap.KeyBindings)
             {
                 KeyBindingControl kbc = new KeyBindingControl(kb);
                 flpBindings.Controls.Add(kbc);
@@ -32,19 +32,33 @@ namespace Input
         internal void ProcessKey(Microsoft.Xna.Framework.Input.KeyboardState currentState)
         {
             Microsoft.Xna.Framework.Input.Keys[] pressed = currentState.GetPressedKeys();
+            // make sure a key was pressed
             if (pressed.Length < 1)
                 return;                
             
             foreach (KeyBindingControl kbc in flpBindings.Controls)
             {
+                // if this keybindingcontrol is in edit mode
                 if (kbc.Editing)
                 {
+                    // apply the pressed key to it
                     kbc.SetKey(pressed[0]);
+                    // take it out of edit mode!
                     kbc.Editing = false;
                 }
             }
-            flpBindings.Focus();
-            
+            // get focus off of the textbox
+            flpBindings.Focus();            
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            DialogResult = System.Windows.Forms.DialogResult.OK;
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            DialogResult = System.Windows.Forms.DialogResult.Cancel;
         }
     }
 }

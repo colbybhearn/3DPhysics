@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Physics.PhysicsObjects;
 using Microsoft.Xna.Framework;
+using Input;
 
 namespace Game
 {
@@ -46,18 +47,31 @@ namespace Game
             currentSelectedObject = myCar;
         }
 
-        public override void  InitializeInputs()
+        public override void InitializeInputs()
         {
- 	        base.InitializeInputs();
-            // Car controls
-            inputManager.AddWatch(new Input.KeyWatch(Keys.Up, false, false, false, Input.KeyWatch.keyEvent.Down, Accelerate));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.Down, false, false, false, Input.KeyWatch.keyEvent.Down, Decelerate));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.Left, false, false, false, Input.KeyWatch.keyEvent.Down, SteerLeft));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.Right, false, false, false, Input.KeyWatch.keyEvent.Down, SteerRight));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.B, false, false, false, Input.KeyWatch.keyEvent.Down, ApplyHandbrake));
-            // Random Spheres
-            inputManager.AddWatch(new Input.KeyWatch(Keys.N, false, true, false, Input.KeyWatch.keyEvent.Pressed, SpawnSpheres));
+            inputManager = new Input.InputManager(this.name, GetDefaultKeyMap()); 
+        }
 
+        public override List<KeyBinding> GetDefaultKeyBindings()
+        {
+            List<KeyBinding> defaults = base.GetDefaultKeyBindings();
+            // Car
+            defaults.Add(new KeyBinding("CarAccelerate", Keys.Up, false, false, false, Input.KeyEvent.Down, Accelerate));
+            defaults.Add(new KeyBinding("CarSteerLeft", Keys.Left, false, false, false, Input.KeyEvent.Down, SteerLeft));
+            defaults.Add(new KeyBinding("CarDecelerate", Keys.Down, false, false, false, Input.KeyEvent.Down, Decelerate));
+            defaults.Add(new KeyBinding("CarSteerRight", Keys.Right, false, false, false, Input.KeyEvent.Down, SteerRight));
+            defaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, Input.KeyEvent.Down, ApplyHandbrake));
+            // Spheres
+            defaults.Add(new KeyBinding("SpawnSpheres", Keys.Z, false, false, false, Input.KeyEvent.Down, SpawnSpheres));
+
+            return defaults;
+        }
+
+        
+        public override Input.KeyMap GetDefaultKeyMap()
+        {
+            KeyMap km = new KeyMap(this.name, GetDefaultKeyBindings());
+            return km;
         }
         /*
         /// <summary>
@@ -91,7 +105,6 @@ namespace Game
         private void Accelerate()
         {
             myCar.SetAcceleration(1.0f);
-            
         }
 
         private void Decelerate()
@@ -102,13 +115,11 @@ namespace Game
         private void SteerLeft()
         {
             myCar.SetSteering(1.0f);
-
         }
 
         private void SteerRight()
         {
             myCar.SetSteering(-1.0f);
-
         }
 
         private void ApplyHandbrake()

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.lblAlias = new System.Windows.Forms.Label();
-            this.tbBinding = new System.Windows.Forms.TextBox();
+            this.txtBinding = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // lblAlias
@@ -41,20 +41,20 @@
             this.lblAlias.TabIndex = 0;
             this.lblAlias.Text = "Alias";
             // 
-            // tbBinding
+            // txtBinding
             // 
-            this.tbBinding.Location = new System.Drawing.Point(191, 6);
-            this.tbBinding.Name = "tbBinding";
-            this.tbBinding.ReadOnly = true;
-            this.tbBinding.Size = new System.Drawing.Size(122, 20);
-            this.tbBinding.TabIndex = 1;
-            this.tbBinding.Click += new System.EventHandler(this.tbBinding_Click);
+            this.txtBinding.Location = new System.Drawing.Point(191, 6);
+            this.txtBinding.Name = "txtBinding";
+            this.txtBinding.ReadOnly = true;
+            this.txtBinding.Size = new System.Drawing.Size(122, 20);
+            this.txtBinding.TabIndex = 1;
+            this.txtBinding.Click += new System.EventHandler(this.tbBinding_Click);
             // 
             // KeyBindingControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tbBinding);
+            this.Controls.Add(this.txtBinding);
             this.Controls.Add(this.lblAlias);
             this.Name = "KeyBindingControl";
             this.Size = new System.Drawing.Size(316, 32);
@@ -66,6 +66,6 @@
         #endregion
 
         private System.Windows.Forms.Label lblAlias;
-        private System.Windows.Forms.TextBox tbBinding;
+        private System.Windows.Forms.TextBox txtBinding;
     }
 }

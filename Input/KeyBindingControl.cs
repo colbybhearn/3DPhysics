@@ -13,12 +13,12 @@ namespace Input
     {
         public Input.KeyBinding binding;
         public bool Editing;
-        public KeyBindingControl(Input.KeyMap.KeyBinding kb)
+        public KeyBindingControl(Input.KeyBinding kb)
         {
             binding = kb;
             InitializeComponent();
             lblAlias.Text = binding.Alias;
-            tbBinding.Text = binding.Key.ToString();
+            txtBinding.Text = binding.Key.ToString();
         }
 
         private void tbBinding_Click(object sender, EventArgs e)
@@ -29,7 +29,7 @@ namespace Input
         internal void SetKey(Microsoft.Xna.Framework.Input.Keys keys)
         {
             binding.Key = keys;
-            tbBinding.Text = binding.Key.ToString();
+            txtBinding.Text = binding.Key.ToString();
         }
     }
 }

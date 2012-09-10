@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Input
 {
-    class KeyBinding
+    public class KeyBinding
     {
         public Keys Key { get; set; }
         public KeyEvent KeyEvent { get; set; }
@@ -18,6 +18,10 @@ namespace Input
         public bool Ctrl { get; set; }
         public bool Shift { get; set; }
         public bool Alt { get; set; }
+
+        public KeyBinding()
+        {
+        }
 
         public KeyBinding(string alias, Keys k, bool ctrl, bool shift, bool alt, KeyEvent kevent)
         {

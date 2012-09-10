@@ -47,10 +47,15 @@ namespace Input
         [XmlIgnore]
         public SortedList<String, KeyBindingDelegate> KeyBindingMap { get; set; }
 
+        public KeyMap()
+        {
+        }
+
         public KeyMap(string game, List<KeyBinding> defaultBindings)
         {
             this.Game = game;
             KeyBindings = defaultBindings;
+
         }
 
         public void Check(KeyboardState last, KeyboardState current)
@@ -67,7 +72,13 @@ namespace Input
             StreamWriter stm = null;
             try
             {
-                stm = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + km.Game + ".xml");
+                string filepath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + km.Game + ".xml";
+                if (!Directory.Exists(filepath))
+                {
+                    string dirpath = Path.GetDirectoryName(filepath);
+                    Directory.CreateDirectory(dirpath);
+                }
+                stm = new StreamWriter(filepath);
                 x.Serialize(stm, km);
             }
             catch (Exception e)
@@ -88,7 +99,8 @@ namespace Input
             StreamReader stm = null;
             try
             {
-                stm = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + game + ".xml");
+                string filepath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + game + ".xml";
+                stm = new StreamReader(filepath);
                 km = (KeyMap)x.Deserialize(stm);
 
                 km.KeyBindingMap = defaultKeyMap.KeyBindingMap;
