@@ -321,6 +321,11 @@ namespace ClientApp
             XnaPanelMain.ProcessMouseDown(e, XnaPanelMain.Bounds);
         }
         #endregion
+
+        private void tsmiSettings_Click(object sender, EventArgs e)
+        {
+            game.EditSettings();
+        }
                       
     }
 }

@@ -47,6 +47,9 @@ namespace ClientApp
             this.txtChatBox = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.spMain = new System.Windows.Forms.SplitContainer();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.tsmiOptions = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -54,6 +57,7 @@ namespace ClientApp
             ((System.ComponentModel.ISupportInitialize)(this.spMain)).BeginInit();
             this.spMain.Panel1.SuspendLayout();
             this.spMain.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // numLobbyPort
@@ -144,7 +148,7 @@ namespace ClientApp
             // 
             this.txtChat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtChat.Location = new System.Drawing.Point(6, 321);
+            this.txtChat.Location = new System.Drawing.Point(6, 297);
             this.txtChat.Multiline = true;
             this.txtChat.Name = "txtChat";
             this.txtChat.Size = new System.Drawing.Size(212, 40);
@@ -156,7 +160,7 @@ namespace ClientApp
             // 
             this.btnSendChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSendChat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSendChat.Location = new System.Drawing.Point(224, 321);
+            this.btnSendChat.Location = new System.Drawing.Point(224, 297);
             this.btnSendChat.Name = "btnSendChat";
             this.btnSendChat.Size = new System.Drawing.Size(48, 40);
             this.btnSendChat.TabIndex = 2;
@@ -216,7 +220,7 @@ namespace ClientApp
             this.txtChatBox.Multiline = true;
             this.txtChatBox.Name = "txtChatBox";
             this.txtChatBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtChatBox.Size = new System.Drawing.Size(266, 296);
+            this.txtChatBox.Size = new System.Drawing.Size(266, 272);
             this.txtChatBox.TabIndex = 0;
             this.txtChatBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtChatBox_KeyPress);
             // 
@@ -229,7 +233,7 @@ namespace ClientApp
             this.groupBox2.Controls.Add(this.btnSendChat);
             this.groupBox2.Location = new System.Drawing.Point(3, 111);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(278, 369);
+            this.groupBox2.Size = new System.Drawing.Size(278, 345);
             this.groupBox2.TabIndex = 45;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Chat";
@@ -238,16 +242,41 @@ namespace ClientApp
             // 
             this.spMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.spMain.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.spMain.Location = new System.Drawing.Point(0, 0);
+            this.spMain.Location = new System.Drawing.Point(0, 24);
             this.spMain.Name = "spMain";
             // 
             // spMain.Panel1
             // 
             this.spMain.Panel1.Controls.Add(this.groupBox1);
             this.spMain.Panel1.Controls.Add(this.groupBox2);
-            this.spMain.Size = new System.Drawing.Size(855, 483);
+            this.spMain.Size = new System.Drawing.Size(855, 459);
             this.spMain.SplitterDistance = 285;
             this.spMain.TabIndex = 46;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiOptions});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(855, 24);
+            this.menuStrip1.TabIndex = 47;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // tsmiOptions
+            // 
+            this.tsmiOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiSettings});
+            this.tsmiOptions.Name = "tsmiOptions";
+            this.tsmiOptions.Size = new System.Drawing.Size(61, 20);
+            this.tsmiOptions.Text = "Options";
+            // 
+            // tsmiSettings
+            // 
+            this.tsmiSettings.Name = "tsmiSettings";
+            this.tsmiSettings.Size = new System.Drawing.Size(152, 22);
+            this.tsmiSettings.Text = "Settings";
+            this.tsmiSettings.Click += new System.EventHandler(this.tsmiSettings_Click);
             // 
             // Client
             // 
@@ -256,6 +285,8 @@ namespace ClientApp
             this.ClientSize = new System.Drawing.Size(855, 505);
             this.Controls.Add(this.spMain);
             this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(673, 425);
             this.Name = "Client";
             this.Text = "Connection";
@@ -271,6 +302,8 @@ namespace ClientApp
             this.spMain.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.spMain)).EndInit();
             this.spMain.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -297,6 +330,9 @@ namespace ClientApp
         private System.Windows.Forms.GroupBox groupBox2;
         private Winform_XNA.XnaPanel XnaPanelMain;
         private System.Windows.Forms.SplitContainer spMain;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem tsmiOptions;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSettings;
 
     }
 }

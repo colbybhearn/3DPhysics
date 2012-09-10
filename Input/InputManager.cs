@@ -5,12 +5,19 @@ using System.Text;
 using Microsoft.Xna.Framework.Input;
 using System.Timers;
 using System.ComponentModel;
+using System.Windows.Forms;
 
+
+//global :: using Microsoft.Xna.Framework.Input;
+//global::using Microsoft.Xna.Framework.Input.Keys;
 namespace Input
 {
+    
+    
     public class InputManager
     {
-
+        
+        
         /* Vision:
          * 
          * KeyMap should be an end-to-end map of possible actions in terms of (alias to key to delegate)
@@ -28,7 +35,9 @@ namespace Input
          * 
          */
 
-        Keys[] lastPressed;
+        bool SetupMode = false;
+
+        Microsoft.Xna.Framework.Input.Keys[] lastPressed;
         KeyboardState currentState = new KeyboardState();
         List<KeyWatch> watches = new List<KeyWatch>();
 
@@ -38,17 +47,43 @@ namespace Input
 
         public void Update()
         {
-            currentState = Keyboard.GetState();
             
-            foreach (KeyWatch kw in watches)
-                kw.Check(lastPressed, currentState);
+            currentState = Keyboard.GetState();
 
-            lastPressed = currentState.GetPressedKeys();
+            if (SetupMode)
+            {
+                frmSettings.ProcessKey(currentState);                
+            }
+            else
+            {
+
+                foreach (KeyWatch kw in watches)
+                    kw.Check(lastPressed, currentState);
+
+                lastPressed = currentState.GetPressedKeys();
+            }
         }
 
         public void AddWatch(KeyWatch watch)
         {
             watches.Add(watch);
+        }
+
+        Settings frmSettings;
+        public void EditSettings()
+        {
+            //HUGE BUG POTENTIAL here
+            KeyMap keyMap = new KeyMap("whatever", new List<KeyMap.KeyBinding>());
+            keyMap.KeyBindings.Add(new KeyMap.KeyBinding("CameraMoveForward", Microsoft.Xna.Framework.Input.Keys.W, false, false, false, Input.KeyWatch.keyEvent.Down));
+            frmSettings = new Settings(keyMap);
+            SetupMode = true;            
+            DialogResult dr = frmSettings.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                keyMap = frmSettings.keyMap;
+            }
+            frmSettings.Dispose();
+            SetupMode = false;
         }
     }
 
@@ -61,7 +96,7 @@ namespace Input
             [Description("On Press")]           Pressed, // just pressed since last update
             [Description("On Release")]          Released, // just released since last update
         }
-        public Keys key;
+        public Microsoft.Xna.Framework.Input.Keys key;
         public keyEvent kEvent;
         public delegate void myCallbackDelegate();
         myCallbackDelegate dCallback;
@@ -69,7 +104,7 @@ namespace Input
         bool Shift;
         bool Alt;
 
-        public KeyWatch(Keys k, bool ctrl, bool shift, bool alt, keyEvent kevent, myCallbackDelegate callback)
+        public KeyWatch(Microsoft.Xna.Framework.Input.Keys k, bool ctrl, bool shift, bool alt, keyEvent kevent, myCallbackDelegate callback)
         {
             key = k;
             Ctrl = ctrl;
@@ -86,7 +121,7 @@ namespace Input
             dCallback();
         }
 
-        public void Check(Keys[] last, KeyboardState curr)
+        public void Check(Microsoft.Xna.Framework.Input.Keys[] last, KeyboardState curr)
         {
             if (last == null)
                 return;
@@ -120,33 +155,33 @@ namespace Input
         private bool matchMods(KeyboardState curr)
         {
             if(Ctrl)
-                if (!(curr.IsKeyDown(Keys.LeftControl) || curr.IsKeyDown(Keys.RightControl)))
+                if (!(curr.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) || curr.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl)))
                     return false;
 
             if(Shift)
-                if (!(curr.IsKeyDown(Keys.LeftShift) || curr.IsKeyDown(Keys.RightShift)))
+                if (!(curr.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) || curr.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)))
                     return false;
 
             if (Alt)
-                if (!(curr.IsKeyDown(Keys.LeftAlt) || curr.IsKeyDown(Keys.RightAlt)))
+                if (!(curr.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt) || curr.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightAlt)))
                     return false;
             
             // we made it!
             return true;
         }
-        public bool isDown(Keys key, KeyboardState curr)
+        public bool isDown(Microsoft.Xna.Framework.Input.Keys key, KeyboardState curr)
         {
             return curr.IsKeyDown(key);
         }
-        public bool isUp(Keys key, KeyboardState curr)
+        public bool isUp(Microsoft.Xna.Framework.Input.Keys key, KeyboardState curr)
         {
             return curr.IsKeyUp(key);
         }
-        public bool wasDown(Keys key, Keys[] last)
+        public bool wasDown(Microsoft.Xna.Framework.Input.Keys key, Microsoft.Xna.Framework.Input.Keys[] last)
         {
             return last.Contains(key);
         }
-        public bool wasUp(Keys key, Keys[] last)
+        public bool wasUp(Microsoft.Xna.Framework.Input.Keys key, Microsoft.Xna.Framework.Input.Keys[] last)
         {
             return !last.Contains(key);
         }
