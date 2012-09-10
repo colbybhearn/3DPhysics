@@ -58,6 +58,7 @@
     <Compile Include="KeyBindingControl.Designer.cs">
       <DependentUpon>KeyBindingControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="KeyBinding.cs" />
     <Compile Include="KeyMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs">
