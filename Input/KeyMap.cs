@@ -91,7 +91,7 @@ namespace Input
             StreamReader stm = null;
             try
             {
-                stm = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + km.Game + ".xml");
+                stm = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + game + ".xml");
                 km = (KeyMap)x.Deserialize(stm);
             }
             catch (Exception e)
