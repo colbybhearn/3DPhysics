@@ -44,8 +44,6 @@ namespace Input
         public string Game { get; set; }
         public List<KeyBinding> KeyBindings { get; set; }
 
-        [XmlIgnore]
-        public SortedList<String, KeyBindingDelegate> KeyBindingMap { get; set; }
 
         public KeyMap()
         {
@@ -55,9 +53,12 @@ namespace Input
         {
             this.Game = game;
             KeyBindings = defaultBindings;
-            KeyBindingMap = new SortedList<string,KeyBindingDelegate>();
-            foreach (KeyBinding kb in KeyBindings)
-                KeyBindingMap.Add(kb.Alias, kb.Callback);
+        }
+
+        public KeyMap(KeyMap other)
+        {
+            Game = other.Game;
+            KeyBindings = new List<KeyBinding>(other.KeyBindings);
         }
 
         public void Check(KeyboardState last, KeyboardState current)
@@ -97,24 +98,30 @@ namespace Input
         public static KeyMap LoadKeyMap(string game, KeyMap defaultKeyMap)
         {
             XmlSerializer x = new XmlSerializer(typeof(KeyMap));
-            KeyMap km = null;
+            KeyMap newKeyMap = new KeyMap(defaultKeyMap);
             StreamReader stm = null;
             try
             {
                 string filepath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + game + ".xml";
                 stm = new StreamReader(filepath);
-                km = (KeyMap)x.Deserialize(stm);
+                KeyMap km = (KeyMap)x.Deserialize(stm);
 
-                km.KeyBindingMap = defaultKeyMap.KeyBindingMap;
-
-                foreach (KeyBinding kb in km.KeyBindings)
+                foreach (KeyBinding saved in km.KeyBindings)
                 {
-                    KeyBindingDelegate d;
-                    bool success = km.KeyBindingMap.TryGetValue(kb.Alias, out d);
-                    if (success)
-                        kb.Callback = d;
-                    else
-                        System.Diagnostics.Debug.WriteLine("Error loading keybinding delegate for " + kb.Alias);
+                    foreach (KeyBinding kb in newKeyMap.KeyBindings)
+                    {
+                        // We found a saved keybinding, use its settings instead
+                        if (saved.Alias.Equals(kb.Alias))
+                        {
+                            kb.Alt = saved.Alt;
+                            kb.Callback = saved.Callback;
+                            kb.Ctrl = saved.Ctrl;
+                            kb.Key = saved.Key;
+                            kb.KeyEvent = saved.KeyEvent;
+                            kb.Shift = saved.Shift;
+                        }
+
+                    }
                 }
 
             }
@@ -127,7 +134,7 @@ namespace Input
                 if (stm != null)
                     stm.Close();
             }
-            return km;
+            return newKeyMap;
         }
     }
 }
