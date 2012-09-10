@@ -22,7 +22,7 @@ namespace Input
 
         public void AddKeys()
         {
-            foreach (Input.KeyBinding kb in keyMap.KeyBindings.Values)
+            foreach (Input.KeyBinding kb in keyMap.KeyBindings)
             {
                 KeyBindingControl kbc = new KeyBindingControl(kb);
                 flpBindings.Controls.Add(kbc);
