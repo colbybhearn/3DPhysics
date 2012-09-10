@@ -42,10 +42,10 @@ namespace Game
         public override void InitializeEnvironment()
         {
             base.InitializeEnvironment();
-            
-            myCar = physicsManager.AddCar(carModel, wheelModel);
-            currentSelectedObject = myCar;
+            RespawnCar();
         }
+
+        
 
         public override void InitializeInputs()
         {
@@ -61,21 +61,16 @@ namespace Game
             defaults.Add(new KeyBinding("CarDecelerate", Keys.Down, false, false, false, Input.KeyEvent.Down, Deccelerate));
             defaults.Add(new KeyBinding("CarSteerRight", Keys.Right, false, false, false, Input.KeyEvent.Down, SteerRight));
             defaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, Input.KeyEvent.Down, ApplyHandbrake));
-            defaults.Add(new KeyBinding("RespawnCar", Keys.N, false, true, false, Input.KeyEvent.Down, RespawnCar));
+            defaults.Add(new KeyBinding("RespawnCar", Keys.R, false, true, false, Input.KeyEvent.Pressed, RespawnCar));
             // Spheres
-            defaults.Add(new KeyBinding("SpawnSpheres", Keys.R, false, true, false, Input.KeyEvent.Down, SpawnSpheres));
-            
-
+            defaults.Add(new KeyBinding("SpawnSpheres", Keys.N, false, true, false, Input.KeyEvent.Pressed, SpawnSpheres));
             return defaults;
         }
 
         
         public override Input.KeyMap GetDefaultKeyMap()
         {
-            KeyMap km = new KeyMap(this.name, GetDefaultKeyBindings());
-            
-                
-            return km;
+            return new KeyMap(this.name, GetDefaultKeyBindings());
         }
 
         /// <summary>
@@ -90,12 +85,12 @@ namespace Game
             myCar.setHandbrake(0);
         }
 
-        public void RespawnCar()
+        private void RespawnCar()
         {
             if (myCar != null)
                 gameObjects.Remove(myCar);
-
             myCar = physicsManager.AddCar(carModel, wheelModel);
+            currentSelectedObject = myCar;
         }
 
         private void Accelerate()

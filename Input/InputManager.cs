@@ -45,13 +45,7 @@ namespace Input
         public InputManager(String gameName, KeyMap defaultKeyMap)
         {
             game = gameName;
-            
-            KeyMap loadedKeyMap = KeyMap.LoadKeyMap(game, defaultKeyMap);
-            //
-            //foreach(KeyBinding kb in loadedKeyMap.KeyBindings)
-                //if(keyMap.
-                
-                
+            keyMap = KeyMap.LoadKeyMap(game, defaultKeyMap);
         }
 
         public void Update()
@@ -63,7 +57,8 @@ namespace Input
             }
             else
             {
-                keyMap.Check(lastState, currentState);
+                if(keyMap!=null)
+                    keyMap.Check(lastState, currentState);
                 lastState = currentState;
             }
         }

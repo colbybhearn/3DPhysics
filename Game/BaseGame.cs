@@ -260,8 +260,7 @@ namespace Game
         // this should be overriden in every game for the default keys
         public virtual KeyMap GetDefaultKeyMap()
         {
-            KeyMap km = new KeyMap(this.name, GetDefaultKeyBindings());
-            return km;
+            return new KeyMap(this.name, GetDefaultKeyBindings());
         }
 
         public void CameraMoveForward()
