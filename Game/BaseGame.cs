@@ -247,39 +247,19 @@ namespace Game
         public virtual List<KeyBinding> GetDefaultKeyBindings()
         {
             List<KeyBinding> defaults = new List<KeyBinding>();
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.W, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveLeft", Keys.A, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveBackward", Keys.S, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveRight", Keys.D, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveSpeedIncrease", Keys.Q, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, Input.KeyEvent.Pressed));
+            defaults.Add(new KeyBinding("CameraMoveForward", Keys.W, false, false, false, Input.KeyEvent.Down, CameraMoveForward));
+            defaults.Add(new KeyBinding("CameraMoveLeft", Keys.A, false, false, false, Input.KeyEvent.Down, CameraMoveLeft));
+            defaults.Add(new KeyBinding("CameraMoveBackward", Keys.S, false, false, false, Input.KeyEvent.Down, CameraMoveBackward));
+            defaults.Add(new KeyBinding("CameraMoveRight", Keys.D, false, false, false, Input.KeyEvent.Down, CameraMoveRight));
+            defaults.Add(new KeyBinding("CameraMoveSpeedIncrease", Keys.Q, false, false, false, Input.KeyEvent.Down, CameraMoveSpeedIncrease));
+            defaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, Input.KeyEvent.Down, CameraMoveSpeedDecrease));
+            defaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, Input.KeyEvent.Pressed, CameraModeCycle));
             return defaults;
         }
-        
-        //public SortedList<string, myCallbackDelegate> keyCalls = new SortedList<string, myCallbackDelegate>();
 
         // this should be overriden in every game for the default keys
         public virtual KeyMap GetDefaultKeyMap()
         {
-            List<KeyBinding> defaults= new List<KeyBinding>();
-
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.W, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.A, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.S, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.D, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.Q, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.Z, false, false, false, Input.KeyEvent.Down));
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.C, false, false, false, Input.KeyEvent.Pressed));
-            /*
-            inputManager.AddWatch(new Input.KeyWatch(Keys.W, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveForward));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.A, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveLeft));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.S, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveBackward));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.D, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveRight));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.Q, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveSpeedIncrease));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.Z, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveSpeedDecrease));
-            inputManager.AddWatch(new Input.KeyWatch(Keys.C, false, false, false, Input.KeyWatch.keyEvent.Pressed, CameraModeCycle));*/
-
             return new KeyMap(this.name, GetDefaultKeyBindings());
         }
 

@@ -289,7 +289,8 @@ namespace ClientApp
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(673, 425);
             this.Name = "Client";
-            this.Text = "Connection";
+            this.Text = "WinPhysiX Client";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Client_FormClosed);
             this.Load += new System.EventHandler(this.Client_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).EndInit();
@@ -328,7 +329,7 @@ namespace ClientApp
         private System.Windows.Forms.TextBox txtChatBox;
         private System.Windows.Forms.Timer tStatus;
         private System.Windows.Forms.GroupBox groupBox2;
-        private Winform_XNA.XnaPanel XnaPanelMain;
+        private XnaView.XnaPanel XnaPanelMain;
         private System.Windows.Forms.SplitContainer spMain;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem tsmiOptions;

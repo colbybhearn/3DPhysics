@@ -43,6 +43,7 @@ namespace Input
          */
         public string Game { get; set; }
         public List<KeyBinding> KeyBindings { get; set; }
+        
 
 
         public KeyMap()
@@ -98,17 +99,18 @@ namespace Input
         public static KeyMap LoadKeyMap(string game, KeyMap defaultKeyMap)
         {
             XmlSerializer x = new XmlSerializer(typeof(KeyMap));
-            KeyMap newKeyMap = new KeyMap(defaultKeyMap);
+            KeyMap loadedKeyMap = new KeyMap(defaultKeyMap);
             StreamReader stm = null;
             try
             {
                 string filepath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CnJ Xna Physics\\KeyBindings\\" + game + ".xml";
                 stm = new StreamReader(filepath);
+
                 KeyMap km = (KeyMap)x.Deserialize(stm);
 
                 foreach (KeyBinding saved in km.KeyBindings)
                 {
-                    foreach (KeyBinding kb in newKeyMap.KeyBindings)
+                    foreach (KeyBinding kb in loadedKeyMap.KeyBindings)
                     {
                         // We found a saved keybinding, use its settings instead
                         if (saved.Alias.Equals(kb.Alias))
@@ -132,7 +134,7 @@ namespace Input
                 if (stm != null)
                     stm.Close();
             }
-            return newKeyMap;
+            return loadedKeyMap;
         }
     }
 }

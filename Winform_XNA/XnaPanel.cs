@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Helper;
 using JigLibX.Collision;
 using JigLibX.Geometry;
 using JigLibX.Physics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Physics;
-using Physics.PhysicsObjects;
-using Helper;
 
 
-namespace Winform_XNA
+namespace XnaView
 {
 
     /*
@@ -54,13 +52,12 @@ namespace Winform_XNA
         private Stopwatch tmrDrawElapsed;
         private List<Physics.Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
         private List<Physics.Gobject> newObjects;
-        
-        #endregion
         Game.BaseGame game;
+        #endregion
+        
         #endregion
 
         #region Init
-
         public XnaPanel() 
         {
             gameObjects = new List<Gobject>();

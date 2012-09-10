@@ -45,13 +45,13 @@ namespace ServerApp
             game = new Game.BaseGame();
             AddXnaPanel(ref game);
         }
-        Winform_XNA.XnaPanel XnaPanelMain;
+        XnaView.XnaPanel XnaPanelMain;
         private void AddXnaPanel(ref Game.BaseGame game)
         {
             // 
             // XnaPanelMain
             // 
-            this.XnaPanelMain = new Winform_XNA.XnaPanel(ref game);
+            this.XnaPanelMain = new XnaView.XnaPanel(ref game);
             //this.XnaPanelMain.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top                 | System.Windows.Forms.AnchorStyles.Bottom                | System.Windows.Forms.AnchorStyles.Left                     | System.Windows.Forms.AnchorStyles.Right);
             this.XnaPanelMain.Dock = DockStyle.Fill;
             this.XnaPanelMain.Debug = false;

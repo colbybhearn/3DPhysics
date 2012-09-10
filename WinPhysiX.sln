@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Winform_XNA", "Winform_XNA\Winform_XNA.csproj", "{485FC2F7-3BA9-4046-AB91-919B74F2F03C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XnaView", "Winform_XNA\XnaView.csproj", "{485FC2F7-3BA9-4046-AB91-919B74F2F03C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Content", "Content\Content.contentproj", "{941ACAF8-8E69-4248-BF23-2D9AABEC068E}"
 EndProject

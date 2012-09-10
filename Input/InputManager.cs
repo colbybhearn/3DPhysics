@@ -46,8 +46,6 @@ namespace Input
         {
             game = gameName;
             keyMap = KeyMap.LoadKeyMap(game, defaultKeyMap);
-            if (keyMap == null)
-                keyMap = defaultKeyMap;
         }
 
         public void Update()
@@ -59,7 +57,8 @@ namespace Input
             }
             else
             {
-                keyMap.Check(lastState, currentState);
+                if(keyMap!=null)
+                    keyMap.Check(lastState, currentState);
                 lastState = currentState;
             }
         }
