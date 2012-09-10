@@ -28,128 +28,40 @@ namespace Input
          * 
          */
 
-        Keys[] lastPressed;
+        KeyboardState lastState = new KeyboardState();
         KeyboardState currentState = new KeyboardState();
-        List<KeyWatch> watches = new List<KeyWatch>();
+        //List<KeyWatch> watches = new List<KeyWatch>();
+        public KeyMap keyMap;
+        public String game;
 
-        public InputManager()
+        public InputManager(String gameName, KeyMap defaultKeyMap)
         {
+            game = gameName;
+            keyMap = KeyMap.LoadKeyMap(game, defaultKeyMap);
+            if (keyMap == null)
+                keyMap = defaultKeyMap;
         }
 
         public void Update()
         {
             currentState = Keyboard.GetState();
-            
-            foreach (KeyWatch kw in watches)
-                kw.Check(lastPressed, currentState);
 
-            lastPressed = currentState.GetPressedKeys();
+            keyMap.Check(lastState, currentState);
+
+            /*foreach (KeyWatch kw in watches)
+                kw.Check(lastPressed, currentState);*/
+
+            lastState = currentState;
         }
 
-        public void AddWatch(KeyWatch watch)
+        public void Save()
+        {
+            KeyMap.SaveKeyMap(keyMap);
+        }
+
+        /*public void AddWatch(KeyWatch watch)
         {
             watches.Add(watch);
-        }
-    }
-
-    public class KeyWatch
-    {
-        public enum keyEvent
-        {
-            [Description("While Not Pressed")]      Up, // happens to be up right now            
-            [Description("While Pressed")]          Down, // happens to be down right now
-            [Description("On Press")]           Pressed, // just pressed since last update
-            [Description("On Release")]          Released, // just released since last update
-        }
-        public Keys key;
-        public keyEvent kEvent;
-        public delegate void myCallbackDelegate();
-        myCallbackDelegate dCallback;
-        bool Ctrl;
-        bool Shift;
-        bool Alt;
-
-        public KeyWatch(Keys k, bool ctrl, bool shift, bool alt, keyEvent kevent, myCallbackDelegate callback)
-        {
-            key = k;
-            Ctrl = ctrl;
-            Shift = shift;
-            Alt = alt;
-            kEvent = kevent;
-            dCallback = callback;
-        }
-
-        private void CallDelegate()
-        {
-            if (dCallback == null)
-                return;
-            dCallback();
-        }
-
-        public void Check(Keys[] last, KeyboardState curr)
-        {
-            if (last == null)
-                return;
-            if (!matchMods(curr))
-                return;
-            switch (kEvent)
-            {
-                case KeyWatch.keyEvent.Released:
-                    if (!(wasDown(key, last) && isUp(key, curr)))
-                        return;                    
-                    break;
-                case KeyWatch.keyEvent.Pressed:
-                    if (!(wasUp(key, last) && isDown(key, curr)))
-                        return;
-                    break;
-                case KeyWatch.keyEvent.Down:
-                    if (!(isDown(key, curr)))
-                        return;
-                    break;
-                case KeyWatch.keyEvent.Up:
-                    if (!(isUp(key, curr)))
-                        return;
-                    break;
-                default:
-                    return;
-            }
-            // we made it through! Do something freakin' awesome
-            CallDelegate();
-        }
-
-        private bool matchMods(KeyboardState curr)
-        {
-            if(Ctrl)
-                if (!(curr.IsKeyDown(Keys.LeftControl) || curr.IsKeyDown(Keys.RightControl)))
-                    return false;
-
-            if(Shift)
-                if (!(curr.IsKeyDown(Keys.LeftShift) || curr.IsKeyDown(Keys.RightShift)))
-                    return false;
-
-            if (Alt)
-                if (!(curr.IsKeyDown(Keys.LeftAlt) || curr.IsKeyDown(Keys.RightAlt)))
-                    return false;
-            
-            // we made it!
-            return true;
-        }
-        public bool isDown(Keys key, KeyboardState curr)
-        {
-            return curr.IsKeyDown(key);
-        }
-        public bool isUp(Keys key, KeyboardState curr)
-        {
-            return curr.IsKeyUp(key);
-        }
-        public bool wasDown(Keys key, Keys[] last)
-        {
-            return last.Contains(key);
-        }
-        public bool wasUp(Keys key, Keys[] last)
-        {
-            return !last.Contains(key);
-        }
-
+        }*/
     }
 }
