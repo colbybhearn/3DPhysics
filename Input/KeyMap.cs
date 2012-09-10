@@ -30,10 +30,10 @@ namespace Input
          *  add a form for showing, editing bindings.
          *  [DONE] add a class to read and write a keymap file, per user and per game name.
          */
-        public String Game { get; set; }
+        public string Game { get; set; }
         public List<KeyBinding> KeyBindings { get; set; }
 
-        public KeyMap(String game, List<KeyBinding> defaultBindings)
+        public KeyMap(string game, List<KeyBinding> defaultBindings)
         {
             this.Game = game;
             KeyBindings = defaultBindings;
@@ -45,12 +45,22 @@ namespace Input
         }
         public class KeyBinding
         {
-            public Keys Keys { get; set; }
+            public Keys Key { get; set; }
             public Input.KeyWatch.keyEvent KeyEvent { get; set; }
-            public String Alias { get; set; }
+            public string Alias { get; set; }
             public bool Ctrl { get; set; }
             public bool Shift { get; set; }
             public bool Alt { get; set; }
+
+            public KeyBinding(string alias, Keys k, bool ctrl, bool shift, bool alt, KeyWatch.keyEvent kevent)
+            {
+                Alias = alias;
+                Key = k;
+                Ctrl = ctrl;
+                Shift = shift;
+                Alt = alt;
+                KeyEvent = kevent;
+            }
         }
 
 
@@ -74,7 +84,7 @@ namespace Input
             }
         }
 
-        public static KeyMap LoadKeyMap(String game)
+        public static KeyMap LoadKeyMap(string game)
         {
             XmlSerializer x = new XmlSerializer(typeof(KeyMap));
             KeyMap km = null;
@@ -97,7 +107,7 @@ namespace Input
             return km;
         }
 
-        public static List<KeyWatch> LoadKeyWatches(KeyMap km, SortedList<String, Input.KeyWatch.myCallbackDelegate> map)
+        public static List<KeyWatch> LoadKeyWatches(KeyMap km, SortedList<string, Input.KeyWatch.myCallbackDelegate> map)
         {
             List<KeyWatch> watches = new List<KeyWatch>();
             foreach (KeyBinding kb in km.KeyBindings)
@@ -105,7 +115,7 @@ namespace Input
                 Input.KeyWatch.myCallbackDelegate d;
                 bool success = map.TryGetValue(kb.Alias, out d);
                 if (success)
-                    watches.Add(new KeyWatch(kb.Keys, kb.Ctrl, kb.Shift, kb.Alt, kb.KeyEvent, d));
+                    watches.Add(new KeyWatch(kb.Key, kb.Ctrl, kb.Shift, kb.Alt, kb.KeyEvent, d));
                 else
                     System.Diagnostics.Debug.WriteLine("Error loading keybinding delegate for " + kb.Alias);
             }

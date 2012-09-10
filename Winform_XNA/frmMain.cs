@@ -75,22 +75,6 @@ namespace Winform_XNA
         }
         #endregion
 
-        #region Key Input
-        private void test_XNAControl_KeyDown(object sender, KeyEventArgs e)
-        {
-        }
-        private void test_XNAControl_KeyUp(object sender, KeyEventArgs e)
-        {
-        }
-        private void XnaPanelMain_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-        }
-        #endregion
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
 
     }
 }

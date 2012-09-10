@@ -74,7 +74,6 @@
             this.label1.Size = new System.Drawing.Size(72, 13);
             this.label1.TabIndex = 6;
             this.label1.Text = "Physics Rate:";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // tbStep
             // 
@@ -147,12 +146,9 @@
             this.XnaPanelMain.Size = new System.Drawing.Size(787, 557);
             this.XnaPanelMain.TabIndex = 0;
             this.XnaPanelMain.Text = "XnaPanel";
-            this.XnaPanelMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyDown);
-            this.XnaPanelMain.KeyUp += new System.Windows.Forms.KeyEventHandler(this.test_XNAControl_KeyUp);
             this.XnaPanelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.XnaPanelMain_MouseDown);
             this.XnaPanelMain.MouseEnter += new System.EventHandler(this.test_XNAControl_MouseEnter);
             this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.test_XNAControl_MouseMove);
-            this.XnaPanelMain.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.XnaPanelMain_PreviewKeyDown);
             // 
             // frmMain
             // 

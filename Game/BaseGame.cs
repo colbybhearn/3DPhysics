@@ -9,6 +9,7 @@ using Physics.PhysicsObjects;
 using Microsoft.Xna.Framework.Input;
 using System.Timers;
 using Helper;
+using Input;
 
 namespace Game
 {
@@ -84,7 +85,7 @@ namespace Game
         #endregion
         public Matrix view = Matrix.Identity;
         public Matrix proj = Matrix.Identity;
-
+        KeyMap keyMap;
 
         enum CameraModes
         {
@@ -122,6 +123,7 @@ namespace Game
 
             physicsManager = new Physics.PhysicsManager(ref gameObjects, ref newObjects, physicsUpdateInterval);
             inputManager = new Input.InputManager();
+            
         }
 
         void  tmrCamUpdate_Elapsed(object sender, ElapsedEventArgs e)
@@ -240,6 +242,21 @@ namespace Game
 
         public virtual void InitializeInputs()
         {
+            keyMap = KeyMap.LoadKeyMap(this.name);
+            if (keyMap == null)
+            {
+                keyMap.KeyBindings = GetDefaultKeyBindings();
+            }
+        }
+        
+        public SortedList<string, myCallbackDelegate> keyCalls = new SortedList<string, myCallbackDelegate>();
+
+        // this should be overriden in every game for the default keys
+        public virtual List<KeyMap.KeyBinding> GetDefaultKeyBindings()
+        {
+            List<KeyMap.KeyBinding> defaults= new List<KeyMap.KeyBinding>();
+            defaults.Add(new KeyMap.KeyBinding("CameraMoveForward", Keys.W, false, false, false, Input.KeyWatch.keyEvent.Down));
+
             inputManager.AddWatch(new Input.KeyWatch(Keys.W, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveForward));
             inputManager.AddWatch(new Input.KeyWatch(Keys.A, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveLeft));
             inputManager.AddWatch(new Input.KeyWatch(Keys.S, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveBackward));
@@ -247,6 +264,8 @@ namespace Game
             inputManager.AddWatch(new Input.KeyWatch(Keys.Q, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveSpeedIncrease));
             inputManager.AddWatch(new Input.KeyWatch(Keys.Z, false, false, false, Input.KeyWatch.keyEvent.Down, CameraMoveSpeedDecrease));
             inputManager.AddWatch(new Input.KeyWatch(Keys.C, false, false, false, Input.KeyWatch.keyEvent.Pressed, CameraModeCycle));
+
+            return defaults;
         }
 
         public void CameraMoveForward()
