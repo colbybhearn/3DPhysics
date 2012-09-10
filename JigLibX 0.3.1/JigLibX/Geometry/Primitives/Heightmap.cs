@@ -339,14 +339,62 @@ namespace JigLibX.Geometry
         /// <returns>bool</returns>
         public override bool SegmentIntersect(out float frac, out Vector3 pos, out Vector3 normal,Segment seg)
         {
+            /* Bug with SegmentIntersect, if the segment >= 1 square, then the code fails.
+             * We need to start at seg.Origin, and move to seg.Origin + (dx,dz) until one is below and one is above 0)
+             */
             frac = 0;
             pos = Vector3.Zero;
             normal = Vector3.Up;
+            Vector3 normalStart = Vector3.Zero;
+            float heightStart = 0.0f;
+            Vector3 normalEnd;
+            float heightEnd;
 
-            //if (seg.Delta.Y > -JiggleMath.Epsilon )
-            //    return false;
+            Vector3 segPos = Vector3.Zero;
+            Vector3 segPosEnd = seg.Origin;
+            Vector3 segEnd = seg.GetEnd();
+            Vector3 segDirection = seg.Delta;
+            segDirection.Y = 0;
+            JiggleMath.NormalizeSafe(ref segDirection);
+            segDirection.Y = seg.Delta.Y * (segDirection.X / seg.Delta.X); // Scale the Y to be make segDirection a scaler of segDelta, but normalized in the XY plane
 
-            Vector3 normalStart;
+            float increment = JiggleMath.Min(dx, dz, float.MaxValue); // Move by the smaller of the two dx/dz values so we dont "jump" over a point ... this could be done better
+
+            GetHeightAndNormal(out heightEnd, out normalEnd, seg.Origin);
+            bool done = false;
+            while (!done)
+            {
+                segPos = segPosEnd;
+                normalStart = normalEnd;
+                heightStart = heightEnd;
+
+                segPosEnd += segDirection * increment;
+
+                if ((((segPos.X - segEnd.X) > 0.0f) != ((segPosEnd.X - segEnd.X) > 0.0f)) // We have moved onto the other side of the seg end in X
+                    || (((segPos.Z - segEnd.Z) > 0.0f) != ((segPosEnd.Z - segEnd.Z) > 0.0f))) // We have moved onto the other side of the seg end in Z
+                {
+                    segPosEnd = segEnd;
+                }
+
+
+                GetHeightAndNormal(out heightEnd, out normalEnd, segPosEnd);
+
+                if ((heightStart >= 0.0f && heightEnd <= 0.0f) // Passes down through
+                    || (heightStart <= 0.0f && heightEnd >= 0.0f)) // Passes up through
+                {
+                    done = true;
+                    //We intersect here
+                }
+
+                if (segEnd.X == segPosEnd.X && segEnd.Z == segPosEnd.Z && !done) // Checking for X,Z handles cases of segments only in Y direction
+                {
+                    // No intersection found and we are at the end of the ray
+                    return false;
+                }
+                
+            }
+            
+            /*Vector3 normalStart;
             float heightStart;
 
             GetHeightAndNormal(out heightStart, out normalStart,seg.Origin);
@@ -360,22 +408,22 @@ namespace JigLibX.Geometry
             GetHeightAndNormal(out heightEnd, out normalEnd,end);
 
             if (heightEnd > 0.0f)
-                return false;
-
-            // start is above, end is below...
-            float depthEnd = -heightEnd;
-
+                return false;*/
+            
+            //Rest of calculations are % based, do not need negatives
+            heightStart = System.Math.Abs(heightStart);
+            heightEnd = System.Math.Abs(heightEnd);
             // normal is the weighted mean of these...
             float weightStart = 1.0f / (JiggleMath.Epsilon + heightStart);
-            float weightEnd = 1.0f / (JiggleMath.Epsilon + depthEnd);
+            float weightEnd = 1.0f / (JiggleMath.Epsilon + heightEnd);
 
             normal = (normalStart * weightStart + normalEnd * weightEnd) /
               (weightStart + weightEnd);
 
-            frac = heightStart / (heightStart + depthEnd + JiggleMath.Epsilon);
+            frac = heightStart / (heightStart + heightEnd + JiggleMath.Epsilon);
 
-            pos = seg.GetPoint(frac);
-
+            //pos = seg.GetPoint(frac);
+            pos = segPos + (segPosEnd - segPos) * frac;
             return true;
         }
 
