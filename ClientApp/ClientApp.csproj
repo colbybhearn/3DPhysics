@@ -91,9 +91,9 @@
       <Project>{080DD9B6-4867-457A-9B9B-2400CCD30AAD}</Project>
       <Name>WindowsGameLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Winform_XNA\Winform_XNA.csproj">
+    <ProjectReference Include="..\Winform_XNA\XnaView.csproj">
       <Project>{485FC2F7-3BA9-4046-AB91-919B74F2F03C}</Project>
-      <Name>Winform_XNA</Name>
+      <Name>XnaView</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

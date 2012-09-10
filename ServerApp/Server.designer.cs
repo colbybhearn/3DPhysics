@@ -244,7 +244,7 @@ namespace ServerApp
             this.Controls.Add(this.statusStrip1);
             this.MinimumSize = new System.Drawing.Size(337, 264);
             this.Name = "Server";
-            this.Text = "Server";
+            this.Text = "WinPhysiX Server";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBasePort)).EndInit();
