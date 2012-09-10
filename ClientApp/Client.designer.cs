@@ -329,7 +329,7 @@ namespace ClientApp
         private System.Windows.Forms.TextBox txtChatBox;
         private System.Windows.Forms.Timer tStatus;
         private System.Windows.Forms.GroupBox groupBox2;
-        private Winform_XNA.XnaPanel XnaPanelMain;
+        private XnaView.XnaPanel XnaPanelMain;
         private System.Windows.Forms.SplitContainer spMain;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem tsmiOptions;

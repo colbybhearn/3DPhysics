@@ -8,7 +8,7 @@ using System.Threading;
 // we don't care so we just disable this warning.
 #pragma warning disable 67
 
-namespace Winform_XNA
+namespace XnaView
 {
     /// <summary>
     /// Helper class responsible for creating and managing the GraphicsDevice.

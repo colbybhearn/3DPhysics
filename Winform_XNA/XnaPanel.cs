@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Physics;
 
 
-namespace Winform_XNA
+namespace XnaView
 {
 
     /*

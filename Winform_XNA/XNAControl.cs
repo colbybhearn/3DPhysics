@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Winform_XNA
+namespace XnaView
 {
     using System.Windows.Forms;
     using Microsoft.Xna.Framework.Graphics;
