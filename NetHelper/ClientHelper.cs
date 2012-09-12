@@ -158,6 +158,7 @@ namespace ClientHelper
             }
         }
 
+
         private void ReadServer()
         {
             //if (Setup())
@@ -189,7 +190,7 @@ namespace ClientHelper
                     }
                     Thread.Sleep(100);
                 }
-                
+
             }
         }
 

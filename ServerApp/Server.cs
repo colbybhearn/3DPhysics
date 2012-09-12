@@ -13,6 +13,7 @@ using System.Threading;
 using System.Diagnostics;
 using ServerHelper;
 using MultiplayerHelper;
+using Multiplayer;
 
 namespace ServerApp
 {    
@@ -136,10 +137,26 @@ namespace ServerApp
 
         private void btnStartServer_Click(object sender, EventArgs e)
         {
+            GameServer gameServer = new GameServer(iLobbyPort);
+            
+            gameServer.ClientConnected += new GameServer.ClientConnectedEventHandler(gameServer_ClientConnected);
+            gameServer.Start();
+            /*
             sHelper = new ServerHelper.ServerHelper(InputQueue,OutputQueue, this.iLobbyPort, this.iBasePort);
             sHelper.Start();
             btnStartServer.Enabled = false;
             btnStopServer.Enabled = true;
+          * */
+        }
+
+        void gameServer_ClientConnected(string alias)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Multiplayer.GameServer.ClientConnectedEventHandler(gameServer_ClientConnected), new object[] { alias });
+                return;
+            }
+            lstClients.Items.Add(alias);
         }
 
         private void btnStopServer_Click(object sender, EventArgs e)

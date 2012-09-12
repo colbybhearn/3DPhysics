@@ -14,7 +14,7 @@ using System.Diagnostics;
 namespace ServerHelper
 {
     public class ServerHelper
-    {      
+    {
         #region Properties
         int iLobbyPort;
         int iBasePort;

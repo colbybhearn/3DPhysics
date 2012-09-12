@@ -83,6 +83,10 @@
       <Project>{5F52A970-F0E8-468F-BF24-20DC5E081C96}</Project>
       <Name>Game</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Multiplayer\Multiplayer.csproj">
+      <Project>{B55043D3-2D57-4DD6-BB1E-03E4439FC412}</Project>
+      <Name>Multiplayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NetHelper\Helper.csproj">
       <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
       <Name>Helper</Name>

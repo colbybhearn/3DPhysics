@@ -15,6 +15,7 @@ using System.Diagnostics;
 using ClientHelper;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Multiplayer;
 
 
 namespace ClientApp
@@ -157,10 +158,13 @@ namespace ClientApp
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
+            GameClient gameClient = new GameClient(txtIPAddress.Text, iPort, txtAlias.Text);
+            gameClient.Connect();
+            /*
             cHelper = new ClientHelper.ClientHelper(InputQueue,OutputQueue,txtIPAddress.Text, iPort);
             btnConnect.Enabled = false;
             btnDisconnect.Enabled = true;
-            cHelper.Connect(txtAlias.Text);
+            cHelper.Connect(txtAlias.Text);*/
         }
 
         private void Client_Load(object sender, EventArgs e)
