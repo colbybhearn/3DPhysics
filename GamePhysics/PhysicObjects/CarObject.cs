@@ -85,7 +85,7 @@ namespace Physics.PhysicsObjects
             }
         }
 
-        public override void Draw(Matrix View, Matrix Projection)
+        public override void Draw(ref Matrix View, ref Matrix Projection)
         {
             DrawWheel(car.Wheels[0], true, View, Projection);
             DrawWheel(car.Wheels[1], true, View, Projection);

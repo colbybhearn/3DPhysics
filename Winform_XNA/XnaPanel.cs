@@ -36,8 +36,12 @@ namespace XnaView
 
         #region Debug
         private SpriteBatch spriteBatch;
-        private SpriteFont debugFont;        
-        public bool Debug { get; set; }
+        private SpriteFont debugFont;
+        public bool Debug
+        {
+            get { return game.debug; }
+            set { game.debug = value; }
+        }
         public bool DebugPhysics { get; set; } 
         public bool DrawingEnabled { get; set; }
         public bool PhysicsEnabled { get; set; }
@@ -74,6 +78,7 @@ namespace XnaView
                 tmrDrawElapsed = Stopwatch.StartNew();
                 //
                 spriteBatch = new SpriteBatch(GraphicsDevice);
+                debugFont = game.Content.Load<SpriteFont>("DebugFont");
                 
                 // From the example code, should this be a timer instead?
                 Application.Idle += delegate { Invalidate(); };
@@ -174,7 +179,7 @@ namespace XnaView
                     // Following 3 lines are to reset changes to graphics device made by spritebatch
                     GraphicsDevice.BlendState = BlendState.Opaque;
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                    //GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap; // Described as "may not be needed"
+                    GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap; // Described as "may not be needed"
 
                     tmrDrawElapsed.Restart();
                 }
@@ -212,7 +217,7 @@ namespace XnaView
                         {
                             ObjectsDrawn++;
                             if (DrawingEnabled)
-                                go.Draw(view, proj);
+                                go.Draw(ref view, ref proj);
                             if (DebugPhysics)
                                 go.DrawWireframe(GraphicsDevice, view, proj);
                         }

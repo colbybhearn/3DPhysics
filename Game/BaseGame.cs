@@ -71,6 +71,7 @@ namespace Game
         myCallbackDelegate UpdateCameraCallback;
         public Camera cam;
         public string name = "BaseGame";
+        public bool debug = false;
         #endregion
 
         #region Input
@@ -255,6 +256,7 @@ namespace Game
             defaults.Add(new KeyBinding("CameraMoveSpeedIncrease", Keys.Q, false, false, false, Input.KeyEvent.Down, CameraMoveSpeedIncrease));
             defaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, Input.KeyEvent.Down, CameraMoveSpeedDecrease));
             defaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, Input.KeyEvent.Pressed, CameraModeCycle));
+            defaults.Add(new KeyBinding("ToggleDebugInfo", Keys.F1, false, false, false, Input.KeyEvent.Pressed, ToggleDebugInfo));
             return defaults;
         }
 
@@ -315,6 +317,11 @@ namespace Game
                 default:
                     break;
             }
+        }
+
+        public void ToggleDebugInfo()
+        {
+            debug = !debug;
         }
 
         /// <summary>
