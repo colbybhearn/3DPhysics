@@ -42,7 +42,7 @@ namespace ServerApp
             ProcessPacketTimer.Start();
             
             game = new Game.CarGame();
-            game.ChatMessageReceived += new Helper.Handlers.StringEH(game_ChatMessageReceived);
+            game.ChatMessageReceived += new Helper.Handlers.StringStringEH(game_ChatMessageReceived);
             game.ClientConnected+=new Helper.Handlers.StringEH(game_ClientConnected); 
             AddXnaPanel(ref game);
         }
@@ -57,14 +57,14 @@ namespace ServerApp
             lstClients.Items.Add(alias);
         }
 
-        void game_ChatMessageReceived(string s)
+        void game_ChatMessageReceived(string m, string p)
         {
             if (InvokeRequired)
             {
-                this.Invoke(new Helper.Handlers.StringEH(game_ChatMessageReceived), new object[] { s });
+                this.Invoke(new Helper.Handlers.StringStringEH(game_ChatMessageReceived), new object[] { m, p });
                 return;
             }
-            txtChatLog.Text += s + Convert.ToChar(13) + Convert.ToChar(10);
+            txtChatLog.Text += p + ": " + m + Convert.ToChar(13) + Convert.ToChar(10);
             txtChatLog.Select(txtChatLog.Text.Length - 2, 1);
             txtChatLog.ScrollToCaret();
         }

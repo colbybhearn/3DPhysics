@@ -79,7 +79,7 @@ namespace Multiplayer
             else if (packet is ChatPacket)
             {
                 ChatPacket cp = packet as ChatPacket;
-                CallChatMessageReceived(cp.message);
+                CallChatMessageReceived(cp.message, cp.player);
             }
             else if (packet is ObjectResponsePacket)
             {
@@ -98,12 +98,12 @@ namespace Multiplayer
         }
 
         
-        public event Helper.Handlers.StringEH ChatMessageReceived;
-        private void CallChatMessageReceived(string msg)
+        public event Helper.Handlers.StringStringEH ChatMessageReceived;
+        private void CallChatMessageReceived(string msg, string player)
         {
             if (ChatMessageReceived == null)
                 return;
-            ChatMessageReceived(msg);
+            ChatMessageReceived(msg, player);
         }
 
 

@@ -18,13 +18,12 @@ namespace Game
         Model cubeModel;
         Model sphereModel;
 
-        Chat ChatManager;
-        SpriteFont chatFont;
 
 
         public CarGame()
         {
             name = "CarGame";
+
         }
 
         public override void InitializeContent()
@@ -42,6 +41,7 @@ namespace Game
 
             chatFont = Content.Load<SpriteFont>("debugFont");
             ChatManager = new Chat(chatFont);
+            ChatMessageReceived += new Helper.Handlers.StringStringEH(ChatManager.ReceiveMessage);
 
         }
 

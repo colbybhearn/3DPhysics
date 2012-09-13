@@ -10,6 +10,7 @@ namespace Helper
         // more generic and reusable
         public delegate void IntEH(int i);
         public delegate void StringEH(string s);
+        public delegate void StringStringEH(string s1, string s2);
         public delegate void PacketReceivedEH(Packet p);
 
         // more specific
