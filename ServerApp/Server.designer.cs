@@ -46,6 +46,7 @@ namespace ServerApp
             this.label5 = new System.Windows.Forms.Label();
             this.tbStep = new System.Windows.Forms.TrackBar();
             this.spMain = new System.Windows.Forms.SplitContainer();
+            this.txtChatLog = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBasePort)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -68,7 +69,7 @@ namespace ServerApp
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 134);
+            this.label2.Location = new System.Drawing.Point(12, 105);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(61, 13);
             this.label2.TabIndex = 6;
@@ -86,9 +87,9 @@ namespace ServerApp
             // 
             // lstClients
             // 
-            this.lstClients.Location = new System.Drawing.Point(12, 294);
+            this.lstClients.Location = new System.Drawing.Point(9, 216);
             this.lstClients.Name = "lstClients";
-            this.lstClients.Size = new System.Drawing.Size(148, 142);
+            this.lstClients.Size = new System.Drawing.Size(176, 67);
             this.lstClients.TabIndex = 18;
             this.lstClients.UseCompatibleStateImageBehavior = false;
             this.lstClients.View = System.Windows.Forms.View.List;
@@ -96,7 +97,7 @@ namespace ServerApp
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 160);
+            this.label3.Location = new System.Drawing.Point(12, 131);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(85, 13);
             this.label3.TabIndex = 20;
@@ -104,7 +105,7 @@ namespace ServerApp
             // 
             // numLobbyPort
             // 
-            this.numLobbyPort.Location = new System.Drawing.Point(94, 132);
+            this.numLobbyPort.Location = new System.Drawing.Point(103, 103);
             this.numLobbyPort.Maximum = new decimal(new int[] {
             3000,
             0,
@@ -122,7 +123,7 @@ namespace ServerApp
             // 
             // numBasePort
             // 
-            this.numBasePort.Location = new System.Drawing.Point(94, 158);
+            this.numBasePort.Location = new System.Drawing.Point(103, 129);
             this.numBasePort.Maximum = new decimal(new int[] {
             3000,
             0,
@@ -157,7 +158,7 @@ namespace ServerApp
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 278);
+            this.label1.Location = new System.Drawing.Point(9, 200);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 13);
             this.label1.TabIndex = 24;
@@ -174,16 +175,16 @@ namespace ServerApp
             // 
             // lvActiveGames
             // 
-            this.lvActiveGames.Location = new System.Drawing.Point(12, 208);
+            this.lvActiveGames.Location = new System.Drawing.Point(12, 174);
             this.lvActiveGames.Name = "lvActiveGames";
-            this.lvActiveGames.Size = new System.Drawing.Size(148, 67);
+            this.lvActiveGames.Size = new System.Drawing.Size(148, 23);
             this.lvActiveGames.TabIndex = 25;
             this.lvActiveGames.UseCompatibleStateImageBehavior = false;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 192);
+            this.label4.Location = new System.Drawing.Point(12, 158);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(43, 13);
             this.label4.TabIndex = 26;
@@ -219,6 +220,7 @@ namespace ServerApp
             // 
             // spMain.Panel1
             // 
+            this.spMain.Panel1.Controls.Add(this.txtChatLog);
             this.spMain.Panel1.Controls.Add(this.btnStartServer);
             this.spMain.Panel1.Controls.Add(this.label5);
             this.spMain.Panel1.Controls.Add(this.label2);
@@ -232,8 +234,19 @@ namespace ServerApp
             this.spMain.Panel1.Controls.Add(this.numLobbyPort);
             this.spMain.Panel1.Controls.Add(this.numBasePort);
             this.spMain.Size = new System.Drawing.Size(763, 517);
-            this.spMain.SplitterDistance = 176;
+            this.spMain.SplitterDistance = 205;
             this.spMain.TabIndex = 29;
+            // 
+            // txtChatLog
+            // 
+            this.txtChatLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtChatLog.Location = new System.Drawing.Point(3, 354);
+            this.txtChatLog.Multiline = true;
+            this.txtChatLog.Name = "txtChatLog";
+            this.txtChatLog.Size = new System.Drawing.Size(199, 160);
+            this.txtChatLog.TabIndex = 29;
             // 
             // Server
             // 
@@ -278,6 +291,7 @@ namespace ServerApp
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TrackBar tbStep;
         private System.Windows.Forms.SplitContainer spMain;
+        private System.Windows.Forms.TextBox txtChatLog;
     }
 }
 

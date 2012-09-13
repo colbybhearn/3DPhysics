@@ -35,7 +35,7 @@ namespace Multiplayer
         // list of client information with socket to communicate back
         SortedList<int, ClientInfo> Clients = new SortedList<int, ClientInfo>();
         TcpEventServer listener;
-        private System.Timers.Timer tmrProcessClients;
+        private System.Timers.Timer tmrUpdateClients;
         Queue<ClientPacketInfo> InputQueue = new Queue<ClientPacketInfo>();
         Thread inputThread;
         bool ShouldBeRunning = false;
@@ -51,27 +51,17 @@ namespace Multiplayer
             
             listener.ClientAccepted += new TcpEventServer.ClientAcceptedEventHandler(listener_ClientAccepted);
 
-            tmrProcessClients = new System.Timers.Timer();
-            tmrProcessClients.Interval = 200;
-            tmrProcessClients.Elapsed += new System.Timers.ElapsedEventHandler(tProcessClientsTimer_Elapsed);
+            tmrUpdateClients = new System.Timers.Timer();
+            tmrUpdateClients.Interval = 200;
+            tmrUpdateClients.Elapsed += new System.Timers.ElapsedEventHandler(tProcessClientsTimer_Elapsed);
         }
 
         void tProcessClientsTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            
+
             foreach (ClientInfo ci in Clients.Values)
-            {
-                switch (ci.connectionMode)
-                {
-                    case ClientInfo.ConnectionModes.Accepted:
-                        
-                        break;
-                    case ClientInfo.ConnectionModes.ClientInfoRequested:
-                        break;
-                    case ClientInfo.ConnectionModes.Synced:
-                        break;
-                    default:
-                        break;
-                }
+            {               
 
             }
             
@@ -83,7 +73,7 @@ namespace Multiplayer
         {
             ShouldBeRunning = true;
             listener.StartListening();
-            tmrProcessClients.Start();
+            tmrUpdateClients.Start();
             inputThread = new Thread(new ThreadStart(inputWorker));
             inputThread.Start();
         }
@@ -138,16 +128,35 @@ namespace Multiplayer
                 cpi.client.alias = cirp.Alias;
                 CallClientConnected(cpi.client.alias);
             }
+            else if (packet is ChatPacket)
+            {
+                ChatPacket cp = packet as ChatPacket;
+                BroadcastPacket(cp);
+                CallChatMessageReceived(cp.message);
+            }
+            
         }
 
-        public delegate void ClientConnectedEventHandler(string alias);
-        public event ClientConnectedEventHandler ClientConnected;
+        public event Helper.Handlers.StringEH ChatMessageReceived;
+        private void CallChatMessageReceived(string msg)
+        {
+            if (ChatMessageReceived == null)
+                return;
+            ChatMessageReceived(msg);
+        }
+
+        private void BroadcastPacket(Packet p)
+        {
+            foreach (ClientInfo ci in Clients.Values)
+                ci.Send(p);            
+        }
+
+        public event Helper.Handlers.StringEH ClientConnected;
         private void CallClientConnected(string alias)
         {
             if (ClientConnected == null)
                 return;
             ClientConnected(alias);
-
         }
 
         private int GetAvailableClientId()

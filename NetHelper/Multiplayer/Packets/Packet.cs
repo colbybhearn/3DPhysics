@@ -6,14 +6,37 @@ using System.Collections.Generic;
 
 namespace Helper.Multiplayer.Packets
 {
+    /* Adding a new packet class
+     * 
+     * Steps:
+     *  - Add the specific packet class
+     *  - Add the packet type to the Types enumeration
+     *  - if convenient, copy this list to that new class as a header.
+     * 
+     *  - Make the class serializable with [Serializable]
+     *  - Make the class public
+     *  - Call the base constuctor with   :base(Types.____)
+     *  - Add properties
+     *  - Add constructor with initialization arguments (no empty constructors, please)
+     *  - Add handling case in GameClient and GameServer's ProcessInputPacket
+     *  - All done! Celebrate with some homework! =D
+     * 
+     * Notes:
+     *  - sc means server to client onlu
+     *  - cs means client to server only
+     *  - binary serialization is used / automatically handled
+     */
+
     [Serializable]
     public class Packet
     {
         public enum Types
         {
+            KeepAlive, // not used yet (could be used to determine ping)
+            Chat,
             scClientInfoRequest,
             csClientInfoResponse,
-            csObjectUpdate,
+            csObjectUpdate,  // may not be needed, use scObjectUpdate
             scObjectUpdate
         }
 

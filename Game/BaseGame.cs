@@ -84,6 +84,7 @@ namespace Game
         public List<Gobject> newObjects; // This member is accessed from multiple threads and needs to be locked
         public Gobject currentSelectedObject;
         #endregion
+
         public Matrix view = Matrix.Identity;
         public Matrix proj = Matrix.Identity;
         KeyMap keyMap;

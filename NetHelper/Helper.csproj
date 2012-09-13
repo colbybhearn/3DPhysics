@@ -76,9 +76,13 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="ClientHelper.cs" />
+    <Compile Include="Handlers.cs" />
     <Compile Include="MultiPlayerHelper.cs" />
     <Compile Include="Multiplayer\ClientInfo.cs" />
     <Compile Include="Multiplayer\ClientPacketInfo.cs" />
+    <Compile Include="Multiplayer\Packets\ChatPacket.cs" />
+    <Compile Include="Multiplayer\Packets\KeepAlivePacket.cs" />
+    <Compile Include="Multiplayer\Packets\ObjectUpdatePacket.cs" />
     <Compile Include="Multiplayer\TcpEventServer.cs" />
     <Compile Include="Multiplayer\Packets\ClientInfoRequestPacket.cs" />
     <Compile Include="Multiplayer\Packets\ClientInfoResponsPacket.cs" />

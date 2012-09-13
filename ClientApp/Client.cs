@@ -156,15 +156,29 @@ namespace ClientApp
 
         #region Form Event Handlers
 
+        GameClient commClient;
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            GameClient gameClient = new GameClient(txtIPAddress.Text, iPort, txtAlias.Text);
-            gameClient.Connect();
+            commClient = new GameClient(txtIPAddress.Text, iPort, txtAlias.Text);
+            commClient.Connect();
+            commClient.ChatMessageReceived += new Helper.Handlers.StringEH(commClient_ChatMessageReceived);
             /*
             cHelper = new ClientHelper.ClientHelper(InputQueue,OutputQueue,txtIPAddress.Text, iPort);
             btnConnect.Enabled = false;
             btnDisconnect.Enabled = true;
             cHelper.Connect(txtAlias.Text);*/
+        }
+
+        void commClient_ChatMessageReceived(string s)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Helper.Handlers.StringEH(commClient_ChatMessageReceived), new object[] { s });
+                return;
+            }
+            txtChatBox.Text += s + Convert.ToChar(13) + Convert.ToChar(10);
+            txtChatBox.Select(txtChatBox.Text.Length - 2, 1);
+            txtChatBox.ScrollToCaret();
         }
 
         private void Client_Load(object sender, EventArgs e)
@@ -184,7 +198,7 @@ namespace ClientApp
         }
 
         private void btnSendChat_Click(object sender, EventArgs e)
-        {
+        {/*
             string s = txtAlias.Text + ": " + txtChat.Text;
             cHelper.SendChatMessage(s);
             txtChat.Text = "";
@@ -192,6 +206,9 @@ namespace ClientApp
             txtChatBox.Select(txtChatBox.Text.Length - 2, 1);
             txtChatBox.ScrollToCaret();
             btnSendChat.Enabled = false;
+            */
+            commClient.SendChatPacket(txtChat.Text);
+            txtChat.Text = "";
         }
 
         private void txtChat_TextChanged(object sender, EventArgs e)

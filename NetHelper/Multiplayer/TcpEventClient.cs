@@ -46,6 +46,10 @@ namespace Helper.Multiplayer
             {
                 try
                 {
+                    if (stream == null)
+                    {
+                        continue;
+                    }
                     // if there are enough bytes to know how many bytes make the next packet,
                     if (stream.DataAvailable)
                     {
@@ -83,8 +87,8 @@ namespace Helper.Multiplayer
             }
         }
 
-        public delegate void PacketReceivedEventHandler(Packets.Packet p);
-        public event PacketReceivedEventHandler PacketReceived;
+        
+        public event Helper.Handlers.PacketReceivedEH PacketReceived;
         private void CallPacketsReceived(Packets.Packet p)
         {
             if(PacketReceived!=null)
