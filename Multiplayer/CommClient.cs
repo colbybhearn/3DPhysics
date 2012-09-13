@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
 using System.Diagnostics;
-using System.IO;
-using Helper.Multiplayer;
 using System.Net;
-using Helper.Multiplayer.Packets;
 using System.Threading;
+using Helper.Multiplayer;
+using Helper.Multiplayer.Packets;
+using Microsoft.Xna.Framework;
+using Helper;
 
 
 namespace Multiplayer
 {
-    public class GameClient
+    public class CommClient
     {
         public int iPort;
         public string sAlias;
@@ -24,7 +22,7 @@ namespace Multiplayer
         Queue<Packet> InputQueue = new Queue<Packet>();
         Thread inputThread;
 
-        public GameClient(string ip, int port, string alias)
+        public CommClient(string ip, int port, string alias)
         {
             
             if (!IPAddress.TryParse(ip, out a))
@@ -33,7 +31,6 @@ namespace Multiplayer
             iPort = port;
             sAlias = alias;
             Server = new ServerInfo(new IPEndPoint(a, iPort));
-
         }
 
         public void Connect()
@@ -84,6 +81,20 @@ namespace Multiplayer
                 ChatPacket cp = packet as ChatPacket;
                 CallChatMessageReceived(cp.message);
             }
+            else if (packet is ObjectResponsePacket)
+            {
+                ObjectResponsePacket corp = packet as ObjectResponsePacket;
+                CallObjectRequestResponseReceived(corp.ID, corp.AssetName);
+            }
+            
+        }
+
+        public event Helper.Handlers.ObjectRequestResponseEH ObjectRequestResponseReceived;
+        private void CallObjectRequestResponseReceived(int i, string asset)
+        {
+            if (ObjectRequestResponseReceived == null)
+                return;
+            ObjectRequestResponseReceived(i, asset);
         }
 
         
@@ -101,9 +112,19 @@ namespace Multiplayer
             ShouldBeRunning = false;
         }
 
-        public void SendChatPacket(string msg)
+        public void SendChatPacket(string msg, string player)
         {
-            client.Send(new ChatPacket(msg));
+            client.Send(new ChatPacket(msg, "Someone Else"));
+        }
+
+        public void SendObjectRequest(string assetname)
+        {
+            client.Send(new ObjectRequestPacket(assetname));
+        }
+
+        public void SendObjectUpdate(int id, Vector3 pos, Matrix orient, Vector3 vel)
+        {
+            client.Send(new ObjectUpdatePacket(id, string.Empty, pos, orient, vel));
         }
     }
 }

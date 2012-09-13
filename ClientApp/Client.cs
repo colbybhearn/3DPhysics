@@ -154,12 +154,10 @@ namespace ClientApp
 
         #region Form Event Handlers
 
-        GameClient commClient;
+        
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            commClient = new GameClient(txtIPAddress.Text, iPort, txtAlias.Text);
-            commClient.Connect();
-            commClient.ChatMessageReceived += new Helper.Handlers.StringEH(commClient_ChatMessageReceived);
+            game.ConnectToServer(txtIPAddress.Text, iPort, txtAlias.Text);
             /*
             cHelper = new ClientHelper.ClientHelper(InputQueue,OutputQueue,txtIPAddress.Text, iPort);
             btnConnect.Enabled = false;
@@ -206,7 +204,7 @@ namespace ClientApp
             txtChatBox.ScrollToCaret();
             btnSendChat.Enabled = false;
             */
-            commClient.SendChatPacket(txtChat.Text);
+            //game.SendChatPacket(txtChat.Text);
             txtChat.Text = "";
         }
 

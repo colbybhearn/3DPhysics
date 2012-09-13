@@ -41,8 +41,32 @@ namespace ServerApp
             ProcessPacketTimer.Tick += new EventHandler(ProcessPacketsTimer_Tick);
             ProcessPacketTimer.Start();
             
-            game = new Game.BaseGame();
+            game = new Game.CarGame();
+            game.ChatMessageReceived += new Helper.Handlers.StringEH(game_ChatMessageReceived);
+            game.ClientConnected+=new Helper.Handlers.StringEH(game_ClientConnected); 
             AddXnaPanel(ref game);
+        }
+
+        void game_ClientConnected(string alias)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Helper.Handlers.StringEH(game_ClientConnected), new object[] { alias });
+                return;
+            }
+            lstClients.Items.Add(alias);
+        }
+
+        void game_ChatMessageReceived(string s)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Helper.Handlers.StringEH(game_ChatMessageReceived), new object[] { s });
+                return;
+            }
+            txtChatLog.Text += s + Convert.ToChar(13) + Convert.ToChar(10);
+            txtChatLog.Select(txtChatLog.Text.Length - 2, 1);
+            txtChatLog.ScrollToCaret();
         }
         XnaView.XnaPanel XnaPanelMain;
         private void AddXnaPanel(ref Game.BaseGame game)
@@ -135,11 +159,7 @@ namespace ServerApp
 
         private void btnStartServer_Click(object sender, EventArgs e)
         {
-            GameServer commServer = new GameServer(iLobbyPort);
-
-            commServer.ClientConnected += new Helper.Handlers.StringEH(gameServer_ClientConnected);
-            commServer.ChatMessageReceived += new Helper.Handlers.StringEH(commServer_ChatMessageReceived);
-            commServer.Start();
+            game.ListenForClients(iLobbyPort);
             /*
             sHelper = new ServerHelper.ServerHelper(InputQueue,OutputQueue, this.iLobbyPort, this.iBasePort);
             sHelper.Start();
@@ -148,28 +168,6 @@ namespace ServerApp
           * */
         }
 
-        void commServer_ChatMessageReceived(string s)
-        {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Helper.Handlers.StringEH(commServer_ChatMessageReceived), new object[] { s });
-                return;
-            }
-            txtChatLog.Text += s + Convert.ToChar(13) + Convert.ToChar(10);
-            txtChatLog.Select(txtChatLog.Text.Length - 2, 1);
-            txtChatLog.ScrollToCaret();
-            
-        }
-
-        void gameServer_ClientConnected(string alias)
-        {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Helper.Handlers.StringEH(gameServer_ClientConnected), new object[] { alias });
-                return;
-            }
-            lstClients.Items.Add(alias);
-        }
 
         private void btnStopServer_Click(object sender, EventArgs e)
         {

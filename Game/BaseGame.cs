@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Timers;
 using Helper;
 using Input;
+using Multiplayer;
 
 namespace Game
 {
@@ -77,11 +78,12 @@ namespace Game
         #region Input
         internal Input.InputManager inputManager;
         Timer tmrCamUpdate;
+        Timer tmrUpdateServer;
         #endregion
 
         #region Game
-        public List<Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
-        public List<Gobject> newObjects; // This member is accessed from multiple threads and needs to be locked
+        public SortedList<int, Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
+        public SortedList<int, Gobject> newObjects; // This member is accessed from multiple threads and needs to be locked
         public Gobject currentSelectedObject;
         #endregion
 
@@ -98,6 +100,25 @@ namespace Game
         }
         CameraModes cameraMode = CameraModes.Fixed;
 
+        #region Communication
+        public enum CommTypes
+        {
+            Client,
+            Server
+        }
+        public CommTypes CommType;
+        public CommClient commClient;
+        public CommServer commServer;
+        #endregion
+
+        #region Events
+        public event Handlers.StringEH ChatMessageReceived;
+        #endregion
+
+        #region Multiplayer
+        public List<int> clientControlledObjects = new List<int>();
+        #endregion
+
         public BaseGame()
         {
             CommonInit(10, 10);
@@ -113,8 +134,8 @@ namespace Game
         private void CommonInit(double physicsUpdateInterval, double cameraUpdateInterval)
         {
             graphicsDevice = null;
-            gameObjects = new List<Gobject>();
-            newObjects = new List<Gobject>();
+            gameObjects = new SortedList<int, Gobject>();
+            newObjects = new SortedList<int, Gobject>();
             Instance = this;
 
             tmrCamUpdate = new Timer();
@@ -123,8 +144,28 @@ namespace Game
             tmrCamUpdate.AutoReset=true;
             tmrCamUpdate.Start();
 
+            tmrUpdateServer = new Timer();
+            tmrUpdateServer.Interval = 50;
+            tmrUpdateServer.Elapsed += new ElapsedEventHandler(tmrUpdateServer_Elapsed);
+            tmrUpdateServer.AutoReset = true;
+            tmrUpdateServer.Start();
+
             physicsManager = new Physics.PhysicsManager(ref gameObjects, ref newObjects, physicsUpdateInterval);
                        
+        }
+
+        void tmrUpdateServer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if(CommType == CommTypes.Client)
+            {
+                foreach(int id in clientControlledObjects)
+                {
+                    if(!gameObjects.ContainsKey(id))
+                        continue;
+                    Gobject go = gameObjects[id];
+                    commClient.SendObjectUpdate(go.ID, go.Position, go.BodyOrientation(), go.BodyVelocity());
+                }
+            }
         }
 
         void  tmrCamUpdate_Elapsed(object sender, ElapsedEventArgs e)
@@ -243,6 +284,10 @@ namespace Game
         public virtual void InitializeInputs()
         {
             keyMap = GetDefaultKeyMap();
+        }
+
+        public virtual void InitializeMultiplayer()
+        {
         }
 
         public virtual List<KeyBinding> GetDefaultKeyBindings()
@@ -374,7 +419,7 @@ namespace Game
                                             new Vector3(50f, .55f, 50f),  // X with, possible y range, Z depth 
                                             100, 100, graphicsDevice, moon);
 
-                    newObjects.Add(terrain);
+                    newObjects.Add(terrain.ID, terrain);
                 }
                 catch (Exception E)
                 {
@@ -387,13 +432,13 @@ namespace Game
                     // some video cards can't handle the >16 bit index type of the terrain
                     
                     HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
-                    newObjects.Add(heightmapObj);
+                    newObjects.Add(heightmapObj.ID, heightmapObj);
                 }
                 catch (Exception E)
                 {
                     // if that happens just create a ground plane 
                     planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0));
-                    newObjects.Add(planeObj);
+                    newObjects.Add(planeObj.ID, planeObj);
                 }
             }
         }
@@ -437,5 +482,197 @@ namespace Game
         {
             
         }
+        
+        public void ServerObjectRequest(int clientId, string asset, out int objectId)
+        {
+            
+            objectId = AddOwnedObject(clientId, asset);
+            commServer.SendObjectResponsePacket(clientId, objectId, asset);
+            
+        }
+        SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
+        /// <summary>
+        /// Server adds an object and associates it with its owning client
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        private int AddOwnedObject(int clientId, string asset)
+        {
+            int objectid = GetAvailableObjectId();
+            // setup dual reference for flexible and speedy accesses, whether by objectID, or by clientId 
+            if (!ClientObjectIds.ContainsKey(clientId))
+                ClientObjectIds.Add(clientId, new List<int>());
+            // this is the list of objects owned by client ClientID
+            List<int> objects = ClientObjectIds[clientId];
+            objects.Add(objectid);
+            
+            AddNewObject(objectid, asset);
+
+            return objectid;
+        }
+
+
+        //SortedList<string, List<>
+        /// <summary>
+        /// allows flexibility with that is added, accoding to the asset requested
+        /// </summary>
+        /// <param name="objectid"></param>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        public virtual void AddNewObject(int objectid, string asset)
+        {
+            // all we have here is the name.
+            // that tells us a model to load
+            // but we don't know the primitives or 
+            // if we were in CarObject, we would know the model, and have specific logic
+            
+        }
+        
+
+        private int GetAvailableObjectId()
+        {
+            int id=1;
+            bool found =true;
+            while(found)
+            {
+                if (gameObjects.ContainsKey(id) || newObjects.ContainsKey(id))
+                    id++;
+                else
+                    found = false;
+            }
+
+            return id;
+        }
+
+        #region Communication Methods
+
+        // CLIENT only
+        public virtual void ConnectToServer(string ip, int port, string alias)
+        {
+            CommType = CommTypes.Client;
+            commClient = new CommClient(ip, port, alias);
+            InitializeMultiplayer(CommType);
+            commClient.Connect();
+        }
+
+        public virtual void InitializeMultiplayer(CommTypes CommType)
+        {
+            switch (CommType)
+            {
+                case CommTypes.Client:
+                    commClient.ChatMessageReceived += new Handlers.StringEH(commClient_ChatMessageReceived);
+                    commClient.ObjectRequestResponseReceived += new Handlers.ObjectRequestResponseEH(commClient_ObjectRequestResponseReceived);
+                    break;
+                case CommTypes.Server:
+                    commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
+                    commServer.ChatMessageReceived += new Handlers.StringEH(commServer_ChatMessageReceived);
+                    //commServer.ObjectRequestReceived += new Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
+                    commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        
+        void commClient_ChatMessageReceived(string s)
+        {
+            CallChatMessageReceived(s);
+        }
+        void commClient_ObjectRequestResponseReceived(int i, string asset)
+        {
+            // MINE!
+            clientControlledObjects.Add(i);
+            ProcessObjectRequestResponse(i, asset);
+        }
+
+        public virtual void ProcessObjectRequestResponse(int i, string asset)
+        {
+        }
+        void commServer_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        {
+            if(!gameObjects.ContainsKey(id))
+                return;
+            Gobject go = gameObjects[id];
+            //go.Body.MoveTo(pos);
+            //go.SetPosition(pos);
+            go.SetOrientation(orient);
+            go.SetVelocity(vel);
+        }
+
+        // COMMON
+        private void CallChatMessageReceived(string msg)
+        {
+            if (ChatMessageReceived == null)
+                return;
+             ChatMessageReceived(msg);
+        }
+        public virtual void ProcessChatMessage(string s)
+        {
+        }
+        public void SendChatPacket(ChatMessage msg)
+        {
+            if (CommType == CommTypes.Client)
+            {
+                if (commClient != null)
+                    commClient.SendChatPacket(msg.Message, msg.Owner);
+            }
+            else
+            {
+                if(commServer != null)
+                    commClient.SendChatPacket(msg.Message, msg.Owner);
+            }
+        }
+
+        // SERVER only
+        public void ListenForClients(int port)
+        {
+            CommType = CommTypes.Server;
+            commServer = new CommServer(port);
+            InitializeMultiplayer(CommType);
+            commServer.Start();
+            
+        }
+        void commServer_ObjectRequestReceived(int clientId, string asset)
+        {
+            
+        }
+        void commServer_ChatMessageReceived(string s)
+        {
+            ProcessChatMessage(s);
+        }
+        void commServer_ClientConnected(string s)
+        {
+            ProcessClientConnected(s);
+        }
+
+        public virtual void ProcessClientConnected(string msg)
+        {            
+            CallClientConnected(msg);
+        }
+
+        public event Helper.Handlers.StringEH ClientConnected;
+        private void CallClientConnected(string msg)
+        {
+            if (ClientConnected == null)
+                return;
+            ClientConnected(msg);
+            
+        }
+        /// <summary>
+        /// the server received an object request
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="asset"></param>
+        public virtual int ProcessObjectRequest(int clientId, string asset)
+        {
+            int objectId = -1;
+            ServerObjectRequest(clientId, asset, out objectId);
+            return objectId;
+        }
+        
+        #endregion
     }
 }

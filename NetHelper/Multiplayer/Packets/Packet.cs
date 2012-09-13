@@ -37,7 +37,9 @@ namespace Helper.Multiplayer.Packets
             scClientInfoRequest,
             csClientInfoResponse,
             csObjectUpdate,  // may not be needed, use scObjectUpdate
-            scObjectUpdate
+            scObjectUpdate,
+            csObjectRequest,
+            scObjectResponse
         }
 
         public Types Type;

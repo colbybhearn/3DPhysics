@@ -14,19 +14,18 @@ namespace Physics
 {
     public class PhysicsManager
     {
-        //BoostController bController;
         public PhysicsSystem PhysicsSystem { get; private set; }
         private System.Timers.Timer tmrPhysicsUpdate;
         private Stopwatch tmrPhysicsElapsed;
         private double lastPhysicsElapsed;
-        private List<Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
-        private List<Gobject> newObjects;
+        private SortedList<int, Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
+        private SortedList<int, Gobject> newObjects;
         public bool DebugPhysics { get; set; }
         public bool PhysicsEnabled { get; set; }
         double TIME_STEP = .01; // Recommended timestep
         float SimFactor = 1.0f;
 
-        public PhysicsManager(ref List<Gobject> gObjects, ref List<Gobject> nObjects, double updateInterval=10)
+        public PhysicsManager(ref SortedList<int, Gobject> gObjects, ref SortedList<int, Gobject> nObjects, double updateInterval = 10)
         {
             gameObjects = gObjects;
             newObjects= nObjects;
@@ -66,7 +65,7 @@ namespace Physics
             //Add our new objects
             lock (gameObjects)
             {
-                AddNewObjects();
+                FinalizeNewObjects();
 
                 // Should use a variable timerate to keep up a steady "feel" if we bog down?
                 if (PhysicsEnabled)
@@ -84,19 +83,15 @@ namespace Physics
             ResetTimer();
         }
 
-        private void AddNewObjects()
+        private void FinalizeNewObjects()
         {
             while (newObjects.Count > 0)
             {
                 // Remove from end of list so no shuffling occurs? (maybe)
-                int i = newObjects.Count - 1;
-                newObjects[i].FinalizeBody();
-                gameObjects.Add(newObjects[i]);
-                if (newObjects[i] is CarObject)
-                {
-                    Debug.WriteLine("Car object moved from new to main");
-                }
-                newObjects.RemoveAt(i);
+                int id = newObjects.Values[0].ID;
+                newObjects[id].FinalizeBody(); 
+                gameObjects.Add(newObjects[id].ID, newObjects[id]);
+                newObjects.Remove(id);
             }
         }
         public void ResetTimer()
@@ -107,7 +102,7 @@ namespace Physics
             tmrPhysicsUpdate.Start();
         }
 
-        public CarObject AddCar(Model carModel, Model wheelModel)
+        public CarObject GetCar(Model carModel, Model wheelModel)
         {
             CarObject carObject = null;
             try
@@ -118,8 +113,6 @@ namespace Physics
                     carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 520.0f, PhysicsSystem.Gravity.Length());
                 carObject.Car.EnableCar();
                 carObject.Car.Chassis.Body.AllowFreezing = false;
-                newObjects.Add(carObject);
-                
             }
             catch (Exception E)
             {
@@ -127,7 +120,16 @@ namespace Physics
             return carObject;
         }
 
-        private Gobject AddBox(Vector3 pos, Vector3 size, Matrix orient, Model model, bool moveable)
+        public bool AddNewObject(Gobject gob)
+        {
+            if (gameObjects.ContainsKey(gob.ID) ||
+                newObjects.ContainsKey(gob.ID))
+                return false;
+            newObjects.Add(gob.ID, gob);
+            return true;
+        }
+
+        private Gobject GetBox(Vector3 pos, Vector3 size, Matrix orient, Model model, bool moveable)
         {
             // position of box was upper leftmost corner
             // body has world position
@@ -142,7 +144,7 @@ namespace Physics
                 moveable
                 );
 
-            newObjects.Add(box);
+            //newObjects.Add(box.ID, box);
             return box;
         }
 
@@ -151,7 +153,7 @@ namespace Physics
             Random r = new Random();
             for (int i = 0; i < n; i++)
             {
-                AddSphere(
+                GetSphere(
                     new Vector3(
                         (float)(10 - r.NextDouble() * 20),
                         (float)(40 - r.NextDouble() * 20),
@@ -161,9 +163,13 @@ namespace Physics
         }
         private void AddSphere(Model s)
         {
-            AddSphere(new Vector3(0, 3, 0), .5f, s, true);
+            GetSphere(new Vector3(0, 3, 0), .5f, s, true);
         }
-        public Gobject AddSphere(Vector3 pos, float radius, Model model, bool moveable)
+        public Gobject GetDefaultSphere(Model model)
+        {
+            return GetSphere(new Vector3(0, 0, 0), 5, model, true);
+        }
+        public Gobject GetSphere(Vector3 pos, float radius, Model model, bool moveable)
         {
             Sphere spherePrimitive = new Sphere(pos, radius);
             Gobject sphere = new Gobject(
@@ -173,10 +179,10 @@ namespace Physics
                 model,
                 moveable);
 
-            newObjects.Add(sphere);
+            //newObjects.Add(sphere.ID, sphere);
             return sphere;
         }
-        public LunarVehicle AddLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
+        public LunarVehicle GetLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
         {
             Box boxPrimitive = new Box(-.5f * size, orient, size); // this is relative to the Body!
             LunarVehicle lander = new LunarVehicle(
@@ -186,7 +192,7 @@ namespace Physics
                 model
                 );
 
-            newObjects.Add(lander);
+            //newObjects.Add(lander.ID, lander);
             return lander;
         }
 

@@ -11,6 +11,7 @@ namespace Physics
 {
     public class Gobject
     {
+        public int ID;
         public Body Body { get; internal set; }
         public CollisionSkin Skin { get; internal set; }
         public Model Model { get; set; }
@@ -118,10 +119,18 @@ namespace Physics
         {
             return Body.Orientation;
         }
+        public void SetOrientation(Matrix o)
+        {
+            Body.Orientation = o;
+        }
 
         public Vector3 BodyVelocity()
         {
             return Body.Velocity;
+        }
+        public void SetVelocity(Vector3 v)
+        {
+            Body.Velocity = v;
         }
 
         public virtual void FinalizeBody()
@@ -222,7 +231,6 @@ namespace Physics
                         Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
                         Velocity, 0, Velocity.Length - 1);
                 }
-
             }
             catch (Exception e)
             {
@@ -237,6 +245,21 @@ namespace Physics
         public Matrix GetWorldMatrix()
         {
             return Matrix.CreateScale(Scale) * Skin.GetPrimitiveLocal(0).Transform.Orientation * Body.Orientation * Matrix.CreateTranslation(Body.Position);
+        }
+
+        public void MoveTo(Vector3 pos, Matrix orient)
+        {
+            Body.MoveTo(pos, orient);
+        }
+
+        /// <summary>
+        /// should be called after MoveTo
+        /// </summary>
+        /// <param name="vel"></param>
+        public void UpdateVelocity(Vector3 vel)
+        {
+            Body.Velocity = vel;
+            //Body.UpdateVelocity(vel.Length);
         }
     }
 }
