@@ -10,11 +10,11 @@ using System.Net;
 using Helper.Multiplayer.Packets;
 using System.Threading;
 
+
 namespace Multiplayer
 {
     public class GameClient
     {
-        private System.Timers.Timer ProcessServerDataTimer;
         public int iPort;
         public string sAlias;
         IPAddress a;
@@ -46,14 +46,13 @@ namespace Multiplayer
                 inputThread.Start();
                 client = new TcpEventClient();
                 client.Connect(Server.endPoint);
-                client.PacketReceived += new TcpEventClient.PacketReceivedEventHandler(PacketReceived);
+                client.PacketReceived += new Helper.Handlers.PacketReceivedEH(PacketReceived);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Error..... " + ex.Message);
             }
 
-            //ProcessServerDataTimer.Start();
         }
 
         void PacketReceived(Helper.Multiplayer.Packets.Packet p)
@@ -80,13 +79,31 @@ namespace Multiplayer
                 ClientInfoResponsePacket clientInfoResponse = new ClientInfoResponsePacket(sAlias);
                 client.Send(clientInfoResponse);
             }
+            else if (packet is ChatPacket)
+            {
+                ChatPacket cp = packet as ChatPacket;
+                CallChatMessageReceived(cp.message);
+            }
         }
 
         
+        public event Helper.Handlers.StringEH ChatMessageReceived;
+        private void CallChatMessageReceived(string msg)
+        {
+            if (ChatMessageReceived == null)
+                return;
+            ChatMessageReceived(msg);
+        }
+
 
         public void Stop()
         {
             ShouldBeRunning = false;
+        }
+
+        public void SendChatPacket(string msg)
+        {
+            client.Send(new ChatPacket(msg));
         }
     }
 }
