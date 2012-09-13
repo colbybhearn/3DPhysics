@@ -159,7 +159,7 @@ namespace Physics
             return com;
         }
 
-        public virtual void Draw(Matrix View, Matrix Projection)
+        public virtual void Draw(ref Matrix View, ref Matrix Projection)
         {
             if (Model == null)
                 return;
