@@ -40,13 +40,34 @@ namespace Game
             wheelModel = Content.Load<Model>("wheel");
         }
 
+        public override void InitializeMultiplayer(BaseGame.CommTypes CommType)
+        {
+            base.InitializeMultiplayer(CommType);
+
+            switch (CommType)
+            {
+                case CommTypes.Client:
+                    //commClient.ObjectRequestResponseReceived += new Helper.Handlers.IntEH(commClient_ObjectRequestResponseReceived);
+                    break;
+                case CommTypes.Server:
+                    commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
+        void commServer_ObjectRequestReceived(int clientId, string asset)
+        {
+            ProcessObjectRequest(clientId, asset);
+        }
+
         public override void InitializeEnvironment()
         {
             base.InitializeEnvironment();
-            SpawnCar();
         }
-
-        
 
         public override void InitializeInputs()
         {
@@ -83,54 +104,119 @@ namespace Game
         /// </summary>
         public override void SetNominalInputState()
         {
-            // we don't want to handle
-            myCar.SetAcceleration(0);
-            myCar.SetSteering(0);
-            myCar.setHandbrake(0);
+            foreach (int i in clientControlledObjects)
+            {
+                if (!gameObjects.ContainsKey(i))
+                    return;
+                Gobject go = gameObjects[i];
+                if (go is CarObject)
+                {
+                    CarObject myCar = go as CarObject;
+                    // we don't want to handle
+                    myCar.SetAcceleration(0);
+                    myCar.SetSteering(0);
+                    myCar.setHandbrake(0);
+                }
+            }
         }
 
-        
+        public override void AddNewObject(int objectid, string asset)
+        {
+            Model model = Content.Load<Model>(asset);
+            Gobject newobject = null;
+            switch (asset.ToLower())
+            {
+                case "sphere":
+                    newobject = physicsManager.GetDefaultSphere(model);
+                    break;
+                case "car":
+                    newobject = physicsManager.GetCar(carModel, wheelModel);
+                    break;
+                default:
+                    break;
+            }
+            
+            newobject.ID = objectid;
+            physicsManager.AddNewObject(newobject);
+        }
+
+        /*
         public override bool AddNewObject(int objectid, string asset)
         {
             // the game needs to know what assets go with what primitives
             // if not primitives, then physicsobjects or something
-
+            
             Model model = Content.Load<Model>(asset);
             Gobject newobject = physicsManager.GetDefaultSphere(model);
             newobject.ID = objectid;
             return physicsManager.AddNewObject(newobject);
-        }
+        }*/
 
         private void SpawnCar()
         {
-            if (myCar != null)
-                gameObjects.Remove(myCar.ID);
-            myCar = physicsManager.GetCar(carModel, wheelModel);
-            currentSelectedObject = myCar;
+            //if (myCar != null)
+                //gameObjects.Remove(myCar.ID);
+            //myCar = physicsManager.GetCar(carModel, wheelModel);
+            //currentSelectedObject = myCar;
+            if(commClient!=null)
+                commClient.SendObjectRequest("car");
+        }
+
+        public override void ProcessObjectRequestResponse(int objectid, string asset)
+        {
+            Model model = Content.Load<Model>(asset);
+            Gobject newobject = null;
+            switch (asset.ToLower())
+            {
+                case "sphere":
+                    newobject = physicsManager.GetDefaultSphere(model);
+                    newobject.ID = objectid;
+                    physicsManager.AddNewObject(newobject);
+                    break;
+                case "car":
+                    myCar = physicsManager.GetCar(carModel, wheelModel);
+                    myCar.ID = objectid;
+                    physicsManager.AddNewObject(myCar);
+                    break;
+                default:
+                    break;
+            }
+
+            
         }
 
         private void Accelerate()
         {
+            if (myCar == null)
+                return;
             myCar.SetAcceleration(1.0f);
         }
 
         private void Deccelerate()
         {
+            if (myCar == null)
+                return;
             myCar.SetAcceleration(-1.0f);
         }
 
         private void SteerLeft()
         {
+            if (myCar == null)
+                return;
             myCar.SetSteering(1.0f);
         }
 
         private void SteerRight()
         {
+            if (myCar == null)
+                return;
             myCar.SetSteering(-1.0f);
         }
 
         private void ApplyHandbrake()
         {
+            if (myCar == null)
+                return;
             myCar.setHandbrake(1.0f);
         }
 

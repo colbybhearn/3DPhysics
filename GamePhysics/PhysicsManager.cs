@@ -88,14 +88,10 @@ namespace Physics
             while (newObjects.Count > 0)
             {
                 // Remove from end of list so no shuffling occurs? (maybe)
-                int i = newObjects.Count - 1;
-                newObjects[i].FinalizeBody();
-                gameObjects.Add(newObjects[i].ID, newObjects[i]);
-                if (newObjects[i] is CarObject)
-                {
-                    Debug.WriteLine("Car object moved from new to main");
-                }
-                newObjects.RemoveAt(i);
+                int id = newObjects.Values[0].ID;
+                newObjects[id].FinalizeBody(); 
+                gameObjects.Add(newObjects[id].ID, newObjects[id]);
+                newObjects.Remove(id);
             }
         }
         public void ResetTimer()
@@ -117,8 +113,6 @@ namespace Physics
                     carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 520.0f, PhysicsSystem.Gravity.Length());
                 carObject.Car.EnableCar();
                 carObject.Car.Chassis.Body.AllowFreezing = false;
-                
-                
             }
             catch (Exception E)
             {
@@ -150,7 +144,7 @@ namespace Physics
                 moveable
                 );
 
-            newObjects.Add(box.ID, box);
+            //newObjects.Add(box.ID, box);
             return box;
         }
 
@@ -185,7 +179,7 @@ namespace Physics
                 model,
                 moveable);
 
-            newObjects.Add(sphere.ID, sphere);
+            //newObjects.Add(sphere.ID, sphere);
             return sphere;
         }
         public LunarVehicle GetLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
@@ -198,7 +192,7 @@ namespace Physics
                 model
                 );
 
-            newObjects.Add(lander.ID, lander);
+            //newObjects.Add(lander.ID, lander);
             return lander;
         }
 

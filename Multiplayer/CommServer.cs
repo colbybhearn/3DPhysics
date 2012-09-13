@@ -7,6 +7,7 @@ using Helper.Multiplayer;
 using System.Net;
 using Helper.Multiplayer.Packets;
 using System.Threading;
+using Microsoft.Xna.Framework;
 
 namespace Multiplayer
 {
@@ -29,7 +30,7 @@ namespace Multiplayer
      */
    
 
-    public class GameServer
+    public class CommServer
     {
         
         // list of client information with socket to communicate back
@@ -40,7 +41,7 @@ namespace Multiplayer
         Thread inputThread;
         bool ShouldBeRunning = false;
 
-        public GameServer(int lobbyport)
+        public CommServer(int lobbyport)
         {
             string a = Dns.GetHostName();
             IPHostEntry ipEntry = Dns.GetHostEntry(a);
@@ -131,13 +132,19 @@ namespace Multiplayer
             else if (packet is ChatPacket)
             {
                 ChatPacket cp = packet as ChatPacket;
-                BroadcastPacket(cp);
+                SendChatPacket(cp.message);
                 CallChatMessageReceived(cp.message);
+                
             }
             else if (packet is ObjectRequestPacket)
             {
                 ObjectRequestPacket corp = packet as ObjectRequestPacket;
                 CallObjectRequestReceived(cpi.client.id,corp.AssetName);
+            }
+            else if (packet is ObjectUpdatePacket)
+            {
+                ObjectUpdatePacket oup = packet as ObjectUpdatePacket;
+                CallObjectUpdateRecived(oup.objectId, oup.assetName, oup.position, oup.orientation, oup.velocity);
             }
             
         }
@@ -192,6 +199,26 @@ namespace Multiplayer
         }
 
 
-        
+        public event Helper.Handlers.ObjectUpdateEH ObjectUpdateReceived;
+        private void CallObjectUpdateRecived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        {
+            if (ObjectUpdateReceived == null)
+                return;
+            ObjectUpdateReceived(id, asset, pos, orient, vel);
+        }
+
+
+
+        public void SendChatPacket(string msg)
+        {
+            BroadcastPacket(new ChatPacket(msg));
+        }
+
+        public void SendObjectResponsePacket(int clientid, int objectId, string asset)
+        {
+            if (!Clients.ContainsKey(clientid))
+                return;
+            Clients[clientid].Send(new ObjectResponsePacket(objectId, asset));
+        }
     }
 }

@@ -99,6 +99,8 @@ namespace Helper.Multiplayer
 
         public void Send(Packet packet)
         {
+            if (stream == null)
+                return;
             byte[] data = packet.Serialize();
             stream.Write(data, 0, data.Length);
 
