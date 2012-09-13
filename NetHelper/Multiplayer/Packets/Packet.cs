@@ -76,7 +76,7 @@ namespace Helper.Multiplayer.Packets
         }
 
         public static Packet Deserialize(byte[] data)
-        {            
+        {
             MemoryStream ms = new MemoryStream(data); 
             BinaryFormatter formatter = new BinaryFormatter();
             try

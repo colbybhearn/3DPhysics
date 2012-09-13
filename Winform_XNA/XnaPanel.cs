@@ -159,11 +159,15 @@ namespace XnaView
                 /*if(DebugPhysics)
                     if (terrain != null)
                         terrain.DrawWireframe(GraphicsDevice, v, p);*/
-                
+
+                // SpriteBatch drawing!
+                spriteBatch.Begin();
+
+                game.Draw(spriteBatch);
+
                 if (Debug)
                 {
                     double time = tmrDrawElapsed.ElapsedMilliseconds;
-                    spriteBatch.Begin();
                     Vector2 position = new Vector2(5, 5);
                     Color debugfontColor = Color.Black;
                     spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, debugfontColor);
@@ -179,15 +183,15 @@ namespace XnaView
                     position.Y += debugFont.LineSpacing;
                     //spriteBatch.DrawString(debugFont, "Input Mode: " + inputMode.ToString(), position, debugfontColor); // physics Ticks Per Second
 
-                    spriteBatch.End();
-
-                    // Following 3 lines are to reset changes to graphics device made by spritebatch
-                    GraphicsDevice.BlendState = BlendState.Opaque;
-                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                    GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap; // Described as "may not be needed"
-
                     tmrDrawElapsed.Restart();
                 }
+
+                spriteBatch.End();
+
+                // Following 3 lines are to reset changes to graphics device made by spritebatch
+                GraphicsDevice.BlendState = BlendState.Opaque;
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap; // Described as "may not be needed"
             }
             catch (Exception e)
             {

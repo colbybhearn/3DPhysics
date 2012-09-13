@@ -221,7 +221,6 @@ namespace Game
             UpdateCameraCallback = updateCamCallback;
             try
             {
-
                 InitializeContent();
                 InitializeCameras();
                 InitializeEnvironment();
@@ -432,6 +431,11 @@ namespace Game
         public virtual void EditSettings()
         {
             inputManager.EditSettings();
+        }
+
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+            
         }
     }
 }

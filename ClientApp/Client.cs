@@ -12,7 +12,6 @@ using System.IO;
 using System.Threading;
 using MultiplayerHelper;
 using System.Diagnostics;
-using ClientHelper;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Multiplayer;
@@ -36,7 +35,6 @@ namespace ClientApp
         public string sAlias;        
         public string sIPAddress;
 
-        ClientHelper.ClientHelper cHelper;
     
         System.Windows.Forms.Timer ProcessPacketTimer;
 
@@ -194,7 +192,8 @@ namespace ClientApp
         {
             btnConnect.Enabled = true;
             btnDisconnect.Enabled = false;
-            cHelper.Disconnect();
+            // TODO: Add disconnect
+            //cHelper.Disconnect();
         }
 
         private void btnSendChat_Click(object sender, EventArgs e)
@@ -254,7 +253,7 @@ namespace ClientApp
 
         private void tAliasChange_Tick(object sender, EventArgs e)
         {
-            if(cHelper!=null)
+            /*if(cHelper!=null)
             if (cHelper.isConnected())
             {
                 StatusMsgQueue.Enqueue("Sending New Alias");
@@ -266,7 +265,7 @@ namespace ClientApp
                 p.AddFieldValue("ALIAS",txtAlias.Text);
                 OutputQueue.Enqueue(p);
                 tAliasChange.Stop();
-            }
+            }*/
         }
 
         private void tStatus_Tick(object sender, EventArgs e)
@@ -274,14 +273,14 @@ namespace ClientApp
             tStatus.Stop();
             if (StatusMsgQueue.Count > 0)
                 toolStripStatus.Text = StatusMsgQueue.Dequeue();
-            else if (cHelper!=null)
+            /*else if (cHelper!=null)
             {
                 if(cHelper.isConnected())
                     toolStripStatus.Text = "Connected";
                 else
                     StatusMsgQueue.Enqueue("Disconnected");
             
-            }
+            }*/
             tStatus.Start();
         }
 

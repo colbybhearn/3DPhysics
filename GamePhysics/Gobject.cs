@@ -84,7 +84,7 @@ namespace Physics
 
         public Gobject(Vector3 position, Vector3 scale, Primitive primitive, Model model, bool moveable)
             : this()
-        {            
+        {
             
             try
             {

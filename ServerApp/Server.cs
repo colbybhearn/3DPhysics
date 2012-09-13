@@ -11,7 +11,6 @@ using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 using System.Diagnostics;
-using ServerHelper;
 using MultiplayerHelper;
 using Multiplayer;
 
@@ -21,7 +20,6 @@ namespace ServerApp
     {
 
         #region Properties
-        ServerHelper.ServerHelper sHelper;
         Queue<Packet> InputQueue = new Queue<Packet>();
         Queue<Packet> OutputQueue = new Queue<Packet>();
         int iLobbyPort;
@@ -175,7 +173,7 @@ namespace ServerApp
 
         private void btnStopServer_Click(object sender, EventArgs e)
         {
-            sHelper.Stop();
+            //sHelper.Stop();
             btnStopServer.Enabled = false;
             btnStartServer.Enabled = true;
         }   

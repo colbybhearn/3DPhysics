@@ -45,7 +45,6 @@ namespace Input
         public List<KeyBinding> KeyBindings { get; set; }
         
 
-
         public KeyMap()
         {
         }
@@ -116,7 +115,6 @@ namespace Input
                         if (saved.Alias.Equals(kb.Alias))
                         {
                             kb.Alt = saved.Alt;
-                            //kb.Callback = saved.Callback;
                             kb.Ctrl = saved.Ctrl;
                             kb.Key = saved.Key;
                             kb.KeyEvent = saved.KeyEvent;

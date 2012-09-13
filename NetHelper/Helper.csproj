@@ -75,7 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
-    <Compile Include="ClientHelper.cs" />
+    <Compile Include="Chat.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="MultiPlayerHelper.cs" />
     <Compile Include="Multiplayer\ClientInfo.cs" />
@@ -90,7 +90,6 @@
     <Compile Include="Multiplayer\ServerInfo.cs" />
     <Compile Include="Multiplayer\TcpEventClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+//using System.Windows.Forms;
 using Microsoft.Xna.Framework.Input;
-using System.Timers;
-using System.ComponentModel;
-using System.Windows.Forms;
 
 
 //global :: using Microsoft.Xna.Framework.Input;
 //global::using Microsoft.Xna.Framework.Input.Keys;
 namespace Input
 {
-    
-    
+    public enum InputMode
+    {
+        Setup,
+        Chat,
+        Mapped
+    }
+
+    public delegate void ChatDelegate(List<Microsoft.Xna.Framework.Input.Keys> pressedKeys);
+
     public class InputManager
     {
         
@@ -35,32 +39,63 @@ namespace Input
          * 
          */
 
-        bool SetupMode = false;
+        public InputMode Mode { get; set; }
 
         KeyboardState lastState = new KeyboardState();
         KeyboardState currentState = new KeyboardState();
         public KeyMap keyMap;
+        public SortedList<InputMode, Delegate> InputModeDelegates;
         public String game;
+        Settings frmSettings;
+
 
         public InputManager(String gameName, KeyMap defaultKeyMap)
         {
             game = gameName;
             keyMap = KeyMap.LoadKeyMap(game, defaultKeyMap);
+            Mode = InputMode.Mapped;
+            InputModeDelegates = new SortedList<InputMode, Delegate>();
+        }
+
+        public void AddInputMode(InputMode m, Delegate d)
+        {
+            InputModeDelegates.Add(m, d);
         }
 
         public void Update()
         {            
             currentState = Keyboard.GetState();
-            if (SetupMode)
+            switch(Mode)
             {
-                frmSettings.ProcessKey(currentState);                
+                case InputMode.Setup:
+                    frmSettings.ProcessKey(currentState);
+                    break;
+                case InputMode.Chat:
+                    Delegate d;
+                    if(InputModeDelegates.TryGetValue(Mode, out d))
+                        ((ChatDelegate)d)(GetPressedKeysWithShift(lastState, currentState));
+                    break;
+                case InputMode.Mapped:
+                    if(keyMap != null)
+                        keyMap.Check(lastState, currentState);
+                    break;
             }
-            else
-            {
-                if(keyMap!=null)
-                    keyMap.Check(lastState, currentState);
-                lastState = currentState;
-            }
+        
+            lastState = currentState;
+        }
+
+        //Will always contain shift if shift is held
+        private List<Microsoft.Xna.Framework.Input.Keys> GetPressedKeysWithShift(KeyboardState lastState, KeyboardState currentState)
+        {
+            Keys[] last = lastState.GetPressedKeys();
+            Keys[] current = currentState.GetPressedKeys();
+            List<Keys> pressed = new List<Keys>();
+
+            foreach(Keys k in current)
+                if(last.Contains(k) == false || k.HasFlag(Keys.LeftShift) || k.HasFlag(Keys.RightShift))
+                    pressed.Add(k);
+
+            return pressed;
         }
         
         public void Save()
@@ -68,19 +103,19 @@ namespace Input
             KeyMap.SaveKeyMap(keyMap);
         }
         
-        Settings frmSettings;
         public void EditSettings()
         {
             frmSettings = new Settings(keyMap);
-            SetupMode = true;            
-            DialogResult dr = frmSettings.ShowDialog();
-            if (dr == DialogResult.OK)
+            InputMode lastMode = Mode;
+            Mode = InputMode.Setup;            
+            System.Windows.Forms.DialogResult dr = frmSettings.ShowDialog();
+            if (dr == System.Windows.Forms.DialogResult.OK)
             {
                 keyMap = frmSettings.keyMap;
                 Save();
             }
             frmSettings.Dispose();
-            SetupMode = false;
+            Mode = lastMode;
         }
     }
 }
