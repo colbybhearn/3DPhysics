@@ -33,7 +33,6 @@ namespace Multiplayer
             iPort = port;
             sAlias = alias;
             Server = new ServerInfo(new IPEndPoint(a, iPort));
-
         }
 
         public void Connect()
@@ -104,6 +103,11 @@ namespace Multiplayer
         public void SendChatPacket(string msg)
         {
             client.Send(new ChatPacket(msg));
+        }
+
+        public void SendObjectRequest(string assetname)
+        {
+            client.Send(new ObjectRequestPacket(assetname));
         }
     }
 }

@@ -134,7 +134,20 @@ namespace Multiplayer
                 BroadcastPacket(cp);
                 CallChatMessageReceived(cp.message);
             }
+            else if (packet is ObjectRequestPacket)
+            {
+                ObjectRequestPacket corp = packet as ObjectRequestPacket;
+                CallObjectRequestReceived(cpi.client.id,corp.AssetName);
+            }
             
+        }
+
+        public event Helper.Handlers.ObjectRequestEH ObjectRequestReceived;
+        private void CallObjectRequestReceived(int clientId, string asset)
+        {
+            if (ObjectRequestReceived == null)
+                return;
+            ObjectRequestReceived(clientId, asset);
         }
 
         public event Helper.Handlers.StringEH ChatMessageReceived;

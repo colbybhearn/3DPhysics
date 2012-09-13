@@ -50,19 +50,14 @@ namespace XnaView
 
         #region Game
         private Stopwatch tmrDrawElapsed;
-        private List<Physics.Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
-        private List<Physics.Gobject> newObjects;
+        private SortedList<int, Physics.Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
+        private SortedList<int, Physics.Gobject> newObjects;
         Game.BaseGame game;
         #endregion
         
         #endregion
 
         #region Init
-        public XnaPanel() 
-        {
-            gameObjects = new List<Gobject>();
-            newObjects = new List<Gobject>();
-        }
         public XnaPanel(ref Game.BaseGame g)
         {
             game = g;
@@ -210,7 +205,7 @@ namespace XnaView
                 {
                     
                     ObjectsDrawn = 0;
-                    foreach (Gobject go in gameObjects)
+                    foreach (Gobject go in gameObjects.Values)
                     {
                         BoundingFrustum frustum = new BoundingFrustum(view * proj);
                         if (frustum.Contains(go.Skin.WorldBoundingBox) != ContainmentType.Disjoint)

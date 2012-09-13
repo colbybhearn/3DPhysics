@@ -79,8 +79,8 @@ namespace Game
         #endregion
 
         #region Game
-        public List<Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
-        public List<Gobject> newObjects; // This member is accessed from multiple threads and needs to be locked
+        public SortedList<int, Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
+        public SortedList<int, Gobject> newObjects; // This member is accessed from multiple threads and needs to be locked
         public Gobject currentSelectedObject;
         #endregion
 
@@ -112,8 +112,8 @@ namespace Game
         private void CommonInit(double physicsUpdateInterval, double cameraUpdateInterval)
         {
             graphicsDevice = null;
-            gameObjects = new List<Gobject>();
-            newObjects = new List<Gobject>();
+            gameObjects = new SortedList<int, Gobject>();
+            newObjects = new SortedList<int, Gobject>();
             Instance = this;
 
             tmrCamUpdate = new Timer();
@@ -368,7 +368,7 @@ namespace Game
                                             new Vector3(50f, .55f, 50f),  // X with, possible y range, Z depth 
                                             100, 100, graphicsDevice, moon);
 
-                    newObjects.Add(terrain);
+                    newObjects.Add(terrain.ID, terrain);
                 }
                 catch (Exception E)
                 {
@@ -381,13 +381,13 @@ namespace Game
                     // some video cards can't handle the >16 bit index type of the terrain
                     
                     HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
-                    newObjects.Add(heightmapObj);
+                    newObjects.Add(heightmapObj.ID, heightmapObj);
                 }
                 catch (Exception E)
                 {
                     // if that happens just create a ground plane 
                     planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0));
-                    newObjects.Add(planeObj);
+                    newObjects.Add(planeObj.ID, planeObj);
                 }
             }
         }
@@ -425,6 +425,50 @@ namespace Game
         public virtual void EditSettings()
         {
             inputManager.EditSettings();
+        }
+
+        
+        public void ServerObjectRequest(int clientId, string asset, out int objectId)
+        {
+            
+            objectId = AddOwnedObject(clientId, asset);
+            
+        }
+        SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
+        private int AddOwnedObject(int clientId, string asset)
+        {
+            int objectid = GetAvailableObjectId();
+            // setup dual reference for flexible and speedy accesses, whether by objectID, or by clientId 
+            if (!ClientObjectIds.ContainsKey(clientId))
+                ClientObjectIds.Add(clientId, new List<int>());
+
+            List<int> objects = ClientObjectIds[clientId];
+            objects.Add(objectid);
+
+            AddNewObject(objectid, asset);
+
+            return objectid;
+        }
+
+        public virtual bool AddNewObject(int objectid, string asset)
+        {
+            return true;   
+        }
+        
+
+        private int GetAvailableObjectId()
+        {
+            int id=1;
+            bool found =false;
+            while(!found)
+            {
+                if (gameObjects.ContainsKey(id))
+                    id++;
+                else
+                    found = true;
+            }
+
+            return id;
         }
     }
 }

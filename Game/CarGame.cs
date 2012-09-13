@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Physics.PhysicsObjects;
 using Microsoft.Xna.Framework;
 using Input;
+using Physics;
 
 namespace Game
 {
@@ -42,7 +43,7 @@ namespace Game
         public override void InitializeEnvironment()
         {
             base.InitializeEnvironment();
-            RespawnCar();
+            SpawnCar();
         }
 
         
@@ -61,9 +62,12 @@ namespace Game
             defaults.Add(new KeyBinding("CarDecelerate", Keys.Down, false, false, false, Input.KeyEvent.Down, Deccelerate));
             defaults.Add(new KeyBinding("CarSteerRight", Keys.Right, false, false, false, Input.KeyEvent.Down, SteerRight));
             defaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, Input.KeyEvent.Down, ApplyHandbrake));
-            defaults.Add(new KeyBinding("RespawnCar", Keys.R, false, true, false, Input.KeyEvent.Pressed, RespawnCar));
+            // player 
+            defaults.Add(new KeyBinding("RespawnCar", Keys.R, false, true, false, Input.KeyEvent.Pressed, SpawnCar));
             // Spheres
             defaults.Add(new KeyBinding("SpawnSpheres", Keys.N, false, true, false, Input.KeyEvent.Pressed, SpawnSpheres));
+
+            
             return defaults;
         }
 
@@ -85,11 +89,23 @@ namespace Game
             myCar.setHandbrake(0);
         }
 
-        private void RespawnCar()
+        
+        public override bool AddNewObject(int objectid, string asset)
+        {
+            // the game needs to know what assets go with what primitives
+            // if not primitives, then physicsobjects or something
+
+            Model model = Content.Load<Model>(asset);
+            Gobject newobject = physicsManager.GetDefaultSphere(model);
+            newobject.ID = objectid;
+            return physicsManager.AddNewObject(newobject);
+        }
+
+        private void SpawnCar()
         {
             if (myCar != null)
-                gameObjects.Remove(myCar);
-            myCar = physicsManager.AddCar(carModel, wheelModel);
+                gameObjects.Remove(myCar.ID);
+            myCar = physicsManager.GetCar(carModel, wheelModel);
             currentSelectedObject = myCar;
         }
 

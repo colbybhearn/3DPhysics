@@ -11,6 +11,7 @@ namespace Physics
 {
     public class Gobject
     {
+        public int ID;
         public Body Body { get; internal set; }
         public CollisionSkin Skin { get; internal set; }
         public Model Model { get; set; }

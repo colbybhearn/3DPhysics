@@ -141,6 +141,7 @@ namespace ServerApp
 
             commServer.ClientConnected += new Helper.Handlers.StringEH(gameServer_ClientConnected);
             commServer.ChatMessageReceived += new Helper.Handlers.StringEH(commServer_ChatMessageReceived);
+            commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
             commServer.Start();
             /*
             sHelper = new ServerHelper.ServerHelper(InputQueue,OutputQueue, this.iLobbyPort, this.iBasePort);
@@ -148,6 +149,11 @@ namespace ServerApp
             btnStartServer.Enabled = false;
             btnStopServer.Enabled = true;
           * */
+        }
+
+        void commServer_ObjectRequestReceived(int clientId, string asset)
+        {
+            game.AddNewObject(clientId, asset);
         }
 
         void commServer_ChatMessageReceived(string s)
