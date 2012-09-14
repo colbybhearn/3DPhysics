@@ -210,8 +210,12 @@ namespace Helper
             currentPosition += s.Length;
         }
 
-        public void ReceiveMessage(ChatMessage message)
+        public void ReceiveMessage(string msg, string owner)
         {
+            ChatMessage message = new ChatMessage();
+            message.MessageColor = Color.DarkRed;
+            message.Message = msg;
+            message.Owner = owner;
             message.Time = DateTime.Now;
             ChatLog.Add(message.Time.Ticks, message);
         }

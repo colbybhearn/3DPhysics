@@ -80,6 +80,9 @@ namespace Game
         internal Input.InputManager inputManager;
         Timer tmrCamUpdate;
         Timer tmrUpdateServer;
+
+        internal Chat ChatManager;
+        internal SpriteFont chatFont;
         #endregion
 
         #region Game
@@ -177,7 +180,7 @@ namespace Game
         #endregion
 
         #region Events
-        public event Handlers.StringEH ChatMessageReceived;
+        public event Handlers.StringStringEH ChatMessageReceived;
         #endregion
 
         #region Multiplayer
@@ -682,12 +685,12 @@ namespace Game
             switch (CommType)
             {
                 case CommTypes.Client:
-                    commClient.ChatMessageReceived += new Handlers.StringEH(commClient_ChatMessageReceived);
+                    commClient.ChatMessageReceived += new Handlers.StringStringEH(commClient_ChatMessageReceived);
                     commClient.ObjectRequestResponseReceived += new Handlers.ObjectRequestResponseEH(commClient_ObjectRequestResponseReceived);
                     break;
                 case CommTypes.Server:
                     commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
-                    commServer.ChatMessageReceived += new Handlers.StringEH(commServer_ChatMessageReceived);
+                    commServer.ChatMessageReceived += new Handlers.StringStringEH(commServer_ChatMessageReceived);
                     //commServer.ObjectRequestReceived += new Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
                     commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
                     break;
@@ -698,9 +701,9 @@ namespace Game
 
 
         
-        void commClient_ChatMessageReceived(string s)
+        void commClient_ChatMessageReceived(string m, string p)
         {
-            CallChatMessageReceived(s);
+            CallChatMessageReceived(m, p);
         }
         /// <summary>
         /// CLIENT SIDE
@@ -743,13 +746,13 @@ namespace Game
         }
 
         // COMMON
-        private void CallChatMessageReceived(string msg)
+        private void CallChatMessageReceived(string msg, string player)
         {
             if (ChatMessageReceived == null)
                 return;
-             ChatMessageReceived(msg);
+             ChatMessageReceived(msg, player);
         }
-        public virtual void ProcessChatMessage(string s)
+        public virtual void ProcessChatMessage(string m, string p)
         {
         }
         public void SendChatPacket(ChatMessage msg)
@@ -762,7 +765,7 @@ namespace Game
             else
             {
                 if(commServer != null)
-                    commClient.SendChatPacket(msg.Message, msg.Owner);
+                    commServer.SendChatPacket(msg.Message, msg.Owner);
             }
         }
 
@@ -779,9 +782,9 @@ namespace Game
         {
             
         }
-        void commServer_ChatMessageReceived(string s)
+        void commServer_ChatMessageReceived(string m, string p)
         {
-            ProcessChatMessage(s);
+            ProcessChatMessage(m, p);
         }
         void commServer_ClientConnected(string s)
         {

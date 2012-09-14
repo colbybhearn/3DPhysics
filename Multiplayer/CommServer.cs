@@ -132,7 +132,7 @@ namespace Multiplayer
             {
                 ChatPacket cp = packet as ChatPacket;
                 SendChatPacket(cp.message, cp.player);
-                CallChatMessageReceived(cp.message);
+                CallChatMessageReceived(cp.message, cp.player);
                 
             }
             else if (packet is ObjectRequestPacket)
@@ -156,18 +156,18 @@ namespace Multiplayer
             ObjectRequestReceived(clientId, asset);
         }
 
-        public event Helper.Handlers.StringEH ChatMessageReceived;
-        private void CallChatMessageReceived(string msg)
+        public event Helper.Handlers.StringStringEH ChatMessageReceived;
+        private void CallChatMessageReceived(string msg, string player)
         {
             if (ChatMessageReceived == null)
                 return;
-            ChatMessageReceived(msg);
+            ChatMessageReceived(msg, player);
         }
 
         private void BroadcastPacket(Packet p)
         {
             foreach (ClientInfo ci in Clients.Values)
-                ci.Send(p);            
+                ci.Send(p);          
         }
 
         public event Helper.Handlers.StringEH ClientConnected;
