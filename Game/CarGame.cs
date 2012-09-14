@@ -52,7 +52,7 @@ namespace Game
             switch (CommType)
             {
                 case CommTypes.Client:
-                    //commClient.ObjectRequestResponseReceived += new Helper.Handlers.IntEH(commClient_ObjectRequestResponseReceived);
+                    commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
                     break;
                 case CommTypes.Server:
                     commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
@@ -62,6 +62,52 @@ namespace Game
                     break;
             }
 
+        }
+
+        /// <summary>
+        /// CLIENT SIDE
+        /// Client has received an object update from the server
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="asset"></param>
+        /// <param name="pos"></param>
+        /// <param name="orient"></param>
+        /// <param name="vel"></param>
+        void commClient_ObjectUpdateReceived(int id, string asset, Microsoft.Xna.Framework.Vector3 pos, Microsoft.Xna.Framework.Matrix orient, Microsoft.Xna.Framework.Vector3 vel)
+        {
+            ProcessObjectUpdate(id, asset, pos, orient, vel);
+        }
+
+        /// <summary>
+        /// CLIENT SIDE
+        /// Client should take the information from the server and use it here
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="asset"></param>
+        /// <param name="pos"></param>
+        /// <param name="orient"></param>
+        /// <param name="vel"></param>
+        private void ProcessObjectUpdate(int id, string asset, Microsoft.Xna.Framework.Vector3 pos, Microsoft.Xna.Framework.Matrix orient, Microsoft.Xna.Framework.Vector3 vel)
+        {
+
+            physicsUpdateList.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel));
+            //lock (gameObjects)
+            //{
+
+            //    if (!gameObjects.ContainsKey(id))
+            //    {
+            //        AddNewObject(id, asset); // which will only put it on newObjects;
+            //    }
+            //    if (newObjects.ContainsKey(id))
+            //        return;
+            //    Gobject go = gameObjects[id];
+            //    //go.SetOrientation(orient);
+            //    if (id == 1)
+            //    {
+            //    }
+            //    go.MoveTo(pos, go.BodyOrientation());
+            //    go.SetVelocity(vel);
+            //}
         }
 
         void commServer_ObjectRequestReceived(int clientId, string asset)
@@ -107,7 +153,7 @@ namespace Game
         }
 
         /// <summary>
-        /// This is called by BaseGame immediately before Keyboard state is used to process the KeyWatches
+        /// This is called by BaseGame immediately before Keyboard state is used to process the KeyBindings
         /// we don't want to handle keydowns and keyups, so revert to nominal states and then immediately process key actions to arrive at a current state
         /// </summary>
         public override void SetNominalInputState()
@@ -128,6 +174,12 @@ namespace Game
             }
         }
 
+        /// <summary>
+        /// CLIENT SIDE
+        /// When a client receives an object update for an object it does not know about, instantiate one!
+        /// </summary>
+        /// <param name="objectid"></param>
+        /// <param name="asset"></param>
         public override void AddNewObject(int objectid, string asset)
         {
             Model model = Content.Load<Model>(asset);
@@ -146,30 +198,26 @@ namespace Game
             
             newobject.ID = objectid;
             physicsManager.AddNewObject(newobject);
-        }
+        }        
 
-        /*
-        public override bool AddNewObject(int objectid, string asset)
-        {
-            // the game needs to know what assets go with what primitives
-            // if not primitives, then physicsobjects or something
-            
-            Model model = Content.Load<Model>(asset);
-            Gobject newobject = physicsManager.GetDefaultSphere(model);
-            newobject.ID = objectid;
-            return physicsManager.AddNewObject(newobject);
-        }*/
-
+        /// <summary>
+        /// CLIENT SIDE
+        /// 
+        /// </summary>
         private void SpawnCar()
         {
-            //if (myCar != null)
-                //gameObjects.Remove(myCar.ID);
-            //myCar = physicsManager.GetCar(carModel, wheelModel);
-            //currentSelectedObject = myCar;
             if(commClient!=null)
+                // send a request to the server for an object of asset type "car"
                 commClient.SendObjectRequest("car");
         }
 
+        /// <summary>
+        /// CLIENT SIDE
+        /// client should do something oriented to the specific game here, like player bullets or cars.
+        /// The server has granted the object request and this is where we handle the response it has sent back to the client
+        /// </summary>
+        /// <param name="objectid"></param>
+        /// <param name="asset"></param>
         public override void ProcessObjectRequestResponse(int objectid, string asset)
         {
             Model model = Content.Load<Model>(asset);

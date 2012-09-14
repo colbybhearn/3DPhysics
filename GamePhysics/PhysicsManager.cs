@@ -67,12 +67,14 @@ namespace Physics
             {
                 FinalizeNewObjects();
 
+                CallPreIntegrate();
                 // Should use a variable timerate to keep up a steady "feel" if we bog down?
                 if (PhysicsEnabled)
                 {
                     float step = (float)TIME_STEP * SimFactor;
                     PhysicsSystem.CurrentPhysicsSystem.Integrate(step);
                 }
+                CallPostIntegrate();
             }
 
             //TODO: Add to the Camera Manager a way to 
@@ -81,6 +83,20 @@ namespace Physics
             lastPhysicsElapsed = tmrPhysicsElapsed.ElapsedMilliseconds;
 
             ResetTimer();
+        }
+        public event Helper.Handlers.voidEH PostIntegrate;
+        private void CallPostIntegrate()
+        {
+            if (PostIntegrate == null)
+                return;
+            PostIntegrate();
+        }
+        public event Helper.Handlers.voidEH PreIntegrate;
+        private void CallPreIntegrate()
+        {
+            if (PreIntegrate == null)
+                return;
+            PreIntegrate();
         }
 
         private void FinalizeNewObjects()
@@ -107,7 +123,7 @@ namespace Physics
             CarObject carObject = null;
             try
             {
-                carObject = new CarObject(
+                carObject = new CarObject("car",
                     //new Vector3(-60, 0.5f, 8), // camera's left
                     new Vector3(0, 2.5f, 0),
                     carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 520.0f, PhysicsSystem.Gravity.Length());
@@ -122,10 +138,13 @@ namespace Physics
 
         public bool AddNewObject(Gobject gob)
         {
-            if (gameObjects.ContainsKey(gob.ID) ||
-                newObjects.ContainsKey(gob.ID))
-                return false;
-            newObjects.Add(gob.ID, gob);
+            lock (newObjects)
+            {
+                if (gameObjects.ContainsKey(gob.ID) ||
+                    newObjects.ContainsKey(gob.ID))
+                    return false;
+                newObjects.Add(gob.ID, gob);
+            }
             return true;
         }
 
@@ -141,7 +160,8 @@ namespace Physics
                 size / 2,
                 boxPrimitive,
                 model,
-                moveable
+                moveable,
+                "cube"
                 );
 
             //newObjects.Add(box.ID, box);
@@ -177,7 +197,8 @@ namespace Physics
                 Vector3.One * radius,
                 spherePrimitive,
                 model,
-                moveable);
+                moveable,
+                "sphere");
 
             //newObjects.Add(sphere.ID, sphere);
             return sphere;
@@ -189,7 +210,8 @@ namespace Physics
                 pos,
                 size / 2,
                 boxPrimitive,
-                model
+                model,
+                "cube"
                 );
 
             //newObjects.Add(lander.ID, lander);

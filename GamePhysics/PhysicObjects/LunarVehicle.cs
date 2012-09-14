@@ -21,8 +21,8 @@ namespace Physics.PhysicsObjects
         const float MAX_ROT_JETX=5;
         const float MAX_ROT_JETZ=5;
 
-        public LunarVehicle(Vector3 position, Vector3 scale, Primitive primitive, Model model)
-            : base(position, scale, primitive, model, true)
+        public LunarVehicle(Vector3 position, Vector3 scale, Primitive primitive, Model model, string asset)
+            : base(position, scale, primitive, model, true, asset)
         {
             VertJet = new BoostController(Body, Vector3.Up, Vector3.Zero);
             RotJetX = new BoostController(Body, Vector3.Zero, Vector3.UnitZ);

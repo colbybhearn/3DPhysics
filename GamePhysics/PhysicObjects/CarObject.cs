@@ -14,7 +14,8 @@ namespace Physics.PhysicsObjects
         private Car car;
         private Model wheel;
 
-        public CarObject(Vector3 pos,
+        public CarObject(string asset,
+            Vector3 pos,
             Model model,Model wheels, bool FWDrive,
                        bool RWDrive,
                        float maxSteerAngle,
@@ -41,7 +42,7 @@ namespace Physics.PhysicsObjects
             Body.CollisionSkin = Skin;
             Body.ExternalData = this;
             this.wheel = wheels;
-            CommonInit(pos, new Vector3(1, 1, 1), model, true);
+            CommonInit(pos, new Vector3(1, 1, 1), model, true, asset);
             SetCarMass(100.1f);
         }
 

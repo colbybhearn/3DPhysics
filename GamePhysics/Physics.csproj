@@ -95,6 +95,10 @@
       <Project>{8A7CEF45-3501-491D-AEDA-0164060F5348}</Project>
       <Name>JigLibX</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NetHelper\Helper.csproj">
+      <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
+      <Name>Helper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -11,6 +11,7 @@ using System.Timers;
 using Helper;
 using Input;
 using Multiplayer;
+using Helper.Multiplayer.Packets;
 
 namespace Game
 {
@@ -87,9 +88,73 @@ namespace Game
         public Gobject currentSelectedObject;
         #endregion
 
+
+        /*Vision statement for Multiplayer communication for physics
+         * 
+         * The scheme is:
+         *  - input information goes from client to the server in an ActionUpdatePacket
+         *  - physics information goes from the server to the client in an ObjectUpdatePacket
+         *  - client input shouln't impact the client-side physics
+         *  
+         *  - Gobject has an AssetName.
+         *  - Gobject has an actionManager
+         *  - ActionManager has a list of ActionBindings SortedList<string, ActionBinding>   by ActionAlias
+         *  - ActionManager has the list of ActionValues List<Object>
+         *  
+         * the ActionBinding datastructure associates each action alias with a delegate and indices to be access/set in the ActionValues list list which the action uses or requires
+         *  - an Action Binding has
+         *     - Alias
+         *     - Delegate
+         *     - Set of ActionValueIndices
+         * 
+         *   - there is a global list of ActionValues for current frame input.  List<object>
+         *   
+         *  
+         *  An Example
+         *   - user presses forward on client side
+         *   - car's setAcceleration method is called with the appropriate game-specific new values for acceleration
+         *   - there may need to be two version of that setAcceleration method
+         *     - one for accepting the ActionValues list when called as a delegate
+         *     - one for accepting game-specifc individual, strongly-typed parameters for a clean interface
+         *     - the generic, delegate version may call the strongly-typed version.
+         *   - update the ActionValues list based on this input
+         *   - set the InputApplied boolean to true
+         *   - Many updates may occur before an integration is done.
+         *   - Before client integration is done, a ActionUpdatePacket is sent for the car (if InputApplied is true)
+         *   - This ActionUpdatePacket includes the Gobject ID and all ActionValues 
+         *   - Client sends ActionUpdatePacket to the server
+         *   - Client proceeds with integration using the physics systems values that match the ActionValues
+         *   - Server receives ActionUpdatePacket
+         *   - Server queues the ActionUpdatePacket packet
+         *   - Before server integrates, ActionUpdatePackets are processed.
+         *   - Server calls Gobject.ActionManager.ProcessActionValues on the correct object and provides the ActionValues from the ActionUpdatePacket
+         *   - ProcessActionValues iterates through ActionBinding datastructure (this is why ActionManager exists, really)
+         *     - Call each delegate for each ActionAlias, using the ActionValues
+         *     - All the ActionValues provided in the ActionUpdatePacket get used in this way.
+         *     - Use a GetAliasDelegateValues() method to extract the appropriate ActionValues from the ActionValues list  (also a good reason for ActionManager!)
+         *     - this Delegate-specific ActionValue list (a subset of the full ActionValues list) is passed to the setAcceleration delegate
+         *   - The ActionDelegate assigns the physics system values based on the delegate specific ActionValues 
+         *      - (This is ServerSide, but the same method as above, about step 6)
+         *      - The delegate/generic setAcceleration() will accept the short List<object>, and call the specific setAcceleration() with appropriately casted parameters.
+         *      - The ActionValues have to be cast when passed to the specific setAcceleration method
+         *      - the InputApplied boolean doesn't mean anything for the server 
+         *        - this will be set because this method has double-duty, as it is used in the client from input and in the server for synchronization with client input
+         *   - Any number of ActionUpdatePackets for a single Gobject can be processed by the server before integration
+         *   - After server integration is done, an ObjectUpdatePacket is sent for the car to all clients (if the object is moveable)
+         *     - this ObjectUpdatePacket includes at least Position, Orientation, and Velocity 
+         *   - Client receive an ObjectUpdatePacket
+         *   - Client queue an ObjectUpdatePackets
+         *   - Before client Integration, process ObjectUpdatePacket queue
+         *     - use MoveTo, and other appropriate Gobject/JigLibX methods
+         *   - Do client Integration to apply the server's information.
+         *   - 
+         */
+
+
         public Matrix view = Matrix.Identity;
         public Matrix proj = Matrix.Identity;
         KeyMap keyMap;
+        internal List<ObjectUpdatePacket> physicsUpdateList = new List<ObjectUpdatePacket>();
 
         enum CameraModes
         {
@@ -145,25 +210,71 @@ namespace Game
             tmrCamUpdate.Start();
 
             tmrUpdateServer = new Timer();
-            tmrUpdateServer.Interval = 50;
-            tmrUpdateServer.Elapsed += new ElapsedEventHandler(tmrUpdateServer_Elapsed);
+            tmrUpdateServer.Interval = 20;
+            tmrUpdateServer.Elapsed += new ElapsedEventHandler(tmrUpdateMultiplayer_Elapsed);
             tmrUpdateServer.AutoReset = true;
             tmrUpdateServer.Start();
 
             physicsManager = new Physics.PhysicsManager(ref gameObjects, ref newObjects, physicsUpdateInterval);
-                       
+            physicsManager.PreIntegrate += new Handlers.voidEH(physicsManager_PreIntegrate);
+            physicsManager.PostIntegrate += new Handlers.voidEH(physicsManager_PostIntegrate);
         }
 
-        void tmrUpdateServer_Elapsed(object sender, ElapsedEventArgs e)
+
+        void physicsManager_PreIntegrate()
         {
-            if(CommType == CommTypes.Client)
+            lock (gameObjects)
             {
-                foreach(int id in clientControlledObjects)
+                foreach (ObjectUpdatePacket p in physicsUpdateList)
                 {
-                    if(!gameObjects.ContainsKey(id))
+                    if (!gameObjects.ContainsKey(p.objectId))
+                        return;
+                    Gobject go = gameObjects[p.objectId];
+
+                    //go.SetOrientation(orient);
+
+                    go.SetVelocity(p.velocity);
+                    // angular velocity
+
+                }
+            }
+        }
+
+        void physicsManager_PostIntegrate()
+        {
+            // body has multiple primitives
+        }
+
+
+
+
+        void tmrUpdateMultiplayer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (CommType == CommTypes.Client)
+            {
+                // update the server about the objects this client controls
+                foreach (int id in clientControlledObjects)
+                {
+                    if (!gameObjects.ContainsKey(id))
                         continue;
                     Gobject go = gameObjects[id];
                     commClient.SendObjectUpdate(go.ID, go.Position, go.BodyOrientation(), go.BodyVelocity());
+                }
+            }
+            else
+            {
+                if (commServer == null)
+                    return;
+                foreach (Gobject go in gameObjects.Values)
+                {
+                    if (!go.isMoveable)
+                        continue;
+                    if (go.ID == 1)
+                    {
+                    }
+                    // update all clients about all objects!
+                    // tell them what kind of model this is by asset name
+                    commServer.BroadcastObjectUpdate(new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity()));
                 }
             }
         }
@@ -437,7 +548,7 @@ namespace Game
                 catch (Exception E)
                 {
                     // if that happens just create a ground plane 
-                    planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0));
+                    planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0), "");
                     newObjects.Add(planeObj.ID, planeObj);
                 }
             }
@@ -483,7 +594,15 @@ namespace Game
             
         }
         
-        public void ServerObjectRequest(int clientId, string asset, out int objectId)
+        /// <summary>
+        /// SERVER SIDE
+        /// Add the object being requested 
+        /// Reply to the client to let them know that their object was added, what ID it has, and what type of asset they originally requested.
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="asset"></param>
+        /// <param name="objectId"></param>
+        public void ServeObjectRequest(int clientId, string asset, out int objectId)
         {
             
             objectId = AddOwnedObject(clientId, asset);
@@ -492,6 +611,7 @@ namespace Game
         }
         SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
         /// <summary>
+        /// SERVER SIDE
         /// Server adds an object and associates it with its owning client
         /// </summary>
         /// <param name="clientId"></param>
@@ -515,6 +635,7 @@ namespace Game
 
         //SortedList<string, List<>
         /// <summary>
+        /// SERVER SIDE
         /// allows flexibility with that is added, accoding to the asset requested
         /// </summary>
         /// <param name="objectid"></param>
@@ -581,6 +702,12 @@ namespace Game
         {
             CallChatMessageReceived(s);
         }
+        /// <summary>
+        /// CLIENT SIDE
+        /// The client has received a response back from the server about the object the client requested
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="asset"></param>
         void commClient_ObjectRequestResponseReceived(int i, string asset)
         {
             // MINE!
@@ -588,18 +715,31 @@ namespace Game
             ProcessObjectRequestResponse(i, asset);
         }
 
+
+        /// <summary>
+        /// CLIENT SIDE 
+        /// This should be handled in the specific game, to do something game-specific, like adding a specific model by asset name.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="asset"></param>
         public virtual void ProcessObjectRequestResponse(int i, string asset)
         {
         }
+
+        /// <summary>
+        /// SERVER SIDE
+        /// Server has received a request for a new object from a client.
+        /// This is how a client requests an object it can "own"
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="asset"></param>
+        /// <param name="pos"></param>
+        /// <param name="orient"></param>
+        /// <param name="vel"></param>
         void commServer_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
-            if(!gameObjects.ContainsKey(id))
-                return;
-            Gobject go = gameObjects[id];
-            //go.Body.MoveTo(pos);
-            //go.SetPosition(pos);
-            go.SetOrientation(orient);
-            go.SetVelocity(vel);
+            physicsUpdateList.Add(new ObjectUpdatePacket(id, asset, pos, orient, vel));
+            
         }
 
         // COMMON
@@ -662,6 +802,7 @@ namespace Game
             
         }
         /// <summary>
+        /// SERVER SIDE
         /// the server received an object request
         /// </summary>
         /// <param name="clientId"></param>
@@ -669,7 +810,7 @@ namespace Game
         public virtual int ProcessObjectRequest(int clientId, string asset)
         {
             int objectId = -1;
-            ServerObjectRequest(clientId, asset, out objectId);
+            ServeObjectRequest(clientId, asset, out objectId);
             return objectId;
         }
         

@@ -34,7 +34,7 @@ namespace Physics.PhysicObjects
             Skin.ApplyLocalTransform(new JigLibX.Math.Transform(position, orientation));
             // we also need to move this dummy, so the object is *rendered* at the correct positiob
             Body.MoveTo(position, orientation);
-            CommonInit(position, new Vector3(1, 1, 1), model, false);
+            CommonInit(position, new Vector3(1, 1, 1), model, false, "");
         }
 
 

@@ -39,7 +39,7 @@ namespace Physics.PhysicsObjects
             Skin.AddPrimitive(new Heightmap(field, shift.X, shift.Y, heightMapInfo.terrainScale, heightMapInfo.terrainScale), new MaterialProperties(0.7f, 0.7f, 0.6f));
 
             PhysicsSystem.CurrentPhysicsSystem.CollisionSystem.AddCollisionSkin(Skin);
-            CommonInit(position, new Vector3(1,1,1), model, false);
+            CommonInit(position, new Vector3(1,1,1), model, false, "");
         }
         /*
         public override void ApplyEffects(BasicEffect effect)

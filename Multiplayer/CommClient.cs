@@ -86,7 +86,21 @@ namespace Multiplayer
                 ObjectResponsePacket corp = packet as ObjectResponsePacket;
                 CallObjectRequestResponseReceived(corp.ID, corp.AssetName);
             }
+            else if (packet is ObjectUpdatePacket)
+            {
+                ObjectUpdatePacket oup = packet as ObjectUpdatePacket;
+                CallObjectUpdateReceived(oup.objectId, oup.assetName, oup.position, oup.orientation, oup.velocity);
+            }
+
             
+        }
+
+        public event Helper.Handlers.ObjectUpdateEH ObjectUpdateReceived;
+        private void CallObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        {
+            if (ObjectUpdateReceived == null)
+                return;
+            ObjectUpdateReceived(id, asset, pos, orient, vel);
         }
 
         public event Helper.Handlers.ObjectRequestResponseEH ObjectRequestResponseReceived;

@@ -43,12 +43,12 @@ namespace Physics
         /// <param name="scale">Scale</param>
         /// <param name="primative">Primitive to add to Skin</param>
         /// <param name="prop">Material Properties of Primitive</param>
-        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialProperties prop, Model model)
+        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialProperties prop, Model model, string asset)
             : this()
         {
             Skin.AddPrimitive(primative, prop);
 
-            CommonInit(position, scale, model, true);
+            CommonInit(position, scale, model, true, asset);
         }
 
         /// <summary>
@@ -58,12 +58,12 @@ namespace Physics
         /// <param name="scale">Scale</param>
         /// <param name="primative">Primitive to add to Skin</param>
         /// <param name="propId">Predefined Material Properties of Primitive</param>
-        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialTable.MaterialID propId, Model model)
+        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialTable.MaterialID propId, Model model, string asset)
             : this()
         {
             Skin.AddPrimitive(primative, (int)propId);
 
-            CommonInit(position, scale, model, true);
+            CommonInit(position, scale, model, true, asset);
         }
 
         /// <summary>
@@ -74,16 +74,16 @@ namespace Physics
         /// <param name="scale">Scale</param>
         /// <param name="primatives">Primitives to add to Skin</param>
         /// <param name="props">Material Properties of Primitives to add</param>
-        public Gobject(Vector3 position, Vector3 scale, List<Primitive> primatives, List<MaterialProperties> props, Model model)
+        public Gobject(Vector3 position, Vector3 scale, List<Primitive> primatives, List<MaterialProperties> props, Model model, string asset)
             : this()
         {
             for (int i = 0; i < primatives.Count && i < props.Count; i++)
                 Skin.AddPrimitive(primatives[i], props[i]);
 
-            CommonInit(position, scale, model, true);
+            CommonInit(position, scale, model, true, asset);
         }
 
-        public Gobject(Vector3 position, Vector3 scale, Primitive primitive, Model model, bool moveable)
+        public Gobject(Vector3 position, Vector3 scale, Primitive primitive, Model model, bool moveable, string asset)
             : this()
         {
             
@@ -92,20 +92,22 @@ namespace Physics
                 Skin.AddPrimitive(primitive, (int)MaterialTable.MaterialID.NotBouncyNormal);
                 //CollisionSkin collision = new CollisionSkin(null);
                 //Skin.AddPrimitive(primitive, 2);
-                CommonInit(position, scale, model, moveable);
+                CommonInit(position, scale, model, moveable, asset);
                 //Body.CollisionSkin = collision;
             }
             catch (Exception E)
             {
             }
         }
-
-        internal void CommonInit(Vector3 pos, Vector3 scale, Model model, bool moveable)
+        public string Asset;
+        internal void CommonInit(Vector3 pos, Vector3 scale, Model model, bool moveable, string asset)
         {
             Position = pos;
             Scale = scale;
             Model = model;
             Body.Immovable = !moveable;
+            Asset = asset;
+            
             // MOVED TO BEFORE INTEGRATE
             //FinalizeBody();
         }
@@ -250,6 +252,13 @@ namespace Physics
         public void MoveTo(Vector3 pos, Matrix orient)
         {
             Body.MoveTo(pos, orient);
+        }
+        public bool isMoveable
+        {
+            get
+            {
+                return !Body.Immovable;
+            }
         }
 
         /// <summary>

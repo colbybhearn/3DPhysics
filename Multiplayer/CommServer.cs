@@ -59,13 +59,10 @@ namespace Multiplayer
 
         void tProcessClientsTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            
-
             foreach (ClientInfo ci in Clients.Values)
             {               
 
             }
-            
         }
 
 
@@ -122,6 +119,8 @@ namespace Multiplayer
 
         private void ProcessInputPacket(ClientPacketInfo cpi)
         {
+            if (cpi == null)
+                return;
             Packet packet = cpi.packet;
             if (packet is ClientInfoResponsePacket)
             {
@@ -207,8 +206,6 @@ namespace Multiplayer
             ObjectUpdateReceived(id, asset, pos, orient, vel);
         }
 
-
-
         public void SendChatPacket(string msg, string player)
         {
             BroadcastPacket(new ChatPacket(msg, "Someone Else"));
@@ -219,6 +216,11 @@ namespace Multiplayer
             if (!Clients.ContainsKey(clientid))
                 return;
             Clients[clientid].Send(new ObjectResponsePacket(objectId, asset));
+        }
+
+        public void BroadcastObjectUpdate(Packet p)
+        {
+            BroadcastPacket(p);
         }
     }
 }
