@@ -18,6 +18,7 @@ namespace Physics
         public Vector3 Position { get; internal set; }
         public Vector3 Scale { get; private set; }
         public bool Selected;
+        public Helper.Input.ActionManager actionManager = new Helper.Input.ActionManager();
 
         internal BasicEffect Effect { get; set; }
 
@@ -269,6 +270,11 @@ namespace Physics
         {
             Body.Velocity = vel;
             //Body.UpdateVelocity(vel.Length);
+        }
+
+        public void ProcessSimulatedInput(object[] actionvalues)
+        {
+            actionManager.ProcessActionValues(actionvalues);
         }
     }
 }

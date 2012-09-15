@@ -4,9 +4,14 @@ using System.Linq;
 //using System.Windows.Forms;
 using Microsoft.Xna.Framework.Input;
 
-
-//global :: using Microsoft.Xna.Framework.Input;
-//global::using Microsoft.Xna.Framework.Input.Keys;
+/* Keymapping
+         * Keep a list of possible bindings
+         * each binding has a name / purpose, and an assigned key.
+         * To set the binding, we need a special screen on which bindings are listed, input is monitored, and changes can be made.
+         * save the binding somewhere outside the solution, per game, per user.
+         * read in the binding per game, per user.
+         * 
+         */
 namespace Input
 {
     public enum InputMode

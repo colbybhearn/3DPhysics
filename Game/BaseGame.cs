@@ -17,35 +17,11 @@ namespace Game
 {
     public class BaseGame 
     {
-        /* Class should delegate most Game processing such as:
-         * content loading
-         * handling input
-         * updating physics
-         * drawing
-         */
-        // Both the client and server need the game
-        // Both the client and server's game can run physics
-        // The clients should correct objects based on what the server tells it
-        // Both the client and server need the communications package
-
-        /*
-         * Camera management?
-         * network management?
-         */
 
         #region Physics
         public Physics.PhysicsManager physicsManager;
         public static BaseGame Instance { get; private set; }
         #endregion
-
-        /* Keymapping
-         * Keep a list of possible bindings
-         * each binding has a name / purpose, and an assigned key.
-         * To set the binding, we need a special screen on which bindings are listed, input is monitored, and changes can be made.
-         * save the binding somewhere outside the solution, per game, per user.
-         * read in the binding per game, per user.
-         * 
-         */
 
         #region Content
         public ContentManager Content { get; private set; }
@@ -92,66 +68,9 @@ namespace Game
         #endregion
 
 
-        /*Vision statement for Multiplayer communication for physics
-         * 
-         * The scheme is:
-         *  - input information goes from client to the server in an ActionUpdatePacket
-         *  - physics information goes from the server to the client in an ObjectUpdatePacket
-         *  - client input shouln't impact the client-side physics
-         *  
-         *  - Gobject has an AssetName.
-         *  - Gobject has an actionManager
-         *  - ActionManager has a list of ActionBindings SortedList<string, ActionBinding>   by ActionAlias
-         *  - ActionManager has the list of ActionValues List<Object>
-         *  
-         * the ActionBinding datastructure associates each action alias with a delegate and indices to be access/set in the ActionValues list list which the action uses or requires
-         *  - an Action Binding has
-         *     - Alias
-         *     - Delegate
-         *     - Set of ActionValueIndices
-         * 
-         *   - there is a global list of ActionValues for current frame input.  List<object>
-         *   
-         *  
-         *  An Example
-         *   - user presses forward on client side
-         *   - car's setAcceleration method is called with the appropriate game-specific new values for acceleration
-         *   - there may need to be two version of that setAcceleration method
-         *     - one for accepting the ActionValues list when called as a delegate
-         *     - one for accepting game-specifc individual, strongly-typed parameters for a clean interface
-         *     - the generic, delegate version may call the strongly-typed version.
-         *   - update the ActionValues list based on this input
-         *   - set the InputApplied boolean to true
-         *   - Many updates may occur before an integration is done.
-         *   - Before client integration is done, a ActionUpdatePacket is sent for the car (if InputApplied is true)
-         *   - This ActionUpdatePacket includes the Gobject ID and all ActionValues 
-         *   - Client sends ActionUpdatePacket to the server
-         *   - Client proceeds with integration using the physics systems values that match the ActionValues
-         *   - Server receives ActionUpdatePacket
-         *   - Server queues the ActionUpdatePacket packet
-         *   - Before server integrates, ActionUpdatePackets are processed.
-         *   - Server calls Gobject.ActionManager.ProcessActionValues on the correct object and provides the ActionValues from the ActionUpdatePacket
-         *   - ProcessActionValues iterates through ActionBinding datastructure (this is why ActionManager exists, really)
-         *     - Call each delegate for each ActionAlias, using the ActionValues
-         *     - All the ActionValues provided in the ActionUpdatePacket get used in this way.
-         *     - Use a GetAliasDelegateValues() method to extract the appropriate ActionValues from the ActionValues list  (also a good reason for ActionManager!)
-         *     - this Delegate-specific ActionValue list (a subset of the full ActionValues list) is passed to the setAcceleration delegate
-         *   - The ActionDelegate assigns the physics system values based on the delegate specific ActionValues 
-         *      - (This is ServerSide, but the same method as above, about step 6)
-         *      - The delegate/generic setAcceleration() will accept the short List<object>, and call the specific setAcceleration() with appropriately casted parameters.
-         *      - The ActionValues have to be cast when passed to the specific setAcceleration method
-         *      - the InputApplied boolean doesn't mean anything for the server 
-         *        - this will be set because this method has double-duty, as it is used in the client from input and in the server for synchronization with client input
-         *   - Any number of ActionUpdatePackets for a single Gobject can be processed by the server before integration
-         *   - After server integration is done, an ObjectUpdatePacket is sent for the car to all clients (if the object is moveable)
-         *     - this ObjectUpdatePacket includes at least Position, Orientation, and Velocity 
-         *   - Client receive an ObjectUpdatePacket
-         *   - Client queue an ObjectUpdatePackets
-         *   - Before client Integration, process ObjectUpdatePacket queue
-         *     - use MoveTo, and other appropriate Gobject/JigLibX methods
-         *   - Do client Integration to apply the server's information.
-         *   - 
-         */
+
+
+        
 
 
         public Matrix view = Matrix.Identity;

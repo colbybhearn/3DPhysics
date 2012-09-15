@@ -77,6 +77,8 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Chat.cs" />
     <Compile Include="Handlers.cs" />
+    <Compile Include="Input\ActionBinding.cs" />
+    <Compile Include="Input\ActionManager.cs" />
     <Compile Include="MultiPlayerHelper.cs" />
     <Compile Include="Multiplayer\ClientInfo.cs" />
     <Compile Include="Multiplayer\ClientPacketInfo.cs" />
@@ -92,6 +94,11 @@
     <Compile Include="Multiplayer\ServerInfo.cs" />
     <Compile Include="Multiplayer\TcpEventClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Communication\" />
+    <Folder Include="Graphics\" />
+    <Folder Include="Physics\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

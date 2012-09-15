@@ -10,7 +10,6 @@ namespace Physics.PhysicsObjects
 {
     public class CarObject : Gobject
     {
-
         private Car car;
         private Model wheel;
 
@@ -44,8 +43,13 @@ namespace Physics.PhysicsObjects
             this.wheel = wheels;
             CommonInit(pos, new Vector3(1, 1, 1), model, true, asset);
             SetCarMass(100.1f);
-        }
 
+
+            actionManager.AddBinding(new Helper.Input.ActionBindingDelegate(GenericAcceleration), 1);
+            actionManager.AddBinding(new Helper.Input.ActionBindingDelegate(GenericSteering), 1);
+            actionManager.AddBinding(new Helper.Input.ActionBindingDelegate(GenericHandbrake), 1);
+        }
+        
         public override void FinalizeBody()
         {
             try
@@ -138,19 +142,33 @@ namespace Physics.PhysicsObjects
             car.SetupDefaultWheels();
         }
 
+        #region Input
+        public void GenericAcceleration(object[] vals)
+        {
+            SetAcceleration((float)vals[0]);
+        }
         public void SetAcceleration(float p)
         {
             car.Accelerate = p;
         }
 
+        public void GenericSteering(object[] vals)
+        {
+            SetSteering((float)vals[0]);
+        }
         public void SetSteering(float p)
         {
             car.Steer = p;
         }
 
+        public void GenericHandbrake(object[] vals)
+        {
+            setHandbrake((float)vals[0]);
+        }
         public void setHandbrake(float p)
         {
             car.HBrake = p;
         }
+        #endregion
     }
 }
