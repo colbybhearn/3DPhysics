@@ -91,9 +91,21 @@ namespace Multiplayer
                 ObjectUpdatePacket oup = packet as ObjectUpdatePacket;
                 CallObjectUpdateReceived(oup.objectId, oup.assetName, oup.position, oup.orientation, oup.velocity);
             }
-
-            
+            else if (packet is ObjectActionPacket)
+            {
+                ObjectActionPacket oap = packet as ObjectActionPacket;
+                CallObjectActionReceived(oap.objectId, oap.actionParameters);
+            }
         }
+
+        public event Helper.Handlers.ObjectActionEH ObjectActionReceived;
+        private void CallObjectActionReceived(int id, object[] parameters)
+        {
+            if (ObjectActionReceived == null)
+                return;
+            ObjectActionReceived(id, parameters);
+        }
+
 
         public event Helper.Handlers.ObjectUpdateEH ObjectUpdateReceived;
         private void CallObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
@@ -128,6 +140,7 @@ namespace Multiplayer
 
         public void SendChatPacket(string msg, string player)
         {
+            // TODO, fix
             client.Send(new ChatPacket(msg, "Someone Else"));
         }
 

@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using Physics;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System;
-using Microsoft.Xna.Framework;
-using Physics.PhysicsObjects;
-using Microsoft.Xna.Framework.Input;
 using System.Timers;
 using Helper;
-using Input;
-using Multiplayer;
 using Helper.Multiplayer.Packets;
+using Input;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Multiplayer;
+using Physics;
+using Physics.PhysicsObjects;
 
 namespace Game
 {
@@ -66,13 +66,7 @@ namespace Game
         public SortedList<int, Gobject> newObjects; // This member is accessed from multiple threads and needs to be locked
         public Gobject currentSelectedObject;
         #endregion
-
-
-
-
         
-
-
         public Matrix view = Matrix.Identity;
         public Matrix proj = Matrix.Identity;
         KeyMap keyMap;
@@ -117,7 +111,6 @@ namespace Game
             CommonInit(10, camUpdateInterval);
         }
 
-        
         private void CommonInit(double physicsUpdateInterval, double cameraUpdateInterval)
         {
             graphicsDevice = null;
@@ -142,7 +135,6 @@ namespace Game
             physicsManager.PostIntegrate += new Handlers.voidEH(physicsManager_PostIntegrate);
         }
 
-
         void physicsManager_PreIntegrate()
         {
             lock (gameObjects)
@@ -166,9 +158,6 @@ namespace Game
         {
             // body has multiple primitives
         }
-
-
-
 
         void tmrUpdateMultiplayer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -343,23 +332,27 @@ namespace Game
             return new KeyMap(this.name, GetDefaultKeyBindings());
         }
 
+        #region Camera Manipulation
         public void CameraMoveForward()
         {
             cam.MoveForward();
         }
+
         public void CameraMoveBackward()
         {
             cam.MoveBackward();
         }
+
         public void CameraMoveLeft()
         {
             cam.MoveLeft();
         }
+
         public void CameraMoveRight()
         {
             cam.MoveRight();
         }
-        
+
         public void CameraMoveSpeedIncrease()
         {
             cam.IncreaseSpeed();
@@ -394,7 +387,8 @@ namespace Game
                 default:
                     break;
             }
-        }
+        } 
+        #endregion
 
         public void ToggleDebugInfo()
         {
@@ -492,7 +486,6 @@ namespace Game
             physicsManager.SetSimFactor(value);
         }
 
-
         /// <summary>
         /// override SetNominalInputState to set nominal states (like zero acceleration on a car)
         /// </summary>
@@ -515,63 +508,6 @@ namespace Game
         {
             
         }
-        
-        /// <summary>
-        /// SERVER SIDE
-        /// Add the object being requested 
-        /// Reply to the client to let them know that their object was added, what ID it has, and what type of asset they originally requested.
-        /// </summary>
-        /// <param name="clientId"></param>
-        /// <param name="asset"></param>
-        /// <param name="objectId"></param>
-        public void ServeObjectRequest(int clientId, string asset, out int objectId)
-        {
-            
-            objectId = AddOwnedObject(clientId, asset);
-            commServer.SendObjectResponsePacket(clientId, objectId, asset);
-            
-        }
-        SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
-        /// <summary>
-        /// SERVER SIDE
-        /// Server adds an object and associates it with its owning client
-        /// </summary>
-        /// <param name="clientId"></param>
-        /// <param name="asset"></param>
-        /// <returns></returns>
-        private int AddOwnedObject(int clientId, string asset)
-        {
-            int objectid = GetAvailableObjectId();
-            // setup dual reference for flexible and speedy accesses, whether by objectID, or by clientId 
-            if (!ClientObjectIds.ContainsKey(clientId))
-                ClientObjectIds.Add(clientId, new List<int>());
-            // this is the list of objects owned by client ClientID
-            List<int> objects = ClientObjectIds[clientId];
-            objects.Add(objectid);
-            
-            AddNewObject(objectid, asset);
-
-            return objectid;
-        }
-
-
-        //SortedList<string, List<>
-        /// <summary>
-        /// SERVER SIDE
-        /// allows flexibility with that is added, accoding to the asset requested
-        /// </summary>
-        /// <param name="objectid"></param>
-        /// <param name="asset"></param>
-        /// <returns></returns>
-        public virtual void AddNewObject(int objectid, string asset)
-        {
-            // all we have here is the name.
-            // that tells us a model to load
-            // but we don't know the primitives or 
-            // if we were in CarObject, we would know the model, and have specific logic
-            
-        }
-        
 
         private int GetAvailableObjectId()
         {
@@ -590,6 +526,55 @@ namespace Game
 
         #region Communication Methods
 
+        #region Common to Server and Client
+
+        public virtual void InitializeMultiplayer(CommTypes CommType)
+        {
+            switch (CommType)
+            {
+                case CommTypes.Client:
+                    commClient.ChatMessageReceived += new Handlers.StringStringEH(commClient_ChatMessageReceived);
+                    commClient.ObjectRequestResponseReceived += new Handlers.ObjectRequestResponseEH(commClient_ObjectRequestResponseReceived);
+                    commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
+                    break;
+                case CommTypes.Server:
+                    commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
+                    commServer.ChatMessageReceived += new Handlers.StringStringEH(commServer_ChatMessageReceived);
+                    //commServer.ObjectRequestReceived += new Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
+                    commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
+                    commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // COMMON
+        private void CallChatMessageReceived(string msg, string player)
+        {
+            if (ChatMessageReceived == null)
+                return;
+            ChatMessageReceived(msg, player);
+        }
+        public virtual void ProcessChatMessage(string m, string p)
+        {
+        }
+        public void SendChatPacket(ChatMessage msg)
+        {
+            if (CommType == CommTypes.Client)
+            {
+                if (commClient != null)
+                    commClient.SendChatPacket(msg.Message, msg.Owner);
+            }
+            else
+            {
+                if (commServer != null)
+                    commServer.SendChatPacket(msg.Message, msg.Owner);
+            }
+        }
+        #endregion
+
+        #region Client Side
         // CLIENT only
         public virtual void ConnectToServer(string ip, int port, string alias)
         {
@@ -599,31 +584,21 @@ namespace Game
             commClient.Connect();
         }
 
-        public virtual void InitializeMultiplayer(CommTypes CommType)
-        {
-            switch (CommType)
-            {
-                case CommTypes.Client:
-                    commClient.ChatMessageReceived += new Handlers.StringStringEH(commClient_ChatMessageReceived);
-                    commClient.ObjectRequestResponseReceived += new Handlers.ObjectRequestResponseEH(commClient_ObjectRequestResponseReceived);
-                    break;
-                case CommTypes.Server:
-                    commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
-                    commServer.ChatMessageReceived += new Handlers.StringStringEH(commServer_ChatMessageReceived);
-                    //commServer.ObjectRequestReceived += new Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
-                    commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-
-        
         void commClient_ChatMessageReceived(string m, string p)
         {
             CallChatMessageReceived(m, p);
         }
+        /// <summary>
+        /// CLIENT SIDE
+        /// The client has received an Object Action packet and it needs to be processed
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="parameters"></param>
+        void commClient_ObjectActionReceived(int id, object[] parameters)
+        {
+            // TODO, fill in
+        }
+
         /// <summary>
         /// CLIENT SIDE
         /// The client has received a response back from the server about the object the client requested
@@ -637,7 +612,6 @@ namespace Game
             ProcessObjectRequestResponse(i, asset);
         }
 
-
         /// <summary>
         /// CLIENT SIDE 
         /// This should be handled in the specific game, to do something game-specific, like adding a specific model by asset name.
@@ -646,6 +620,76 @@ namespace Game
         /// <param name="asset"></param>
         public virtual void ProcessObjectRequestResponse(int i, string asset)
         {
+
+        } 
+        #endregion
+
+        #region Server Side
+
+        /// <summary>
+        /// SERVER SIDE
+        /// allows flexibility with that is added, accoding to the asset requested
+        /// </summary>
+        /// <param name="objectid"></param>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        public virtual void AddNewObject(int objectid, string asset)
+        {
+            // all we have here is the name.
+            // that tells us a model to load
+            // but we don't know the primitives or 
+            // if we were in CarObject, we would know the model, and have specific logic
+
+        }
+
+        /// <summary>
+        /// SERVER SIDE
+        /// Add the object being requested 
+        /// Reply to the client to let them know that their object was added, what ID it has, and what type of asset they originally requested.
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="asset"></param>
+        /// <param name="objectId"></param>
+        public void ServeObjectRequest(int clientId, string asset, out int objectId)
+        {
+
+            objectId = AddOwnedObject(clientId, asset);
+            commServer.SendObjectResponsePacket(clientId, objectId, asset);
+
+        }
+
+        SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
+        /// <summary>
+        /// SERVER SIDE
+        /// Server adds an object and associates it with its owning client
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        private int AddOwnedObject(int clientId, string asset)
+        {
+            int objectid = GetAvailableObjectId();
+            // setup dual reference for flexible and speedy accesses, whether by objectID, or by clientId 
+            if (!ClientObjectIds.ContainsKey(clientId))
+                ClientObjectIds.Add(clientId, new List<int>());
+            // this is the list of objects owned by client ClientID
+            List<int> objects = ClientObjectIds[clientId];
+            objects.Add(objectid);
+
+            AddNewObject(objectid, asset);
+
+            return objectid;
+        }
+
+        /// <summary>
+        /// SERVER SIDE
+        /// Server has received an Object Action packet and it should be processed
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="parameters"></param>
+        void commServer_ObjectActionReceived(int id, object[] parameters)
+        {
+            // TODO fill in
         }
 
         /// <summary>
@@ -661,31 +705,6 @@ namespace Game
         void commServer_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
             physicsUpdateList.Add(new ObjectUpdatePacket(id, asset, pos, orient, vel));
-            
-        }
-
-        // COMMON
-        private void CallChatMessageReceived(string msg, string player)
-        {
-            if (ChatMessageReceived == null)
-                return;
-             ChatMessageReceived(msg, player);
-        }
-        public virtual void ProcessChatMessage(string m, string p)
-        {
-        }
-        public void SendChatPacket(ChatMessage msg)
-        {
-            if (CommType == CommTypes.Client)
-            {
-                if (commClient != null)
-                    commClient.SendChatPacket(msg.Message, msg.Owner);
-            }
-            else
-            {
-                if(commServer != null)
-                    commServer.SendChatPacket(msg.Message, msg.Owner);
-            }
         }
 
         // SERVER only
@@ -695,11 +714,11 @@ namespace Game
             commServer = new CommServer(port);
             InitializeMultiplayer(CommType);
             commServer.Start();
-            
+
         }
         void commServer_ObjectRequestReceived(int clientId, string asset)
         {
-            
+
         }
         void commServer_ChatMessageReceived(string m, string p)
         {
@@ -711,7 +730,7 @@ namespace Game
         }
 
         public virtual void ProcessClientConnected(string msg)
-        {            
+        {
             CallClientConnected(msg);
         }
 
@@ -721,7 +740,7 @@ namespace Game
             if (ClientConnected == null)
                 return;
             ClientConnected(msg);
-            
+
         }
         /// <summary>
         /// SERVER SIDE
@@ -734,7 +753,8 @@ namespace Game
             int objectId = -1;
             ServeObjectRequest(clientId, asset, out objectId);
             return objectId;
-        }
+        } 
+        #endregion
         
         #endregion
     }

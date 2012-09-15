@@ -84,6 +84,7 @@
     <Compile Include="Multiplayer\ClientPacketInfo.cs" />
     <Compile Include="Multiplayer\Packets\ChatPacket.cs" />
     <Compile Include="Multiplayer\Packets\KeepAlivePacket.cs" />
+    <Compile Include="Multiplayer\Packets\ObjectActionPacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectRequestPacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectResponsePacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectUpdatePacket.cs" />

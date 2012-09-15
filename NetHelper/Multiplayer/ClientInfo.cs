@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
 using System.Net;
-using Helper.Multiplayer.Packets;
+using System.Net.Sockets;
 using System.Threading;
+using Helper.Multiplayer.Packets;
 
 namespace Helper.Multiplayer
 {

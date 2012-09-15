@@ -19,6 +19,7 @@ namespace Helper
         public delegate void ObjectRequestEH(int clientId, string asset);
         public delegate void ObjectRequestResponseEH(int objectId, string asset);
         public delegate void ObjectUpdateEH(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel);
+        public delegate void ObjectActionEH(int id, object[] parameters);
 
     }
 }

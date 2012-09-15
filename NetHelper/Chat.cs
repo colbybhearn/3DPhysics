@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Helper
 {
@@ -54,6 +52,10 @@ namespace Helper
         public bool Typing { get; set; } // If in type mode, display the chat box
         public Vector2 Position { get; set; }
 
+        /// <summary>
+        /// Default Chat Constructor
+        /// </summary>
+        /// <param name="font">Font used to draw the text</param>
         public Chat(SpriteFont font) : this(font, new Vector2(20, 100), 100, 25, 5) { }
 
         /// <summary>
