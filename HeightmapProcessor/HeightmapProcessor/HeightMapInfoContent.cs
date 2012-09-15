@@ -99,6 +99,8 @@ namespace HeightmapProcessor
         /// </summary>
         public override string GetRuntimeType(TargetPlatform targetPlatform)
         {
+
+            // class, namespace, 
             return "Helper.Physics.HeightMapInfo, " +
                 "Helper.Physics, Version=1.0.0.0, Culture=neutral";
         }
@@ -110,8 +112,11 @@ namespace HeightmapProcessor
         /// </summary>
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "Helper.Physics.HeightMapInfoReader, " +
-                "Helper.Physics, Version=1.0.0.0, Culture=neutral";
+            string name = typeof(Helper.Physics.HeightMapInfoReader).AssemblyQualifiedName;
+                 return name;
+            // class, assembly
+            /*return "Helper.Physics.HeightMapInfoReader, " +
+                "Helper, Version=1.0.0.0, Culture=neutral";*/
         }
     }
 }
