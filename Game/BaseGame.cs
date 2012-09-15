@@ -125,11 +125,11 @@ namespace Game
             tmrCamUpdate.AutoReset=true;
             tmrCamUpdate.Start();
 
-            tmrUpdateServer = new Timer();
-            tmrUpdateServer.Interval = 20;
-            tmrUpdateServer.Elapsed += new ElapsedEventHandler(tmrUpdateMultiplayer_Elapsed);
-            tmrUpdateServer.AutoReset = true;
-            tmrUpdateServer.Start();
+            //tmrUpdateServer = new Timer();
+            //tmrUpdateServer.Interval = 20;
+            //tmrUpdateServer.Elapsed += new ElapsedEventHandler(tmrUpdateMultiplayer_Elapsed);
+            //tmrUpdateServer.AutoReset = true;
+            //tmrUpdateServer.Start();
 
             physicsManager = new Physics.PhysicsManager(ref gameObjects, ref newObjects, physicsUpdateInterval);
             physicsManager.PreIntegrate += new Handlers.voidEH(physicsManager_PreIntegrate);
