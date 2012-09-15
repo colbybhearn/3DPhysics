@@ -234,6 +234,7 @@ namespace Game
                     myCar = physicsManager.GetCar(carModel, wheelModel);
                     myCar.ID = objectid;
                     physicsManager.AddNewObject(myCar);
+                    SelectGameObject(myCar);
                     break;
                 default:
                     break;
