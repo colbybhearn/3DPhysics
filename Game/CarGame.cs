@@ -52,7 +52,7 @@ namespace Game
             switch (CommType)
             {
                 case CommTypes.Client:
-                    commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
+                    //commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
                     break;
                 case CommTypes.Server:
                     commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
@@ -63,7 +63,7 @@ namespace Game
             }
 
         }
-
+        /*
         /// <summary>
         /// CLIENT SIDE
         /// Client has received an object update from the server
@@ -108,7 +108,7 @@ namespace Game
             //    go.MoveTo(pos, go.BodyOrientation());
             //    go.SetVelocity(vel);
             //}
-        }
+        }*/
 
         void commServer_ObjectRequestReceived(int clientId, string asset)
         {

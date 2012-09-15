@@ -153,5 +153,10 @@ namespace Multiplayer
         {
             client.Send(new ObjectUpdatePacket(id, string.Empty, pos, orient, vel));
         }
+
+        public void SendObjectAction(int id, object[] actionvals)
+        {
+            client.Send(new ObjectActionPacket(id, actionvals));
+        }
     }
 }

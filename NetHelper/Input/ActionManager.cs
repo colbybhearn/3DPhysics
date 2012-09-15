@@ -108,6 +108,7 @@ namespace Helper.Input
             {
                 indicies.Add(currDelegateArgIndex);
                 currDelegateArgIndex++;
+                ActionValues.Add((float)0);
             }
             int index = GetAvailableActionID();
             Bindings.Add(index, new ActionBinding(index, d, indicies));
@@ -145,6 +146,11 @@ namespace Helper.Input
             foreach (int index in ab.Indices)
                 values.Add(ActionValues[index]);
             return values.ToArray();
+        }
+
+        public object[] GetActionValues()
+        {
+            return ActionValues.ToArray();
         }
     }
 }

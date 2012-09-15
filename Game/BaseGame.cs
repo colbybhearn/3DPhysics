@@ -98,6 +98,7 @@ namespace Game
 
         #region Multiplayer
         public List<int> clientControlledObjects = new List<int>();
+        public List<object> MultiplayerUpdateQueue = new List<object>();
         #endregion
 
         public BaseGame()
@@ -137,26 +138,82 @@ namespace Game
 
         void physicsManager_PreIntegrate()
         {
-            lock (gameObjects)
+            if (CommType == CommTypes.Client)
             {
-                foreach (ObjectUpdatePacket p in physicsUpdateList)
+                lock (gameObjects)
                 {
-                    if (!gameObjects.ContainsKey(p.objectId))
-                        return;
-                    Gobject go = gameObjects[p.objectId];
+                    foreach (int i in clientControlledObjects)
+                    {
+                        if (!gameObjects.ContainsKey(i))
+                            continue;
+                        Gobject go = gameObjects[i];
+                        commClient.SendObjectAction(go.ID, go.actionManager.GetActionValues());
+                    }
+                }
 
-                    //go.SetOrientation(orient);
+                //MultiplayerUpdateQueue
+                while (MultiplayerUpdateQueue.Count > 0)
+                {
+                    ObjectUpdatePacket oup = MultiplayerUpdateQueue[0] as ObjectUpdatePacket;
+                    if (!gameObjects.ContainsKey(oup.objectId))
+                    {
+                        AddNewObject(oup.objectId, oup.assetName);
+                        continue;
+                    }
+                    Gobject go = gameObjects[oup.objectId];
+                    go.MoveTo(oup.position, oup.orientation);
+                    go.SetVelocity(oup.velocity);
+                    MultiplayerUpdateQueue.RemoveAt(0);
+                }
 
-                    go.SetVelocity(p.velocity);
-                    // angular velocity
-
+            }
+            else if (CommType == CommTypes.Server)
+            {
+                while (MultiplayerUpdateQueue.Count>0)
+                {
+                    ObjectActionPacket oap = MultiplayerUpdateQueue[0] as ObjectActionPacket;
+                    if (!gameObjects.ContainsKey(oap.objectId))
+                        continue;
+                    Gobject go = gameObjects[oap.objectId];
+                    go.actionManager.ProcessActionValues(oap.actionParameters);
+                    MultiplayerUpdateQueue.RemoveAt(0);
                 }
             }
+
+            //lock (gameObjects)
+            //{
+            //    foreach (ObjectUpdatePacket p in physicsUpdateList)
+            //    {
+            //        if (!gameObjects.ContainsKey(p.objectId))
+            //            return;
+            //        Gobject go = gameObjects[p.objectId];
+
+            //        //go.SetOrientation(orient);
+
+            //        go.SetVelocity(p.velocity);
+            //        // angular velocity
+
+            //    }
+            //}
         }
 
         void physicsManager_PostIntegrate()
         {
-            // body has multiple primitives
+            if (CommType == CommTypes.Client)
+            {
+                
+            }
+            else if (CommType == CommTypes.Server)
+            {
+                foreach(Gobject go in gameObjects.Values)
+                {
+                    if(!go.isMoveable)
+                        continue;
+
+                    ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
+                    commServer.BroadcastObjectUpdate(oup);
+                }
+            }
         }
 
         void tmrUpdateMultiplayer_Elapsed(object sender, ElapsedEventArgs e)
@@ -536,6 +593,7 @@ namespace Game
                     commClient.ChatMessageReceived += new Handlers.StringStringEH(commClient_ChatMessageReceived);
                     commClient.ObjectRequestResponseReceived += new Handlers.ObjectRequestResponseEH(commClient_ObjectRequestResponseReceived);
                     commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
+                    commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
                     break;
                 case CommTypes.Server:
                     commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
@@ -547,6 +605,11 @@ namespace Game
                 default:
                     break;
             }
+        }
+
+        void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        {
+            MultiplayerUpdateQueue.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel));
         }
 
         // COMMON
@@ -639,7 +702,6 @@ namespace Game
             // that tells us a model to load
             // but we don't know the primitives or 
             // if we were in CarObject, we would know the model, and have specific logic
-
         }
 
         /// <summary>
@@ -689,7 +751,7 @@ namespace Game
         /// <param name="parameters"></param>
         void commServer_ObjectActionReceived(int id, object[] parameters)
         {
-            // TODO fill in
+            MultiplayerUpdateQueue.Add(new ObjectActionPacket(id, parameters));
         }
 
         /// <summary>
