@@ -135,8 +135,7 @@ namespace Helper.Input
         /// <param name="actionVals"></param>
         public void ProcessActionValues(object[] actionVals)
         {
-            ActionValues.Clear();
-            ActionValues.AddRange(actionVals);
+            ActionValues = new List<object>(actionVals);
             foreach (ActionBinding ab in Bindings.Values)
                 ab.Callback(GetAliasDelegateValues(ab.ID));
         }
