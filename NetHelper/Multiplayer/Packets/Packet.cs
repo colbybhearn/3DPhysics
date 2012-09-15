@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Collections.Generic;
 
 namespace Helper.Multiplayer.Packets
 {
@@ -22,7 +22,7 @@ namespace Helper.Multiplayer.Packets
      *  - All done! Celebrate with some homework! =D
      * 
      * Notes:
-     *  - sc means server to client onlu
+     *  - sc means server to client only
      *  - cs means client to server only
      *  - binary serialization is used / automatically handled
      */
@@ -39,7 +39,9 @@ namespace Helper.Multiplayer.Packets
             csObjectUpdate,  // may not be needed, use scObjectUpdate
             scObjectUpdate,
             csObjectRequest,
-            scObjectResponse
+            scObjectResponse,
+            csObjectAction, // may not be needed either, cs and sc should handle action updates the same?
+            scObjectAction
         }
 
         public Types Type;

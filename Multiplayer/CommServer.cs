@@ -65,8 +65,6 @@ namespace Multiplayer
             }
         }
 
-
-
         public void Start()
         {
             ShouldBeRunning = true;
@@ -97,14 +95,6 @@ namespace Multiplayer
             ci.Send(cirp);
         }
 
-        void PacketReceived(int id, Packet p)
-        {
-            if (!Clients.ContainsKey(id))
-                return;
-            ClientInfo ci = Clients[id];
-            ClientPacketInfo cpi = new ClientPacketInfo(ref ci, p);
-            InputQueue.Enqueue(cpi);
-        }
 
         private void inputWorker()
         {
@@ -115,6 +105,17 @@ namespace Multiplayer
                     ProcessInputPacket(InputQueue.Dequeue());
                 }
             }
+        }
+
+        #region Packet Receiving
+
+        void PacketReceived(int id, Packet p)
+        {
+            if (!Clients.ContainsKey(id))
+                return;
+            ClientInfo ci = Clients[id];
+            ClientPacketInfo cpi = new ClientPacketInfo(ref ci, p);
+            InputQueue.Enqueue(cpi);
         }
 
         private void ProcessInputPacket(ClientPacketInfo cpi)
@@ -143,9 +144,22 @@ namespace Multiplayer
             else if (packet is ObjectUpdatePacket)
             {
                 ObjectUpdatePacket oup = packet as ObjectUpdatePacket;
-                CallObjectUpdateRecived(oup.objectId, oup.assetName, oup.position, oup.orientation, oup.velocity);
+                CallObjectUpdateReceived(oup.objectId, oup.assetName, oup.position, oup.orientation, oup.velocity);
+            }
+            else if (packet is ObjectActionPacket)
+            {
+                ObjectActionPacket oap = packet as ObjectActionPacket;
+                CallObjectActionReceived(oap.objectId, oap.actionParameters);
             }
             
+        }
+
+        public event Helper.Handlers.ObjectActionEH ObjectActionReceived;
+        private void CallObjectActionReceived(int id, object[] parameters)
+        {
+            if (ObjectActionReceived == null)
+                return;
+            ObjectActionReceived(id, parameters);
         }
 
         public event Helper.Handlers.ObjectRequestEH ObjectRequestReceived;
@@ -164,12 +178,6 @@ namespace Multiplayer
             ChatMessageReceived(msg, player);
         }
 
-        private void BroadcastPacket(Packet p)
-        {
-            foreach (ClientInfo ci in Clients.Values)
-                ci.Send(p);          
-        }
-
         public event Helper.Handlers.StringEH ClientConnected;
         private void CallClientConnected(string alias)
         {
@@ -178,32 +186,20 @@ namespace Multiplayer
             ClientConnected(alias);
         }
 
-        private int GetAvailableClientId()
-        {
-            int newId = 0;
-            bool found =true;
-            while(found)
-            {
-                newId++;
-                found = false;
-                foreach (ClientInfo ci in Clients.Values)
-                    if (ci.id == newId)
-                    {
-                        found = true;
-                        break;
-                    }
-            }
-            return newId;
-
-        }
-
-
         public event Helper.Handlers.ObjectUpdateEH ObjectUpdateReceived;
-        private void CallObjectUpdateRecived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        private void CallObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
             if (ObjectUpdateReceived == null)
                 return;
             ObjectUpdateReceived(id, asset, pos, orient, vel);
+        } 
+        #endregion
+
+        #region Packet Sending
+        private void BroadcastPacket(Packet p)
+        {
+            foreach (ClientInfo ci in Clients.Values)
+                ci.Send(p);
         }
 
         public void SendChatPacket(string msg, string player)
@@ -221,6 +217,25 @@ namespace Multiplayer
         public void BroadcastObjectUpdate(Packet p)
         {
             BroadcastPacket(p);
+        } 
+        #endregion
+
+        private int GetAvailableClientId()
+        {
+            int newId = 0;
+            bool found = true;
+            while (found)
+            {
+                newId++;
+                found = false;
+                foreach (ClientInfo ci in Clients.Values)
+                    if (ci.id == newId)
+                    {
+                        found = true;
+                        break;
+                    }
+            }
+            return newId;
         }
     }
 }
