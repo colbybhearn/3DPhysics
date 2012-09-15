@@ -33,6 +33,12 @@ namespace Physics.PhysicsObjects
             PhysicsSystem.CurrentPhysicsSystem.AddController(RotJetX);
             PhysicsSystem.CurrentPhysicsSystem.AddController(RotJetZ);
             PhysicsSystem.CurrentPhysicsSystem.AddController(RotJetY);
+
+            //actionManager.AddBinding(Actions.
+        }
+
+        public enum Actions
+        {
         }
 
         public void SetVertJetThrust(float percentThrust)

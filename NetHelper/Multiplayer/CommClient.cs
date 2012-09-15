@@ -55,7 +55,7 @@ namespace Helper.Multiplayer
 
         void PacketReceived(Helper.Multiplayer.Packets.Packet p)
         {
-            InputQueue.Enqueue(p);            
+            InputQueue.Enqueue(p);             
         }
 
         private void inputWorker()

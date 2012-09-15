@@ -99,6 +99,9 @@ namespace Helper.Communication
                 }
                 catch (Exception e)
                 {
+                    // 2012.09.15   Colby got the following exception (actually showed in commClient at "inputQueue.Enqueue(p)" )
+                    // couldn't reproduce that the time
+                    //Argument Excpetion: Source array was not long enough. Check srcIndex and length, and the array's lower bounds.
                     Debug.WriteLine(e.Message);
                 }
                 Thread.Sleep(10);
