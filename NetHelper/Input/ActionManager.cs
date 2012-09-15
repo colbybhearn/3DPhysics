@@ -105,7 +105,7 @@ namespace Helper.Input
                     return true;
                 for (int i = 0; i < ActionValues.Count; i++)
                 {
-                    if (ActionValues[i] != PreviousValues[i])
+                    if (!ActionValues[i].Equals(PreviousValues[i]))
                         return true;
                 }
                 return false;
@@ -150,7 +150,6 @@ namespace Helper.Input
         /// <param name="actionVals"></param>
         public void ProcessActionValues(object[] actionVals)
         {
-            PreviousValues = ActionValues;
             ActionValues = new List<object>(actionVals);
             foreach (ActionBinding ab in Bindings.Values)
                 ab.Callback(GetAliasDelegateValues(ab.ID));
@@ -184,6 +183,12 @@ namespace Helper.Input
             foreach (int index in ab.Indices)
                 ActionValues[index] = newValues[++currentNewValueIndex];
             
+        }
+
+        public void ValueSwap()
+        {
+            PreviousValues.Clear();
+            PreviousValues.AddRange(ActionValues.ToArray());
         }
     }
 }

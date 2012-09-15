@@ -149,13 +149,14 @@ namespace Game
                         Gobject go = gameObjects[i];
                         if (!go.actionManager.actionApplied)
                             continue;
-                        object[] vals = go.actionManager.GetActionValues();
                         
+                        object[] vals = go.actionManager.GetActionValues();
+                        go.actionManager.ValueSwap();
                         commClient.SendObjectAction(go.ID, vals);
                     }
                 }
 
-                System.Diagnostics.Trace.WriteLine("MultiplayerQueue:" + MultiplayerUpdateQueue.Count);
+                
                 //MultiplayerUpdateQueue
                 while (MultiplayerUpdateQueue.Count > 0)
                 {
@@ -184,22 +185,6 @@ namespace Game
                     MultiplayerUpdateQueue.RemoveAt(0);
                 }
             }
-
-            //lock (gameObjects)
-            //{
-            //    foreach (ObjectUpdatePacket p in physicsUpdateList)
-            //    {
-            //        if (!gameObjects.ContainsKey(p.objectId))
-            //            return;
-            //        Gobject go = gameObjects[p.objectId];
-
-            //        //go.SetOrientation(orient);
-
-            //        go.SetVelocity(p.velocity);
-            //        // angular velocity
-
-            //    }
-            //}
         }
 
         void physicsManager_PostIntegrate()
