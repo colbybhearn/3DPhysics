@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Physics.PhysicsObjects;
 using Helper;
 //using Input;
-using Physics;
 using Helper.Input;
+using Helper.Physics.PhysicsObjects;
+using Helper.Physics;
 
 namespace Game
 {

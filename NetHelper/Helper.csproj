@@ -112,11 +112,22 @@
     <Compile Include="Multiplayer\Packets\Packet.cs" />
     <Compile Include="Multiplayer\ServerInfo.cs" />
     <Compile Include="Communication\TcpEventClient.cs" />
+    <Compile Include="Physics\BoostController.cs" />
+    <Compile Include="Physics\Gobject.cs" />
+    <Compile Include="Physics\HeightMapInfo.cs" />
+    <Compile Include="Physics\PhysicObjects\CarObject.cs" />
+    <Compile Include="Physics\PhysicObjects\HeightmapObject.cs" />
+    <Compile Include="Physics\PhysicObjects\LunarVehicle.cs" />
+    <Compile Include="Physics\PhysicObjects\PhysicObject.cs" />
+    <Compile Include="Physics\PhysicObjects\PlaneObject.cs" />
+    <Compile Include="Physics\PhysicObjects\RagdollObject.cs" />
+    <Compile Include="Physics\PhysicObjects\TriangleMeshObject.cs" />
+    <Compile Include="Physics\PhysicsManager.cs" />
+    <Compile Include="Physics\Terrain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Graphics\" />
-    <Folder Include="Physics\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Input\KeyBindingControl.resx">
@@ -125,6 +136,12 @@
     <EmbeddedResource Include="Input\Settings.resx">
       <DependentUpon>Settings.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JigLibX 0.3.1\JigLibX\JigLibX.csproj">
+      <Project>{8A7CEF45-3501-491D-AEDA-0164060F5348}</Project>
+      <Name>JigLibX</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

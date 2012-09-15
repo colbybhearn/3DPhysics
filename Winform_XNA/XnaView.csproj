@@ -82,10 +82,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GamePhysics\Physics.csproj">
-      <Project>{557BDDF4-7ACB-45D7-8792-CC9F4FB760E3}</Project>
-      <Name>Physics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Game\Game.csproj">
       <Project>{5F52A970-F0E8-468F-BF24-20DC5E081C96}</Project>
       <Name>Game</Name>

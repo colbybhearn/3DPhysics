@@ -8,8 +8,7 @@ using JigLibX.Geometry;
 using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Physics;
-
+using Helper.Physics;
 
 namespace XnaView
 {
@@ -54,8 +53,8 @@ namespace XnaView
 
         #region Game
         private Stopwatch tmrDrawElapsed;
-        private SortedList<int, Physics.Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
-        private SortedList<int, Physics.Gobject> newObjects;
+        private SortedList<int, Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
+        private SortedList<int, Gobject> newObjects;
         Game.BaseGame game;
         #endregion
         
@@ -156,8 +155,9 @@ namespace XnaView
                         terrain.DrawWireframe(GraphicsDevice, v, p);*/
 
                 // SpriteBatch drawing!
+                /*
                 spriteBatch.Begin();
-
+                
                 game.Draw(spriteBatch);
 
                 if (Debug)
@@ -180,8 +180,9 @@ namespace XnaView
 
                     tmrDrawElapsed.Restart();
                 }
-
+                
                 spriteBatch.End();
+                 */
 
                 // Following 3 lines are to reset changes to graphics device made by spritebatch
                 GraphicsDevice.BlendState = BlendState.Opaque;

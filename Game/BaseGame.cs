@@ -10,8 +10,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Physics;
-using Physics.PhysicsObjects;
+using Helper.Physics;
+using Helper.Physics.PhysicsObjects;
 
 namespace Game
 {
@@ -24,7 +24,7 @@ namespace Game
     {
 
         #region Physics
-        public Physics.PhysicsManager physicsManager;
+        public PhysicsManager physicsManager;
         public static BaseGame Instance { get; private set; }
         #endregion
 
@@ -35,7 +35,7 @@ namespace Game
         Model staticFloatObjects;
         Model carModel, wheelModel;
         Texture2D moon;
-        Physics.Terrain terrain;
+        Terrain terrain;
         PlaneObject planeObj;
         #endregion
 
@@ -136,7 +136,7 @@ namespace Game
             //tmrUpdateServer.AutoReset = true;
             //tmrUpdateServer.Start();
 
-            physicsManager = new Physics.PhysicsManager(ref gameObjects, ref newObjects, physicsUpdateInterval);
+            physicsManager = new PhysicsManager(ref gameObjects, ref newObjects, physicsUpdateInterval);
             physicsManager.PreIntegrate += new Handlers.voidEH(physicsManager_PreIntegrate);
             physicsManager.PostIntegrate += new Handlers.voidEH(physicsManager_PostIntegrate);
         }

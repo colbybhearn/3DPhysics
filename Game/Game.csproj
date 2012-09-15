@@ -76,10 +76,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GamePhysics\Physics.csproj">
-      <Project>{557BDDF4-7ACB-45D7-8792-CC9F4FB760E3}</Project>
-      <Name>Physics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NetHelper\Helper.csproj">
       <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
       <Name>Helper</Name>
