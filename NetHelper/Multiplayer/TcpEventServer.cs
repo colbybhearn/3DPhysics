@@ -67,7 +67,7 @@ namespace Helper.Multiplayer
                         Socket socket = myListener.AcceptSocket();
                         CallClientAccepted(socket);
                     }
-                    Thread.Sleep(100);
+                    Thread.Sleep(10);
                 }
             }
             catch (Exception ex)

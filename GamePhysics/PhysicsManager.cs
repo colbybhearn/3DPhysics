@@ -63,19 +63,16 @@ namespace Physics
         void tmrPhysicsUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             //Add our new objects
-            lock (gameObjects)
-            {
-                FinalizeNewObjects();
+            FinalizeNewObjects();
 
-                CallPreIntegrate();
-                // Should use a variable timerate to keep up a steady "feel" if we bog down?
-                if (PhysicsEnabled)
-                {
-                    float step = (float)TIME_STEP * SimFactor;
-                    PhysicsSystem.CurrentPhysicsSystem.Integrate(step);
-                }
-                CallPostIntegrate();
+            CallPreIntegrate();
+            // Should use a variable timerate to keep up a steady "feel" if we bog down?
+            if (PhysicsEnabled)
+            {
+                float step = (float)TIME_STEP * SimFactor;
+                PhysicsSystem.CurrentPhysicsSystem.Integrate(step);
             }
+            CallPostIntegrate();
 
             //TODO: Add to the Camera Manager a way to 
             //cam.UpdatePosition(); // keep the camera moving towards its target position
@@ -101,13 +98,19 @@ namespace Physics
 
         private void FinalizeNewObjects()
         {
-            while (newObjects.Count > 0)
+            lock (gameObjects)
             {
-                // Remove from end of list so no shuffling occurs? (maybe)
-                int id = newObjects.Values[0].ID;
-                newObjects[id].FinalizeBody(); 
-                gameObjects.Add(newObjects[id].ID, newObjects[id]);
-                newObjects.Remove(id);
+                lock (newObjects)
+                {
+                    while (newObjects.Count > 0)
+                    {
+                        // Remove from end of list so no shuffling occurs? (maybe)
+                        int id = newObjects.Values[0].ID;
+                        newObjects[id].FinalizeBody();
+                        gameObjects.Add(newObjects[id].ID, newObjects[id]);
+                        newObjects.Remove(id);
+                    }
+                }
             }
         }
         public void ResetTimer()

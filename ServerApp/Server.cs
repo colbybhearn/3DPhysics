@@ -37,7 +37,7 @@ namespace ServerApp
             iBasePort = (int)numBasePort.Value;
             btnStopServer.Enabled = false;
             ProcessPacketTimer = new System.Windows.Forms.Timer(this.components);
-            ProcessPacketTimer.Interval = 200;
+            ProcessPacketTimer.Interval = 20;
             ProcessPacketTimer.Tick += new EventHandler(ProcessPacketsTimer_Tick);
             ProcessPacketTimer.Start();
             
