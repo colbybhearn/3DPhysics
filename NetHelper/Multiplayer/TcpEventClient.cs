@@ -17,10 +17,12 @@ namespace Helper.Multiplayer
         Thread readThread;
         bool ShouldBeRunning = false;
         NetworkStream stream;
+        Queue<byte[]> DataToSendQueue;
 
         public TcpEventClient()
         {
             readThread = new Thread(new ThreadStart(readWorker));
+            DataToSendQueue = new Queue<byte[]>();
 
         }
 
@@ -42,6 +44,7 @@ namespace Helper.Multiplayer
 
         private void readWorker()
         {
+            List<byte[]> dataToSend = new List<byte[]>();
             while (ShouldBeRunning)
             {
                 try
@@ -51,14 +54,14 @@ namespace Helper.Multiplayer
                         continue;
                     }
                     // if there are enough bytes to know how many bytes make the next packet,
-                    if (stream.DataAvailable)
+                    while (stream.DataAvailable)
                     {
 
                         //if(stream.
                         byte[] lenBytes = new byte[4];
                         // read in the packet length bytes (4 of them)
                         stream.Read(lenBytes, 0, 4);
-                        // convert the bytes into an integer 
+                        // convert the bytes into an integer
                         int length = BitConverter.ToInt32(lenBytes, 0);
                         if (length > 10000)
                             throw new FormatException("packet length is unreasonably long");
@@ -77,6 +80,15 @@ namespace Helper.Multiplayer
                             // hand the packet off and get back to work
                             CallPacketsReceived(p);
                     }
+
+                    dataToSend.Clear();
+                    lock (DataToSendQueue)
+                    {
+                        while (DataToSendQueue.Count > 0)
+                            dataToSend.Add(DataToSendQueue.Dequeue());
+                    }
+                    foreach(byte[] b in dataToSend)
+                        stream.Write(b, 0, b.Length);
                 }
                 catch (Exception e)
                 {
@@ -101,8 +113,8 @@ namespace Helper.Multiplayer
             if (stream == null)
                 return;
             byte[] data = packet.Serialize();
-            stream.Write(data, 0, data.Length);
-
+            //stream.Write(data, 0, data.Length);
+            DataToSendQueue.Enqueue(data);
         }
     }
 }

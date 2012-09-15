@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Helper.Multiplayer.Packets;
+using System.Collections.Generic;
 
 namespace Helper.Multiplayer
 {
@@ -26,6 +27,7 @@ namespace Helper.Multiplayer
 
         public ConnectionModes connectionMode;
         bool ShouldBeRunning = false;
+        Queue<byte[]> DataToSendQueue;
 
         public ClientInfo(int id, IPEndPoint ep, string alias, Socket s)
         {
@@ -34,6 +36,7 @@ namespace Helper.Multiplayer
             this.alias = alias;
             this.socket = s;
             connectionMode = ConnectionModes.Accepted;
+            DataToSendQueue = new Queue<byte[]>();
         }
 
         public void Start()
@@ -48,15 +51,19 @@ namespace Helper.Multiplayer
         }
 
         public void Send(Packet p)
-        { 
-            socket.Send(p.Serialize());            
+        {
+            lock (DataToSendQueue)
+            {
+                DataToSendQueue.Enqueue(p.Serialize());
+            }
+            //socket.SendAsync(p.Serialize());            
         }
 
         private void inputWorker()
         {
             int length = -1;
             byte[] lenBytes = new byte[4];
-
+            List<byte[]> dataToSend = new List<byte[]>();
             while (ShouldBeRunning)
             {
                 if (length == -1 && socket.Available>=4)
@@ -76,6 +83,15 @@ namespace Helper.Multiplayer
                         CallPacketReceived(p);
                     length = -1;
                 }
+
+                dataToSend.Clear();
+                lock (DataToSendQueue)
+                {
+                    while (DataToSendQueue.Count > 0)
+                        dataToSend.Add(DataToSendQueue.Dequeue());
+                }
+                foreach(byte[] b in dataToSend)
+                    socket.Send(b);
                 Thread.Sleep(10);
             }
         }

@@ -73,20 +73,21 @@ namespace Physics.PhysicsObjects
 
         private void DrawWheel(Wheel wh, bool rotated, Matrix View, Matrix Projection)
         {
+            float steer = wh.SteerAngle;
+
+            Matrix rot;
+            if (rotated) rot = Matrix.CreateRotationY(MathHelper.ToRadians(180.0f));
+            else rot = Matrix.Identity;
+
+            Matrix world = rot * Matrix.CreateRotationZ(MathHelper.ToRadians(-wh.AxisAngle)) * // rotate the wheels
+                        Matrix.CreateRotationY(MathHelper.ToRadians(steer)) *
+                        Matrix.CreateTranslation(wh.Pos + wh.Displacement * wh.LocalAxisUp) * car.Chassis.Body.Orientation * // oritentation of wheels
+                        Matrix.CreateTranslation(car.Chassis.Body.Position);
             foreach (ModelMesh mesh in wheel.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    float steer = wh.SteerAngle;
-
-                    Matrix rot;
-                    if (rotated) rot = Matrix.CreateRotationY(MathHelper.ToRadians(180.0f));
-                    else rot = Matrix.Identity;
-
-                    effect.World = rot * Matrix.CreateRotationZ(MathHelper.ToRadians(-wh.AxisAngle)) * // rotate the wheels
-                        Matrix.CreateRotationY(MathHelper.ToRadians(steer)) *
-                        Matrix.CreateTranslation(wh.Pos + wh.Displacement * wh.LocalAxisUp) * car.Chassis.Body.Orientation * // oritentation of wheels
-                        Matrix.CreateTranslation(car.Chassis.Body.Position); // translation
+                    effect.World = world; // translation
 
                     effect.View = View;
                     effect.Projection = Projection;

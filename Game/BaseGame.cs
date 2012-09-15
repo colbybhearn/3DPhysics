@@ -159,42 +159,45 @@ namespace Game
                         go.actionManager.ValueSwap();
                         commClient.SendObjectAction(go.ID, vals);
                     }
-                }
 
                 
-                //MultiplayerUpdateQueue
-                while (MultiplayerUpdateQueue.Count > 0)
-                {
-                    lock (MultiplayerUpdateQueue)
+                    //MultiplayerUpdateQueue
+                    while (MultiplayerUpdateQueue.Count > 0)
                     {
-                        ObjectUpdatePacket oup = MultiplayerUpdateQueue[0] as ObjectUpdatePacket;
-
-                        if (!gameObjects.ContainsKey(oup.objectId))
+                        lock (MultiplayerUpdateQueue)
                         {
-                            AddNewObject(oup.objectId, oup.assetName);
+                            ObjectUpdatePacket oup = MultiplayerUpdateQueue[0] as ObjectUpdatePacket;
+
+                            if (!gameObjects.ContainsKey(oup.objectId))
+                            {
+                                AddNewObject(oup.objectId, oup.assetName);
+                                MultiplayerUpdateQueue.RemoveAt(0);
+                                continue;
+                            }
+                            Gobject go = gameObjects[oup.objectId];
+                            go.MoveTo(oup.position, oup.orientation);
+                            go.SetVelocity(oup.velocity);
                             MultiplayerUpdateQueue.RemoveAt(0);
-                            continue;
                         }
-                        Gobject go = gameObjects[oup.objectId];
-                        go.MoveTo(oup.position, oup.orientation);
-                        go.SetVelocity(oup.velocity);
-                        MultiplayerUpdateQueue.RemoveAt(0);
                     }
                 }
 
             }
             else if (CommType == CommTypes.Server)
             {
-                lock (MultiplayerUpdateQueue)
+                lock (gameObjects)
                 {
-                    while (MultiplayerUpdateQueue.Count > 0)
+                    lock (MultiplayerUpdateQueue)
                     {
-                        ObjectActionPacket oap = MultiplayerUpdateQueue[0] as ObjectActionPacket;
-                        if (!gameObjects.ContainsKey(oap.objectId))
-                            continue;
-                        Gobject go = gameObjects[oap.objectId];
-                        go.actionManager.ProcessActionValues(oap.actionParameters);
-                        MultiplayerUpdateQueue.RemoveAt(0);
+                        while (MultiplayerUpdateQueue.Count > 0)
+                        {
+                            ObjectActionPacket oap = MultiplayerUpdateQueue[0] as ObjectActionPacket;
+                            if (!gameObjects.ContainsKey(oap.objectId))
+                                continue;
+                            Gobject go = gameObjects[oap.objectId];
+                            go.actionManager.ProcessActionValues(oap.actionParameters);
+                            MultiplayerUpdateQueue.RemoveAt(0);
+                        }
                     }
                 }
             }
@@ -208,13 +211,16 @@ namespace Game
             }
             else if (CommType == CommTypes.Server)
             {
-                foreach(Gobject go in gameObjects.Values)
+                lock (gameObjects)
                 {
-                    if(!go.isMoveable)
-                        continue;
+                    foreach (Gobject go in gameObjects.Values)
+                    {
+                        if (!go.isMoveable)
+                            continue;
 
-                    ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
-                    commServer.BroadcastObjectUpdate(oup);
+                        ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
+                        commServer.BroadcastObjectUpdate(oup);
+                    }
                 }
             }
         }
