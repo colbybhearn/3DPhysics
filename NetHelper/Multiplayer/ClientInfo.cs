@@ -34,7 +34,6 @@ namespace Helper.Multiplayer
             this.alias = alias;
             this.socket = s;
             connectionMode = ConnectionModes.Accepted;
-            
         }
 
         public void Start()

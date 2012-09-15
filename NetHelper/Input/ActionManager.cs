@@ -94,8 +94,23 @@ namespace Helper.Input
     public class ActionManager
     {
         SortedList<int, ActionBinding> Bindings = new SortedList<int, ActionBinding>();
-        List<object> ActionValues = new List<object>();
+        public List<object> ActionValues = new List<object>();
+        public List<object> PreviousValues = new List<object>();
         private int currDelegateArgIndex = 0;
+        public bool actionApplied
+        {
+            get
+            {
+                if (ActionValues.Count != PreviousValues.Count)
+                    return true;
+                for (int i = 0; i < ActionValues.Count; i++)
+                {
+                    if (ActionValues[i] != PreviousValues[i])
+                        return true;
+                }
+                return false;
+            }
+        }
 
         public ActionManager()
         {
@@ -135,6 +150,7 @@ namespace Helper.Input
         /// <param name="actionVals"></param>
         public void ProcessActionValues(object[] actionVals)
         {
+            PreviousValues = ActionValues;
             ActionValues = new List<object>(actionVals);
             foreach (ActionBinding ab in Bindings.Values)
                 ab.Callback(GetAliasDelegateValues(ab.ID));

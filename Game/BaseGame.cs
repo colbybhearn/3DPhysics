@@ -147,14 +147,15 @@ namespace Game
                         if (!gameObjects.ContainsKey(i))
                             continue;
                         Gobject go = gameObjects[i];
+                        if (!go.actionManager.actionApplied)
+                            continue;
                         object[] vals = go.actionManager.GetActionValues();
-                        if ((float)vals[0] >.1f)
-                        {
-                        }
+                        
                         commClient.SendObjectAction(go.ID, vals);
                     }
                 }
 
+                System.Diagnostics.Trace.WriteLine("MultiplayerQueue:" + MultiplayerUpdateQueue.Count);
                 //MultiplayerUpdateQueue
                 while (MultiplayerUpdateQueue.Count > 0)
                 {
