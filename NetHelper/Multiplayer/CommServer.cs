@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-using Helper.Multiplayer;
+﻿using System.Collections.Generic;
 using System.Net;
-using Helper.Multiplayer.Packets;
+using System.Net.Sockets;
 using System.Threading;
+using Helper.Communication;
+using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework;
 
-namespace Multiplayer
+namespace Helper.Multiplayer
 {
     /*Vision
      * this will have a game
@@ -35,7 +32,7 @@ namespace Multiplayer
         
         // list of client information with socket to communicate back
         SortedList<int, ClientInfo> Clients = new SortedList<int, ClientInfo>();
-        TcpEventServer listener;
+        TcpEventServer tcpServer;
         private System.Timers.Timer tmrUpdateClients;
         Queue<ClientPacketInfo> InputQueue = new Queue<ClientPacketInfo>();
         Thread inputThread;
@@ -48,9 +45,9 @@ namespace Multiplayer
             IPAddress[] ips = ipEntry.AddressList;
             string ip = ips[0].ToString();
 
-            listener = new TcpEventServer(ip, lobbyport);
+            tcpServer = new TcpEventServer(ip, lobbyport);
             
-            listener.ClientAccepted += new TcpEventServer.ClientAcceptedEventHandler(listener_ClientAccepted);
+            tcpServer.ClientAccepted += new TcpEventServer.ClientAcceptedEventHandler(listener_ClientAccepted);
 
             tmrUpdateClients = new System.Timers.Timer();
             tmrUpdateClients.Interval = 200;
@@ -68,7 +65,7 @@ namespace Multiplayer
         public void Start()
         {
             ShouldBeRunning = true;
-            listener.Start();
+            tcpServer.Start();
             tmrUpdateClients.Start();
             inputThread = new Thread(new ThreadStart(inputWorker));
             inputThread.Start();
@@ -77,7 +74,7 @@ namespace Multiplayer
         public void Stop()
         {
             ShouldBeRunning = false;
-            listener.Stop();
+            tcpServer.Stop();
             tmrUpdateClients.Stop();            
             foreach (ClientInfo ci in Clients.Values)
                 ci.Stop();

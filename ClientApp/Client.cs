@@ -1,21 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Net;
-using System.Net.Sockets;
-using System.IO;
-using System.Threading;
-using MultiplayerHelper;
-using System.Diagnostics;
-using Microsoft.Xna.Framework.Graphics;
+using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework.Input;
-using Multiplayer;
-
 
 namespace ClientApp
 {
@@ -63,15 +51,10 @@ namespace ClientApp
             iPort = (int)numLobbyPort.Value;
             tStatus.Start();
             btnDisconnect.Enabled = false;
-            btnSendChat.Enabled = false;
-                        
-            ProcessPacketTimer = new System.Windows.Forms.Timer(this.components);
-            ProcessPacketTimer.Interval = 100;
-            ProcessPacketTimer.Tick += new EventHandler(ProcessPacketTimer_Tick);
-            ProcessPacketTimer.Start();
 
             // Create an instance of the game
             game = new Game.CarGame();
+            //game.ClientDisconnected+=new Helper.Handlers.StringEH(game_ClientDisconnected);
             // Give the xna panel a reference to game.
             // Xna Panel will initialize the game with its graphicsDevice the moment it is ready.
             AddXnaPanel(ref game);
@@ -84,7 +67,7 @@ namespace ClientApp
         }
 
         private void InitializeScene()
-        {            
+        {
         }
 
         private void AddXnaPanel(ref Game.BaseGame game)
@@ -114,67 +97,18 @@ namespace ClientApp
 
         #endregion
 
-        private void ProcessClientGUIPackets()
-        {
-            if (InputQueue.Count > 0)
-            {
-                if (InputQueue.Peek().type == Packet.pType.TO_CLIENT_GUI)
-                {
-                    Packet p = InputQueue.Dequeue();
-                    Debug.WriteLine("Client GUI Heard: "+p.ToString());
-                    switch (p.info)
-                    {
-                        case Packet.pInfo.CLIENT_LIST_REFRESH:
-                            int iClients = Convert.ToInt32(p.GetFieldValue("CLIENT COUNT"));
-
-                            //lvClients.Clear();
-                            //for (int i = 0; i < iClients; i++)
-                                //lvClients.Items.Add(p.GetFieldValue("CLIENT ALIAS "+i.ToString()));
-                            break;
-                        case Packet.pInfo.STATUS_MESSAGE:
-                            toolStripStatus.Text = p.GetFieldValue("STATUS MESSAGE");
-                            break;
-                        case Packet.pInfo.CONNECTION_INFO:
-                            this.sKey = p.sClientTarget;
-                            break;
-                        case Packet.pInfo.CHAT_MESSAGE:
-                            this.txtChatBox.Text += p.GetFieldValue("CHAT MESSAGE") + Convert.ToChar(13) + Convert.ToChar(10);
-                            this.txtChatBox.Select(txtChatBox.Text.Length - 2, 1);
-                            this.txtChatBox.ScrollToCaret();
-                            break;
-                        case Packet.pInfo.NEW_GAME:
-                            MultiplayerHelper.Game g = new MultiplayerHelper.Game(p.GetFieldValue("GAME KEY"), p.GetFieldValue("GAME NAME"));
-                            ActiveGames.Add(g);
-                            //lvActiveGames.Items.Add(g.m_Name);
-                            break;
-                    }
-                }
-            }
-        }
+        
 
         #region Form Event Handlers
 
         
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            game.ConnectToServer(txtIPAddress.Text, iPort, txtAlias.Text);
-            /*
-            cHelper = new ClientHelper.ClientHelper(InputQueue,OutputQueue,txtIPAddress.Text, iPort);
-            btnConnect.Enabled = false;
-            btnDisconnect.Enabled = true;
-            cHelper.Connect(txtAlias.Text);*/
-        }
-
-        void commClient_ChatMessageReceived(string s)
-        {
-            if (InvokeRequired)
+            if (game.ConnectToServer(txtIPAddress.Text, iPort, txtAlias.Text))
             {
-                this.Invoke(new Helper.Handlers.StringEH(commClient_ChatMessageReceived), new object[] { s });
-                return;
+                btnConnect.Enabled = false;
+                btnDisconnect.Enabled = true;
             }
-            txtChatBox.Text += s + Convert.ToChar(13) + Convert.ToChar(10);
-            txtChatBox.Select(txtChatBox.Text.Length - 2, 1);
-            txtChatBox.ScrollToCaret();
         }
 
         private void Client_Load(object sender, EventArgs e)
@@ -190,80 +124,22 @@ namespace ClientApp
         {
             btnConnect.Enabled = true;
             btnDisconnect.Enabled = false;
-            // TODO: Add disconnect
-            //cHelper.Disconnect();
+            game.ClientDisconnect();
         }
 
-        private void btnSendChat_Click(object sender, EventArgs e)
-        {/*
-            string s = txtAlias.Text + ": " + txtChat.Text;
-            cHelper.SendChatMessage(s);
-            txtChat.Text = "";
-            txtChatBox.Text += s + Convert.ToChar(13) + Convert.ToChar(10);
-            txtChatBox.Select(txtChatBox.Text.Length - 2, 1);
-            txtChatBox.ScrollToCaret();
-            btnSendChat.Enabled = false;
-            */
-            //game.SendChatPacket(txtChat.Text);
-            txtChat.Text = "";
-        }
-
-        private void txtChat_TextChanged(object sender, EventArgs e)
-        {
-            if(txtChat.Text=="")
-                btnSendChat.Enabled = false;
-            else
-                btnSendChat.Enabled = true;
-        }
-
-        private void txtAlias_TextChanged(object sender, EventArgs e)
-        {
-            tAliasChange.Start();
-        }
         
-        private void txtChat_KeyPress(object sender, KeyPressEventArgs e)
-        {            
-            if (e.KeyChar == 13)
-            {
-                btnSendChat_Click(null, null);
-                e.Handled = true;
-            }
-        }
-
-        private void Client_FormClosed(object sender, FormClosedEventArgs e)
+        private void ClientApp_MainFormClosed(object sender, FormClosedEventArgs e)
         {
+            Properties.Settings.Default.Save();
+            game.Stop();
         }
 
         #endregion
 
         #region Timer Ticks
-
-        void ProcessPacketTimer_Tick(object sender, EventArgs e)
-        {
-            ProcessClientGUIPackets();
-            ProcessPacketTimer.Start();
-        }
-
         public void SendPacketToServer(Packet p)
         {
             OutputQueue.Enqueue(p);
-        }
-
-        private void tAliasChange_Tick(object sender, EventArgs e)
-        {
-            /*if(cHelper!=null)
-            if (cHelper.isConnected())
-            {
-                StatusMsgQueue.Enqueue("Sending New Alias");
-                Packet p = new Packet(Packet.pType.TO_SERVER,
-                    Packet.pInfo.ALIAS_CHANGE,
-                    Packet.pDelivery.BROADCAST_OTHERS,
-                    this.sKey,
-                    "");
-                p.AddFieldValue("ALIAS",txtAlias.Text);
-                OutputQueue.Enqueue(p);
-                tAliasChange.Stop();
-            }*/
         }
 
         private void tStatus_Tick(object sender, EventArgs e)
@@ -271,14 +147,7 @@ namespace ClientApp
             tStatus.Stop();
             if (StatusMsgQueue.Count > 0)
                 toolStripStatus.Text = StatusMsgQueue.Dequeue();
-            /*else if (cHelper!=null)
-            {
-                if(cHelper.isConnected())
-                    toolStripStatus.Text = "Connected";
-                else
-                    StatusMsgQueue.Enqueue("Disconnected");
             
-            }*/
             tStatus.Start();
         }
 
@@ -288,29 +157,6 @@ namespace ClientApp
         {
             e.Handled = true;
         }
-
-        private void lvGameList_DragDrop(object sender, DragEventArgs e)
-        {
-            //e.Effect = DragDropEffects.Move;
-            //e.Data.GetData(System.Windows.Forms.DataFormats.FileDrop, true);
-        }
-
-        private void btnStartGame_Click(object sender, EventArgs e)
-        {
-            /*
-            MultiplayerHelper.Game g = new MultiplayerHelper.Game(lvGameList.SelectedItems[lvGameList.SelectedIndices[0]].Text);
-
-            Packet p = new Packet(Packet.pType.TO_SERVER,
-                Packet.pInfo.NEW_GAME,
-                Packet.pDelivery.TARGETED,
-                this.sKey,
-                "SERVER");
-
-            p.AddFieldValue("GAME KEY",g.m_Key);
-            p.AddFieldValue("GAME NAME",g.m_Name);
-            SendPacketToServer(p);*/
-        }
-
 
 
         #region Mouse Input
@@ -344,6 +190,5 @@ namespace ClientApp
         {
             game.EditSettings();
         }
-                      
     }
 }

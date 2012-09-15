@@ -67,6 +67,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -79,27 +80,51 @@
     <Compile Include="Handlers.cs" />
     <Compile Include="Input\ActionBinding.cs" />
     <Compile Include="Input\ActionManager.cs" />
-    <Compile Include="MultiPlayerHelper.cs" />
+    <Compile Include="Input\InputManager.cs" />
+    <Compile Include="Input\KeyBinding.cs" />
+    <Compile Include="Input\KeyBindingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Input\KeyBindingControl.Designer.cs">
+      <DependentUpon>KeyBindingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Input\KeyMap.cs" />
+    <Compile Include="Input\Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Input\Settings.Designer.cs">
+      <DependentUpon>Settings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Multiplayer\ClientInfo.cs" />
     <Compile Include="Multiplayer\ClientPacketInfo.cs" />
+    <Compile Include="Multiplayer\CommClient.cs" />
+    <Compile Include="Multiplayer\CommServer.cs" />
     <Compile Include="Multiplayer\Packets\ChatPacket.cs" />
+    <Compile Include="Multiplayer\Packets\ClientDisconnectPacket.cs" />
     <Compile Include="Multiplayer\Packets\KeepAlivePacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectActionPacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectRequestPacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectResponsePacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectUpdatePacket.cs" />
-    <Compile Include="Multiplayer\TcpEventServer.cs" />
+    <Compile Include="Communication\TcpEventServer.cs" />
     <Compile Include="Multiplayer\Packets\ClientInfoRequestPacket.cs" />
     <Compile Include="Multiplayer\Packets\ClientInfoResponsPacket.cs" />
     <Compile Include="Multiplayer\Packets\Packet.cs" />
     <Compile Include="Multiplayer\ServerInfo.cs" />
-    <Compile Include="Multiplayer\TcpEventClient.cs" />
+    <Compile Include="Communication\TcpEventClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Communication\" />
     <Folder Include="Graphics\" />
     <Folder Include="Physics\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Input\KeyBindingControl.resx">
+      <DependentUpon>KeyBindingControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Input\Settings.resx">
+      <DependentUpon>Settings.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

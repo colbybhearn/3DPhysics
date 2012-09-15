@@ -190,7 +190,8 @@ namespace XnaView
             }
             catch (Exception e)
             {
-                System.Console.WriteLine(e.Message);
+                //System.Console.WriteLine(e.Message);
+                System.Diagnostics.Debug.WriteLine(e.Message);
             }
         }
         private Vector2 DebugShowVector(SpriteBatch sb, SpriteFont font, Vector2 p, string s, Vector3 vector)

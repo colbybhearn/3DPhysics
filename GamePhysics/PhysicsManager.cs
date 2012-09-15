@@ -225,5 +225,13 @@ namespace Physics
         {
             SimFactor = value;
         }
+
+        public void Stop()
+        {
+            if(tmrPhysicsElapsed!=null)
+                tmrPhysicsElapsed.Stop();
+            if(tmrPhysicsUpdate!=null)
+                tmrPhysicsUpdate.Stop();
+        }
     }
 }

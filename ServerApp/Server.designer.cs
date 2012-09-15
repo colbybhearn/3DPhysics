@@ -46,7 +46,6 @@ namespace ServerApp
             this.label5 = new System.Windows.Forms.Label();
             this.tbStep = new System.Windows.Forms.TrackBar();
             this.spMain = new System.Windows.Forms.SplitContainer();
-            this.txtChatLog = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBasePort)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -89,7 +88,7 @@ namespace ServerApp
             // 
             this.lstClients.Location = new System.Drawing.Point(9, 216);
             this.lstClients.Name = "lstClients";
-            this.lstClients.Size = new System.Drawing.Size(176, 67);
+            this.lstClients.Size = new System.Drawing.Size(127, 137);
             this.lstClients.TabIndex = 18;
             this.lstClients.UseCompatibleStateImageBehavior = false;
             this.lstClients.View = System.Windows.Forms.View.List;
@@ -220,7 +219,6 @@ namespace ServerApp
             // 
             // spMain.Panel1
             // 
-            this.spMain.Panel1.Controls.Add(this.txtChatLog);
             this.spMain.Panel1.Controls.Add(this.btnStartServer);
             this.spMain.Panel1.Controls.Add(this.label5);
             this.spMain.Panel1.Controls.Add(this.label2);
@@ -234,19 +232,8 @@ namespace ServerApp
             this.spMain.Panel1.Controls.Add(this.numLobbyPort);
             this.spMain.Panel1.Controls.Add(this.numBasePort);
             this.spMain.Size = new System.Drawing.Size(763, 517);
-            this.spMain.SplitterDistance = 205;
+            this.spMain.SplitterDistance = 171;
             this.spMain.TabIndex = 29;
-            // 
-            // txtChatLog
-            // 
-            this.txtChatLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtChatLog.Location = new System.Drawing.Point(3, 354);
-            this.txtChatLog.Multiline = true;
-            this.txtChatLog.Name = "txtChatLog";
-            this.txtChatLog.Size = new System.Drawing.Size(199, 160);
-            this.txtChatLog.TabIndex = 29;
             // 
             // Server
             // 
@@ -258,7 +245,7 @@ namespace ServerApp
             this.MinimumSize = new System.Drawing.Size(337, 264);
             this.Name = "Server";
             this.Text = "WinPhysiX Server";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ServerApp_MainFormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBasePort)).EndInit();
             this.statusStrip1.ResumeLayout(false);
@@ -291,7 +278,6 @@ namespace ServerApp
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TrackBar tbStep;
         private System.Windows.Forms.SplitContainer spMain;
-        private System.Windows.Forms.TextBox txtChatLog;
     }
 }
 

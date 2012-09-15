@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Helper.Multiplayer;
 using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework;
-using Helper;
+using Helper.Communication;
 
-
-namespace Multiplayer
+namespace Helper.Multiplayer
 {
     public class CommClient
     {
         public int iPort;
         public string sAlias;
         IPAddress a;
-        TcpEventClient client;
+        Helper.Communication.TcpEventClient client;
         ServerInfo Server;
         bool ShouldBeRunning = false;
         Queue<Packet> InputQueue = new Queue<Packet>();
@@ -24,7 +22,6 @@ namespace Multiplayer
 
         public CommClient(string ip, int port, string alias)
         {
-            
             if (!IPAddress.TryParse(ip, out a))
                 throw new ArgumentException("Unparsable IP");
             
@@ -33,9 +30,10 @@ namespace Multiplayer
             Server = new ServerInfo(new IPEndPoint(a, iPort));
         }
 
-        public void Connect()
+        public bool Connect()
         {
             Debug.WriteLine("Client: Connection " + Server.endPoint.Address.ToString() + " " + iPort);
+            bool connected = false;
             try
             {
                 ShouldBeRunning = true;
@@ -44,12 +42,15 @@ namespace Multiplayer
                 client = new TcpEventClient();
                 client.Connect(Server.endPoint);
                 client.PacketReceived += new Helper.Handlers.PacketReceivedEH(PacketReceived);
+                connected = true;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Error..... " + ex.Message);
+                Debug.WriteLine("Comm Client Error..... " + ex.Message);
+                connected = false;
             }
 
+            return connected;
         }
 
         void PacketReceived(Helper.Multiplayer.Packets.Packet p)

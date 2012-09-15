@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Physics.PhysicsObjects;
 using Helper;
-using Input;
+//using Input;
 using Physics;
+using Helper.Input;
 
 namespace Game
 {
@@ -122,32 +123,32 @@ namespace Game
 
         public override void InitializeInputs()
         {
-            inputManager = new Input.InputManager(this.name, GetDefaultKeyMap());
+            inputManager = new InputManager(this.name, GetDefaultKeyMap());
 
-            inputManager.AddInputMode(InputMode.Chat, (Input.ChatDelegate)ChatCallback);
+            inputManager.AddInputMode(InputMode.Chat, (ChatDelegate)ChatCallback);
         }
 
         public override List<KeyBinding> GetDefaultKeyBindings()
         {
             List<KeyBinding> defaults = base.GetDefaultKeyBindings();
             // Car
-            defaults.Add(new KeyBinding("CarAccelerate", Keys.Up, false, false, false, Input.KeyEvent.Down, Accelerate));
-            defaults.Add(new KeyBinding("CarSteerLeft", Keys.Left, false, false, false, Input.KeyEvent.Down, SteerLeft));
-            defaults.Add(new KeyBinding("CarDecelerate", Keys.Down, false, false, false, Input.KeyEvent.Down, Deccelerate));
-            defaults.Add(new KeyBinding("CarSteerRight", Keys.Right, false, false, false, Input.KeyEvent.Down, SteerRight));
-            defaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, Input.KeyEvent.Down, ApplyHandbrake));
+            defaults.Add(new KeyBinding("CarAccelerate", Keys.Up, false, false, false, KeyEvent.Down, Accelerate));
+            defaults.Add(new KeyBinding("CarSteerLeft", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
+            defaults.Add(new KeyBinding("CarDecelerate", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
+            defaults.Add(new KeyBinding("CarSteerRight", Keys.Right, false, false, false, KeyEvent.Down, SteerRight));
+            defaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, KeyEvent.Down, ApplyHandbrake));
             // player 
-            defaults.Add(new KeyBinding("RespawnCar", Keys.R, false, true, false, Input.KeyEvent.Pressed, SpawnCar));
+            defaults.Add(new KeyBinding("RespawnCar", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
             // Spheres
-            defaults.Add(new KeyBinding("SpawnSpheres", Keys.N, false, true, false, Input.KeyEvent.Pressed, SpawnSpheres));
+            defaults.Add(new KeyBinding("SpawnSpheres", Keys.N, false, true, false, KeyEvent.Pressed, SpawnSpheres));
 
             // Chat
-            defaults.Add(new KeyBinding("ChatKeyPressed", Keys.Enter, false, false, false, Input.KeyEvent.Pressed, ChatKeyPressed));
+            defaults.Add(new KeyBinding("ChatKeyPressed", Keys.Enter, false, false, false, KeyEvent.Pressed, ChatKeyPressed));
             return defaults;
         }
 
         
-        public override Input.KeyMap GetDefaultKeyMap()
+        public override KeyMap GetDefaultKeyMap()
         {
             return new KeyMap(this.name, GetDefaultKeyBindings());
         }

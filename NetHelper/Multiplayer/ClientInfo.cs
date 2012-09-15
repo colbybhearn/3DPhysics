@@ -14,10 +14,11 @@ namespace Helper.Multiplayer
         public int id;
         public Socket socket;
         public enum ConnectionModes
-        { 
+        {
             Accepted,
             ClientInfoRequested,
-            Synced
+            Synced,
+            Disconnected
         }
 
         Thread inputThread;
@@ -90,11 +91,35 @@ namespace Helper.Multiplayer
                     while (DataToSendQueue.Count > 0)
                         dataToSend.Add(DataToSendQueue.Dequeue());
                 }
-                foreach(byte[] b in dataToSend)
-                    socket.Send(b);
+                if (!socket.Connected)
+                    continue;
+                try
+                {
+                    foreach (byte[] b in dataToSend)
+                        socket.Send(b);
+                }
+                catch(SocketException E)
+                {
+                    ShouldBeRunning = false;
+                    connectionMode = ConnectionModes.Disconnected;
+                    // no longer connected.
+                }
                 Thread.Sleep(10);
             }
+
+            if (connectionMode == ConnectionModes.Disconnected)
+            {
+                CallClientDisconnected();
+            }
         }
+
+        private void CallClientDisconnected( )
+        {
+            if (ClientDisconnected == null)
+                return;
+            ClientDisconnected(this.alias);
+        }
+        public event Helper.Handlers.StringEH ClientDisconnected;
 
         public void CallPacketReceived(Packet p)
         {

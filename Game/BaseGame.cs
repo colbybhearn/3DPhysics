@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Timers;
 using Helper;
+using Helper.Input;
+using Helper.Multiplayer;
 using Helper.Multiplayer.Packets;
-using Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Multiplayer;
 using Physics;
 using Physics.PhysicsObjects;
 
@@ -58,7 +58,7 @@ namespace Game
         #endregion
 
         #region Input
-        internal Input.InputManager inputManager;
+        internal InputManager inputManager;
         Timer tmrCamUpdate;
         Timer tmrUpdateServer;
 
@@ -223,6 +223,14 @@ namespace Game
                     }
                 }
             }
+            if (cam != null)
+            {
+                PreUpdateCameraCallback();
+                if (UpdateCameraCallback == null)
+                    return;
+                GetCameraViewProjection();
+                UpdateCameraCallback(cam, view, proj);
+            }
         }
 
         void tmrUpdateMultiplayer_Elapsed(object sender, ElapsedEventArgs e)
@@ -261,11 +269,7 @@ namespace Game
             if (cam == null)
                 return;
 
-            PreUpdateCameraCallback();
-            if (UpdateCameraCallback == null)
-                return;
-            GetCameraViewProjection();
- 	        UpdateCameraCallback(cam, view, proj);
+            
         }
         
         public virtual void GetCameraViewProjection()
@@ -283,13 +287,10 @@ namespace Game
                     if (currentSelectedObject == null)
                         return;
                     Matrix bodyOrientation = currentSelectedObject.BodyOrientation();
-                    //cam.SetOrientation(currentSelectedObject.BodyOrientation());
                     Matrix forward = Matrix.CreateFromAxisAngle(bodyOrientation.Up, (float)-Math.PI/2);
                     
                     cam.SetOrientation(bodyOrientation * forward);
                     Matrix ForwardOrientation = bodyOrientation * forward;
-                    //cam.positionLagFactor = 1.0f;
-
                     Vector3 firstPersonOffsetPosition = new Vector3(-.45f, 1.4f, .05f); // To the driver's seat in car coordinates!
                     Vector3 firstTransRef = Vector3.Transform(firstPersonOffsetPosition, ForwardOrientation);
                     cam.CurrentPosition = bodyPosition + firstTransRef;
@@ -300,44 +301,60 @@ namespace Game
                 case CameraModes.ObjectChase:
                     if (currentSelectedObject == null)
                         return;
+                    try
+                    {
+                        // bodyPosition is the physical location of the body
+                        // the location of where it's headed
+                        Vector3 WhereItsHeaded = bodyPosition + currentSelectedObject.BodyVelocity() * 2;
+                        // a vector point toward direction of travel
+                        Vector3 Direction = (WhereItsHeaded - bodyPosition);
+                        Direction.Normalize();
+                        Direction *= 10f;
+                        Vector3 WhereItCameFrom = bodyPosition - (Direction);
+                        WhereItCameFrom += new Vector3(0, 3, 0);
+                        cam.positionLagFactor = .2f;
+                        cam.TargetPosition = WhereItCameFrom; // this line causes the problem
+                        cam.LookAtLocation(bodyPosition);
+                        cam.TargetLookAt = WhereItsHeaded;
 
-                    // bodyPosition is the physical location of the body
-                    // the location of where it's headed
-                    Vector3 WhereItsHeaded = bodyPosition + currentSelectedObject.BodyVelocity()*2;
-                    // a vector point toward direction of travel
-                    Vector3 Direction = (WhereItsHeaded - bodyPosition);
-                    Direction.Normalize();
-                    Direction *= 10f;
-                    Vector3 WhereItCameFrom = bodyPosition - (Direction);
-                    WhereItCameFrom += new Vector3(0, 3, 0);
-                    cam.positionLagFactor = .2f;
-                    //Vector3 ThirdPersonOffsetPosition = new Vector3(-10, 3, 0);
-                    //Vector3 TransRef = Vector3.Transform(ThirdPersonOffsetPosition, currentSelectedObject.BodyOrientation());
-                    //cam.TargetPosition = TransRef + bodyPosition;
-                    cam.TargetPosition = WhereItCameFrom;
-                    //cam.LookAtLocation(bodyPosition);
-                    cam.TargetLookAt = WhereItsHeaded;
-
-                    view = cam.RhsViewMatrix;
-                    proj = cam._projection;
+                        view = cam.RhsViewMatrix;
+                        proj = cam._projection;
+                    }
+                    catch (Exception E)
+                    {
+                    }
                     break;
                 case CameraModes.ObjectWatch:
-                    if (currentSelectedObject == null)
-                        return;
-                    cam.LookAtLocation(currentSelectedObject.BodyPosition());
-                    view = cam.RhsLevelViewMatrix;
-                    proj = cam._projection;
-                     
+                    try
+                    {
+                        if (currentSelectedObject == null)
+                            return;
+                        cam.LookAtLocation(currentSelectedObject.BodyPosition());
+                        view = cam.RhsLevelViewMatrix;
+                        proj = cam._projection;
+                    }
+                    catch (Exception E)
+                    {
+                    }
                     break;
                 default:
-                    view = Matrix.Identity;
-                    proj = Matrix.Identity;
+                    try
+                    {
+                        view = Matrix.Identity;
+                        proj = Matrix.Identity;
+                    }
+                    catch(Exception E)
+                    {
+
+                    }
                     break;
             }
         }
 
         public virtual void PreUpdateCameraCallback()
         {
+            if (cam == null)
+                return;
             cam.UpdatePosition();
             if(cameraMode != CameraModes.Fixed)
                 cam.UpdateLookAt();
@@ -381,14 +398,14 @@ namespace Game
         public virtual List<KeyBinding> GetDefaultKeyBindings()
         {
             List<KeyBinding> defaults = new List<KeyBinding>();
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.W, false, false, false, Input.KeyEvent.Down, CameraMoveForward));
-            defaults.Add(new KeyBinding("CameraMoveLeft", Keys.A, false, false, false, Input.KeyEvent.Down, CameraMoveLeft));
-            defaults.Add(new KeyBinding("CameraMoveBackward", Keys.S, false, false, false, Input.KeyEvent.Down, CameraMoveBackward));
-            defaults.Add(new KeyBinding("CameraMoveRight", Keys.D, false, false, false, Input.KeyEvent.Down, CameraMoveRight));
-            defaults.Add(new KeyBinding("CameraMoveSpeedIncrease", Keys.Q, false, false, false, Input.KeyEvent.Down, CameraMoveSpeedIncrease));
-            defaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, Input.KeyEvent.Down, CameraMoveSpeedDecrease));
-            defaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, Input.KeyEvent.Pressed, CameraModeCycle));
-            defaults.Add(new KeyBinding("ToggleDebugInfo", Keys.F1, false, false, false, Input.KeyEvent.Pressed, ToggleDebugInfo));
+            defaults.Add(new KeyBinding("CameraMoveForward", Keys.W, false, false, false, KeyEvent.Down, CameraMoveForward));
+            defaults.Add(new KeyBinding("CameraMoveLeft", Keys.A, false, false, false, KeyEvent.Down, CameraMoveLeft));
+            defaults.Add(new KeyBinding("CameraMoveBackward", Keys.S, false, false, false, KeyEvent.Down, CameraMoveBackward));
+            defaults.Add(new KeyBinding("CameraMoveRight", Keys.D, false, false, false, KeyEvent.Down, CameraMoveRight));
+            defaults.Add(new KeyBinding("CameraMoveSpeedIncrease", Keys.Q, false, false, false, KeyEvent.Down, CameraMoveSpeedIncrease));
+            defaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, KeyEvent.Down, CameraMoveSpeedDecrease));
+            defaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, KeyEvent.Pressed, CameraModeCycle));
+            defaults.Add(new KeyBinding("ToggleDebugInfo", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
             return defaults;
         }
 
@@ -603,17 +620,25 @@ namespace Game
                     commClient.ObjectRequestResponseReceived += new Handlers.ObjectRequestResponseEH(commClient_ObjectRequestResponseReceived);
                     commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
                     commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
+                    commClient.ClientDisconnected += new Helper.Handlers.StringEH(commClient_ClientDisconnected);
                     break;
                 case CommTypes.Server:
                     commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
                     commServer.ChatMessageReceived += new Handlers.StringStringEH(commServer_ChatMessageReceived);
-                    //commServer.ObjectRequestReceived += new Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
                     commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
                     commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
                     break;
                 default:
                     break;
             }
+        }
+
+        public event Handlers.StringEH ClientDisconnected;
+        void commClient_ClientDisconnected(string alias)
+        {
+            if (ClientDisconnected == null)
+                return;
+            ClientDisconnected(alias);
         }
 
         void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
@@ -651,12 +676,12 @@ namespace Game
 
         #region Client Side
         // CLIENT only
-        public virtual void ConnectToServer(string ip, int port, string alias)
+        public virtual bool ConnectToServer(string ip, int port, string alias)
         {
             CommType = CommTypes.Client;
             commClient = new CommClient(ip, port, alias);
             InitializeMultiplayer(CommType);
-            commClient.Connect();
+            return commClient.Connect();
         }
 
         void commClient_ChatMessageReceived(string m, string p)
@@ -697,6 +722,8 @@ namespace Game
         {
 
         } 
+
+        
         #endregion
 
         #region Server Side
@@ -834,5 +861,25 @@ namespace Game
         #endregion
         
         #endregion
+
+        public void Stop()
+        {
+            physicsManager.Stop();
+            if(tmrCamUpdate!=null)
+                tmrCamUpdate.Stop();
+            if (commClient != null)
+                commClient.Stop();
+            if(commServer!=null)
+                commServer.Stop();
+        }
+
+        /// <summary>
+        /// CLIENT SIDE
+        /// calls this to disconnect from the server
+        /// </summary>
+        public void ClientDisconnect()
+        {
+            commClient.Stop();
+        }
     }
 }

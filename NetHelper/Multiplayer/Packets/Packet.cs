@@ -41,7 +41,8 @@ namespace Helper.Multiplayer.Packets
             csObjectRequest,
             scObjectResponse,
             csObjectAction, // may not be needed either, cs and sc should handle action updates the same?
-            scObjectAction
+            scObjectAction,
+            ClientDisconnectPacket
         }
 
         public Types Type;
