@@ -158,7 +158,7 @@ namespace Helper.Multiplayer
         public void SendChatPacket(string msg, string player)
         {
             // TODO, fix
-            client.Send(new ChatPacket(msg, "Someone Else"));
+            client.Send(new ChatPacket(msg, player));
         }
 
         public void SendObjectRequest(string assetname)

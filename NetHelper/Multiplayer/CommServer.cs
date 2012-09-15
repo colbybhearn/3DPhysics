@@ -211,7 +211,7 @@ namespace Helper.Multiplayer
 
         public void SendChatPacket(string msg, string player)
         {
-            BroadcastPacket(new ChatPacket(msg, "Someone Else"));
+            BroadcastPacket(new ChatPacket(msg, player));
         }
 
         public void SendObjectResponsePacket(int clientid, int objectId, string asset)
