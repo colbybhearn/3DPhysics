@@ -32,7 +32,7 @@ namespace Helper.Multiplayer.Packets
         public override byte[] Serialize()
         {
             List<byte> data = new List<byte>();
-            //data.AddRange(BitConverter.GetBytes((int)Type));
+            data.AddRange(BitConverter.GetBytes((int)Type));
             data.AddRange(BitConverter.GetBytes(objectId));
             data.AddRange(BitConverter.GetBytes(assetName.Length));
             foreach(char c in assetName)

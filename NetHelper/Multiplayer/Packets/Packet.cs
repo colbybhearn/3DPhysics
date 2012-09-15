@@ -65,10 +65,13 @@ namespace Helper.Multiplayer.Packets
             }
 
             List<byte> dataList = new List<byte>();
+            // serialization
             dataList.AddRange(ms.ToArray());
+            // type
             dataList.InsertRange(0, BitConverter.GetBytes((int)Type));
-
+            
             byte[] lenbytes = BitConverter.GetBytes(dataList.Count);
+            // length
             dataList.InsertRange(0,lenbytes);
             
             //   | len of data to follow | Type | Serialized Data Or Custom Data|
