@@ -63,23 +63,40 @@ namespace Helper.Multiplayer.Packets
             {
                 Debug.WriteLine(e.Message);
             }
-            int datalen = (int)ms.Length;
-            byte[] lenbytes = BitConverter.GetBytes(datalen);
-            if (lenbytes.Length != 4)
-            {
 
-            }
             List<byte> dataList = new List<byte>();
-            dataList.AddRange(lenbytes);
             dataList.AddRange(ms.ToArray());
-            //ms.Write(lenbytes, 0, lenbytes.Length);
+            dataList.InsertRange(0, BitConverter.GetBytes((int)Type));
+
+            byte[] lenbytes = BitConverter.GetBytes(dataList.Count);
+            dataList.InsertRange(0,lenbytes);
             
-            //   | len of serialised data | Serialized Data |
+            //   | len of data to follow | Type | Serialized Data Or Custom Data|
 
             return dataList.ToArray();
         }
 
-        public static Packet Deserialize(byte[] data)
+        public static Packet Read(byte[] data)
+        {
+            
+            int itype = BitConverter.ToInt32(data, 0);
+            Types ptype = (Types)itype;
+            byte[] inner = new byte[data.Length - 4];
+            for (int i = 4; i < data.Length; i++)
+                inner[i - 4] = data[i];
+            switch (ptype)
+            {
+                case Types.scObjectUpdate:
+                    ObjectUpdatePacket oup = new ObjectUpdatePacket();
+                    return oup.CustomDeserialize(inner);
+                default:
+                    Packet p = new Packet(Types.KeepAlive);
+                    return p.Deserialize(inner);
+            }
+            return null;
+        }
+
+        public virtual Packet Deserialize(byte[] data)
         {
             MemoryStream ms = new MemoryStream(data); 
             BinaryFormatter formatter = new BinaryFormatter();

@@ -160,29 +160,37 @@ namespace Game
                 //MultiplayerUpdateQueue
                 while (MultiplayerUpdateQueue.Count > 0)
                 {
-                    ObjectUpdatePacket oup = MultiplayerUpdateQueue[0] as ObjectUpdatePacket;
-                    if (!gameObjects.ContainsKey(oup.objectId))
+                    lock (MultiplayerUpdateQueue)
                     {
-                        AddNewObject(oup.objectId, oup.assetName);
-                        continue;
+                        ObjectUpdatePacket oup = MultiplayerUpdateQueue[0] as ObjectUpdatePacket;
+
+                        if (!gameObjects.ContainsKey(oup.objectId))
+                        {
+                            AddNewObject(oup.objectId, oup.assetName);
+                            MultiplayerUpdateQueue.RemoveAt(0);
+                            continue;
+                        }
+                        Gobject go = gameObjects[oup.objectId];
+                        go.MoveTo(oup.position, oup.orientation);
+                        go.SetVelocity(oup.velocity);
+                        MultiplayerUpdateQueue.RemoveAt(0);
                     }
-                    Gobject go = gameObjects[oup.objectId];
-                    go.MoveTo(oup.position, oup.orientation);
-                    go.SetVelocity(oup.velocity);
-                    MultiplayerUpdateQueue.RemoveAt(0);
                 }
 
             }
             else if (CommType == CommTypes.Server)
             {
-                while (MultiplayerUpdateQueue.Count>0)
+                lock (MultiplayerUpdateQueue)
                 {
-                    ObjectActionPacket oap = MultiplayerUpdateQueue[0] as ObjectActionPacket;
-                    if (!gameObjects.ContainsKey(oap.objectId))
-                        continue;
-                    Gobject go = gameObjects[oap.objectId];
-                    go.actionManager.ProcessActionValues(oap.actionParameters);
-                    MultiplayerUpdateQueue.RemoveAt(0);
+                    while (MultiplayerUpdateQueue.Count > 0)
+                    {
+                        ObjectActionPacket oap = MultiplayerUpdateQueue[0] as ObjectActionPacket;
+                        if (!gameObjects.ContainsKey(oap.objectId))
+                            continue;
+                        Gobject go = gameObjects[oap.objectId];
+                        go.actionManager.ProcessActionValues(oap.actionParameters);
+                        MultiplayerUpdateQueue.RemoveAt(0);
+                    }
                 }
             }
         }
@@ -599,7 +607,10 @@ namespace Game
 
         void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
-            MultiplayerUpdateQueue.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel));
+            lock (MultiplayerUpdateQueue)
+            {
+                MultiplayerUpdateQueue.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel));
+            }
         }
 
         // COMMON
@@ -741,7 +752,10 @@ namespace Game
         /// <param name="parameters"></param>
         void commServer_ObjectActionReceived(int id, object[] parameters)
         {
-            MultiplayerUpdateQueue.Add(new ObjectActionPacket(id, parameters));
+            lock (MultiplayerUpdateQueue)
+            {
+                MultiplayerUpdateQueue.Add(new ObjectActionPacket(id, parameters));
+            }
         }
 
         /// <summary>

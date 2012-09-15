@@ -72,8 +72,7 @@ namespace Helper.Multiplayer
                         // read in the packet data
                         stream.Read(data, 0, length);
                         // deserialize the packet data into a packet
-                        Packet p = Packet.Deserialize(data);
-                        
+                        Packet p = Packet.Read(data);                        
                         if(p!=null)
                             // hand the packet off and get back to work
                             CallPacketsReceived(p);

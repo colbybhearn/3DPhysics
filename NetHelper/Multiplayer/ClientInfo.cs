@@ -70,7 +70,8 @@ namespace Helper.Multiplayer
                 {
                     byte[] data = new byte[length];
                     int datacount = socket.Receive(data);
-                    Packet p = Packet.Deserialize(data);
+
+                    Packet p = Packet.Read(data);
                     if (p != null)
                         CallPacketReceived(p);
                     length = -1;
