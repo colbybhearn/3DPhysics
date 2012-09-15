@@ -101,7 +101,7 @@ namespace Helper.Input
         {
         }
 
-        public void AddBinding(ActionBindingDelegate d, int numDelegateArgs)
+        public void AddBinding(int uniq, ActionBindingDelegate d, int numDelegateArgs)
         {
             List<int> indicies = new List<int>();
             for(int i=0;i<numDelegateArgs;i++)
@@ -110,24 +110,24 @@ namespace Helper.Input
                 currDelegateArgIndex++;
                 ActionValues.Add((float)0);
             }
-            int index = GetAvailableActionID();
+            int index = uniq;//GetAvailableActionID();
             Bindings.Add(index, new ActionBinding(index, d, indicies));
         }
 
-        private int GetAvailableActionID()
-        {
-            int id = 1;
-            bool found = true;
-            while (found)
-            {
+        //private int GetAvailableActionID()
+        //{
+        //    int id = 1;
+        //    bool found = true;
+        //    while (found)
+        //    {
 
-                if (Bindings.ContainsKey(id))
-                    id++;
-                else
-                    found = false;
-            }
-            return id;
-        }
+        //        if (Bindings.ContainsKey(id))
+        //            id++;
+        //        else
+        //            found = false;
+        //    }
+        //    return id;
+        //}
 
         /// <summary>
         /// This is called ServerSide only to simulate the user input
@@ -135,6 +135,8 @@ namespace Helper.Input
         /// <param name="actionVals"></param>
         public void ProcessActionValues(object[] actionVals)
         {
+            ActionValues.Clear();
+            ActionValues.AddRange(actionVals);
             foreach (ActionBinding ab in Bindings.Values)
                 ab.Callback(GetAliasDelegateValues(ab.ID));
         }
@@ -151,6 +153,22 @@ namespace Helper.Input
         public object[] GetActionValues()
         {
             return ActionValues.ToArray();
+        }
+
+        /// <summary>
+        /// this is called ClientSide only for tracking actual user input
+        /// </summary>
+        /// <param name="uniqId"></param>
+        /// <param name="newValues"></param>
+        public void SetActionValues(int uniqId, object[] newValues)
+        {
+            if (!Bindings.ContainsKey(uniqId))
+                return;
+            ActionBinding ab = Bindings[uniqId];
+            int currentNewValueIndex = -1;
+            foreach (int index in ab.Indices)
+                ActionValues[index] = newValues[++currentNewValueIndex];
+            
         }
     }
 }

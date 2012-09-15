@@ -45,11 +45,18 @@ namespace Physics.PhysicsObjects
             SetCarMass(100.1f);
 
 
-            actionManager.AddBinding(new Helper.Input.ActionBindingDelegate(GenericAcceleration), 1);
-            actionManager.AddBinding(new Helper.Input.ActionBindingDelegate(GenericSteering), 1);
-            actionManager.AddBinding(new Helper.Input.ActionBindingDelegate(GenericHandbrake), 1);
+            actionManager.AddBinding((int)Actions.Acceleration, new Helper.Input.ActionBindingDelegate(GenericAcceleration), 1);
+            actionManager.AddBinding((int)Actions.Steering, new Helper.Input.ActionBindingDelegate(GenericSteering), 1);
+            actionManager.AddBinding((int)Actions.Handbrake, new Helper.Input.ActionBindingDelegate(GenericHandbrake), 1);
         }
-        
+
+        public enum Actions
+        {
+            Acceleration,
+            Steering,
+            Handbrake
+        }
+
         public override void FinalizeBody()
         {
             try
@@ -150,6 +157,7 @@ namespace Physics.PhysicsObjects
         public void SetAcceleration(float p)
         {
             car.Accelerate = p;
+            actionManager.SetActionValues((int)Actions.Acceleration, new object[] {p});
         }
 
         public void GenericSteering(object[] vals)
