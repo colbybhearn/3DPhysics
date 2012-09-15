@@ -100,10 +100,11 @@ namespace Multiplayer
         {
             while (ShouldBeRunning)
             {
-                if (InputQueue.Count > 0)
+                while (InputQueue.Count > 0)
                 {
                     ProcessInputPacket(InputQueue.Dequeue());
                 }
+                Thread.Sleep(1);
             }
         }
 
