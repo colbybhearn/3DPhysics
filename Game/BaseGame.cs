@@ -681,6 +681,7 @@ namespace Game
             CommType = CommTypes.Client;
             commClient = new CommClient(ip, port, alias);
             InitializeMultiplayer(CommType);
+            ChatManager.PlayerAlias = alias;
             return commClient.Connect();
         }
 

@@ -51,6 +51,7 @@ namespace Helper
         public int FadeOutTime { get; private set; } // How long after reaching DisplayLength it should take to fade out and no longer be displayed
         public bool Typing { get; set; } // If in type mode, display the chat box
         public Vector2 Position { get; set; }
+        public String PlayerAlias { get; set; }
 
         /// <summary>
         /// Default Chat Constructor
@@ -102,7 +103,7 @@ namespace Helper
                 {
                     exitMode = true;
                     message = new ChatMessage();
-                    message.Owner = "self"; // TODO: fix
+                    message.Owner = PlayerAlias; // TODO: fix
                     message.Time = DateTime.Now;
                     message.Message = currentMessage;
                     message.MessageColor = Color.DarkBlue;
@@ -110,7 +111,8 @@ namespace Helper
                     currentMessage = "";
                     currentPosition = 0;
                     // Add Message to list and send a packet about it
-                    ChatLog.Add(message.Time.Ticks, message);
+                    // let server add it for us
+                    //ChatLog.Add(message.Time.Ticks, message);
                 }
                 else if (k == Keys.Escape)
                 {
