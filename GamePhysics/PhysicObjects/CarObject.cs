@@ -167,6 +167,7 @@ namespace Physics.PhysicsObjects
         public void SetSteering(float p)
         {
             car.Steer = p;
+            actionManager.SetActionValues((int)Actions.Steering, new object[] { p });
         }
 
         public void GenericHandbrake(object[] vals)
@@ -176,6 +177,7 @@ namespace Physics.PhysicsObjects
         public void setHandbrake(float p)
         {
             car.HBrake = p;
+            actionManager.SetActionValues((int)Actions.Handbrake, new object[] { p });
         }
         #endregion
     }
