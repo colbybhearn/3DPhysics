@@ -31,7 +31,49 @@ namespace Helper.Multiplayer.Packets
 
         public override byte[] Serialize()
         {
-            List<byte> data = new List<byte>();
+            int length = assetName.Length + (25 * 4);
+            byte[] data = new byte[length+4];
+            int index = 0;
+            Array.Copy(BitConverter.GetBytes((int)length), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes((int)Type), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(objectId), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(assetName.Length), 0, data, index, 4);
+            index += 4;
+            foreach (char c in assetName)
+                Array.Copy(new byte[1] { (byte)c }, 0, data, index++, 1);
+            Array.Copy(BitConverter.GetBytes(position.X), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(position.Y), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(position.Z), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M11), 0, data, index, 4);index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M12), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M13), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M14), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M21), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M22), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M23), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M24), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M31), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M32), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M33), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M34), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M41), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M42), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M43), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(orientation.M44), 0, data, index, 4); index += 4;
+            Array.Copy(BitConverter.GetBytes(velocity.X), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(velocity.Y), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(velocity.Z), 0, data, index, 4);
+            return data;
+                
+            /*List<byte> data = new List<byte>;
             data.AddRange(BitConverter.GetBytes((int)Type));
             data.AddRange(BitConverter.GetBytes(objectId));
             data.AddRange(BitConverter.GetBytes(assetName.Length));
@@ -39,7 +81,7 @@ namespace Helper.Multiplayer.Packets
                 data.Add((byte)c);
             data.AddRange(BitConverter.GetBytes(position.X));
             data.AddRange(BitConverter.GetBytes(position.Y));
-            data.AddRange(BitConverter.GetBytes(position.Z));
+            data.AddRange(BitConverter.GetBytes(position.Z)); // 24 including this line
             data.AddRange(BitConverter.GetBytes(orientation.M11));
             data.AddRange(BitConverter.GetBytes(orientation.M12));
             data.AddRange(BitConverter.GetBytes(orientation.M13));
@@ -60,7 +102,7 @@ namespace Helper.Multiplayer.Packets
             data.AddRange(BitConverter.GetBytes(velocity.Y));
             data.AddRange(BitConverter.GetBytes(velocity.Z));
             data.InsertRange(0, BitConverter.GetBytes(data.Count));
-            return data.ToArray();
+            return data.ToArray();*/
         }
 
         public Packet CustomDeserialize(byte[] data)

@@ -15,6 +15,11 @@ using Physics.PhysicsObjects;
 
 namespace Game
 {
+
+    /*
+     * Asynchronous sending / receiving in ComServer/Client
+     * 
+     */
     public class BaseGame 
     {
 
