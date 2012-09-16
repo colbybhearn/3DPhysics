@@ -156,7 +156,7 @@ namespace XnaView
                         terrain.DrawWireframe(GraphicsDevice, v, p);*/
 
                 // SpriteBatch drawing!
-                /*
+                
                 spriteBatch.Begin();
                 
                 game.Draw(spriteBatch);
@@ -183,7 +183,7 @@ namespace XnaView
                 }
                 
                 spriteBatch.End();
-                 */
+                 
 
                 // Following 3 lines are to reset changes to graphics device made by spritebatch
                 GraphicsDevice.BlendState = BlendState.Opaque;

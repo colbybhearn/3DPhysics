@@ -240,7 +240,7 @@ namespace JigLibX.Physics
         public PhysicsSystem()
         {
             CurrentPhysicsSystem = this;
-            Gravity = -10.0f * Vector3.Up;
+            Gravity = -20.0f * Vector3.Up;
 
             SetCollisionFns();
         }

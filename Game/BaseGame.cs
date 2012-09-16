@@ -312,9 +312,10 @@ namespace Game
                         Direction *= 10f;
                         Vector3 WhereItCameFrom = bodyPosition - (Direction);
                         WhereItCameFrom += new Vector3(0, 3, 0);
-                        cam.positionLagFactor = .2f;
+                        //cam.positionLagFactor = .2f;
                         cam.TargetPosition = WhereItCameFrom; // this line causes the problem
-                        cam.LookAtLocation(bodyPosition);
+                        //cam.lookAtLagFactor = .2f;
+                        //cam.LookAtLocation(bodyPosition);
                         cam.TargetLookAt = WhereItsHeaded;
 
                         view = cam.RhsViewMatrix;
