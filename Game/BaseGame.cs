@@ -305,16 +305,19 @@ namespace Game
                     {
                         // bodyPosition is the physical location of the body
                         // the location of where it's headed
-                        Vector3 WhereItsHeaded = bodyPosition + currentSelectedObject.BodyVelocity() * 2;
+                        Vector3 ObjectDirection = currentSelectedObject.BodyVelocity() * 2;
+                        if (ObjectDirection.Length() < 2)
+                            ObjectDirection = currentSelectedObject.BodyOrientation().Right;
+                        Vector3 WhereItsHeaded = bodyPosition + ObjectDirection;
                         // a vector point toward direction of travel
-                        Vector3 Direction = (WhereItsHeaded - bodyPosition);
-                        Direction.Normalize();
-                        Direction *= 10f;
-                        Vector3 WhereItCameFrom = bodyPosition - (Direction);
+                        //Vector3 Direction = (WhereItsHeaded - bodyPosition);
+                        ObjectDirection.Normalize();
+                        ObjectDirection *= 10f;
+                        Vector3 WhereItCameFrom = bodyPosition - (ObjectDirection);
                         WhereItCameFrom += new Vector3(0, 3, 0);
-                        //cam.positionLagFactor = .2f;
+                        cam.positionLagFactor = .25f;
                         cam.TargetPosition = WhereItCameFrom; // this line causes the problem
-                        //cam.lookAtLagFactor = .2f;
+                        cam.lookAtLagFactor = .2f;
                         //cam.LookAtLocation(bodyPosition);
                         cam.TargetLookAt = WhereItsHeaded;
 
