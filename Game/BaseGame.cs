@@ -274,6 +274,10 @@ namespace Game
         
         public virtual void GetCameraViewProjection()
         {
+            //Preset just incase an error occurs
+            view = Matrix.Identity;
+            proj = Matrix.Identity;
+
             Vector3 bodyPosition = new Vector3(0,0,0);
             if(currentSelectedObject!=null)
                 bodyPosition= currentSelectedObject.BodyPosition();
@@ -297,6 +301,9 @@ namespace Game
 
                     view = cam.RhsViewMatrix;
                     proj = cam._projection;
+
+                    cam.positionLagFactor = .1f;
+                    cam.lookAtLagFactor = .1f;
                     break;
                 case CameraModes.ObjectChase:
                     if (currentSelectedObject == null)
@@ -315,14 +322,14 @@ namespace Game
                         ObjectDirection *= 10f;
                         Vector3 WhereItCameFrom = bodyPosition - (ObjectDirection);
                         WhereItCameFrom += new Vector3(0, 3, 0);
-                        cam.positionLagFactor = .25f;
                         cam.TargetPosition = WhereItCameFrom; // this line causes the problem
-                        cam.lookAtLagFactor = .2f;
                         //cam.LookAtLocation(bodyPosition);
                         cam.TargetLookAt = WhereItsHeaded;
 
                         view = cam.RhsViewMatrix;
                         proj = cam._projection;
+                        cam.positionLagFactor = .25f;
+                        cam.lookAtLagFactor = .2f;
                     }
                     catch (Exception E)
                     {
@@ -343,7 +350,8 @@ namespace Game
                         System.Diagnostics.Debug.WriteLine(E.StackTrace);
                     }
                     break;
-                default:
+                    // If an error occurs in any of the above functions, this needs to have happened, so it WILL get set beforehand and overridden otherwise.
+                /*default:
                     try
                     {
                         view = Matrix.Identity;
@@ -353,7 +361,7 @@ namespace Game
                     {
                         System.Diagnostics.Debug.WriteLine(E.StackTrace);
                     }
-                    break;
+                    break;*/
             }
         }
 
