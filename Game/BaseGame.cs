@@ -322,6 +322,7 @@ namespace Game
                     }
                     catch (Exception E)
                     {
+                        System.Diagnostics.Debug.WriteLine(E.StackTrace);
                     }
                     break;
                 case CameraModes.ObjectWatch:
@@ -335,6 +336,7 @@ namespace Game
                     }
                     catch (Exception E)
                     {
+                        System.Diagnostics.Debug.WriteLine(E.StackTrace);
                     }
                     break;
                 default:
@@ -345,7 +347,7 @@ namespace Game
                     }
                     catch(Exception E)
                     {
-
+                        System.Diagnostics.Debug.WriteLine(E.StackTrace);
                     }
                     break;
             }
@@ -499,6 +501,7 @@ namespace Game
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
         private void LoadModel(Model m, string name)
@@ -509,6 +512,7 @@ namespace Game
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
 
@@ -533,6 +537,7 @@ namespace Game
                 }
                 catch (Exception E)
                 {
+                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
                 }
             }
             else
@@ -549,6 +554,7 @@ namespace Game
                     // if that happens just create a ground plane 
                     planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0), "");
                     newObjects.Add(planeObj.ID, planeObj);
+                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
                 }
             }
         }

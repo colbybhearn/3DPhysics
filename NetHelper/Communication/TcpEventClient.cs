@@ -33,7 +33,8 @@ namespace Helper.Communication
                 connected = true;
             }
             catch (Exception E)
-            {                
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
             if (connected)
             {

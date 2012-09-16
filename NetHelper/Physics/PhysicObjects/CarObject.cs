@@ -69,6 +69,7 @@ namespace Helper.Physics.PhysicsObjects
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
 

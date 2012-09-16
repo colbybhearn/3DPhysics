@@ -51,9 +51,9 @@ namespace Helper.Physics
             //float edgeHeigh = 0;
             //float worldZPosition = posCenter.Z - (size.Z / 2);
             float worldZPosition = - (size.Z / 2);
-            float height;
-            float stair = 0;
-            float diff = .5f;
+            //float height;
+            //float stair = 0;
+            //float diff = .5f;
             for (int z = 0; z < numVertsZ; z++)
             {
                 //float worldXPosition = posCenter.X - (size.X / 2);
@@ -138,6 +138,7 @@ namespace Helper.Physics
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
 
             this.Body = new Body();
@@ -180,6 +181,7 @@ namespace Helper.Physics
             }
             catch(Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
 
         }
@@ -234,7 +236,7 @@ namespace Helper.Physics
             }
             catch (Exception E)
             {
-
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
 

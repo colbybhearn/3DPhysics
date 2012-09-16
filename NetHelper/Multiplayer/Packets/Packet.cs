@@ -97,7 +97,6 @@ namespace Helper.Multiplayer.Packets
                     Packet p = new Packet(Types.KeepAlive);
                     return p.Deserialize(inner);
             }
-            return null;
         }
 
         public virtual Packet Deserialize(byte[] data)

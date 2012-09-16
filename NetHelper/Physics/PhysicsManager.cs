@@ -135,6 +135,7 @@ namespace Helper.Physics
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
             return carObject;
         }
