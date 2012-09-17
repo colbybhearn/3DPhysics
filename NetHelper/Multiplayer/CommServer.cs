@@ -92,7 +92,7 @@ namespace Helper.Multiplayer
             ci.Start();
             ci.PacketReceived += new ClientInfo.PacketReceivedEventHandler(PacketReceived);
             Clients.Add(id, ci);
-            ClientInfoRequestPacket cirp = new ClientInfoRequestPacket();
+            ClientInfoRequestPacket cirp = new ClientInfoRequestPacket(id);
             ci.Send(cirp);
         }
 

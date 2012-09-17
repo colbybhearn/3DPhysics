@@ -45,7 +45,6 @@ namespace Helper.Physics.PhysicsObjects
             CommonInit(pos, new Vector3(1, 1, 1), model, true, asset);
             SetCarMass(100.1f);
 
-
             actionManager.AddBinding((int)Actions.Acceleration, new Helper.Input.ActionBindingDelegate(GenericAcceleration), 1);
             actionManager.AddBinding((int)Actions.Steering, new Helper.Input.ActionBindingDelegate(GenericSteering), 1);
             actionManager.AddBinding((int)Actions.Handbrake, new Helper.Input.ActionBindingDelegate(GenericHandbrake), 1);

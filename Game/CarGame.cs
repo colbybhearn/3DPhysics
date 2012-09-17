@@ -216,6 +216,7 @@ namespace Game
         /// CLIENT SIDE
         /// client should do something oriented to the specific game here, like player bullets or cars.
         /// The server has granted the object request and this is where we handle the response it has sent back to the client
+        /// This is called from the Network code, thus in the Network threads
         /// </summary>
         /// <param name="objectid"></param>
         /// <param name="asset"></param>

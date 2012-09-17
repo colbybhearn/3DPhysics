@@ -108,7 +108,7 @@
     <Compile Include="Multiplayer\Packets\ObjectUpdatePacket.cs" />
     <Compile Include="Communication\TcpEventServer.cs" />
     <Compile Include="Multiplayer\Packets\ClientInfoRequestPacket.cs" />
-    <Compile Include="Multiplayer\Packets\ClientInfoResponsPacket.cs" />
+    <Compile Include="Multiplayer\Packets\ClientInfoResponsePacket.cs" />
     <Compile Include="Multiplayer\Packets\Packet.cs" />
     <Compile Include="Multiplayer\ServerInfo.cs" />
     <Compile Include="Communication\TcpEventClient.cs" />
