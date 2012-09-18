@@ -102,6 +102,7 @@ namespace Helper.Multiplayer
                 {
                     ShouldBeRunning = false;
                     connectionMode = ConnectionModes.Disconnected;
+                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
                     // no longer connected.
                 }
                 Thread.Sleep(10);

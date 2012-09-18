@@ -135,18 +135,27 @@ namespace Helper.Physics
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
             return carObject;
         }
-
+        /// <summary>
+        /// Adds a new object to the physics system
+        /// </summary>
+        /// <param name="gob"></param>
+        /// <returns></returns>
         public bool AddNewObject(Gobject gob)
         {
-            lock (newObjects)
+            lock (gameObjects)
             {
-                if (gameObjects.ContainsKey(gob.ID) ||
-                    newObjects.ContainsKey(gob.ID))
-                    return false;
-                newObjects.Add(gob.ID, gob);
+                lock (newObjects)
+                {
+                    if (gameObjects.ContainsKey(gob.ID) ||
+                        newObjects.ContainsKey(gob.ID))
+                        return false;
+
+                    newObjects.Add(gob.ID, gob);
+                }
             }
             return true;
         }

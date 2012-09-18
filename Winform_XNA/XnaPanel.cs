@@ -107,8 +107,8 @@ namespace XnaView
                 Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
                 Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
                 Microsoft.Xna.Framework.Ray r = cam.GetMouseRay(mouse, view);
-                Gobject nearest = null;
-                float min = float.MaxValue;
+                //Gobject nearest = null;
+                //float min = float.MaxValue;
                 float dist = 0;
                 Vector3 pos;
                 Vector3 norm;
@@ -128,6 +128,7 @@ namespace XnaView
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
         public void PanCam(float dX, float dY)
@@ -155,7 +156,7 @@ namespace XnaView
                         terrain.DrawWireframe(GraphicsDevice, v, p);*/
 
                 // SpriteBatch drawing!
-                /*
+                
                 spriteBatch.Begin();
                 
                 game.Draw(spriteBatch);
@@ -182,7 +183,7 @@ namespace XnaView
                 }
                 
                 spriteBatch.End();
-                 */
+                 
 
                 // Following 3 lines are to reset changes to graphics device made by spritebatch
                 GraphicsDevice.BlendState = BlendState.Opaque;
@@ -232,7 +233,7 @@ namespace XnaView
             }
             catch (Exception E)
             {
-
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
         #endregion

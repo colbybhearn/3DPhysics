@@ -102,7 +102,6 @@ namespace Helper.Multiplayer.Packets
             catch(Exception E)
             {
             }
-            return null;
         }
 
         public virtual Packet Deserialize(byte[] data)

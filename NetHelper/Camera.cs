@@ -19,7 +19,7 @@ namespace Helper
         public float positionLagFactor = 1.0f;
         public Vector3 TargetLookAt;
         Vector3 CurrentLookAt;
-        float lookAtLagFactor = .1f;
+        public float lookAtLagFactor = .1f;
 
         public Camera(Vector3 pos)
         {

@@ -22,6 +22,13 @@ namespace Game
      */
     public class BaseGame 
     {
+        /* Notes on object locking!
+         * Ordering I have used so far for locking is
+         * GameObjects > NewObjects
+         * GameObjects > MultiplayerUpdateQueue
+         * 
+         * Please update the locks and this if the order changes, or obey this order to prevent deadlocks!
+         */
 
         #region Physics
         public PhysicsManager physicsManager;
@@ -102,14 +109,14 @@ namespace Game
         #endregion
 
         #region Multiplayer
-        public List<int> clientControlledObjects = new List<int>();
+        public SortedList<int, string> ownedObjects = new SortedList<int, string>(); // Object ID, User who owns them
+        public List<int> clientControlledObjects = new List<int>(); // TODO - Client Side only, merge with ownedObjects somehow?
         public List<object> MultiplayerUpdateQueue = new List<object>();
         #endregion
 
         public BaseGame()
         {
             CommonInit(10, 10);
-            //CommonInit(10, 15);
         }
 
         public BaseGame(int camUpdateInterval)
@@ -123,18 +130,6 @@ namespace Game
             gameObjects = new SortedList<int, Gobject>();
             newObjects = new SortedList<int, Gobject>();
             Instance = this;
-
-            tmrCamUpdate = new Timer();
-            tmrCamUpdate.Interval = cameraUpdateInterval;
-            tmrCamUpdate.Elapsed +=new ElapsedEventHandler(tmrCamUpdate_Elapsed);
-            tmrCamUpdate.AutoReset=true;
-            tmrCamUpdate.Start();
-
-            //tmrUpdateServer = new Timer();
-            //tmrUpdateServer.Interval = 20;
-            //tmrUpdateServer.Elapsed += new ElapsedEventHandler(tmrUpdateMultiplayer_Elapsed);
-            //tmrUpdateServer.AutoReset = true;
-            //tmrUpdateServer.Start();
 
             physicsManager = new PhysicsManager(ref gameObjects, ref newObjects, physicsUpdateInterval);
             physicsManager.PreIntegrate += new Handlers.voidEH(physicsManager_PreIntegrate);
@@ -159,7 +154,6 @@ namespace Game
                         go.actionManager.ValueSwap();
                         commClient.SendObjectAction(go.ID, vals);
                     }
-
                 
                     //MultiplayerUpdateQueue
                     while (MultiplayerUpdateQueue.Count > 0)
@@ -172,7 +166,7 @@ namespace Game
                             {
                                 AddNewObject(oup.objectId, oup.assetName);
                                 MultiplayerUpdateQueue.RemoveAt(0);
-                                continue;
+                                continue;// TODO -  Should we continue instead of not updating this frame? (can't yet)
                             }
                             Gobject go = gameObjects[oup.objectId];
                             go.MoveTo(oup.position, oup.orientation);
@@ -193,7 +187,7 @@ namespace Game
                         {
                             ObjectActionPacket oap = MultiplayerUpdateQueue[0] as ObjectActionPacket;
                             if (!gameObjects.ContainsKey(oap.objectId))
-                                continue;
+                                continue; // TODO - infinite loop if this is hit
                             Gobject go = gameObjects[oap.objectId];
                             go.actionManager.ProcessActionValues(oap.actionParameters);
                             MultiplayerUpdateQueue.RemoveAt(0);
@@ -223,11 +217,12 @@ namespace Game
                     }
                 }
             }
+
             if (cam != null)
             {
-                PreUpdateCameraCallback();
                 if (UpdateCameraCallback == null)
                     return;
+                PreUpdateCameraCallback();
                 GetCameraViewProjection();
                 UpdateCameraCallback(cam, view, proj);
             }
@@ -264,16 +259,18 @@ namespace Game
             }
         }
 
-        void  tmrCamUpdate_Elapsed(object sender, ElapsedEventArgs e)
+        /*void  tmrCamUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (cam == null)
                 return;
-
-            
-        }
+        }*/
         
         public virtual void GetCameraViewProjection()
         {
+            //Preset just incase an error occurs
+            view = Matrix.Identity;
+            proj = Matrix.Identity;
+
             Vector3 bodyPosition = new Vector3(0,0,0);
             if(currentSelectedObject!=null)
                 bodyPosition= currentSelectedObject.BodyPosition();
@@ -297,6 +294,9 @@ namespace Game
 
                     view = cam.RhsViewMatrix;
                     proj = cam._projection;
+
+                    cam.positionLagFactor = .1f;
+                    cam.lookAtLagFactor = .1f;
                     break;
                 case CameraModes.ObjectChase:
                     if (currentSelectedObject == null)
@@ -305,23 +305,28 @@ namespace Game
                     {
                         // bodyPosition is the physical location of the body
                         // the location of where it's headed
-                        Vector3 WhereItsHeaded = bodyPosition + currentSelectedObject.BodyVelocity() * 2;
+                        Vector3 ObjectDirection = currentSelectedObject.BodyVelocity() * 2;
+                        if (ObjectDirection.Length() < 2)
+                            ObjectDirection = currentSelectedObject.BodyOrientation().Right;
+                        Vector3 WhereItsHeaded = bodyPosition + ObjectDirection;
                         // a vector point toward direction of travel
-                        Vector3 Direction = (WhereItsHeaded - bodyPosition);
-                        Direction.Normalize();
-                        Direction *= 10f;
-                        Vector3 WhereItCameFrom = bodyPosition - (Direction);
+                        //Vector3 Direction = (WhereItsHeaded - bodyPosition);
+                        ObjectDirection.Normalize();
+                        ObjectDirection *= 10f;
+                        Vector3 WhereItCameFrom = bodyPosition - (ObjectDirection);
                         WhereItCameFrom += new Vector3(0, 3, 0);
-                        cam.positionLagFactor = .2f;
                         cam.TargetPosition = WhereItCameFrom; // this line causes the problem
-                        cam.LookAtLocation(bodyPosition);
+                        //cam.LookAtLocation(bodyPosition);
                         cam.TargetLookAt = WhereItsHeaded;
 
                         view = cam.RhsViewMatrix;
                         proj = cam._projection;
+                        cam.positionLagFactor = .25f;
+                        cam.lookAtLagFactor = .2f;
                     }
                     catch (Exception E)
                     {
+                        System.Diagnostics.Debug.WriteLine(E.StackTrace);
                     }
                     break;
                 case CameraModes.ObjectWatch:
@@ -335,9 +340,11 @@ namespace Game
                     }
                     catch (Exception E)
                     {
+                        System.Diagnostics.Debug.WriteLine(E.StackTrace);
                     }
                     break;
-                default:
+                    // If an error occurs in any of the above functions, this needs to have happened, so it WILL get set beforehand and overridden otherwise.
+                /*default:
                     try
                     {
                         view = Matrix.Identity;
@@ -345,9 +352,9 @@ namespace Game
                     }
                     catch(Exception E)
                     {
-
+                        System.Diagnostics.Debug.WriteLine(E.StackTrace);
                     }
-                    break;
+                    break;*/
             }
         }
 
@@ -499,6 +506,7 @@ namespace Game
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
         private void LoadModel(Model m, string name)
@@ -509,6 +517,7 @@ namespace Game
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
 
@@ -533,6 +542,7 @@ namespace Game
                 }
                 catch (Exception E)
                 {
+                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
                 }
             }
             else
@@ -549,6 +559,7 @@ namespace Game
                     // if that happens just create a ground plane 
                     planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0), "");
                     newObjects.Add(planeObj.ID, planeObj);
+                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
                 }
             }
         }
@@ -703,6 +714,7 @@ namespace Game
         /// <summary>
         /// CLIENT SIDE
         /// The client has received a response back from the server about the object the client requested
+        /// This is called from the Network code, thus in the Network threads
         /// </summary>
         /// <param name="i"></param>
         /// <param name="asset"></param>
@@ -764,6 +776,7 @@ namespace Game
         /// <summary>
         /// SERVER SIDE
         /// Server adds an object and associates it with its owning client
+        /// Called from the Network threads
         /// </summary>
         /// <param name="clientId"></param>
         /// <param name="asset"></param>

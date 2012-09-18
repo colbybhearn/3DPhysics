@@ -98,6 +98,7 @@ namespace Helper.Physics
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
         public string Asset;
@@ -149,6 +150,7 @@ namespace Helper.Physics
             }
             catch (Exception E)
             {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
 
