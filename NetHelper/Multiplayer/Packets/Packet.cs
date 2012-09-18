@@ -82,20 +82,25 @@ namespace Helper.Multiplayer.Packets
 
         public static Packet Read(byte[] data)
         {
-            
-            int itype = BitConverter.ToInt32(data, 0);
-            Types ptype = (Types)itype;
-            byte[] inner = new byte[data.Length - 4];
-            for (int i = 4; i < data.Length; i++)
-                inner[i - 4] = data[i];
-            switch (ptype)
+            try
             {
-                case Types.scObjectUpdate:
-                    ObjectUpdatePacket oup = new ObjectUpdatePacket();
-                    return oup.CustomDeserialize(inner);
-                default:
-                    Packet p = new Packet(Types.KeepAlive);
-                    return p.Deserialize(inner);
+                int itype = BitConverter.ToInt32(data, 0);
+                Types ptype = (Types)itype;
+                byte[] inner = new byte[data.Length - 4];
+                for (int i = 4; i < data.Length; i++)
+                    inner[i - 4] = data[i];
+                switch (ptype)
+                {
+                    case Types.scObjectUpdate:
+                        ObjectUpdatePacket oup = new ObjectUpdatePacket();
+                        return oup.CustomDeserialize(inner);
+                    default:
+                        Packet p = new Packet(Types.KeepAlive);
+                        return p.Deserialize(inner);
+                }
+            }
+            catch(Exception E)
+            {
             }
             return null;
         }

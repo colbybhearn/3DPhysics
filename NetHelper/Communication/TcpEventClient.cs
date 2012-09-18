@@ -12,14 +12,14 @@ namespace Helper.Communication
     {        
         Thread readThread;
         bool ShouldBeRunning = false;
-        NetworkStream stream;
-        Queue<byte[]> DataToSendQueue;
+        Socket socket;
+        Helper.Collections.ThreadQueue DataToSendQueue = new Helper.Collections.ThreadQueue();
+        //Queue<byte[]> DataToSendQueue;
 
         public TcpEventClient()
         {
             readThread = new Thread(new ThreadStart(readWorker));
-            DataToSendQueue = new Queue<byte[]>();
-
+            DataToSendQueue = new Collections.ThreadQueue();
         }
 
         public void Connect(IPEndPoint remoteEndPoint)
@@ -29,7 +29,7 @@ namespace Helper.Communication
             try
             {
                 client.Connect(remoteEndPoint);
-                stream = client.GetStream();
+                socket = client.Client;
                 connected = true;
             }
             catch (Exception E)
@@ -52,65 +52,55 @@ namespace Helper.Communication
         private void readWorker()
         {
             List<byte[]> dataToSend = new List<byte[]>();
+            byte[] lenBytes = new byte[4];
+            int length = -1;
             while (ShouldBeRunning)
             {
                 try
                 {
-                    if (stream == null)
-                    {
+                    if (socket == null)
                         continue;
-                    }
-                    // if there are enough bytes to know how many bytes make the next packet,
-                    while (stream.DataAvailable)
-                    {
 
-                        //if(stream.
-                        byte[] lenBytes = new byte[4];
-                        // read in the packet length bytes (4 of them)
-                        stream.Read(lenBytes, 0, 4);
-                        // convert the bytes into an integer
-                        int length = BitConverter.ToInt32(lenBytes, 0);
+                    // if there are enough bytes to know how many bytes make the next packet,
+                    if (length == -1 && socket.Available >= 4)
+                    {
+                        int count = socket.Receive(lenBytes);
+                        length = BitConverter.ToInt32(lenBytes, 0);
                         if (length > 10000)
                             throw new FormatException("packet length is unreasonably long");
-                        
-                        // wait for that many more bytes of pure golden-brown data goodness
-                        //while (stream.Length < length)
-                            // Take a power nap
-                            //Thread.Sleep(3);
-                                                
+                    }
+                    else if (length>0 && socket.Available>=length)
+                    {
                         byte[] data = new byte[length];
-                        // read in the packet data
-                        stream.Read(data, 0, length);
-                        // deserialize the packet data into a packet
-                        Packet p = Packet.Read(data);                        
-                        if(p!=null)
-                            // hand the packet off and get back to work
-                            CallPacketsReceived(p);
+                        int datacount = socket.Receive(data);
+
+                        Packet p = Packet.Read(data);
+                        if (p != null)
+                            CallPacketReceived(p);
+                        length = -1;
                     }
 
                     dataToSend.Clear();
-                    lock (DataToSendQueue)
-                    {
-                        while (DataToSendQueue.Count > 0)
-                            dataToSend.Add(DataToSendQueue.Dequeue());
-                    }
+                    // now a ThreadQueue
+                    while (DataToSendQueue.Count > 0)
+                        dataToSend.Add(DataToSendQueue.DeQ() as byte[]);
                     foreach(byte[] b in dataToSend)
-                        stream.Write(b, 0, b.Length);
+                        socket.Send(b);
                 }
                 catch (Exception e)
                 {
-                    // 2012.09.15   Colby got the following exception (actually showed in commClient at "inputQueue.Enqueue(p)" )
+                    // 2012.09.15   Colby got the following exception (actually showed in commClient at "inputQueue.Enqueue(p)" originally)
                     // couldn't reproduce that the time
                     //Argument Excpetion: Source array was not long enough. Check srcIndex and length, and the array's lower bounds.
                     Debug.WriteLine(e.Message);
                 }
-                Thread.Sleep(10);
+                Thread.Sleep(0);
             }
         }
 
         
         public event Helper.Handlers.PacketReceivedEH PacketReceived;
-        private void CallPacketsReceived(Packet p)
+        private void CallPacketReceived(Packet p)
         {
             if(PacketReceived!=null)
             {
@@ -120,11 +110,11 @@ namespace Helper.Communication
 
         public void Send(Packet packet)
         {
-            if (stream == null)
+            if (socket == null)
                 return;
             byte[] data = packet.Serialize();
             //stream.Write(data, 0, data.Length);
-            DataToSendQueue.Enqueue(data);
+            DataToSendQueue.EnQ(data);
         }
     }
 }
