@@ -78,6 +78,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Chat.cs" />
     <Compile Include="Collections\ThreadQueue.cs" />
+    <Compile Include="Communication\SocketComm.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="Input\ActionBinding.cs" />
     <Compile Include="Input\ActionManager.cs" />
