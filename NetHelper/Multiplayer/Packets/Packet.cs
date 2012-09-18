@@ -42,7 +42,8 @@ namespace Helper.Multiplayer.Packets
             scObjectResponse,
             csObjectAction, // may not be needed either, cs and sc should handle action updates the same?
             scObjectAction,
-            ClientDisconnectPacket
+            ClientDisconnectPacket,
+            ClientConnectedPacket
         }
 
         public Types Type;
@@ -62,7 +63,7 @@ namespace Helper.Multiplayer.Packets
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
             }
 
             List<byte> dataList = new List<byte>();
@@ -117,7 +118,7 @@ namespace Helper.Multiplayer.Packets
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
             }
             return null;
         }

@@ -151,6 +151,11 @@ namespace Helper.Physics.PhysicsObjects
             car.SetupDefaultWheels();
         }
 
+        public override Vector3 GetPositionAbove()
+        {
+            return Body.Position + Vector3.UnitY * 4;
+        }
+
         #region Input
         public void GenericAcceleration(object[] vals)
         {

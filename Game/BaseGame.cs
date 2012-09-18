@@ -66,9 +66,6 @@ namespace Game
 
         #region Input
         internal InputManager inputManager;
-        Timer tmrCamUpdate;
-        Timer tmrUpdateServer;
-
         internal Chat ChatManager;
         internal SpriteFont chatFont;
         #endregion
@@ -109,9 +106,13 @@ namespace Game
         #endregion
 
         #region Multiplayer
-        public SortedList<int, string> ownedObjects = new SortedList<int, string>(); // Object ID, User who owns them
+        // Todo - turn the players into a SortedList<int, Player> type? (thus allowing more information than an alias to be stored
+        // This can also be used server side
+        public SortedList<int, string> players = new SortedList<int, string>(); // User ID, User ID Alias
+        public SortedList<int, int> objectsOwned = new SortedList<int, int>(); // Object ID, User ID who owns them
         public List<int> clientControlledObjects = new List<int>(); // TODO - Client Side only, merge with ownedObjects somehow?
         public List<object> MultiplayerUpdateQueue = new List<object>();
+        public int MyClientID; // Used by the client
         #endregion
 
         public BaseGame()
@@ -381,7 +382,7 @@ namespace Game
             }
             catch (Exception e)
             {
-                System.Diagnostics.Trace.WriteLine(e.Message);
+                System.Diagnostics.Trace.WriteLine(e.StackTrace);
             }
 
         }
@@ -627,13 +628,15 @@ namespace Game
             switch (CommType)
             {
                 case CommTypes.Client:
+                    commClient.ClientInfoRequestReceived += new Handlers.IntEH(commClient_ClientInfoRequestReceived);
                     commClient.ChatMessageReceived += new Handlers.StringStringEH(commClient_ChatMessageReceived);
-                    commClient.ObjectRequestResponseReceived += new Handlers.ObjectRequestResponseEH(commClient_ObjectRequestResponseReceived);
+                    commClient.ObjectAddedReceived += new Handlers.ObjectAddedResponseEH(commClient_ObjectAddedReceived);
                     commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
                     commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-                    commClient.ClientDisconnected += new Helper.Handlers.StringEH(commClient_ClientDisconnected);
+                    commClient.ClientDisconnected += new Handlers.StringEH(commClient_ClientDisconnected);
+                    commClient.ClientConnected += new Handlers.ClientConnectedEH(commClient_ClientConnected);
                     break;
-                case CommTypes.Server:
+                case CommTypes.Server: // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
                     commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
                     commServer.ChatMessageReceived += new Handlers.StringStringEH(commServer_ChatMessageReceived);
                     commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
@@ -642,6 +645,17 @@ namespace Game
                 default:
                     break;
             }
+        }
+
+        //public event Handlers.ClientConnectedEH ClientConnected2; // TODO - name this better ... it conflicts with the server side one
+        void commClient_ClientConnected(int id, string alias)
+        {
+            if (players.ContainsKey(id) == false)
+                players.Add(id, alias);
+
+            /*if (ClientConnected2 == null)
+                return;
+            ClientConnected2(id, alias);*/
         }
 
         public event Handlers.StringEH ClientDisconnected;
@@ -695,6 +709,15 @@ namespace Game
             ChatManager.PlayerAlias = alias;
             return commClient.Connect();
         }
+        /// <summary>
+        /// CLIENT SIDE
+        /// Client received an info request packet from the server, which contains our ID to use
+        /// </summary>
+        /// <param name="id"></param>
+        void commClient_ClientInfoRequestReceived(int id)
+        {
+            MyClientID = id;
+        }
 
         void commClient_ChatMessageReceived(string m, string p)
         {
@@ -718,11 +741,13 @@ namespace Game
         /// </summary>
         /// <param name="i"></param>
         /// <param name="asset"></param>
-        void commClient_ObjectRequestResponseReceived(int i, string asset)
+        void commClient_ObjectAddedReceived(int owner, int id, string asset)
         {
             // MINE!
-            clientControlledObjects.Add(i);
-            ProcessObjectRequestResponse(i, asset);
+            if(owner == MyClientID)
+                clientControlledObjects.Add(id);
+            objectsOwned.Add(id, owner);
+            ProcessObjectAdded(owner, id, asset);
         }
 
         /// <summary>
@@ -731,7 +756,7 @@ namespace Game
         /// </summary>
         /// <param name="i"></param>
         /// <param name="asset"></param>
-        public virtual void ProcessObjectRequestResponse(int i, string asset)
+        public virtual void ProcessObjectAdded(int owner, int id, string asset)
         {
 
         } 
@@ -879,8 +904,6 @@ namespace Game
         public void Stop()
         {
             physicsManager.Stop();
-            if(tmrCamUpdate!=null)
-                tmrCamUpdate.Stop();
             if (commClient != null)
                 commClient.Stop();
             if(commServer!=null)

@@ -74,9 +74,6 @@ namespace Helper.Physics
             }
             CallPostIntegrate();
 
-            //TODO: Add to the Camera Manager a way to 
-            //cam.UpdatePosition(); // keep the camera moving towards its target position
-            //objectCam.UpdatePosition(); // keep the camera moving towards its target position
             lastPhysicsElapsed = tmrPhysicsElapsed.ElapsedMilliseconds;
 
             ResetTimer();

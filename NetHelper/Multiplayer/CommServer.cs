@@ -135,6 +135,9 @@ namespace Helper.Multiplayer
                 ClientInfoResponsePacket cirp = packet as ClientInfoResponsePacket;
                 cpi.client.alias = cirp.Alias;
                 CallClientConnected(cpi.client.alias);
+
+                ClientConnectedPacket ccp = new ClientConnectedPacket(cpi.client.id, cirp.Alias);
+                BroadcastPacket(ccp);
             }
             else if (packet is ChatPacket)
             {
@@ -218,7 +221,7 @@ namespace Helper.Multiplayer
         {
             if (!Clients.ContainsKey(clientid))
                 return;
-            Clients[clientid].Send(new ObjectResponsePacket(objectId, asset));
+            Clients[clientid].Send(new ObjectAddedPacket(clientid, objectId, asset));
         }
 
         public void BroadcastObjectUpdate(Packet p)

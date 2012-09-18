@@ -102,11 +102,12 @@
     <Compile Include="Multiplayer\CommClient.cs" />
     <Compile Include="Multiplayer\CommServer.cs" />
     <Compile Include="Multiplayer\Packets\ChatPacket.cs" />
+    <Compile Include="Multiplayer\Packets\ClientConnectedPacket.cs" />
     <Compile Include="Multiplayer\Packets\ClientDisconnectPacket.cs" />
     <Compile Include="Multiplayer\Packets\KeepAlivePacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectActionPacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectRequestPacket.cs" />
-    <Compile Include="Multiplayer\Packets\ObjectResponsePacket.cs" />
+    <Compile Include="Multiplayer\Packets\ObjectAddedPacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectUpdatePacket.cs" />
     <Compile Include="Communication\TcpEventServer.cs" />
     <Compile Include="Multiplayer\Packets\ClientInfoRequestPacket.cs" />
