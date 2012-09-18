@@ -99,7 +99,6 @@ namespace HeightmapProcessor
         /// </summary>
         public override string GetRuntimeType(TargetPlatform targetPlatform)
         {
-
             // class, namespace, 
             return "Helper.Physics.HeightMapInfo, " +
                 "Helper.Physics, Version=1.0.0.0, Culture=neutral";
