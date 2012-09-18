@@ -84,7 +84,7 @@ namespace XnaView
             }
             catch (Exception e)
             {
-                System.Diagnostics.Trace.WriteLine(e.Message);
+                System.Diagnostics.Trace.WriteLine(e.StackTrace);
             }
             
         }
@@ -193,7 +193,7 @@ namespace XnaView
             catch (Exception e)
             {
                 //System.Console.WriteLine(e.Message);
-                System.Diagnostics.Debug.WriteLine(e.Message);
+                System.Diagnostics.Debug.WriteLine(e.StackTrace);
             }
         }
         private Vector2 DebugShowVector(SpriteBatch sb, SpriteFont font, Vector2 p, string s, Vector3 vector)

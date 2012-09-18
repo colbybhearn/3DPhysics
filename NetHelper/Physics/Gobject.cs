@@ -236,7 +236,7 @@ namespace Helper.Physics
             }
             catch (Exception e)
             {
-                System.Console.WriteLine(e.Message);
+                System.Console.WriteLine(e.StackTrace);
             }
         }
 
@@ -274,6 +274,13 @@ namespace Helper.Physics
         public void ProcessSimulatedInput(object[] actionvalues)
         {
             actionManager.ProcessActionValues(actionvalues);
+        }
+
+        public virtual Vector3 GetPositionAbove()
+        {
+            Vector3 ret = Body.Position;
+            ret.Y += Math.Abs((Body.CollisionSkin.WorldBoundingBox.Min.Y + Body.CollisionSkin.WorldBoundingBox.Max.Y) / 2f); // Assume body is halfway in this?
+            return ret;
         }
     }
 }

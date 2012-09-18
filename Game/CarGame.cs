@@ -6,6 +6,8 @@ using Helper;
 using Helper.Input;
 using Helper.Physics.PhysicsObjects;
 using Helper.Physics;
+using Microsoft.Xna.Framework;
+using System;
 
 namespace Game
 {
@@ -220,7 +222,7 @@ namespace Game
         /// </summary>
         /// <param name="objectid"></param>
         /// <param name="asset"></param>
-        public override void ProcessObjectRequestResponse(int objectid, string asset)
+        public override void ProcessObjectAdded(int ownerid, int objectid, string asset)
         {
             Model model = Content.Load<Model>(asset);
             Gobject newobject = null;
@@ -235,13 +237,12 @@ namespace Game
                     myCar = physicsManager.GetCar(carModel, wheelModel);
                     myCar.ID = objectid;
                     physicsManager.AddNewObject(myCar);
-                    SelectGameObject(myCar);
+                    if (ownerid == MyClientID) // Only select the new car if its OUR new car
+                        SelectGameObject(myCar);
                     break;
                 default:
                     break;
             }
-
-            
         }
 
         private void Accelerate()
@@ -317,11 +318,51 @@ namespace Game
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        Texture2D BlankBackground;
+        public override void Draw(SpriteBatch sb)
         {
-            base.Draw(spriteBatch);
+            base.Draw(sb);
 
-            ChatManager.Draw(spriteBatch);
+            // Lets draw names for cars!
+            List<Vector3> pos = new List<Vector3>();
+            List<string> text = new List<string>();
+            lock (gameObjects)
+            {
+                for (int i = 0; i < objectsOwned.Count; i++)
+                {
+                    int playerId = objectsOwned.Values[i];
+                    int objectId = objectsOwned.Keys[i];
+                    string alias;
+                    Gobject g;
+                    if (gameObjects.TryGetValue(objectId, out g) && players.TryGetValue(playerId, out alias))
+                    {
+                        pos.Add(g.GetPositionAbove());
+                        text.Add(alias);
+                    }
+                }
+            }
+            if (BlankBackground == null)
+            {
+                BlankBackground = new Texture2D(sb.GraphicsDevice, 1, 1);
+                BlankBackground.SetData(new Color[] { Color.White });
+            }
+
+            //Now that we're no longer blocking, lets draw
+            for (int i = 0; i < pos.Count; i++)
+            {
+                // TODO - magic number
+                if (Vector3.Distance(cam.CurrentPosition, pos[i]) < 100)
+                {
+                    Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cam._projection, cam.RhsLevelViewMatrix, Matrix.Identity);
+                    
+                    int size = (int)chatFont.MeasureString(text[i]).X;
+                    sb.Draw(BlankBackground, new Rectangle((int)screen.X - size/2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);
+
+                    sb.DrawString(chatFont, text[i], new Vector2(screen.X - size/2, screen.Y), Color.White);
+                }
+            }
+
+            ChatManager.Draw(sb);
         }
     }
 }

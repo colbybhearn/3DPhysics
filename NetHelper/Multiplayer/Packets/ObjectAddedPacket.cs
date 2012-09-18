@@ -3,14 +3,16 @@
 namespace Helper.Multiplayer.Packets
 {
     [Serializable]
-    public class ObjectResponsePacket : Packet
+    public class ObjectAddedPacket : Packet
     {
+        public int Owner;
         public int ID;
         public string AssetName;
 
-        public ObjectResponsePacket(int id, string asset)
+        public ObjectAddedPacket(int owner, int id, string asset)
             : base(Types.scObjectResponse)
         {
+            Owner = owner;
             ID = id;
             AssetName = asset;
         }

@@ -74,18 +74,20 @@ namespace Helper.Multiplayer
         {
             if (packet is ClientInfoRequestPacket)
             {
+                ClientInfoRequestPacket cir = packet as ClientInfoRequestPacket;
                 ClientInfoResponsePacket clientInfoResponse = new ClientInfoResponsePacket(sAlias);
                 client.Send(clientInfoResponse);
+                CallClientInfoRequestReceived(cir.ID);
             }
             else if (packet is ChatPacket)
             {
                 ChatPacket cp = packet as ChatPacket;
                 CallChatMessageReceived(cp.message, cp.player);
             }
-            else if (packet is ObjectResponsePacket)
+            else if (packet is ObjectAddedPacket)
             {
-                ObjectResponsePacket corp = packet as ObjectResponsePacket;
-                CallObjectRequestResponseReceived(corp.ID, corp.AssetName);
+                ObjectAddedPacket corp = packet as ObjectAddedPacket;
+                CallObjectRequestResponseReceived(corp.Owner, corp.ID, corp.AssetName);
             }
             else if (packet is ObjectUpdatePacket)
             {
@@ -103,6 +105,20 @@ namespace Helper.Multiplayer
 
                 CallClientDisconnected(cdp.Alias);
             }
+            else if (packet is ClientConnectedPacket)
+            {
+                ClientConnectedPacket ccp = packet as ClientConnectedPacket;
+
+                CallClientConnected(ccp.ID, ccp.Alias);
+            }
+        }
+
+        public event Handlers.ClientConnectedEH ClientConnected;
+        private void CallClientConnected(int id, string alias)
+        {
+            if(ClientConnected == null)
+                return;
+            ClientConnected(id, alias);
         }
 
         public event Handlers.StringEH ClientDisconnected;
@@ -130,12 +146,12 @@ namespace Helper.Multiplayer
             ObjectUpdateReceived(id, asset, pos, orient, vel);
         }
 
-        public event Helper.Handlers.ObjectRequestResponseEH ObjectRequestResponseReceived;
-        private void CallObjectRequestResponseReceived(int i, string asset)
+        public event Helper.Handlers.ObjectAddedResponseEH ObjectAddedReceived;
+        private void CallObjectRequestResponseReceived(int owner, int id, string asset)
         {
-            if (ObjectRequestResponseReceived == null)
+            if (ObjectAddedReceived == null)
                 return;
-            ObjectRequestResponseReceived(i, asset);
+            ObjectAddedReceived(owner, id, asset);
         }
 
         
@@ -145,6 +161,14 @@ namespace Helper.Multiplayer
             if (ChatMessageReceived == null)
                 return;
             ChatMessageReceived(msg, player);
+        }
+
+        public event Helper.Handlers.IntEH ClientInfoRequestReceived;
+        private void CallClientInfoRequestReceived(int id)
+        {
+            if (ClientInfoRequestReceived == null)
+                return;
+            ClientInfoRequestReceived(id);
         }
 
 

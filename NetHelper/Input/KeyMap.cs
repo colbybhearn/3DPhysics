@@ -86,7 +86,7 @@ namespace Helper.Input
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("Error in SaveKeyMap " + e.Message);
+                System.Diagnostics.Debug.WriteLine("Error in SaveKeyMap " + e.StackTrace);
             }
             finally
             {
@@ -125,7 +125,7 @@ namespace Helper.Input
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("Error in LoadKeyMap " + e.Message);
+                System.Diagnostics.Debug.WriteLine("Error in LoadKeyMap " + e.StackTrace);
             }
             finally
             {
