@@ -26,6 +26,7 @@ namespace Helper.Communication
         {
             bool connected = false;
             TcpClient client = new TcpClient();
+            client.NoDelay = true; // Test
             try
             {
                 client.Connect(remoteEndPoint);

@@ -62,6 +62,7 @@ namespace Helper.Communication
                     if (myListener.Pending())
                     {
                         Socket socket = myListener.AcceptSocket();
+                        socket.NoDelay = true;
                         CallClientAccepted(socket);
                     }
                     Thread.Sleep(10);

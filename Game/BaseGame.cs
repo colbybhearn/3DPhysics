@@ -500,7 +500,7 @@ namespace Game
                 moon = Content.Load<Texture2D>("Moon");
                 staticFloatObjects = Content.Load<Model>("StaticMesh");
                 planeModel = Content.Load<Model>("plane");
-                terrainModel = Content.Load<Model>("track");
+                terrainModel = Content.Load<Model>("terrain");
                 carModel = Content.Load<Model>("car");
                 wheelModel = Content.Load<Model>("wheel");
                 //debugFont = Content.Load<SpriteFont>("DebugFont");
