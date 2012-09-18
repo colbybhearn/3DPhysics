@@ -170,8 +170,9 @@ namespace Game
                                 continue;// TODO -  Should we continue instead of not updating this frame? (can't yet)
                             }
                             Gobject go = gameObjects[oup.objectId];
-                            go.MoveTo(oup.position, oup.orientation);
-                            go.SetVelocity(oup.velocity);
+                            go.Interpoladate(oup.position, oup.orientation, oup.velocity);
+                            //go.MoveTo(oup.position, oup.orientation);
+                            //go.SetVelocity(oup.velocity);
                             MultiplayerUpdateQueue.RemoveAt(0);
                         }
                     }

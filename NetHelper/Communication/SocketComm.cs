@@ -21,20 +21,15 @@ namespace Helper.Communication
         bool ShouldBeRunning = false;
         ThreadQueue DataToSendQueue;
 
-        public SocketComm(IPEndPoint ep, Socket s)
+        public SocketComm()
         {
-            this.endPoint = ep;
-            this.socket = s;
+            
+
+            
             DataToSendQueue = new ThreadQueue();
         }
 
-        public void Start()
-        {
-            ShouldBeRunning = true;
-            inputThread = new Thread(new ThreadStart(inputWorker));
-            inputThread.Start();
-        }
-        public void Stop()
+        public void Dicsonnect()
         {
             ShouldBeRunning = false;
         }
@@ -46,9 +41,10 @@ namespace Helper.Communication
 
         private void inputWorker()
         {
-            int length = -1;
-            byte[] lenBytes = new byte[4];
             List<byte[]> dataToSend = new List<byte[]>();
+            byte[] lenBytes = new byte[4];
+            int length = -1;
+            
             while (ShouldBeRunning)
             {
                 if (length == -1 && socket.Available>=4)
@@ -104,6 +100,25 @@ namespace Helper.Communication
             if (PacketReceived == null)
                 return;
             PacketReceived(data);
+        }
+
+        internal void Connect(IPEndPoint remoteEndPoint)
+        {
+            this.endPoint = remoteEndPoint;
+            TcpClient client = new TcpClient();
+            try
+            {
+                client.Connect(remoteEndPoint);
+                socket = client.Client;
+            }
+            catch (Exception E)
+            {
+
+            }
+
+            ShouldBeRunning = true;
+            inputThread = new Thread(new ThreadStart(inputWorker));
+            inputThread.Start();
         }
     }
 }

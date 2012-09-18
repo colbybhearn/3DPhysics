@@ -282,5 +282,30 @@ namespace Helper.Physics
             ret.Y += Math.Abs((Body.CollisionSkin.WorldBoundingBox.Min.Y + Body.CollisionSkin.WorldBoundingBox.Max.Y) / 2f); // Assume body is halfway in this?
             return ret;
         }
+
+
+        /// <summary>
+        /// CLIENT SIDE
+        /// Interpolating Update
+        /// </summary>
+        /// <param name="vector3"></param>
+        /// <param name="matrix"></param>
+        /// <param name="vector3_2"></param>
+        public void Interpoladate(Vector3 position, Matrix orientation, Vector3 velocity)
+        {
+            //MoveTo(position, orientation);
+            //SetVelocity(velocity);
+            /*Vector3 intPosition = new Vector3(  Position.X + (Position.X - position.X)*.9f,
+                                                Position.Y + (Position.Y - position.Y)*.9f,
+                                                Position.Z + (Position.Z - position.Z)*.9f);*/
+
+            Vector3 intPosition = BodyPosition() + (position - BodyPosition()) * .5f;
+            //System.Diagnostics.Debug.WriteLine(position.ToString());
+            //System.Diagnostics.Debug.WriteLine(Position.ToString());
+            Vector3 intvelocity = BodyVelocity() + (velocity - BodyVelocity()) * .5f;
+            MoveTo(intPosition, orientation);
+            SetVelocity(intvelocity);
+            //SetVelocity(intvelocity);
+        }
     }
 }

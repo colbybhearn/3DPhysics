@@ -107,8 +107,6 @@ namespace XnaView
                 Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
                 Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
                 Microsoft.Xna.Framework.Ray r = cam.GetMouseRay(mouse, view);
-                //Gobject nearest = null;
-                //float min = float.MaxValue;
                 float dist = 0;
                 Vector3 pos;
                 Vector3 norm;
@@ -146,14 +144,6 @@ namespace XnaView
                 GraphicsDevice.Clear(Color.Gray);
 
                 DrawObjects();
-                
-                /*
-                if(DrawingEnabled)
-                    if(terrain!=null)
-                        terrain.Draw(GraphicsDevice, v, p);*/
-                /*if(DebugPhysics)
-                    if (terrain != null)
-                        terrain.DrawWireframe(GraphicsDevice, v, p);*/
 
                 // SpriteBatch drawing!
                 

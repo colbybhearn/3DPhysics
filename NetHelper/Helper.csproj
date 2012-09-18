@@ -79,6 +79,7 @@
     <Compile Include="Chat.cs" />
     <Compile Include="Collections\ThreadQueue.cs" />
     <Compile Include="Communication\SocketComm.cs" />
+    <Compile Include="Communication\TcpEventClient2.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="Input\ActionBinding.cs" />
     <Compile Include="Input\ActionManager.cs" />
