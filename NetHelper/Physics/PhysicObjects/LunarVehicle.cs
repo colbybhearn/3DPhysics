@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using JigLibX.Geometry;
 using System.Windows.Forms;
+using JigLibX.Collision;
 
 namespace Helper.Physics.PhysicsObjects
 {
@@ -20,9 +21,15 @@ namespace Helper.Physics.PhysicsObjects
         const float MAX_VERT_MAGNITUDE=30;
         const float MAX_ROT_JET=10;
 
-        public LunarVehicle(Vector3 position, Vector3 scale, Primitive primitive, Model model, string asset)
-            : base(position, scale, primitive, model, true, asset)
+        public LunarVehicle(Vector3 position, Vector3 scale, Matrix orient, Model model, string asset)
+            : base()
         {
+            Vector3 sides = new Vector3(1f * scale.X, 1.75f * scale.Y, 1f * scale.Z);
+            Skin.AddPrimitive(new Box(new Vector3(sides.X * -.5f, sides.Y * -.5f, sides.Z * -.5f), orient, sides), (int)MaterialTable.MaterialID.NotBouncyNormal); // Top portion
+            sides = new Vector3(scale.X * 2.1f, scale.Y * 1.15f, scale.Z * 2.1f);
+            Skin.AddPrimitive(new Box(new Vector3(sides.X * -.5f, sides.Y * -1.45f, sides.Z * -.5f), orient, sides), (int)MaterialTable.MaterialID.NotBouncyNormal); // Legs
+            CommonInit(position, scale / 2, model, true, asset);
+
             VertJet = new BoostController(Body, Vector3.Up, Vector3.Zero);
             RotJetX = new BoostController(Body, Vector3.Zero, Vector3.UnitZ);
             RotJetZ = new BoostController(Body, Vector3.Zero, Vector3.UnitX);
@@ -99,6 +106,20 @@ namespace Helper.Physics.PhysicsObjects
             SetRotJetYThrust(0);
             SetRotJetZThrust(0);
         }
-        
+
+        public override void FinalizeBody()
+        {
+            try
+            {
+                //Vector3 com = SetMass(2.0f);
+                //Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
+                Body.MoveTo(Position, Matrix.Identity);
+                Body.EnableBody(); // adds to CurrentPhysicsSystem
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
+        }
     }
 }

@@ -38,8 +38,8 @@ namespace XnaView
         private SpriteFont debugFont;
         public bool Debug
         {
-            get { return game.debug; }
-            set { game.debug = value; }
+            get { return game.DebugInfo; }
+            set { game.DebugInfo = value; }
         }
         public bool DebugPhysics { get; set; } 
         public bool DrawingEnabled { get; set; }
@@ -222,7 +222,7 @@ namespace XnaView
                                 else
                                     go.Draw(ref view, ref proj);
                             }
-                            if (DebugPhysics)
+                            if (game.DebugPhysics)
                                 go.DrawWireframe(GraphicsDevice, view, proj);
                         }
                     }

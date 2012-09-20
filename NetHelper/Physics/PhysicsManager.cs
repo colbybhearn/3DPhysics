@@ -219,13 +219,13 @@ namespace Helper.Physics
         }
         public LunarVehicle GetLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
         {
-            Box boxPrimitive = new Box(-.5f * size, orient, size); // this is relative to the Body!
+            //Box boxPrimitive = new Box(-.5f * size, orient, size); // this is relative to the Body!
             LunarVehicle lander = new LunarVehicle(
                 pos,
-                size / 2,
-                boxPrimitive,
+                size,
+                orient,
                 model,
-                "cube"
+                "lunar lander"
                 );
 
             //newObjects.Add(lander.ID, lander);

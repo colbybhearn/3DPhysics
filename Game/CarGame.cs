@@ -38,7 +38,7 @@ namespace Game
     public class CarGame : BaseGame
     {
 
-        Model carModel, wheelModel;
+        Model carModel, wheelModel, landerModel;
         CarObject myCar;
         Model terrainModel;
         Model planeModel;
@@ -64,6 +64,7 @@ namespace Game
             terrainModel = Content.Load<Model>("terrain");
             carModel = Content.Load<Model>("car");
             wheelModel = Content.Load<Model>("wheel");
+            landerModel = Content.Load<Model>("Lunar Lander");
 
             chatFont = Content.Load<SpriteFont>("debugFont");
             ChatManager = new Chat(chatFont);
@@ -210,8 +211,8 @@ namespace Game
                 case "car":
                     newobject = physicsManager.GetCar(carModel, wheelModel);
                     break;
-                case "cube":
-                    newobject = physicsManager.GetLunarLander(model);
+                case "lunar lander":
+                    newobject = physicsManager.GetLunarLander(landerModel);
                     break;
                 default:
                     break;
@@ -258,8 +259,8 @@ namespace Game
                     if (ownerid == MyClientID) // Only select the new car if its OUR new car
                         SelectGameObject(myCar);
                     break;
-                case "cube":
-                    lander = physicsManager.GetLunarLander(model);
+                case "lunar lander":
+                    lander = physicsManager.GetLunarLander(landerModel);
                     lander.ID = objectid;
                     physicsManager.AddNewObject(lander);
                     if (ownerid == MyClientID) // Only select the new car if its OUR new car
@@ -274,7 +275,7 @@ namespace Game
         {
             if (commClient != null)
             {
-                commClient.SendObjectRequest("cube");
+                commClient.SendObjectRequest("lunar lander");
             }
         }
 
