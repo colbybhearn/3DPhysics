@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using JigLibX.Vehicles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using JigLibX.Vehicles;
-using JigLibX.Collision;
-using Helper.Physics;
 
 namespace Helper.Physics.PhysicsObjects
 {

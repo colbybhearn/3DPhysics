@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using JigLibX.Geometry;
 using JigLibX.Physics;
 using Microsoft.Xna.Framework;
-//using System.Windows.Forms;
 using Microsoft.Xna.Framework.Graphics;
-using JigLibX.Geometry;
-using System.Windows.Forms;
 
 namespace Helper.Physics.PhysicsObjects
 {
