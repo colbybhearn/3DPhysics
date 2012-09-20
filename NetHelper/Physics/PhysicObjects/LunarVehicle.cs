@@ -17,9 +17,8 @@ namespace Helper.Physics.PhysicsObjects
         BoostController RotJetY;
         BoostController RotJetX;
         BoostController RotJetZ;
-        const float MAX_VERT_MAGNITUDE=15;
-        const float MAX_ROT_JETX=5;
-        const float MAX_ROT_JETZ=5;
+        const float MAX_VERT_MAGNITUDE=30;
+        const float MAX_ROT_JET=10;
 
         public LunarVehicle(Vector3 position, Vector3 scale, Primitive primitive, Model model, string asset)
             : base(position, scale, primitive, model, true, asset)
@@ -34,98 +33,71 @@ namespace Helper.Physics.PhysicsObjects
             PhysicsSystem.CurrentPhysicsSystem.AddController(RotJetZ);
             PhysicsSystem.CurrentPhysicsSystem.AddController(RotJetY);
 
-            //actionManager.AddBinding(Actions.
+            actionManager.AddBinding((int)Actions.ThrustUp, new Helper.Input.ActionBindingDelegate(GenericThrustUp), 1);
+            actionManager.AddBinding((int)Actions.Pitch, new Helper.Input.ActionBindingDelegate(GenericPitch), 1);
+            actionManager.AddBinding((int)Actions.Roll, new Helper.Input.ActionBindingDelegate(GenericRoll), 1);
+            actionManager.AddBinding((int)Actions.Yaw, new Helper.Input.ActionBindingDelegate(GenericYaw), 1);
         }
 
         public enum Actions
         {
+            ThrustUp,
+            Roll,
+            Pitch,
+            Yaw
         }
 
-        public void SetVertJetThrust(float percentThrust)
+        private void GenericThrustUp(object[] v)
         {
-            VertJet.SetForceMagnitude(percentThrust * MAX_VERT_MAGNITUDE);
+            SetVertJetThrust((float)v[0]);
         }
 
-        public void SetRotJetXThrust(float percentThrust)
+
+        private void GenericPitch(object[] v)
         {
-            RotJetX.SetTorqueMagnitude(percentThrust * MAX_ROT_JETX);
+            SetRotJetXThrust((float)v[0]);
         }
 
-        public void SetRotJetZThrust(float percentThrust)
+        private void GenericRoll(object[] v)
         {
-            RotJetZ.SetTorqueMagnitude(percentThrust * MAX_ROT_JETZ);
+            SetRotJetZThrust((float)v[0]);
         }
 
-        public void SetRotJetYThrust(float percentThrust)
+        private void GenericYaw(object[] v)
         {
-            RotJetY.SetTorqueMagnitude(percentThrust * MAX_ROT_JETZ);
+            SetRotJetYThrust((float)v[0]);
         }
 
-        public void ProcessInputKeyUp(KeyEventArgs e)
+        public void SetVertJetThrust(float v)
         {
-            Keys key = e.KeyCode;
-            if (key == Keys.Space)
-            {
-                SetVertJetThrust(0);
-            }
-            if (key == Keys.W)
-            {
-                SetRotJetZThrust(0);
-            }
-            if (key == Keys.A)
-            {
-                SetRotJetXThrust(0);
-            }
-            if (e.KeyCode == Keys.S)
-            {
-                SetRotJetZThrust(0);
-            }
-            if (e.KeyCode == Keys.D)
-            {
-                SetRotJetXThrust(0);
-            }
-            if (e.KeyCode == Keys.Q)
-            {
-                SetRotJetYThrust(0);
-            }
-            if (e.KeyCode == Keys.E)
-            {
-                SetRotJetYThrust(0);
-            }
-
-
+            VertJet.SetForceMagnitude(v * MAX_VERT_MAGNITUDE);
+            actionManager.SetActionValues((int)Actions.ThrustUp, new object[] { v });
         }
 
-        public void ProcessInputKeyDown(KeyEventArgs e)
+        public void SetRotJetXThrust(float v)
         {
-            if (e.KeyCode == Keys.Space)
-            {
-                SetVertJetThrust(1.0f);
-            }
-            if (e.KeyCode == Keys.W)
-            {
-                SetRotJetZThrust(-.4f);
-            }
-            if (e.KeyCode == Keys.A)
-            {
-                SetRotJetXThrust(.4f);
-            }
-            if (e.KeyCode == Keys.S)
-            {
-                SetRotJetZThrust(.4f);
-            }
-            if (e.KeyCode == Keys.D)
-            {
-                SetRotJetXThrust(-.4f);
-            }
-            if (e.KeyCode == Keys.Q)
-            {
-                SetRotJetYThrust(.4f);
-            }
-            if (e.KeyCode == Keys.E)
-            {
-                SetRotJetYThrust(-.4f);
-            }   
+            RotJetX.SetTorqueMagnitude(v * MAX_ROT_JET);
+            actionManager.SetActionValues((int)Actions.Pitch, new object[] { v });
+        }
+
+        public void SetRotJetZThrust(float v)
+        {
+            RotJetZ.SetTorqueMagnitude(v * MAX_ROT_JET);
+            actionManager.SetActionValues((int)Actions.Roll, new object[] { v });
+        }
+
+        public void SetRotJetYThrust(float v)
+        {
+            RotJetY.SetTorqueMagnitude(v * MAX_ROT_JET);
+            actionManager.SetActionValues((int)Actions.Yaw, new object[] { v });
+        }
+
+        public override void SetNominalInput()
+        {
+            SetVertJetThrust(0);
+            SetRotJetXThrust(0);
+            SetRotJetYThrust(0);
+            SetRotJetZThrust(0);
         }
         
     }

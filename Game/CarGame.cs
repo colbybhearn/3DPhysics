@@ -11,8 +11,33 @@ using System;
 
 namespace Game
 {
+
+    /* Todo:
+     * work on having different first person and chase cam views for different object types (car vs. lunar lander vs. aircraft)
+     * Work on what the physicsManager has to know in ProcessObjectAdded. Right now, it has to know the specific physicalObject. (that may or may not be the best we can do - I'd like it to be generic).
+     * work on having the same input do different things, based on the current role or player mode. (car mode and lander mode, both with WASD controls is the goal)
+     */
+
+    /* Adding a Vehicle
+     * Add the specific Gobject under physicsObjects folder
+     * Add Getter method to PhysicsManager with some defaults like location, orientation, etc.
+     * 
+     * In the specific Game,
+     *  - Process the asset type in ProcessObjectAdded
+     *  - Process the asset type in AddNewObject
+     *  - Add InputManager Key Bindings in the specific Game
+     * 
+     * In the specific Gobject, 
+     *  - add the degrees of freedom into an "Actions" enum
+     *  - add generic action methods that take object[] 
+     *  - Add ActionManager Action Bindings in the constructor
+     *  - call ActionManager.SetActionValues in specific action method
+     *  - override SetNominalInput method and define what nominal input is 
+     * 
+     */
     public class CarGame : BaseGame
     {
+
         Model carModel, wheelModel;
         CarObject myCar;
         Model terrainModel;
@@ -20,13 +45,11 @@ namespace Game
         Texture2D moon;
         Model cubeModel;
         Model sphereModel;
-
-
+        LunarVehicle lander;
 
         public CarGame()
         {
             name = "CarGame";
-
         }
 
         public override void InitializeContent()
@@ -146,6 +169,18 @@ namespace Game
 
             // Chat
             defaults.Add(new KeyBinding("ChatKeyPressed", Keys.Enter, false, false, false, KeyEvent.Pressed, ChatKeyPressed));
+
+            //Lunar Lander
+            defaults.Add(new KeyBinding("SpawnLunarLander", Keys.Decimal, false, false, false, KeyEvent.Pressed, SpawnLander));
+            defaults.Add(new KeyBinding("LunarThrustUp", Keys.Space, false, false, false, KeyEvent.Down, LunarThrustUp));
+            defaults.Add(new KeyBinding("LunarPitchUp", Keys.NumPad5, false, false, false, KeyEvent.Down, LunarPitchUp));
+            defaults.Add(new KeyBinding("LunarPitchDown", Keys.NumPad8, false, false, false, KeyEvent.Down, LunarPitchDown));
+            defaults.Add(new KeyBinding("LunarRollLeft", Keys.NumPad4, false, false, false, KeyEvent.Down, LunarRollLeft));            
+            defaults.Add(new KeyBinding("LunarRollRight", Keys.NumPad6, false, false, false, KeyEvent.Down, LunarRollRight));
+            defaults.Add(new KeyBinding("LunarYawLeft", Keys.NumPad7, false, false, false, KeyEvent.Down, LunarYawLeft));
+            defaults.Add(new KeyBinding("LunarYawRight", Keys.NumPad9, false, false, false, KeyEvent.Down, LunarYawRight));
+
+
             return defaults;
         }
 
@@ -155,27 +190,7 @@ namespace Game
             return new KeyMap(this.name, GetDefaultKeyBindings());
         }
 
-        /// <summary>
-        /// This is called by BaseGame immediately before Keyboard state is used to process the KeyBindings
-        /// we don't want to handle keydowns and keyups, so revert to nominal states and then immediately process key actions to arrive at a current state
-        /// </summary>
-        public override void SetNominalInputState()
-        {
-            foreach (int i in clientControlledObjects)
-            {
-                if (!gameObjects.ContainsKey(i))
-                    return;
-                Gobject go = gameObjects[i];
-                if (go is CarObject)
-                {
-                    CarObject myCar = go as CarObject;
-                    // we don't want to handle
-                    myCar.SetAcceleration(0);
-                    myCar.SetSteering(0);
-                    myCar.setHandbrake(0);
-                }
-            }
-        }
+    
 
         /// <summary>
         /// CLIENT SIDE
@@ -194,6 +209,9 @@ namespace Game
                     break;
                 case "car":
                     newobject = physicsManager.GetCar(carModel, wheelModel);
+                    break;
+                case "cube":
+                    newobject = physicsManager.GetLunarLander(model);
                     break;
                 default:
                     break;
@@ -240,10 +258,77 @@ namespace Game
                     if (ownerid == MyClientID) // Only select the new car if its OUR new car
                         SelectGameObject(myCar);
                     break;
+                case "cube":
+                    lander = physicsManager.GetLunarLander(model);
+                    lander.ID = objectid;
+                    physicsManager.AddNewObject(lander);
+                    if (ownerid == MyClientID) // Only select the new car if its OUR new car
+                        SelectGameObject(lander);
+                    break;
                 default:
                     break;
             }
         }
+
+        private void SpawnLander()
+        {
+            if (commClient != null)
+            {
+                commClient.SendObjectRequest("cube");
+            }
+        }
+
+        private void LunarThrustUp()
+        {
+            if (lander == null)
+                return;
+            lander.SetVertJetThrust(.9f);
+        }
+
+        private void LunarPitchDown()
+        {
+            if (lander == null)
+                return;
+            lander.SetRotJetXThrust(-.4f);
+            
+        }
+
+        private void LunarRollLeft()
+        {
+            if (lander == null)
+                return;
+            lander.SetRotJetZThrust(-.4f);
+        }
+
+        private void LunarPitchUp()
+        {
+            if (lander == null)
+                return;
+            lander.SetRotJetXThrust(.4f);
+        }
+
+        private void LunarRollRight()
+        {
+            if (lander == null)
+                return;
+            lander.SetRotJetZThrust(.4f);
+        }
+
+        private void LunarYawLeft()
+        {
+            if (lander == null)
+                return;
+            lander.SetRotJetYThrust(.4f);
+        }
+
+        private void LunarYawRight()
+        {
+            if (lander == null)
+                return;
+            lander.SetRotJetYThrust(-.4f);
+        }
+
+
 
         private void Accelerate()
         {
@@ -364,5 +449,7 @@ namespace Game
 
             ChatManager.Draw(sb);
         }
+
+        
     }
 }

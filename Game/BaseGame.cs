@@ -415,6 +415,7 @@ namespace Game
             defaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, KeyEvent.Down, CameraMoveSpeedDecrease));
             defaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, KeyEvent.Pressed, CameraModeCycle));
             defaults.Add(new KeyBinding("ToggleDebugInfo", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
+
             return defaults;
         }
 
@@ -591,8 +592,18 @@ namespace Game
             inputManager.Update();
         }
 
+        /// <summary>
+        /// This is called by BaseGame immediately before Keyboard state is used to process the KeyBindings
+        /// we don't want to handle keydowns and keyups, so revert to nominal states and then immediately process key actions to arrive at a current state
+        /// </summary>
         public virtual void SetNominalInputState()
         {
+            foreach (int i in clientControlledObjects)
+            {
+                if (!gameObjects.ContainsKey(i))
+                    return;
+                gameObjects[i].SetNominalInput();
+            }
         }
 
         public virtual void EditSettings()

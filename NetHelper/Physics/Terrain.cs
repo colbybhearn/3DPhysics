@@ -27,6 +27,8 @@ namespace Helper.Physics
         List<Vector3> meshVertices = new List<Vector3>();// overlapping verts
         List<Vector3> heightVertices = new List<Vector3>();// overlapping verts
 
+        Vector3[] heightNodes;
+
         public Terrain( Vector3 posCenter,Vector3 size, int cellsX, int cellsZ, GraphicsDevice g, Texture2D tex) : base()
         {
             numVertsX = cellsX + 1;
@@ -48,43 +50,36 @@ namespace Helper.Physics
             double currentHeight = 0;
             // Fill in the vertices
             int count = 0;
-            //float edgeHeigh = 0;
-            //float worldZPosition = posCenter.Z - (size.Z / 2);
+            
+            // distribute height nodes across the map.
+            // for each vert, calculate the height by summing (node height / distance)
+            int numHeightNodes = 10;
+            heightNodes = new Vector3[numHeightNodes];
+            for (int i = 0; i < numHeightNodes; i++)
+            {
+                heightNodes[i] = new Vector3((float)((-size.X / 2) + (r.NextDouble() * size.X)),
+                                                (float)(r.NextDouble() * size.Y),
+                                                (float)((-size.Z / 2) + (r.NextDouble() * size.Z)));
+            }
+
             float worldZPosition = - (size.Z / 2);
-            //float height;
-            //float stair = 0;
-            //float diff = .5f;
             for (int z = 0; z < numVertsZ; z++)
             {
-                //float worldXPosition = posCenter.X - (size.X / 2);
                 float worldXPosition = - (size.X / 2);
                 for (int x = 0; x < numVertsX; x++)
                 {
 
                     if (count % numVertsX == 0)
                         targetHeight = r2.NextDouble();
-                    //targetHeight += Math.Abs(worldZPosition);// +worldXPosition * 1.0f;
                     
-                    currentHeight += (targetHeight - currentHeight) * .009f;
-                    //if(x!=0)
-                    //currentHeight = (targetHeight) / ((float)x / (float)(numVertsX+1));
-                    //height = (float)((r.NextDouble() + currentHeight) * size.Y);
+                    //currentHeight += (targetHeight - currentHeight) * .009f;
 
-                    
-                    //height = 1;
-                    
-                    //stair += diff;
-                    //if (z + x == 17)
-                        //stair += 10;
-
-                    //height += stair;
-                    verts[count].Position = new Vector3(worldXPosition,(float)currentHeight, worldZPosition);
+                    float height = GetNodeBasedHeight(worldXPosition, worldZPosition);
+                    verts[count].Position = new Vector3(worldXPosition, height, worldZPosition);
                     verts[count].Normal = Vector3.Zero;
                     verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
                     verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);
 
-                    //if (z + x == 17)
-                        //stair -= 10;
                     count++;
 
                     // Advance in x
@@ -94,9 +89,6 @@ namespace Helper.Physics
                 currentHeight = 0;
                 // Advance in z
                 worldZPosition += cellSizeZ;
-                //diff *= -1;
-                //if (diff < 1)
-                   // stair += numVertsX * diff;
             }
 
             int index = 0;
@@ -158,7 +150,7 @@ namespace Helper.Physics
                 
                 if (i >= verts.Length)
                     i = (i % verts.Length)+1;
-                heightf = verts[i].Position.Y + posCenter.Y;
+                heightf = verts[i].Position.Y + posCenter.Y; // works
                 //heightf = verts[i].Position.Y;
                 i += numVertsX;
                 
@@ -185,6 +177,21 @@ namespace Helper.Physics
             }
 
         }
+
+        private float GetNodeBasedHeight(float x, float z)
+        {
+            float h = 0;
+            float dist=0;
+            foreach (Vector3 v in heightNodes)
+            {
+                dist = (float)Math.Sqrt(((v.X - x) * (v.X - x)) + (float)((v.Z - z) * (v.Z - z)));
+                float power = dist * v.Y / 10;
+                h+= power;
+            }
+
+            return h;
+        }
+        
 
         private Triangle GetTriangleOfFirstVert(int startVertex)
         {

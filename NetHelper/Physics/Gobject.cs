@@ -295,17 +295,16 @@ namespace Helper.Physics
         {
             //MoveTo(position, orientation);
             //SetVelocity(velocity);
-            /*Vector3 intPosition = new Vector3(  Position.X + (Position.X - position.X)*.9f,
-                                                Position.Y + (Position.Y - position.Y)*.9f,
-                                                Position.Z + (Position.Z - position.Z)*.9f);*/
-
             Vector3 intPosition = BodyPosition() + (position - BodyPosition()) * .5f;
-            //System.Diagnostics.Debug.WriteLine(position.ToString());
-            //System.Diagnostics.Debug.WriteLine(Position.ToString());
             Vector3 intvelocity = BodyVelocity() + (velocity - BodyVelocity()) * .5f;
             MoveTo(intPosition, orientation);
             SetVelocity(intvelocity);
             //SetVelocity(intvelocity);
+        }
+
+        public virtual void SetNominalInput()
+        {
+            
         }
     }
 }

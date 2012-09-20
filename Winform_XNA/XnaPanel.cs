@@ -214,7 +214,14 @@ namespace XnaView
                         {
                             ObjectsDrawn++;
                             if (DrawingEnabled)
-                                go.Draw(ref view, ref proj);
+                            {
+                                if (go is Terrain)
+                                {
+                                    (go as Terrain).Draw(GraphicsDevice, view, proj);
+                                }
+                                else
+                                    go.Draw(ref view, ref proj);
+                            }
                             if (DebugPhysics)
                                 go.DrawWireframe(GraphicsDevice, view, proj);
                         }

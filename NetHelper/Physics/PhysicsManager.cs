@@ -157,7 +157,13 @@ namespace Helper.Physics
             return true;
         }
 
-        private Gobject GetBox(Vector3 pos, Vector3 size, Matrix orient, Model model, bool moveable)
+
+        
+        public Gobject GetBox(Model model)
+        {
+            return GetBox(new Vector3(0, 0, 0), new Vector3(2, 2, 2), Matrix.Identity, model, true);
+        }
+        public Gobject GetBox(Vector3 pos, Vector3 size, Matrix orient, Model model, bool moveable)
         {
             // position of box was upper leftmost corner
             // body has world position
@@ -173,7 +179,6 @@ namespace Helper.Physics
                 "cube"
                 );
 
-            //newObjects.Add(box.ID, box);
             return box;
         }
 
@@ -238,6 +243,12 @@ namespace Helper.Physics
                 tmrPhysicsElapsed.Stop();
             if(tmrPhysicsUpdate!=null)
                 tmrPhysicsUpdate.Stop();
+        }
+
+
+        public LunarVehicle GetLunarLander(Model model)
+        {
+            return GetLunarLander(new Vector3(0, 0, 0), new Vector3(2, 2, 2), Matrix.Identity, model);
         }
     }
 }

@@ -187,5 +187,12 @@ namespace Helper.Physics.PhysicsObjects
             actionManager.SetActionValues((int)Actions.Handbrake, new object[] { p });
         }
         #endregion
+
+        public override void SetNominalInput()
+        {
+            SetAcceleration(0);
+            SetSteering(0);
+            setHandbrake(0);
+        }
     }
 }

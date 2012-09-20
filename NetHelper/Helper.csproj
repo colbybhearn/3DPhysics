@@ -119,6 +119,7 @@
     <Compile Include="Physics\BoostController.cs" />
     <Compile Include="Physics\Gobject.cs" />
     <Compile Include="Physics\HeightMapInfo.cs" />
+    <Compile Include="Physics\PhysicObjects\Aircraft.cs" />
     <Compile Include="Physics\PhysicObjects\CarObject.cs" />
     <Compile Include="Physics\PhysicObjects\HeightmapObject.cs" />
     <Compile Include="Physics\PhysicObjects\LunarVehicle.cs" />
