@@ -28,15 +28,15 @@ namespace ServerApp
             
             game = new Game.CarGame();
             game.ChatMessageReceived += new Helper.Handlers.ChatMessageEH(game_ChatMessageReceived);
-            game.ClientConnected+=new Helper.Handlers.StringEH(game_ClientConnected); 
+            game.ClientConnected += new Helper.Handlers.IntStringEH(game_ClientConnected); 
             AddXnaPanel(ref game);
         }
 
-        void game_ClientConnected(string alias)
+        void game_ClientConnected(int id, string alias)
         {
             if (InvokeRequired)
             {
-                this.Invoke(new Helper.Handlers.StringEH(game_ClientConnected), new object[] { alias });
+                this.Invoke(new Helper.Handlers.IntStringEH(game_ClientConnected), new object[] { id, alias });
                 return;
             }
             lstClients.Items.Add(alias);

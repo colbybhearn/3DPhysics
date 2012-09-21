@@ -128,15 +128,16 @@ namespace Helper.Multiplayer
             {
                 ClientInfoResponsePacket cirp = packet as ClientInfoResponsePacket;
                 //cpi.client.alias = cirp.Alias;
-                CallClientConnected(cirp.Alias);
+                CallClientConnected(cpi.id, cirp.Alias);
 
+                // Let everyone know they joined
                 ClientConnectedPacket ccp = new ClientConnectedPacket(cpi.id, cirp.Alias);
                 BroadcastPacket(ccp);
             }
             else if (packet is ChatPacket)
             {
                 ChatPacket cp = packet as ChatPacket;
-                SendChatPacket(cp.message, cp.player);
+                BroadcastChatMessage(cp.message, cp.player);
                 CallChatMessageReceived(new ChatMessage(cp.message, cp.player));
                 
             }
@@ -182,12 +183,12 @@ namespace Helper.Multiplayer
             ChatMessageReceived(cm);
         }
 
-        public event Helper.Handlers.StringEH ClientConnected;
-        private void CallClientConnected(string alias)
+        public event Helper.Handlers.IntStringEH ClientConnected;
+        private void CallClientConnected(int id, string alias)
         {
             if (ClientConnected == null)
                 return;
-            ClientConnected(alias);
+            ClientConnected(id, alias);
         }
 
         public event Helper.Handlers.ObjectUpdateEH ObjectUpdateReceived;
@@ -205,9 +206,19 @@ namespace Helper.Multiplayer
             tcpServer.Send(p);
         }
 
-        public void SendChatPacket(string msg, int player)
+        private void SendPacket(Packet p, int clientID)
+        {
+            tcpServer.Send(p, clientID);
+        }
+
+        public void BroadcastChatMessage(string msg, int player)
         {
             BroadcastPacket(new ChatPacket(msg, player));
+        }
+
+        public void SendPlayerInformation(int receivingClient, int id, string alias)
+        {
+            SendPacket(new ClientConnectedPacket(id, alias), receivingClient);
         }
 
         public void SendObjectResponsePacket(int clientid, int objectId, string asset)

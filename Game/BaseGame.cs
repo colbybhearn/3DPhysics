@@ -656,7 +656,7 @@ namespace Game
                     commClient.ClientConnected += new Handlers.ClientConnectedEH(commClient_ClientConnected);
                     break;
                 case CommTypes.Server: // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
-                    commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
+                    commServer.ClientConnected += new Handlers.IntStringEH(commServer_ClientConnected);
                     commServer.ChatMessageReceived += new Handlers.ChatMessageEH(commServer_ChatMessageReceived);
                     commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
                     commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
@@ -715,7 +715,7 @@ namespace Game
             else
             {
                 if (commServer != null)
-                    commServer.SendChatPacket(msg.Message, msg.Owner);
+                    commServer.BroadcastChatMessage(msg.Message, msg.Owner);
             }
         }
         #endregion
@@ -896,22 +896,26 @@ namespace Game
 
             ProcessChatMessage(cm);
         }
-        void commServer_ClientConnected(string s)
+        void commServer_ClientConnected(int id, string s)
         {
-            ProcessClientConnected(s);
+            ProcessClientConnected(id, s);
         }
 
-        public virtual void ProcessClientConnected(string msg)
+        public virtual void ProcessClientConnected(int id, string alias)
         {
-            CallClientConnected(msg);
+            CallClientConnected(id, alias);
         }
 
-        public event Helper.Handlers.StringEH ClientConnected;
-        private void CallClientConnected(string msg)
+        public event Helper.Handlers.IntStringEH ClientConnected;
+        private void CallClientConnected(int id, string alias)
         {
+            // Let new client know about all other clients
+            for (int i = 0; i < players.Count; i++)
+                commServer.SendPlayerInformation(id, players.Keys[i], players.Values[i]);
+
             if (ClientConnected == null)
                 return;
-            ClientConnected(msg);
+            ClientConnected(id, alias);
 
         }
         /// <summary>
