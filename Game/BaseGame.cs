@@ -909,9 +909,11 @@ namespace Game
         public event Helper.Handlers.IntStringEH ClientConnected;
         private void CallClientConnected(int id, string alias)
         {
+            players.Add(id, alias);
             // Let new client know about all other clients
             for (int i = 0; i < players.Count; i++)
-                commServer.SendPlayerInformation(id, players.Keys[i], players.Values[i]);
+                if(id != players.Keys[i])
+                    commServer.SendPlayerInformation(id, players.Keys[i], players.Values[i]);
 
             if (ClientConnected == null)
                 return;
