@@ -10,7 +10,7 @@ namespace Helper
         // more generic and reusable
         public delegate void IntEH(int i);
         public delegate void StringEH(string s);
-        public delegate void StringStringEH(string s1, string s2);
+        //public delegate void StringStringEH(string s1, string s2);
 
         public delegate void voidEH();
 
@@ -22,6 +22,7 @@ namespace Helper
         public delegate void ClientConnectedEH(int id, string alias);
         public delegate void PacketReceivedEH(Packet p);
         public delegate void IntPacketEH(int i, Packet p);
+        public delegate void ChatMessageEH(ChatMessage cm);
 
     }
 }

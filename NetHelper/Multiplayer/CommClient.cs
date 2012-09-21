@@ -82,7 +82,7 @@ namespace Helper.Multiplayer
             else if (packet is ChatPacket)
             {
                 ChatPacket cp = packet as ChatPacket;
-                CallChatMessageReceived(cp.message, cp.player);
+                CallChatMessageReceived(new ChatMessage(cp.message, cp.player));
             }
             else if (packet is ObjectAddedPacket)
             {
@@ -155,12 +155,12 @@ namespace Helper.Multiplayer
         }
 
         
-        public event Helper.Handlers.StringStringEH ChatMessageReceived;
-        private void CallChatMessageReceived(string msg, string player)
+        public event Helper.Handlers.ChatMessageEH ChatMessageReceived;
+        private void CallChatMessageReceived(ChatMessage cm)
         {
             if (ChatMessageReceived == null)
                 return;
-            ChatMessageReceived(msg, player);
+            ChatMessageReceived(cm);
         }
 
         public event Helper.Handlers.IntEH ClientInfoRequestReceived;
@@ -179,7 +179,7 @@ namespace Helper.Multiplayer
             
         }
 
-        public void SendChatPacket(string msg, string player)
+        public void SendChatPacket(string msg, int player)
         {
             // TODO, fix
             client.Send(new ChatPacket(msg, player));

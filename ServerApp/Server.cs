@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Helper.Multiplayer.Packets;
+using Helper;
 
 namespace ServerApp
 {    
@@ -26,7 +27,7 @@ namespace ServerApp
             btnStopServer.Enabled = false;
             
             game = new Game.CarGame();
-            game.ChatMessageReceived += new Helper.Handlers.StringStringEH(game_ChatMessageReceived);
+            game.ChatMessageReceived += new Helper.Handlers.ChatMessageEH(game_ChatMessageReceived);
             game.ClientConnected+=new Helper.Handlers.StringEH(game_ClientConnected); 
             AddXnaPanel(ref game);
         }
@@ -41,13 +42,13 @@ namespace ServerApp
             lstClients.Items.Add(alias);
         }
 
-        void game_ChatMessageReceived(string m, string p)
+        void game_ChatMessageReceived(ChatMessage cm)
         {
-            if (InvokeRequired)
+            /*if (InvokeRequired)
             {
-                this.Invoke(new Helper.Handlers.StringStringEH(game_ChatMessageReceived), new object[] { m, p });
+                this.Invoke(new Helper.Handlers.ChatMessageEH(game_ChatMessageReceived), new object[] { cm });
                 return;
-            }
+            }*/
         }
         XnaView.XnaPanel XnaPanelMain;
         private void AddXnaPanel(ref Game.BaseGame game)

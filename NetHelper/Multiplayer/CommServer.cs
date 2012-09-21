@@ -137,7 +137,7 @@ namespace Helper.Multiplayer
             {
                 ChatPacket cp = packet as ChatPacket;
                 SendChatPacket(cp.message, cp.player);
-                CallChatMessageReceived(cp.message, cp.player);
+                CallChatMessageReceived(new ChatMessage(cp.message, cp.player));
                 
             }
             else if (packet is ObjectRequestPacket)
@@ -174,12 +174,12 @@ namespace Helper.Multiplayer
             ObjectRequestReceived(clientId, asset);
         }
 
-        public event Helper.Handlers.StringStringEH ChatMessageReceived;
-        private void CallChatMessageReceived(string msg, string player)
+        public event Helper.Handlers.ChatMessageEH ChatMessageReceived;
+        private void CallChatMessageReceived(ChatMessage cm)
         {
             if (ChatMessageReceived == null)
                 return;
-            ChatMessageReceived(msg, player);
+            ChatMessageReceived(cm);
         }
 
         public event Helper.Handlers.StringEH ClientConnected;
@@ -205,7 +205,7 @@ namespace Helper.Multiplayer
             tcpServer.Send(p);
         }
 
-        public void SendChatPacket(string msg, string player)
+        public void SendChatPacket(string msg, int player)
         {
             BroadcastPacket(new ChatPacket(msg, player));
         }

@@ -103,7 +103,7 @@ namespace Game
         #endregion
 
         #region Events
-        public event Handlers.StringStringEH ChatMessageReceived;
+        public event Handlers.ChatMessageEH ChatMessageReceived;
         #endregion
 
         #region Multiplayer
@@ -648,7 +648,7 @@ namespace Game
             {
                 case CommTypes.Client:
                     commClient.ClientInfoRequestReceived += new Handlers.IntEH(commClient_ClientInfoRequestReceived);
-                    commClient.ChatMessageReceived += new Handlers.StringStringEH(commClient_ChatMessageReceived);
+                    commClient.ChatMessageReceived += new Handlers.ChatMessageEH(commClient_ChatMessageReceived);
                     commClient.ObjectAddedReceived += new Handlers.ObjectAddedResponseEH(commClient_ObjectAddedReceived);
                     commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
                     commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
@@ -657,7 +657,7 @@ namespace Game
                     break;
                 case CommTypes.Server: // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
                     commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
-                    commServer.ChatMessageReceived += new Handlers.StringStringEH(commServer_ChatMessageReceived);
+                    commServer.ChatMessageReceived += new Handlers.ChatMessageEH(commServer_ChatMessageReceived);
                     commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
                     commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
                     break;
@@ -693,14 +693,16 @@ namespace Game
             }
         }
 
-        // COMMON
-        private void CallChatMessageReceived(string msg, string player)
+        // CLIENT
+        private void CallChatMessageReceived(ChatMessage cm)
         {
             if (ChatMessageReceived == null)
                 return;
-            ChatMessageReceived(msg, player);
+            ChatMessageReceived(cm);
         }
-        public virtual void ProcessChatMessage(string m, string p)
+
+        // COMMON
+        public virtual void ProcessChatMessage(ChatMessage cm)
         {
         }
         public void SendChatPacket(ChatMessage msg)
@@ -708,7 +710,7 @@ namespace Game
             if (CommType == CommTypes.Client)
             {
                 if (commClient != null)
-                    commClient.SendChatPacket(msg.Message, msg.Owner);
+                    commClient.SendChatPacket(msg.Message, MyClientID);
             }
             else
             {
@@ -725,7 +727,7 @@ namespace Game
             CommType = CommTypes.Client;
             commClient = new CommClient(ip, port, alias);
             InitializeMultiplayer(CommType);
-            ChatManager.PlayerAlias = alias;
+            //ChatManager.PlayerAlias = alias;
             return commClient.Connect();
         }
         /// <summary>
@@ -738,9 +740,13 @@ namespace Game
             MyClientID = id;
         }
 
-        void commClient_ChatMessageReceived(string m, string p)
+        void commClient_ChatMessageReceived(ChatMessage cm)
         {
-            CallChatMessageReceived(m, p);
+            String alias;
+            if (players.TryGetValue(cm.Owner, out alias))
+                cm.OwnerAlias = alias;
+
+            CallChatMessageReceived(cm);
         }
         /// <summary>
         /// CLIENT SIDE
@@ -882,9 +888,13 @@ namespace Game
         {
 
         }
-        void commServer_ChatMessageReceived(string m, string p)
+        void commServer_ChatMessageReceived(ChatMessage cm)
         {
-            ProcessChatMessage(m, p);
+            String alias;
+            if (players.TryGetValue(cm.Owner, out alias))
+                cm.OwnerAlias = alias;
+
+            ProcessChatMessage(cm);
         }
         void commServer_ClientConnected(string s)
         {
