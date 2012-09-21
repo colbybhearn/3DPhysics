@@ -818,7 +818,7 @@ namespace Game
         {
 
             objectId = AddOwnedObject(clientId, asset);
-            commServer.SendObjectResponsePacket(clientId, objectId, asset);
+            commServer.BroadcastObjectAddedPacket(clientId, objectId, asset);
 
         }
 

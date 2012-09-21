@@ -221,12 +221,20 @@ namespace Helper.Multiplayer
             SendPacket(new ClientConnectedPacket(id, alias), receivingClient);
         }
 
-        public void SendObjectResponsePacket(int clientid, int objectId, string asset)
+        public void BroadcastObjectAddedPacket(int clientid, int objectId, string asset)
         {
             if (!Clients.Contains(clientid))
                 return;
-            tcpServer.Send(new ObjectAddedPacket(clientid, objectId, asset), clientid);
+            tcpServer.Send(new ObjectAddedPacket(clientid, objectId, asset));
         }
+
+        public void SendObjectAddedPacket(int receivingClient, int owner, int objectId, string asset)
+        {
+            if (!Clients.Contains(owner) || !Clients.Contains(receivingClient))
+                return;
+            tcpServer.Send(new ObjectAddedPacket(owner, objectId, asset), receivingClient);
+        }
+
 
         public void BroadcastObjectUpdate(Packet p)
         {
