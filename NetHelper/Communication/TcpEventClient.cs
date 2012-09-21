@@ -14,7 +14,6 @@ namespace Helper.Communication
         bool ShouldBeRunning = false;
         Socket socket;
         Helper.Collections.ThreadQueue DataToSendQueue = new Helper.Collections.ThreadQueue();
-        //Queue<byte[]> DataToSendQueue;
 
         public TcpEventClient()
         {

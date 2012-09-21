@@ -3,11 +3,20 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Collections.Generic;
+using Helper.Multiplayer.Packets;
 
 namespace Helper.Communication
 {
     public class TcpEventServer
     {
+        /* Vision
+         * One instance of the TcpEventServer handles the lobby, and thus the ClientConnected will hand off to a function to connect them to the correct "server"
+         * A second instance of the TcpEventServer will also accept connections, but this time it will handle them appropriately via SocketComm and all its goodness
+         * 
+         * TcpEventServer will keep a list of "connected clients" (was ClientInfo.cs)
+         */
+
         #region Properties
         string sIPAddress;
         int iPort;
@@ -15,9 +24,10 @@ namespace Helper.Communication
         IPAddress ipAd;
         TcpListener myListener;
         Thread ServerListener;
+        SortedList<int, ClientInfoSocket> Clients = new SortedList<int, ClientInfoSocket>();
+        public event Helper.Handlers.IntPacketEH PacketReceived;
 
         #endregion
-
 
         #region Initialization
 
@@ -37,6 +47,8 @@ namespace Helper.Communication
         public void Stop()
         {
             this.ShouldBeRunning = false;
+            foreach (ClientInfoSocket s in Clients.Values)
+                s.Disconnect();
         }
 
         #endregion
@@ -76,15 +88,57 @@ namespace Helper.Communication
                myListener.Stop();
         }
         
-        public delegate void ClientAcceptedEventHandler(Socket s);
-        public event ClientAcceptedEventHandler ClientAccepted;
+        //public delegate void SocketEH(Socket s);
+        public event Helper.Handlers.IntEH ClientAccepted;
+        int nextClientId = 0;
         public void CallClientAccepted(Socket s)
         {
+
+            nextClientId++;
+
+            ClientInfoSocket socket = new ClientInfoSocket(s, nextClientId);
+            socket.ClientDisconnected += new Handlers.IntEH(ClientDisconnected);
+            socket.PacketReceived += new ClientInfoSocket.PacketReceivedEventHandler(Receive);
+            Clients.Add(nextClientId, socket);
+            //ClientInfoRequestPacket cirp = new ClientInfoRequestPacket(id);
+            //ci.Send(cirp);
+
             if (ClientAccepted != null)
-                ClientAccepted(s);
+                ClientAccepted(nextClientId);
         }
 
-        
+        public void ClientDisconnected(int id)
+        {
+            // TODO
+        }
 
+        public void Send(Packet p)
+        {
+            // To everyone
+            byte[] data = p.Serialize();
+            foreach (SocketComm s in Clients.Values)
+            {
+                if (s != null)
+                    s.Send(data);
+            }
+        }
+
+        public void Send(Packet p, int id)
+        {
+            // To Specific id
+            ClientInfoSocket s;
+            if(Clients.TryGetValue(id, out s))
+            {
+                if(s != null)
+                    s.Send(p.Serialize());
+            }
+        }
+
+        public void Receive(int id, byte[] data)
+        {
+            Packet p = Packet.Read(data);
+            if (p != null && PacketReceived != null)
+                PacketReceived(id, p);
+        }
     }
 }

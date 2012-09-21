@@ -14,7 +14,7 @@ namespace Helper.Multiplayer
         public int iPort;
         public string sAlias;
         IPAddress a;
-        Helper.Communication.TcpEventClient client;
+        Helper.Communication.TcpEventClient2 client;
         ServerInfo Server;
         bool ShouldBeRunning = false;
         Queue<Packet> InputQueue = new Queue<Packet>();
@@ -39,7 +39,7 @@ namespace Helper.Multiplayer
                 ShouldBeRunning = true;
                 inputThread = new Thread(new ThreadStart(inputWorker));
                 inputThread.Start();
-                client = new TcpEventClient();
+                client = new TcpEventClient2();
                 client.Connect(Server.endPoint);
                 client.PacketReceived += new Helper.Handlers.PacketReceivedEH(PacketReceived);
                 connected = true;
@@ -103,7 +103,7 @@ namespace Helper.Multiplayer
             {
                 ClientDisconnectPacket cdp = packet as ClientDisconnectPacket;
 
-                CallClientDisconnected(cdp.Alias);
+                CallClientDisconnected(cdp.id);
             }
             else if (packet is ClientConnectedPacket)
             {
@@ -121,12 +121,12 @@ namespace Helper.Multiplayer
             ClientConnected(id, alias);
         }
 
-        public event Handlers.StringEH ClientDisconnected;
-        private void CallClientDisconnected(string alias)
+        public event Handlers.IntEH ClientDisconnected;
+        private void CallClientDisconnected(int id)
         {
             if (ClientDisconnected == null)
                 return;
-            ClientDisconnected(alias);
+            ClientDisconnected(id);
         }
 
         public event Helper.Handlers.ObjectActionEH ObjectActionReceived;

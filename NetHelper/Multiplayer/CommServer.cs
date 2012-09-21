@@ -31,9 +31,10 @@ namespace Helper.Multiplayer
     {
         
         // list of client information with socket to communicate back
-        SortedList<int, ClientInfo> Clients = new SortedList<int, ClientInfo>();
+        //SortedList<int, ClientInfo> Clients = new SortedList<int, ClientInfo>();
+        List<int> Clients = new List<int>();
         TcpEventServer tcpServer;
-        private System.Timers.Timer tmrUpdateClients;
+        //private System.Timers.Timer tmrUpdateClients;
         Queue<ClientPacketInfo> InputQueue = new Queue<ClientPacketInfo>();
         Thread inputThread;
         bool ShouldBeRunning = false;
@@ -46,27 +47,27 @@ namespace Helper.Multiplayer
             string ip = ips[0].ToString();
 
             tcpServer = new TcpEventServer(ip, lobbyport);
-            
-            tcpServer.ClientAccepted += new TcpEventServer.ClientAcceptedEventHandler(listener_ClientAccepted);
+            tcpServer.ClientAccepted += new Helper.Handlers.IntEH(listener_ClientAccepted);
+            tcpServer.PacketReceived += new Handlers.IntPacketEH(PacketReceived);
 
-            tmrUpdateClients = new System.Timers.Timer();
-            tmrUpdateClients.Interval = 200;
-            tmrUpdateClients.Elapsed += new System.Timers.ElapsedEventHandler(tProcessClientsTimer_Elapsed);
+            //tmrUpdateClients = new System.Timers.Timer();
+            //tmrUpdateClients.Interval = 200;
+            //tmrUpdateClients.Elapsed += new System.Timers.ElapsedEventHandler(tProcessClientsTimer_Elapsed);
         }
 
-        void tProcessClientsTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        /*void tProcessClientsTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             foreach (ClientInfo ci in Clients.Values)
             {               
 
             }
-        }
+        }*/
 
         public void Start()
         {
             ShouldBeRunning = true;
             tcpServer.Start();
-            tmrUpdateClients.Start();
+            //tmrUpdateClients.Start();
             inputThread = new Thread(new ThreadStart(inputWorker));
             inputThread.Start();
         }
@@ -75,30 +76,23 @@ namespace Helper.Multiplayer
         {
             ShouldBeRunning = false;
             tcpServer.Stop();
-            tmrUpdateClients.Stop();            
-            foreach (ClientInfo ci in Clients.Values)
-                ci.Stop();
+            //tmrUpdateClients.Stop();
+            Clients.Clear();
+            //foreach (ClientInfo ci in Clients.Values)
+            //   ci.Stop();
         }
 
-        void listener_ClientAccepted(Socket s)
+        void listener_ClientAccepted(int id)
         {
-            int id = GetAvailableClientId();
-            IPEndPoint ep = null;
-            if(s.RemoteEndPoint is IPEndPoint)
-                ep = s.RemoteEndPoint as IPEndPoint;
-            
-            ClientInfo ci = new ClientInfo(id, ep, string.Empty, s);
-            ci.ClientDisconnected += new Helper.Handlers.StringEH(ci_ClientDisconnected);
-            ci.Start();
-            ci.PacketReceived += new ClientInfo.PacketReceivedEventHandler(PacketReceived);
-            Clients.Add(id, ci);
             ClientInfoRequestPacket cirp = new ClientInfoRequestPacket(id);
-            ci.Send(cirp);
+            tcpServer.Send(cirp, id);
+            Clients.Add(id);
         }
 
-        void ci_ClientDisconnected(string alias)
+        void ci_ClientDisconnected(int id)
         {
-            BroadcastPacket(new ClientDisconnectPacket(alias));
+            BroadcastPacket(new ClientDisconnectPacket(id));
+            Clients.Remove(id);
         }
 
 
@@ -118,10 +112,10 @@ namespace Helper.Multiplayer
 
         void PacketReceived(int id, Packet p)
         {
-            if (!Clients.ContainsKey(id))
+            if (!Clients.Contains(id))
                 return;
-            ClientInfo ci = Clients[id];
-            ClientPacketInfo cpi = new ClientPacketInfo(ref ci, p);
+            //ClientInfo ci = Clients[id];
+            ClientPacketInfo cpi = new ClientPacketInfo(id, p);
             InputQueue.Enqueue(cpi);
         }
 
@@ -133,10 +127,10 @@ namespace Helper.Multiplayer
             if (packet is ClientInfoResponsePacket)
             {
                 ClientInfoResponsePacket cirp = packet as ClientInfoResponsePacket;
-                cpi.client.alias = cirp.Alias;
-                CallClientConnected(cpi.client.alias);
+                //cpi.client.alias = cirp.Alias;
+                CallClientConnected(cirp.Alias);
 
-                ClientConnectedPacket ccp = new ClientConnectedPacket(cpi.client.id, cirp.Alias);
+                ClientConnectedPacket ccp = new ClientConnectedPacket(cpi.id, cirp.Alias);
                 BroadcastPacket(ccp);
             }
             else if (packet is ChatPacket)
@@ -149,7 +143,7 @@ namespace Helper.Multiplayer
             else if (packet is ObjectRequestPacket)
             {
                 ObjectRequestPacket corp = packet as ObjectRequestPacket;
-                CallObjectRequestReceived(cpi.client.id,corp.AssetName);
+                CallObjectRequestReceived(cpi.id,corp.AssetName);
             }
             else if (packet is ObjectUpdatePacket)
             {
@@ -208,8 +202,7 @@ namespace Helper.Multiplayer
         #region Packet Sending
         private void BroadcastPacket(Packet p)
         {
-            foreach (ClientInfo ci in Clients.Values)
-                ci.Send(p);
+            tcpServer.Send(p);
         }
 
         public void SendChatPacket(string msg, string player)
@@ -219,9 +212,9 @@ namespace Helper.Multiplayer
 
         public void SendObjectResponsePacket(int clientid, int objectId, string asset)
         {
-            if (!Clients.ContainsKey(clientid))
+            if (!Clients.Contains(clientid))
                 return;
-            Clients[clientid].Send(new ObjectAddedPacket(clientid, objectId, asset));
+            tcpServer.Send(new ObjectAddedPacket(clientid, objectId, asset), clientid);
         }
 
         public void BroadcastObjectUpdate(Packet p)
@@ -230,7 +223,7 @@ namespace Helper.Multiplayer
         } 
         #endregion
 
-        private int GetAvailableClientId()
+        /*private int GetAvailableClientId()
         {
             int newId = 0;
             bool found = true;
@@ -246,6 +239,6 @@ namespace Helper.Multiplayer
                     }
             }
             return newId;
-        }
+        }*/
     }
 }

@@ -9,6 +9,7 @@ using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Helper.Physics;
+using System.Threading;
 
 namespace XnaView
 {

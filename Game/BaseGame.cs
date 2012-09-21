@@ -652,7 +652,7 @@ namespace Game
                     commClient.ObjectAddedReceived += new Handlers.ObjectAddedResponseEH(commClient_ObjectAddedReceived);
                     commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
                     commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-                    commClient.ClientDisconnected += new Handlers.StringEH(commClient_ClientDisconnected);
+                    commClient.ClientDisconnected += new Handlers.IntEH(commClient_ClientDisconnected);
                     commClient.ClientConnected += new Handlers.ClientConnectedEH(commClient_ClientConnected);
                     break;
                 case CommTypes.Server: // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
@@ -677,12 +677,12 @@ namespace Game
             ClientConnected2(id, alias);*/
         }
 
-        public event Handlers.StringEH ClientDisconnected;
-        void commClient_ClientDisconnected(string alias)
+        public event Handlers.IntEH ClientDisconnected;
+        void commClient_ClientDisconnected(int id)
         {
             if (ClientDisconnected == null)
                 return;
-            ClientDisconnected(alias);
+            ClientDisconnected(id);
         }
 
         void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)

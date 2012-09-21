@@ -114,7 +114,7 @@ namespace Helper.Multiplayer
             }
         }
 
-        private void CallClientDisconnected( )
+        private void CallClientDisconnected()
         {
             if (ClientDisconnected == null)
                 return;
