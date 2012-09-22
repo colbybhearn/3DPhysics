@@ -68,7 +68,7 @@ namespace Game
 
             chatFont = Content.Load<SpriteFont>("debugFont");
             ChatManager = new Chat(chatFont);
-            ChatMessageReceived += new Helper.Handlers.StringStringEH(ChatManager.ReceiveMessage);
+            ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
 
            
         }

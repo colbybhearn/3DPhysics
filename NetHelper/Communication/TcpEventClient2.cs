@@ -10,56 +10,57 @@ using Helper.Multiplayer.Packets;
 namespace Helper.Communication
 {
     class TcpEventClient2
-    {           
-        bool ShouldBeRunning = false;
+    {
         SocketComm socket;
-        Helper.Collections.ThreadQueue DataToSendQueue = new Helper.Collections.ThreadQueue();
+        public event Helper.Handlers.PacketReceivedEH PacketReceived;
+        public event Helper.Handlers.voidEH Disconnected;
 
         public TcpEventClient2()
         {
-            DataToSendQueue = new Collections.ThreadQueue();
+
         }
 
         public void Connect(IPEndPoint remoteEndPoint)
         {
-            socket = new SocketComm();
-            socket.PacketReceived += new SocketComm.PacketReceivedEventHandler(socket_PacketReceived);
-            socket.ClientDisconnected += new Handlers.voidEH(socket_ClientDisconnected);
-            socket.Connect(remoteEndPoint);
+            TcpClient client = new TcpClient();
+            try
+            {
+                client.Connect(remoteEndPoint);
+                socket = new SocketComm(client.Client);
+                socket.PacketReceived += new SocketComm.PacketReceivedEventHandler(socket_PacketReceived);
+                socket.ClientDisconnected += new Handlers.voidEH(socket_ClientDisconnected);
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
         }
 
         void socket_PacketReceived(byte[] data)
         {
-            
+            Packet p = Packet.Read(data);
+            if (p != null && PacketReceived != null)
+                PacketReceived(p);
         }
 
         void socket_ClientDisconnected()
         {
-            throw new NotImplementedException();
+            if(Disconnected == null)
+                return;
+            Disconnected();
         }
 
         public void Stop()
         {
-            ShouldBeRunning = false;
-        }
-
-        
-        public event Helper.Handlers.PacketReceivedEH PacketReceived;
-        private void CallPacketReceived(Packet p)
-        {
-            if(PacketReceived!=null)
-            {
-                PacketReceived(p);
-            }
+            socket.Disconnect();
         }
 
         public void Send(Packet packet)
         {
             if (socket == null)
                 return;
-            byte[] data = packet.Serialize();
-            //stream.Write(data, 0, data.Length);
-            DataToSendQueue.EnQ(data);
+
+            socket.Send(packet.Serialize());
         }
     }
 }

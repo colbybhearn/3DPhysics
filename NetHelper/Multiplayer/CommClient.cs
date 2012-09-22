@@ -14,7 +14,7 @@ namespace Helper.Multiplayer
         public int iPort;
         public string sAlias;
         IPAddress a;
-        Helper.Communication.TcpEventClient client;
+        Helper.Communication.TcpEventClient2 client;
         ServerInfo Server;
         bool ShouldBeRunning = false;
         Queue<Packet> InputQueue = new Queue<Packet>();
@@ -39,7 +39,7 @@ namespace Helper.Multiplayer
                 ShouldBeRunning = true;
                 inputThread = new Thread(new ThreadStart(inputWorker));
                 inputThread.Start();
-                client = new TcpEventClient();
+                client = new TcpEventClient2();
                 client.Connect(Server.endPoint);
                 client.PacketReceived += new Helper.Handlers.PacketReceivedEH(PacketReceived);
                 connected = true;
@@ -82,7 +82,7 @@ namespace Helper.Multiplayer
             else if (packet is ChatPacket)
             {
                 ChatPacket cp = packet as ChatPacket;
-                CallChatMessageReceived(cp.message, cp.player);
+                CallChatMessageReceived(new ChatMessage(cp.message, cp.player));
             }
             else if (packet is ObjectAddedPacket)
             {
@@ -103,7 +103,7 @@ namespace Helper.Multiplayer
             {
                 ClientDisconnectPacket cdp = packet as ClientDisconnectPacket;
 
-                CallClientDisconnected(cdp.Alias);
+                CallClientDisconnected(cdp.id);
             }
             else if (packet is ClientConnectedPacket)
             {
@@ -121,12 +121,12 @@ namespace Helper.Multiplayer
             ClientConnected(id, alias);
         }
 
-        public event Handlers.StringEH ClientDisconnected;
-        private void CallClientDisconnected(string alias)
+        public event Handlers.IntEH ClientDisconnected;
+        private void CallClientDisconnected(int id)
         {
             if (ClientDisconnected == null)
                 return;
-            ClientDisconnected(alias);
+            ClientDisconnected(id);
         }
 
         public event Helper.Handlers.ObjectActionEH ObjectActionReceived;
@@ -155,12 +155,12 @@ namespace Helper.Multiplayer
         }
 
         
-        public event Helper.Handlers.StringStringEH ChatMessageReceived;
-        private void CallChatMessageReceived(string msg, string player)
+        public event Helper.Handlers.ChatMessageEH ChatMessageReceived;
+        private void CallChatMessageReceived(ChatMessage cm)
         {
             if (ChatMessageReceived == null)
                 return;
-            ChatMessageReceived(msg, player);
+            ChatMessageReceived(cm);
         }
 
         public event Helper.Handlers.IntEH ClientInfoRequestReceived;
@@ -179,7 +179,7 @@ namespace Helper.Multiplayer
             
         }
 
-        public void SendChatPacket(string msg, string player)
+        public void SendChatPacket(string msg, int player)
         {
             // TODO, fix
             client.Send(new ChatPacket(msg, player));

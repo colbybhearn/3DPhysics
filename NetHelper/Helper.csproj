@@ -78,6 +78,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Chat.cs" />
     <Compile Include="Collections\ThreadQueue.cs" />
+    <Compile Include="Communication\ClientInfoSocket.cs" />
     <Compile Include="Communication\SocketComm.cs" />
     <Compile Include="Communication\TcpEventClient2.cs" />
     <Compile Include="Handlers.cs" />
@@ -98,7 +99,6 @@
     <Compile Include="Input\Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Multiplayer\ClientInfo.cs" />
     <Compile Include="Multiplayer\ClientPacketInfo.cs" />
     <Compile Include="Multiplayer\CommClient.cs" />
     <Compile Include="Multiplayer\CommServer.cs" />

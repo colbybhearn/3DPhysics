@@ -6,13 +6,13 @@ namespace Helper.Multiplayer.Packets
     public class ChatPacket : Packet
     {
         public string message;
-        public string player;
+        public int player;
 
-        public ChatPacket(string msg, string name)
+        public ChatPacket(string msg, int pid)
             : base(Types.Chat)
         {
             message = msg;
-            player = name;
+            player = pid;
         }
     }
 }

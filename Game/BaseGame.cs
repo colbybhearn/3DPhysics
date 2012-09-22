@@ -103,7 +103,7 @@ namespace Game
         #endregion
 
         #region Events
-        public event Handlers.StringStringEH ChatMessageReceived;
+        public event Handlers.ChatMessageEH ChatMessageReceived;
         #endregion
 
         #region Multiplayer
@@ -650,16 +650,16 @@ namespace Game
             {
                 case CommTypes.Client:
                     commClient.ClientInfoRequestReceived += new Handlers.IntEH(commClient_ClientInfoRequestReceived);
-                    commClient.ChatMessageReceived += new Handlers.StringStringEH(commClient_ChatMessageReceived);
+                    commClient.ChatMessageReceived += new Handlers.ChatMessageEH(commClient_ChatMessageReceived);
                     commClient.ObjectAddedReceived += new Handlers.ObjectAddedResponseEH(commClient_ObjectAddedReceived);
                     commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
                     commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-                    commClient.ClientDisconnected += new Handlers.StringEH(commClient_ClientDisconnected);
+                    commClient.ClientDisconnected += new Handlers.IntEH(commClient_ClientDisconnected);
                     commClient.ClientConnected += new Handlers.ClientConnectedEH(commClient_ClientConnected);
                     break;
                 case CommTypes.Server: // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
-                    commServer.ClientConnected += new Handlers.StringEH(commServer_ClientConnected);
-                    commServer.ChatMessageReceived += new Handlers.StringStringEH(commServer_ChatMessageReceived);
+                    commServer.ClientConnected += new Handlers.IntStringEH(commServer_ClientConnected);
+                    commServer.ChatMessageReceived += new Handlers.ChatMessageEH(commServer_ChatMessageReceived);
                     commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
                     commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
                     break;
@@ -679,12 +679,12 @@ namespace Game
             ClientConnected2(id, alias);*/
         }
 
-        public event Handlers.StringEH ClientDisconnected;
-        void commClient_ClientDisconnected(string alias)
+        public event Handlers.IntEH ClientDisconnected;
+        void commClient_ClientDisconnected(int id)
         {
             if (ClientDisconnected == null)
                 return;
-            ClientDisconnected(alias);
+            ClientDisconnected(id);
         }
 
         void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
@@ -695,14 +695,16 @@ namespace Game
             }
         }
 
-        // COMMON
-        private void CallChatMessageReceived(string msg, string player)
+        // CLIENT
+        private void CallChatMessageReceived(ChatMessage cm)
         {
             if (ChatMessageReceived == null)
                 return;
-            ChatMessageReceived(msg, player);
+            ChatMessageReceived(cm);
         }
-        public virtual void ProcessChatMessage(string m, string p)
+
+        // COMMON
+        public virtual void ProcessChatMessage(ChatMessage cm)
         {
         }
         public void SendChatPacket(ChatMessage msg)
@@ -710,12 +712,12 @@ namespace Game
             if (CommType == CommTypes.Client)
             {
                 if (commClient != null)
-                    commClient.SendChatPacket(msg.Message, msg.Owner);
+                    commClient.SendChatPacket(msg.Message, MyClientID);
             }
             else
             {
                 if (commServer != null)
-                    commServer.SendChatPacket(msg.Message, msg.Owner);
+                    commServer.BroadcastChatMessage(msg.Message, msg.Owner);
             }
         }
         #endregion
@@ -727,7 +729,7 @@ namespace Game
             CommType = CommTypes.Client;
             commClient = new CommClient(ip, port, alias);
             InitializeMultiplayer(CommType);
-            ChatManager.PlayerAlias = alias;
+            //ChatManager.PlayerAlias = alias;
             return commClient.Connect();
         }
         /// <summary>
@@ -740,9 +742,13 @@ namespace Game
             MyClientID = id;
         }
 
-        void commClient_ChatMessageReceived(string m, string p)
+        void commClient_ChatMessageReceived(ChatMessage cm)
         {
-            CallChatMessageReceived(m, p);
+            String alias;
+            if (players.TryGetValue(cm.Owner, out alias))
+                cm.OwnerAlias = alias;
+
+            CallChatMessageReceived(cm);
         }
         /// <summary>
         /// CLIENT SIDE
@@ -814,7 +820,7 @@ namespace Game
         {
 
             objectId = AddOwnedObject(clientId, asset);
-            commServer.SendObjectResponsePacket(clientId, objectId, asset);
+            commServer.BroadcastObjectAddedPacket(clientId, objectId, asset);
 
         }
 
@@ -884,26 +890,36 @@ namespace Game
         {
 
         }
-        void commServer_ChatMessageReceived(string m, string p)
+        void commServer_ChatMessageReceived(ChatMessage cm)
         {
-            ProcessChatMessage(m, p);
+            String alias;
+            if (players.TryGetValue(cm.Owner, out alias))
+                cm.OwnerAlias = alias;
+
+            ProcessChatMessage(cm);
         }
-        void commServer_ClientConnected(string s)
+        void commServer_ClientConnected(int id, string s)
         {
-            ProcessClientConnected(s);
+            ProcessClientConnected(id, s);
         }
 
-        public virtual void ProcessClientConnected(string msg)
+        public virtual void ProcessClientConnected(int id, string alias)
         {
-            CallClientConnected(msg);
+            CallClientConnected(id, alias);
         }
 
-        public event Helper.Handlers.StringEH ClientConnected;
-        private void CallClientConnected(string msg)
+        public event Helper.Handlers.IntStringEH ClientConnected;
+        private void CallClientConnected(int id, string alias)
         {
+            players.Add(id, alias);
+            // Let new client know about all other clients
+            for (int i = 0; i < players.Count; i++)
+                if(id != players.Keys[i])
+                    commServer.SendPlayerInformation(id, players.Keys[i], players.Values[i]);
+
             if (ClientConnected == null)
                 return;
-            ClientConnected(msg);
+            ClientConnected(id, alias);
 
         }
         /// <summary>

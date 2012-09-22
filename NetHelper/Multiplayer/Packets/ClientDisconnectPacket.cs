@@ -8,11 +8,11 @@ namespace Helper.Multiplayer.Packets
     [Serializable]
     public class ClientDisconnectPacket : Packet       
     {
-        public string Alias;
-        public ClientDisconnectPacket(string alias)
+        public int id;
+        public ClientDisconnectPacket(int i)
             :base(Types.ClientDisconnectPacket)
         {
-            Alias = alias;
+            id = i;
         }
     }
 }

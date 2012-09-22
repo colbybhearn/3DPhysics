@@ -15,13 +15,20 @@ namespace Helper
          */
 
         public DateTime Time { get; set; }
-        public String Owner { get; set; }
+        public int Owner { get; set; }
+        public String OwnerAlias { get; set; }
         public String Message { get; set; }
         public Color MessageColor { get; set; }
 
         public override string ToString()
         {
-            return "[" + Time.ToLongTimeString() + "] " + Owner + ": " + Message;
+            return "[" + Time.ToLongTimeString() + "] " + OwnerAlias + ": " + Message;
+        }
+
+        public ChatMessage(string message, int owner)
+        {
+            Message = message;
+            Owner = owner;
         }
     }
 
@@ -51,7 +58,7 @@ namespace Helper
         public int FadeOutTime { get; private set; } // How long after reaching DisplayLength it should take to fade out and no longer be displayed
         public bool Typing { get; set; } // If in type mode, display the chat box
         public Vector2 Position { get; set; }
-        public String PlayerAlias { get; set; }
+        //public String PlayerAlias { get; set; }
 
         /// <summary>
         /// Default Chat Constructor
@@ -102,8 +109,7 @@ namespace Helper
                 else if (k == Keys.Enter)
                 {
                     exitMode = true;
-                    message = new ChatMessage();
-                    message.Owner = PlayerAlias; // TODO: fix
+                    message = new ChatMessage(currentMessage, -1); // TODO: Owner is set elsewhere
                     message.Time = DateTime.Now;
                     message.Message = currentMessage;
                     message.MessageColor = Color.DarkBlue;
@@ -214,14 +220,14 @@ namespace Helper
             currentPosition += s.Length;
         }
 
-        public void ReceiveMessage(string msg, string owner)
+        public void ReceiveMessage(ChatMessage cm)
         {
-            ChatMessage message = new ChatMessage();
-            message.MessageColor = Color.DarkRed;
-            message.Message = msg;
-            message.Owner = owner;
-            message.Time = DateTime.Now;
-            ChatLog.Add(message.Time.Ticks, message);
+            //ChatMessage message = new ChatMessage();
+            cm.MessageColor = Color.Black;
+            //message.Message = msg;
+            //message.Owner = owner;
+            cm.Time = DateTime.Now;
+            ChatLog.Add(cm.Time.Ticks, cm);
         }
     }
 }

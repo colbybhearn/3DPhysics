@@ -3,12 +3,13 @@ namespace Helper.Multiplayer
 {
     public class ClientPacketInfo
     {
-        public ClientInfo client;
+        //public ClientInfo client;
+        public int id;
         public Packets.Packet packet;
 
-        public ClientPacketInfo(ref ClientInfo ci, Packets.Packet p)
+        public ClientPacketInfo(int i, Packets.Packet p)
         {
-            client = ci;
+            id = i;
             packet = p;
         }
     }
