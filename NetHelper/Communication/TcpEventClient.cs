@@ -73,7 +73,7 @@ namespace Helper.Communication
                     }
                     else if (length>0 && socket.Available>=length)
                     {
-                        System.Diagnostics.Debug.WriteLine(socket.Available / 107 + " packets queued");
+                        //System.Diagnostics.Debug.WriteLine(socket.Available / 107 + " packets queued");
                         byte[] data = new byte[length];
                         int datacount = socket.Receive(data);
 

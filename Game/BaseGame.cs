@@ -61,7 +61,8 @@ namespace Game
         myCallbackDelegate UpdateCameraCallback;
         public Camera cam;
         public string name = "BaseGame";
-        public bool debug = false;
+        public bool DebugInfo = false;
+        public bool DebugPhysics = false;
         #endregion
 
         #region Input
@@ -177,7 +178,6 @@ namespace Game
                         }
                     }
                 }
-
             }
             else if (CommType == CommTypes.Server)
             {
@@ -415,6 +415,7 @@ namespace Game
             defaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, KeyEvent.Down, CameraMoveSpeedDecrease));
             defaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, KeyEvent.Pressed, CameraModeCycle));
             defaults.Add(new KeyBinding("ToggleDebugInfo", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
+            defaults.Add(new KeyBinding("TogglePhysicsDebug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
 
             return defaults;
         }
@@ -485,7 +486,12 @@ namespace Game
 
         public void ToggleDebugInfo()
         {
-            debug = !debug;
+            DebugInfo = !DebugInfo;
+        }
+
+        public void TogglePhsyicsDebug()
+        {
+            DebugPhysics = !DebugPhysics;
         }
 
         /// <summary>
@@ -530,7 +536,7 @@ namespace Game
         public virtual void InitializeEnvironment()
         {            
             
-            bool useCustomTerrain = false;
+            bool useCustomTerrain = true;
 
             if (useCustomTerrain)
             {
@@ -538,7 +544,7 @@ namespace Game
                 {
                     terrain = new Terrain(new Vector3(0, -15, 0), // position
                         //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
-                                            new Vector3(50f, .55f, 50f),  // X with, possible y range, Z depth 
+                                            new Vector3(150f, .55f, 150f),  // X with, possible y range, Z depth 
                                             100, 100, graphicsDevice, moon);
 
                     newObjects.Add(terrain.ID, terrain);
@@ -604,6 +610,9 @@ namespace Game
                     return;
                 gameObjects[i].SetNominalInput();
             }
+            // for client-side only created object (mainly for testing new aircraft without the server. this can be removed after 2012.09.25)
+            foreach (Gobject go in gameObjects.Values)
+                go.SetNominalInput();
         }
 
         public virtual void EditSettings()

@@ -58,7 +58,7 @@ namespace Helper.Physics
             for (int i = 0; i < numHeightNodes; i++)
             {
                 heightNodes[i] = new Vector3((float)((-size.X / 2) + (r.NextDouble() * size.X)),
-                                                (float)(r.NextDouble() * size.Y),
+                                                (float)(r.NextDouble() * 0),
                                                 (float)((-size.Z / 2) + (r.NextDouble() * size.Z)));
             }
 

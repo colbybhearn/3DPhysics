@@ -38,7 +38,7 @@ namespace Game
     public class CarGame : BaseGame
     {
 
-        Model carModel, wheelModel;
+        Model carModel, wheelModel, landerModel;
         CarObject myCar;
         Model terrainModel;
         Model planeModel;
@@ -64,11 +64,13 @@ namespace Game
             terrainModel = Content.Load<Model>("terrain");
             carModel = Content.Load<Model>("car");
             wheelModel = Content.Load<Model>("wheel");
+            landerModel = Content.Load<Model>("Lunar Lander");
 
             chatFont = Content.Load<SpriteFont>("debugFont");
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.StringStringEH(ChatManager.ReceiveMessage);
 
+           
         }
 
         public override void InitializeMultiplayer(BaseGame.CommTypes CommType)
@@ -180,7 +182,13 @@ namespace Game
             defaults.Add(new KeyBinding("LunarYawLeft", Keys.NumPad7, false, false, false, KeyEvent.Down, LunarYawLeft));
             defaults.Add(new KeyBinding("LunarYawRight", Keys.NumPad9, false, false, false, KeyEvent.Down, LunarYawRight));
 
-
+            //
+            defaults.Add(new KeyBinding("SpawnPlane", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
+            defaults.Add(new KeyBinding("IncreaseThrust", Keys.OemPlus, false, false, false, KeyEvent.Down, PlaneThrustIncrease));
+            defaults.Add(new KeyBinding("DecreaseThrust", Keys.OemMinus, false, false, false, KeyEvent.Down, PlaneThrustDecrease));
+            defaults.Add(new KeyBinding("RollLeft", Keys.H, false, false, false, KeyEvent.Down, PlaneRollLeft));
+            defaults.Add(new KeyBinding("RollRight", Keys.K, false, false, false, KeyEvent.Down, PlaneRollRight));
+            defaults.Add(new KeyBinding("PitchUp", Keys.J, false, false, false, KeyEvent.Down, PlanePitchUp));
             return defaults;
         }
 
@@ -189,8 +197,6 @@ namespace Game
         {
             return new KeyMap(this.name, GetDefaultKeyBindings());
         }
-
-    
 
         /// <summary>
         /// CLIENT SIDE
@@ -210,8 +216,11 @@ namespace Game
                 case "car":
                     newobject = physicsManager.GetCar(carModel, wheelModel);
                     break;
+                case "lunar lander":
+                    newobject = physicsManager.GetLunarLander(landerModel);
+                    break;
                 case "cube":
-                    newobject = physicsManager.GetLunarLander(model);
+                    newobject = physicsManager.GetAircraft(model);
                     break;
                 default:
                     break;
@@ -232,6 +241,7 @@ namespace Game
                 commClient.SendObjectRequest("car");
         }
 
+        Aircraft myPlane;
         /// <summary>
         /// CLIENT SIDE
         /// client should do something oriented to the specific game here, like player bullets or cars.
@@ -258,11 +268,18 @@ namespace Game
                     if (ownerid == MyClientID) // Only select the new car if its OUR new car
                         SelectGameObject(myCar);
                     break;
-                case "cube":
-                    lander = physicsManager.GetLunarLander(model);
+                case "lunar lander":
+                    lander = physicsManager.GetLunarLander(landerModel);
                     lander.ID = objectid;
                     physicsManager.AddNewObject(lander);
-                    if (ownerid == MyClientID) // Only select the new car if its OUR new car
+                    if (ownerid == MyClientID) // Only select the new object if its OUR new object
+                        SelectGameObject(lander);
+                    break;
+                case "cube":
+                    myPlane = physicsManager.GetAircraft(model);
+                    myPlane.ID = objectid;
+                    physicsManager.AddNewObject(myPlane);
+                    if (ownerid == MyClientID) // Only select the new plane if its OUR new plane
                         SelectGameObject(lander);
                     break;
                 default:
@@ -270,11 +287,53 @@ namespace Game
             }
         }
 
+
+        private void SpawnPlane()
+        {
+            // test code for client-side aircraft/plane spawning
+            myPlane = physicsManager.GetAircraft(cubeModel);
+            myPlane.ID = gameObjects.Count;
+            physicsManager.AddNewObject(myPlane);
+
+            if (commClient != null)
+                commClient.SendObjectRequest("cube");
+        }
+        private void PlaneThrustIncrease()
+        {
+            if(myPlane==null)return;
+            myPlane.AdjustThrust(.1f);
+        }
+
+        private void PlaneThrustDecrease()
+        {
+            if (myPlane == null) return;
+            myPlane.AdjustThrust(-.1f);
+        }
+
+        private void PlaneRollLeft()
+        {
+            if (myPlane == null) return;
+            myPlane.SetAilerons(-.1f);
+        }
+
+        private void PlaneRollRight()
+        {
+            if (myPlane == null) return;
+            myPlane.SetAilerons(.1f);
+        }
+
+        private void PlanePitchUp()
+        {
+            if (myPlane == null) return;
+            myPlane.PitchUp(.1f);
+        }
+
+
         private void SpawnLander()
         {
             if (commClient != null)
             {
-                commClient.SendObjectRequest("cube");
+                commClient.SendObjectRequest("lunar lander");
             }
         }
 

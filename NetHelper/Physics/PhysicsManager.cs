@@ -40,7 +40,7 @@ namespace Helper.Physics
             PhysicsSystem.SolverType = PhysicsSystem.Solver.Normal;
 
             PhysicsSystem.CollisionSystem.UseSweepTests = true;
-            //PhysicsSystem.Gravity = new Vector3(0, -2f, 0);
+            PhysicsSystem.Gravity = new Vector3(0, -10, 0);
             // CollisionTOllerance and Allowed Penetration
             // changed because our objects were "too small"
             PhysicsSystem.CollisionTollerance = 0.01f;
@@ -116,6 +116,14 @@ namespace Helper.Physics
 
             tmrPhysicsUpdate.Stop();
             tmrPhysicsUpdate.Start();
+        }
+
+        public Aircraft GetAircraft(Vector3 pos, Model model, Vector3 size, Matrix orient)
+        {
+            Box boxPrimitive = new Box(-.5f * size, orient, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
+
+            Aircraft a = new Aircraft(new Vector3(0, 0, 0), new Vector3(1, 1, 1), boxPrimitive, model, "cube");
+            return a;
         }
 
         public CarObject GetCar(Model carModel, Model wheelModel)
@@ -219,13 +227,13 @@ namespace Helper.Physics
         }
         public LunarVehicle GetLunarLander(Vector3 pos, Vector3 size, Matrix orient, Model model)
         {
-            Box boxPrimitive = new Box(-.5f * size, orient, size); // this is relative to the Body!
+            //Box boxPrimitive = new Box(-.5f * size, orient, size); // this is relative to the Body!
             LunarVehicle lander = new LunarVehicle(
                 pos,
-                size / 2,
-                boxPrimitive,
+                size,
+                orient,
                 model,
-                "cube"
+                "lunar lander"
                 );
 
             //newObjects.Add(lander.ID, lander);
@@ -249,6 +257,11 @@ namespace Helper.Physics
         public LunarVehicle GetLunarLander(Model model)
         {
             return GetLunarLander(new Vector3(0, 0, 0), new Vector3(2, 2, 2), Matrix.Identity, model);
+        }
+
+        public Aircraft GetAircraft(Model model)
+        {
+            return GetAircraft(new Vector3(0, 0, 0), model, new Vector3(1,1,1), Matrix.Identity);
         }
     }
 }

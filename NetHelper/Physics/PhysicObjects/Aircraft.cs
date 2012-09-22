@@ -3,13 +3,12 @@ using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Helper.Physics.PhysicObjects
+namespace Helper.Physics.PhysicsObjects
 {
     public class Aircraft : Gobject
     {
         BoostController Yaw;
         BoostController Pitch;
-        BoostController Roll;
 
         BoostController Thrust;
         BoostController LiftLeft;
@@ -22,33 +21,45 @@ namespace Helper.Physics.PhysicObjects
         float ForwardThrust =0;
         const float DragCoefficient = .1f;
         float drag = 0;
-        float LeftWingLiftCoefficient = 0;
-        float RightWingLiftCoefficient  =0;
-        const float WingLiftCoefficientMin = .7f;
-        const float WingLiftCoefficientMax = 1.0f;
+        float WingLiftCoefficient = .1f;
+        const float WingLiftCoefficientMin = .02f;
+        const float WingLiftCoefficientMax = .2f;
+        const float AileronFactor = .03f;
+        float RollDestination = 0;
+        float RollCurrent = 0;
+
+        public float AirSpeed
+        {
+            get
+            {
+                Vector3 vel = BodyVelocity();
+                Vector3 forr = BodyOrientation().Forward;
+                // the amount of vel in the direction of forr
+                return Vector3.Dot(vel, forr);
+            }
+        }
 
         public Aircraft(Vector3 position, Vector3 scale, Primitive primitive, Model model, string asset)
             : base(position, scale, primitive, model, true, asset)
         {
-            
             Pitch = new BoostController(Body, Vector3.Zero, Vector3.UnitZ);
-            Roll = new BoostController(Body, Vector3.Zero, Vector3.UnitX);
             Yaw = new BoostController(Body, Vector3.Zero, Vector3.UnitY);
 
             Thrust = new BoostController(Body, Vector3.Forward, Vector3.Forward, Vector3.Zero);
-            LiftLeft = new BoostController(Body, Vector3.Zero, Vector3.UnitZ);  // this could be totally different than a force at a position (midwing)
-            LiftRight = new BoostController(Body, Vector3.Zero, -Vector3.UnitZ);
+            LiftLeft = new BoostController(Body, Vector3.Up, -2*Vector3.UnitX, Vector3.Zero);  // this could be totally different than a force at a position (midwing)
+            LiftRight = new BoostController(Body, Vector3.Up, 2*Vector3.UnitX, Vector3.Zero);
             Drag = new BoostController(Body, Vector3.Backward, Vector3.Backward, Vector3.Zero);
 
             PhysicsSystem.CurrentPhysicsSystem.AddController(Thrust);
             PhysicsSystem.CurrentPhysicsSystem.AddController(LiftLeft);
             PhysicsSystem.CurrentPhysicsSystem.AddController(LiftRight);
             PhysicsSystem.CurrentPhysicsSystem.AddController(Drag);
-
-            actionManager.AddBinding((int)Actions.Thrust, new Helper.Input.ActionBindingDelegate(GenericThrustUp), 1);
-            actionManager.AddBinding((int)Actions.Pitch, new Helper.Input.ActionBindingDelegate(GenericPitch), 1);
+            
+            actionManager.AddBinding((int)Actions.Thrust, new Helper.Input.ActionBindingDelegate(GenericThrust), 1);
+            actionManager.AddBinding((int)Actions.Aileron, new Helper.Input.ActionBindingDelegate(GenericAileron), 1);
+            /*actionManager.AddBinding((int)Actions.Pitch, new Helper.Input.ActionBindingDelegate(GenericPitch), 1);
             actionManager.AddBinding((int)Actions.Roll, new Helper.Input.ActionBindingDelegate(GenericRoll), 1);
-            actionManager.AddBinding((int)Actions.Yaw, new Helper.Input.ActionBindingDelegate(GenericYaw), 1);
+            actionManager.AddBinding((int)Actions.Yaw, new Helper.Input.ActionBindingDelegate(GenericYaw), 1);*/
         }
 
         public enum Actions
@@ -57,86 +68,87 @@ namespace Helper.Physics.PhysicObjects
             Roll,
             Pitch,
             Yaw,
+            Aileron
         }
 
-        private void GenericThrustUp(object[] v)
+        private void GenericAileron(object[] v)
         {
-            AdjustForwardThrust((float)v[0]);
-        }
-        private void GenericPitch(object[] v)
-        {
-            SetRotJetXThrust((float)v[0]);
-        }
-        private void GenericRoll(object[] v)
-        {
-            SetRotJetZThrust((float)v[0]);
-        }
-        private void GenericYaw(object[] v)
-        {
-            SetRotJetYThrust((float)v[0]);
+            SetAilerons((float)v[0]);
         }
 
-        public void AdjustForwardThrust(float v)
+        //user input
+        public void AdjustThrust(float v)
         {
-            ForwardThrust += v;            
+            SetThrust(ForwardThrust + v);
+        }
+        // simulated input
+        private void GenericThrust(object[] v)
+        {
+            SetThrust((float)v[0]);
+        }
+        // common
+        public void SetThrust(float t)
+        {
+            ForwardThrust = t;
             Thrust.SetForceMagnitude(ForwardThrust);
+            actionManager.SetActionValues((int)Actions.Thrust, new object[] { ForwardThrust });
+        }
+
+        //common
+        private void SetRightWingLift(float right)
+        {
+            LiftRight.SetForceMagnitude(right);
+        }
+
+        private void SetLeftWingLift(float left)
+        {
+            LiftLeft.SetForceMagnitude(left);
+        }
+
+        private void SetDrag(float drag)
+        {
             Drag.SetForceMagnitude(drag);
-            actionManager.SetActionValues((int)Actions.Thrust, new object[] { v });
         }
 
-        public void RollLeft(float v)
-        {
-            LeftWingLiftCoefficient -= v;
-            if (LeftWingLiftCoefficient < WingLiftCoefficientMin)
-                LeftWingLiftCoefficient = WingLiftCoefficientMin;
-            if (LeftWingLiftCoefficient > WingLiftCoefficientMax)
-                LeftWingLiftCoefficient = WingLiftCoefficientMax;
-        }
 
-        public void RollRight(float v)
-        {
-            RightWingLiftCoefficient -= v;
-            if (RightWingLiftCoefficient < WingLiftCoefficientMin)
-                RightWingLiftCoefficient = WingLiftCoefficientMin;
-            if (RightWingLiftCoefficient > WingLiftCoefficientMax)
-                RightWingLiftCoefficient = WingLiftCoefficientMax;
-        }
+        float leftWingLift = 0;
+        float rightWingLift = 0;
 
-        public void SetRotJetXThrust(float v)
+        public void SetAilerons(float v)
         {
-            Pitch.SetTorqueMagnitude(v * MAX_ROT_JET);
-            actionManager.SetActionValues((int)Actions.Pitch, new object[] { v });
-        }
+            RollDestination = v;
 
-        public void SetRotJetZThrust(float v)
-        {
-            Roll.SetTorqueMagnitude(v * MAX_ROT_JET);
-            actionManager.SetActionValues((int)Actions.Roll, new object[] { v });
-        }
+            float leftAileron = RollCurrent * -1;
+            if (leftAileron < 0)
+                leftAileron = 0;
+            float LeftWingLiftCoefficient = WingLiftCoefficient - (AileronFactor * leftAileron);
 
-        public void SetRotJetYThrust(float v)
-        {
-            Yaw.SetTorqueMagnitude(v * MAX_ROT_JET);
-            actionManager.SetActionValues((int)Actions.Yaw, new object[] { v });
+            float rightAileron = RollCurrent;
+            if(rightAileron<0)
+                rightAileron = 0;
+            float RightWingLiftCoefficient = WingLiftCoefficient - (AileronFactor * rightAileron);
+
+            leftWingLift = AirSpeed * LeftWingLiftCoefficient;
+            rightWingLift = AirSpeed * RightWingLiftCoefficient;
+            SetLeftWingLift(leftWingLift);
+            actionManager.SetActionValues((int)Actions.Aileron, new object[] { v });
+            SetRightWingLift(rightWingLift);
         }
 
         public override void SetNominalInput()
         {
-            Vector3 forwardMotion = Vector3.Cross(BodyVelocity(), BodyOrientation().Forward);
-            float forwardSpeed = forwardMotion.Length();
-            drag = forwardSpeed * DragCoefficient;
-            float leftWingLift = forwardSpeed * LeftWingLiftCoefficient;
-            float rightWinLift = forwardSpeed * RightWingLiftCoefficient;
-            
-            Drag.SetForceMagnitude(drag);
-            Thrust.SetForceMagnitude(ForwardThrust);
-            LiftLeft.SetForceMagnitude(leftWingLift);
-            LiftRight.SetForceMagnitude(rightWinLift);
+            drag = AirSpeed * DragCoefficient;
+            RollCurrent += (RollDestination - RollCurrent) * .3f;
+            //System.Diagnostics.Debug.WriteLine(ForwardThrust + ", " + forwardMotion);
+            SetThrust(ForwardThrust);
+            SetDrag(drag);
+            SetAilerons(0);
+        }
 
 
-            SetRotJetXThrust(0);
-            SetRotJetYThrust(0);
-            SetRotJetZThrust(0);
+        public void PitchUp(float p)
+        {
+
         }
     }
 }

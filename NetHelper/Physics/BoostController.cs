@@ -54,6 +54,7 @@ namespace Helper.Physics
             if (Body == null)
                 return;
 
+
             if (Force != null && Force != Vector3.Zero)
             {
                 if (ForcePosition == Vector3.Zero)
