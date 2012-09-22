@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Helper.Physics;
 using System.Threading;
+using Helper.Collections;
 
 namespace XnaView
 {
@@ -141,6 +142,9 @@ namespace XnaView
         {
             try
             {
+                Counter.AddTick("fps");
+                Counter.AddTick("average_fps", Counter.GetAveragePerSecond("fps"));
+
                 Matrix proj = Matrix.Identity;
                 GraphicsDevice.Clear(Color.Gray);
 
@@ -157,9 +161,15 @@ namespace XnaView
                     double time = tmrDrawElapsed.ElapsedMilliseconds;
                     Vector2 position = new Vector2(5, 5);
                     Color debugfontColor = Color.Black;
-                    spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, debugfontColor);
+                    spriteBatch.DrawString(debugFont, "FPS: " + String.Format("{0:0}", Counter.GetAverageValue("average_fps")), position, debugfontColor);
                     position.Y += debugFont.LineSpacing;
-                    //spriteBatch.DrawString(debugFont, "TPS: " + (1000.0 / lastPhysicsElapsed), position, debugfontColor); // physics Ticks Per Second
+                    //spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, debugfontColor);
+                    //position.Y += debugFont.LineSpacing;
+                    spriteBatch.DrawString(debugFont, "Physics Updates PS: " + String.Format("{0:0}", Counter.GetAveragePerSecond("average_pups")), position, debugfontColor); // physics Ticks Per Second
+                    position.Y += debugFont.LineSpacing;
+                    spriteBatch.DrawString(debugFont, "Packets PS Out: " + String.Format("{0:0}", Counter.GetAveragePerSecond("average_pps_out")), position, debugfontColor); // physics Ticks Per Second
+                    position.Y += debugFont.LineSpacing;
+                    spriteBatch.DrawString(debugFont, "Packets PS In: " + String.Format("{0:0}", Counter.GetAveragePerSecond("average_pps_in")), position, debugfontColor); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.TargetPosition);
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
