@@ -167,9 +167,9 @@ namespace XnaView
                     //position.Y += debugFont.LineSpacing;
                     spriteBatch.DrawString(debugFont, "Physics Updates PS: " + String.Format("{0:0}", Counter.GetAveragePerSecond("average_pups")), position, debugfontColor); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "Packets PS Out: " + String.Format("{0:0}", Counter.GetAveragePerSecond("average_pps_out")), position, debugfontColor); // physics Ticks Per Second
+                    spriteBatch.DrawString(debugFont, "Packets PS Out: " + String.Format("{0:0.0}", Counter.GetAveragePerSecond("average_pps_out")), position, debugfontColor); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "Packets PS In: " + String.Format("{0:0}", Counter.GetAveragePerSecond("average_pps_in")), position, debugfontColor); // physics Ticks Per Second
+                    spriteBatch.DrawString(debugFont, "Packets PS In: " + String.Format("{0:0.0}", Counter.GetAveragePerSecond("average_pps_in")), position, debugfontColor); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.TargetPosition);
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);

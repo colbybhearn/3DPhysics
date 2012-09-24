@@ -18,11 +18,63 @@ namespace Helper.Collections
         }
     }
 
-    public static class Counter
+    public class Counter
     {
-        static SortedList<string, ThreadQueue<Tick>> Counters = new SortedList<string, ThreadQueue<Tick>>();
+        static SortedList<string, Counter> Counters = new SortedList<string, Counter>();
         static int MaxSize = 1000;
         static Stopwatch Watch = Stopwatch.StartNew();
+
+        List<Tick> Ticks;
+        int TicksStart = 0;
+        int TicksEnd = 0;
+        long MinTime;
+        long MaxTime;
+        double TotalValue;
+        long TotalTime;
+
+        int Count
+        {
+            get
+            {
+                return (TicksStart - TicksEnd + MaxSize) % MaxSize;
+            }
+        }
+
+        private Counter()
+        {
+            MinTime = long.MaxValue;
+            MaxTime = long.MinValue;
+
+            Ticks = new List<Tick>(MaxSize);
+        }
+
+        private void AddTick(double value)
+        {
+            if(Double.IsInfinity(value))
+                value = 0;
+            if ((TicksEnd - TicksStart + MaxSize) % MaxSize == 1) // Queue is full
+            {
+                TotalValue -= Ticks[TicksEnd].Value;
+                TotalTime -= Ticks[TicksEnd].Time;
+                TicksEnd = (TicksEnd + 1) % MaxSize;
+
+            }
+
+
+            if (Ticks.Count == TicksStart)
+                Ticks.Add(new Tick(Watch.ElapsedTicks, value));
+            else
+            {
+                Ticks[TicksStart].Time = Watch.ElapsedTicks;
+                Ticks[TicksStart].Value = value;
+            }
+
+            MaxTime = Ticks[TicksStart].Time;
+            MinTime = Ticks[TicksEnd].Time;
+            TotalValue += value;
+            TotalTime += Ticks[TicksStart].Time;
+            TicksStart = (TicksStart + 1) % MaxSize;
+        }
 
 
         public static void AddTick(string alias, double value)
@@ -33,13 +85,11 @@ namespace Helper.Collections
                 int index = Counters.IndexOfKey(alias);
                 if (index == -1)
                 {
-                    Counters.Add(alias, new ThreadQueue<Tick>());
+                    Counters.Add(alias, new Counter());
                     index = Counters.IndexOfKey(alias);
                 }
 
-                Counters.Values[index].EnQ(new Tick(Watch.ElapsedTicks, value));
-                if (Counters.Values[index].Count > MaxSize)
-                    Counters.Values[index].DeQ();
+                Counters.Values[index].AddTick(value);
             }
         }
 
@@ -58,9 +108,9 @@ namespace Helper.Collections
                 int index = Counters.IndexOfKey(alias);
                 if (index != -1)
                 {
-                    long min = Counters.Values[index].Min(t => t.Time);
-                    time = Counters.Values[index].Sum(t => (t.Time - min));
-                    value = Counters.Values[index].Sum(t => t.Value);
+                    //long min = Counters.Values[index].MinTime;
+                    time = Counters.Values[index].TotalTime;
+                    value = Counters.Values[index].TotalValue;
                 }
             }
         }
@@ -131,15 +181,15 @@ namespace Helper.Collections
                 int index = Counters.IndexOfKey(alias);
                 if (index != -1)
                 {
-                    long min = Counters.Values[index].Min(a => a.Time);
-                    long max = Counters.Values[index].Max(a => a.Time);
+                    long min = Counters.Values[index].MinTime;
+                    long max = Counters.Values[index].MaxTime;
                     /*        Ticks Per Second             Ticks Per Second * Total
                      * ----------------------------       ---------------------------
                      *     Time Elapse * Average     ==     Time Elapsed * Average
                      *      -----------------
                      *            Total
                      */
-                    ret = (Stopwatch.Frequency * Counters.Values[index].Count) / (double)((max - min) * v);
+                    ret = (Stopwatch.Frequency * Counters.Values[index].Count) / (double)((Watch.ElapsedTicks - min) * v);
                 }
             }
 

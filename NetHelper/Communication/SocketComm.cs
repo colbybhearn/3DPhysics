@@ -41,7 +41,7 @@ namespace Helper.Communication
 
         public void Send(byte[] data)
         {
-            DataToSendQueue.Enqueue(data);
+            DataToSendQueue.EnQ(data);
         }
 
         private void inputWorker()
