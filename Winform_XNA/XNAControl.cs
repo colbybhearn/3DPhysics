@@ -10,6 +10,7 @@ namespace XnaView
     using Rectangle = Microsoft.Xna.Framework.Rectangle;
     using System.Drawing;
     using System.ComponentModel.Design;
+    using System.Diagnostics;
 
 
     /// <summary>
@@ -26,6 +27,9 @@ namespace XnaView
         // the same underlying GraphicsDevice, managed by this helper service.
         GraphicsDeviceService graphicsDeviceService;
 
+        Stopwatch watch;
+        long lastFrame = 0;
+        long frameFrequency = 0;
 
         #endregion
 
@@ -51,6 +55,12 @@ namespace XnaView
             get { return services; }
         }
 
+        public long FrameRate
+        {
+            get { return Stopwatch.Frequency / frameFrequency; }
+            set { frameFrequency = Stopwatch.Frequency / value; }
+        }
+
         ServiceContainer services = new ServiceContainer();
 
 
@@ -64,6 +74,8 @@ namespace XnaView
         /// </summary>
         protected override void OnCreateControl()
         {
+            FrameRate = 60;
+            watch = Stopwatch.StartNew();
             // Don't initialize the graphics device if we are running in the designer.
             if (!DesignMode)
             {
@@ -107,18 +119,23 @@ namespace XnaView
         /// </summary>
         protected override void OnPaint(PaintEventArgs e)
         {
-            string beginDrawError = BeginDraw();
+            // Last Frame + Ticks Per Frame <= Now, need to redraw
+            if (lastFrame + frameFrequency <= watch.ElapsedTicks)
+            {
+                lastFrame = watch.ElapsedTicks;
+                string beginDrawError = BeginDraw();
 
-            if (string.IsNullOrEmpty(beginDrawError))
-            {
-                // Draw the control using the GraphicsDevice.
-                Draw();
-                EndDraw();
-            }
-            else
-            {
-                // If BeginDraw failed, show an error message using System.Drawing.
-                PaintUsingSystemDrawing(e.Graphics, beginDrawError);
+                if (string.IsNullOrEmpty(beginDrawError))
+                {
+                    // Draw the control using the GraphicsDevice.
+                    Draw();
+                    EndDraw();
+                }
+                else
+                {
+                    // If BeginDraw failed, show an error message using System.Drawing.
+                    PaintUsingSystemDrawing(e.Graphics, beginDrawError);
+                }
             }
         }
 

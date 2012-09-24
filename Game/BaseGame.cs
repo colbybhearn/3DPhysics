@@ -156,8 +156,7 @@ namespace Game
                         go.actionManager.ValueSwap();
                         commClient.SendObjectAction(go.ID, vals);
                     }
-                
-                    //MultiplayerUpdateQueue
+                    
                     while (MultiplayerUpdateQueue.Count > 0)
                     {
                         lock (MultiplayerUpdateQueue)
@@ -168,7 +167,9 @@ namespace Game
                             {
                                 AddNewObject(oup.objectId, oup.assetName);
                                 MultiplayerUpdateQueue.RemoveAt(0);
-                                continue;// TODO -  Should we continue instead of not updating this frame? (can't yet)
+                                continue;
+                                // TODO -  Should we continue instead of not updating this frame?
+                                // (can't yet due to AddNewObject waiting until the next integrate to actually add it)
                             }
                             Gobject go = gameObjects[oup.objectId];
                             go.Interpoladate(oup.position, oup.orientation, oup.velocity);
@@ -178,7 +179,6 @@ namespace Game
                         }
                     }
                 }
-
             }
             else if (CommType == CommTypes.Server)
             {
@@ -230,43 +230,6 @@ namespace Game
                 UpdateCameraCallback(cam, view, proj);
             }
         }
-
-        void tmrUpdateMultiplayer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (CommType == CommTypes.Client)
-            {
-                // update the server about the objects this client controls
-                foreach (int id in clientControlledObjects)
-                {
-                    if (!gameObjects.ContainsKey(id))
-                        continue;
-                    Gobject go = gameObjects[id];
-                    commClient.SendObjectUpdate(go.ID, go.Position, go.BodyOrientation(), go.BodyVelocity());
-                }
-            }
-            else
-            {
-                if (commServer == null)
-                    return;
-                foreach (Gobject go in gameObjects.Values)
-                {
-                    if (!go.isMoveable)
-                        continue;
-                    if (go.ID == 1)
-                    {
-                    }
-                    // update all clients about all objects!
-                    // tell them what kind of model this is by asset name
-                    commServer.BroadcastObjectUpdate(new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity()));
-                }
-            }
-        }
-
-        /*void  tmrCamUpdate_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (cam == null)
-                return;
-        }*/
         
         public virtual void GetCameraViewProjection()
         {

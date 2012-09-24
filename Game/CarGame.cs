@@ -253,18 +253,24 @@ namespace Game
                     physicsManager.AddNewObject(newobject);
                     break;
                 case "car":
-                    myCar = physicsManager.GetCar(carModel, wheelModel);
-                    myCar.ID = objectid;
-                    physicsManager.AddNewObject(myCar);
+                    newobject = physicsManager.GetCar(carModel, wheelModel);
+                    newobject.ID = objectid;
+                    physicsManager.AddNewObject(newobject);
                     if (ownerid == MyClientID) // Only select the new car if its OUR new car
+                    {
+                        myCar = (CarObject)newobject;
                         SelectGameObject(myCar);
+                    }
                     break;
                 case "lunar lander":
-                    lander = physicsManager.GetLunarLander(landerModel);
-                    lander.ID = objectid;
-                    physicsManager.AddNewObject(lander);
+                    newobject = physicsManager.GetLunarLander(landerModel);
+                    newobject.ID = objectid;
+                    physicsManager.AddNewObject(newobject);
                     if (ownerid == MyClientID) // Only select the new car if its OUR new car
+                    {
+                        lander = (LunarVehicle)newobject;
                         SelectGameObject(lander);
+                    }
                     break;
                 default:
                     break;

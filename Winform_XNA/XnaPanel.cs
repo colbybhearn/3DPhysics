@@ -15,21 +15,11 @@ using Helper.Collections;
 namespace XnaView
 {
 
-    /*
-     * I had to reference the WindowsGameLibrary from Clientapp in order for the ContentManager to load any models when invoked from the client (it worked fine in XNA_Panel and the missing reference was the only difference)
-     * 
-     * 
+    /* I had to reference the WindowsGameLibrary from Clientapp in order for the ContentManager to load any models when invoked from the client
+     * (it worked fine in XNA_Panel and the missing reference was the only difference)
      */
     public class XnaPanel : XnaControl
     {
-        #region Todo
-        /* Refactor Physics Controllers
-         * fix mesh wireframe connections being drawn
-         * fix location of wireframe to match physics
-         * fix collision with objects
-         */
-        #endregion
-
         #region Fields
         Camera cam;
         Matrix view = Matrix.Identity;
