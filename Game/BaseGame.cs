@@ -536,7 +536,7 @@ namespace Game
         public virtual void InitializeEnvironment()
         {            
             
-            bool useCustomTerrain = true;
+            bool useCustomTerrain = false;
 
             if (useCustomTerrain)
             {

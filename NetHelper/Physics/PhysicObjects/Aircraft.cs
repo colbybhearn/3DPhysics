@@ -2,6 +2,7 @@
 using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace Helper.Physics.PhysicsObjects
 {
@@ -21,9 +22,7 @@ namespace Helper.Physics.PhysicsObjects
         float ForwardThrust =0;
         const float DragCoefficient = .1f;
         float drag = 0;
-        float WingLiftCoefficient = .1f;
-        const float WingLiftCoefficientMin = .02f;
-        const float WingLiftCoefficientMax = .2f;
+        float WingLiftCoefficient = 1.0f;
         const float AileronFactor = .03f;
         float RollDestination = 0;
         float RollCurrent = 0;
@@ -45,10 +44,10 @@ namespace Helper.Physics.PhysicsObjects
             Pitch = new BoostController(Body, Vector3.Zero, Vector3.UnitZ);
             Yaw = new BoostController(Body, Vector3.Zero, Vector3.UnitY);
 
-            Thrust = new BoostController(Body, Vector3.Forward, Vector3.Forward, Vector3.Zero);
-            LiftLeft = new BoostController(Body, Vector3.Up, -2*Vector3.UnitX, Vector3.Zero);  // this could be totally different than a force at a position (midwing)
-            LiftRight = new BoostController(Body, Vector3.Up, 2*Vector3.UnitX, Vector3.Zero);
-            Drag = new BoostController(Body, Vector3.Backward, Vector3.Backward, Vector3.Zero);
+            Thrust = new BoostController(Body, Vector3.Left, Vector3.Left, Vector3.Zero);
+            LiftLeft = new BoostController(Body, Vector3.Up, -2*Vector3.UnitZ, Vector3.Zero);  // this could be totally different than a force at a position (midwing)
+            LiftRight = new BoostController(Body, Vector3.Up, 2*Vector3.UnitZ, Vector3.Zero);
+            Drag = new BoostController(Body, Vector3.Right, Vector3.Right, Vector3.Zero);
 
             PhysicsSystem.CurrentPhysicsSystem.AddController(Thrust);
             PhysicsSystem.CurrentPhysicsSystem.AddController(LiftLeft);
@@ -117,6 +116,14 @@ namespace Helper.Physics.PhysicsObjects
         public void SetAilerons(float v)
         {
             RollDestination = v;
+            if (RollDestination == 0)
+            {
+                // there's a wobble, 
+                // like wrong coordinate systemm..
+                // or like wrong direction of force
+                Debug.WriteLine(leftWingLift + ", " + rightWingLift);    
+            }
+            
 
             float leftAileron = RollCurrent * -1;
             if (leftAileron < 0)
@@ -131,14 +138,14 @@ namespace Helper.Physics.PhysicsObjects
             leftWingLift = AirSpeed * LeftWingLiftCoefficient;
             rightWingLift = AirSpeed * RightWingLiftCoefficient;
             SetLeftWingLift(leftWingLift);
-            actionManager.SetActionValues((int)Actions.Aileron, new object[] { v });
+            //actionManager.SetActionValues((int)Actions.Aileron, new object[] { v });
             SetRightWingLift(rightWingLift);
         }
 
         public override void SetNominalInput()
         {
             drag = AirSpeed * DragCoefficient;
-            RollCurrent += (RollDestination - RollCurrent) * .3f;
+            RollCurrent = RollDestination;// (RollDestination - RollCurrent) * .3f;
             //System.Diagnostics.Debug.WriteLine(ForwardThrust + ", " + forwardMotion);
             SetThrust(ForwardThrust);
             SetDrag(drag);

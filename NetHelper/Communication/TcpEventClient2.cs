@@ -17,6 +17,7 @@ namespace Helper.Communication
 
         public TcpEventClient2()
         {
+            
 
         }
 

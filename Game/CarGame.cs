@@ -46,6 +46,7 @@ namespace Game
         Model cubeModel;
         Model sphereModel;
         LunarVehicle lander;
+        Model airplane;
 
         public CarGame()
         {
@@ -65,7 +66,7 @@ namespace Game
             carModel = Content.Load<Model>("car");
             wheelModel = Content.Load<Model>("wheel");
             landerModel = Content.Load<Model>("Lunar Lander");
-
+            airplane = Content.Load<Model>("Airplane");
             chatFont = Content.Load<SpriteFont>("debugFont");
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
@@ -291,7 +292,7 @@ namespace Game
         private void SpawnPlane()
         {
             // test code for client-side aircraft/plane spawning
-            myPlane = physicsManager.GetAircraft(cubeModel);
+            myPlane = physicsManager.GetAircraft(airplane);
             myPlane.ID = gameObjects.Count;
             physicsManager.AddNewObject(myPlane);
 
@@ -313,13 +314,13 @@ namespace Game
         private void PlaneRollLeft()
         {
             if (myPlane == null) return;
-            myPlane.SetAilerons(-.1f);
+            myPlane.SetAilerons(-1f);
         }
 
         private void PlaneRollRight()
         {
             if (myPlane == null) return;
-            myPlane.SetAilerons(.1f);
+            myPlane.SetAilerons(1f);
         }
 
         private void PlanePitchUp()
