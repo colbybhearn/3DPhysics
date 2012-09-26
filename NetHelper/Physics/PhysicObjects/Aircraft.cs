@@ -44,10 +44,10 @@ namespace Helper.Physics.PhysicsObjects
             Pitch = new BoostController(Body, Vector3.Zero, Vector3.UnitZ);
             Yaw = new BoostController(Body, Vector3.Zero, Vector3.UnitY);
 
-            Thrust = new BoostController(Body, Vector3.Left, Vector3.Left, Vector3.Zero);
-            LiftLeft = new BoostController(Body, Vector3.Up, -2*Vector3.UnitZ, Vector3.Zero);  // this could be totally different than a force at a position (midwing)
-            LiftRight = new BoostController(Body, Vector3.Up, 2*Vector3.UnitZ, Vector3.Zero);
-            Drag = new BoostController(Body, Vector3.Right, Vector3.Right, Vector3.Zero);
+            Thrust = new BoostController(Body, Vector3.Forward, Vector3.Forward, Vector3.Zero);
+            LiftLeft = new BoostController(Body, Vector3.Up,  2*Vector3.Left, Vector3.Zero);  // this could be totally different than a force at a position (midwing)
+            LiftRight = new BoostController(Body, Vector3.Up, 2*Vector3.Right, Vector3.Zero);
+            Drag = new BoostController(Body, Vector3.Backward, Vector3.Backward, Vector3.Zero);
 
             PhysicsSystem.CurrentPhysicsSystem.AddController(Thrust);
             PhysicsSystem.CurrentPhysicsSystem.AddController(LiftLeft);
@@ -56,9 +56,11 @@ namespace Helper.Physics.PhysicsObjects
             
             actionManager.AddBinding((int)Actions.Thrust, new Helper.Input.ActionBindingDelegate(GenericThrust), 1);
             actionManager.AddBinding((int)Actions.Aileron, new Helper.Input.ActionBindingDelegate(GenericAileron), 1);
-            /*actionManager.AddBinding((int)Actions.Pitch, new Helper.Input.ActionBindingDelegate(GenericPitch), 1);
+            /*
+            actionManager.AddBinding((int)Actions.Pitch, new Helper.Input.ActionBindingDelegate(GenericPitch), 1);
             actionManager.AddBinding((int)Actions.Roll, new Helper.Input.ActionBindingDelegate(GenericRoll), 1);
-            actionManager.AddBinding((int)Actions.Yaw, new Helper.Input.ActionBindingDelegate(GenericYaw), 1);*/
+            actionManager.AddBinding((int)Actions.Yaw, new Helper.Input.ActionBindingDelegate(GenericYaw), 1);
+            */
         }
 
         public enum Actions
@@ -145,7 +147,7 @@ namespace Helper.Physics.PhysicsObjects
         public override void SetNominalInput()
         {
             drag = AirSpeed * DragCoefficient;
-            RollCurrent = RollDestination;// (RollDestination - RollCurrent) * .3f;
+            RollCurrent = RollCurrent + (RollDestination - RollCurrent) * .3f;
             //System.Diagnostics.Debug.WriteLine(ForwardThrust + ", " + forwardMotion);
             SetThrust(ForwardThrust);
             SetDrag(drag);

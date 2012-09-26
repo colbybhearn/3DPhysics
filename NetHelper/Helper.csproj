@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Chat.cs" />
+    <Compile Include="Collections\Counter.cs" />
     <Compile Include="Collections\ThreadQueue.cs" />
     <Compile Include="Communication\ClientInfoSocket.cs" />
     <Compile Include="Communication\SocketComm.cs" />

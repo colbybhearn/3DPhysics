@@ -6,6 +6,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Net;
 using Helper.Multiplayer.Packets;
+using Helper.Collections;
 
 namespace Helper.Communication
 {
@@ -53,11 +54,15 @@ namespace Helper.Communication
 
         public void Stop()
         {
-            socket.Disconnect();
+            if(socket != null)
+                socket.Disconnect();
         }
 
         public void Send(Packet packet)
         {
+            Counter.AddTick("pps_out");
+            Counter.AddTick("average_pps_out", Counter.GetAverageValue("pps_out"));
+
             if (socket == null)
                 return;
 

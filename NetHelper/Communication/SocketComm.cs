@@ -21,7 +21,7 @@ namespace Helper.Communication
         public event Helper.Handlers.voidEH ClientDisconnected;
 
         bool ShouldBeRunning = false;
-        ThreadQueue DataToSendQueue;
+        ThreadQueue<byte[]> DataToSendQueue;
 
         public SocketComm(Socket s)
         {
@@ -31,7 +31,7 @@ namespace Helper.Communication
             outputThread = new Thread(new ThreadStart(outputWorker));
             inputThread.Start();
             outputThread.Start();
-            DataToSendQueue = new ThreadQueue();
+            DataToSendQueue = new ThreadQueue<byte[]>();
         }
 
         public void Disconnect()
@@ -41,7 +41,7 @@ namespace Helper.Communication
 
         public void Send(byte[] data)
         {
-            DataToSendQueue.Enqueue(data);
+            DataToSendQueue.EnQ(data);
         }
 
         private void inputWorker()
@@ -91,7 +91,7 @@ namespace Helper.Communication
 
                 dataToSend.Clear();
                 while (DataToSendQueue.Count > 0)
-                    dataToSend.AddRange(DataToSendQueue.DeQ() as byte[]);
+                    dataToSend.AddRange(DataToSendQueue.DeQ());
                 try
                 {
                     //Send ALL bytes at once instead of "per packet", should be better

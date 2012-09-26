@@ -6,6 +6,7 @@ using System.Threading;
 using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework;
 using Helper.Communication;
+using Helper.Collections;
 
 namespace Helper.Multiplayer
 {
@@ -62,10 +63,18 @@ namespace Helper.Multiplayer
         {
             while (ShouldBeRunning)
             {
+                int count = 0; // Using this since its possible one can get added to the queue while another is being processed
                 while (InputQueue.Count > 0)                    
                 {
                     ProcessInputPacket(InputQueue.Dequeue());
+                    count++;
                 }
+                if (count > 0)
+                {
+                    Counter.AddTick("pps_in", count);
+                    Counter.AddTick("average_pps_in", Counter.GetAverageValue("pps_in"));
+                }
+
                 Thread.Sleep(1);
             }
         }

@@ -13,12 +13,12 @@ namespace Helper.Communication
         Thread readThread;
         bool ShouldBeRunning = false;
         Socket socket;
-        Helper.Collections.ThreadQueue DataToSendQueue = new Helper.Collections.ThreadQueue();
+        Helper.Collections.ThreadQueue<byte[]> DataToSendQueue;
 
         public TcpEventClient()
         {
             readThread = new Thread(new ThreadStart(readWorker));
-            DataToSendQueue = new Collections.ThreadQueue();
+            DataToSendQueue = new Collections.ThreadQueue<byte[]>();
         }
 
         public void Connect(IPEndPoint remoteEndPoint)
@@ -85,7 +85,7 @@ namespace Helper.Communication
                     dataToSend.Clear();
                     // now a ThreadQueue
                     while (DataToSendQueue.Count > 0)
-                        dataToSend.Add(DataToSendQueue.DeQ() as byte[]);
+                        dataToSend.Add(DataToSendQueue.DeQ());
                     foreach(byte[] b in dataToSend)
                         socket.Send(b);
                 }

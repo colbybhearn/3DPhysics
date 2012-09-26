@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Helper.Collections
 {
-    public class ThreadQueue : Queue<object>
+    public class ThreadQueue<T> : Queue<T>
     {
         public ThreadQueue()
             : base ()
         {
         }
-        
-        public void EnQ(object o)
+
+        public void EnQ(T o)
         {
             lock(this)
             {
@@ -20,9 +20,9 @@ namespace Helper.Collections
             }
         }
 
-        public object DeQ()
+        public T DeQ()
         {
-            object o = null;
+            T o;
             lock (this)
             {
                 o =this.Dequeue();

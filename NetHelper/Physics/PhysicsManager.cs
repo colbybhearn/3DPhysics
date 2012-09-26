@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using JigLibX.Geometry;
 using Helper.Physics.PhysicsObjects;
+using Helper.Collections;
 
 namespace Helper.Physics
 {
@@ -62,6 +63,8 @@ namespace Helper.Physics
 
         void tmrPhysicsUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            Counter.AddTick("pups");
+            Counter.AddTick("average_pups", Counter.GetAverageValue("pups"));
             //Add our new objects
             FinalizeNewObjects();
 
