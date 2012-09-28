@@ -12,38 +12,51 @@ namespace Helper.Input
 {
     public partial class Settings : Form
     {
-        public KeyMap keyMap;
-        public Settings(KeyMap km)
+        public KeyMapCollection keyMaps;
+        public Settings(KeyMapCollection kmc)
         {
             InitializeComponent();
-            keyMap = km;
-            AddKeys();
+            keyMaps = kmc;
+            AddKeyBindingGuiControls();
         }
 
-        public void AddKeys()
+        /// <summary>
+        /// Adds controls (custom tab pages containing keybindingControls) for displaying each keybinding
+        /// </summary>
+        public void AddKeyBindingGuiControls()
         {
-            foreach (Input.KeyBinding kb in keyMap.KeyBindings)
+            for (int kmi = 0; kmi < keyMaps.keyMaps.Count; kmi++)
             {
-                KeyBindingControl kbc = new KeyBindingControl(kb);
-                flpBindings.Controls.Add(kbc);
-            }
-        }
-
-        internal void ProcessKey(Microsoft.Xna.Framework.Input.KeyboardState currentState)
-        {
-            foreach (KeyBindingControl kbc in flpBindings.Controls)
-            {
-                // if this keybindingcontrol is in edit mode
-                if (kbc.Editing)
+                FlowLayoutTabPage fltp = new FlowLayoutTabPage();
+                tcControlGroups.TabPages.Add(fltp);
+                KeyMap km = keyMaps.keyMaps.Values[kmi];
+                fltp.Text = km.Alias;
+                foreach (Input.KeyBinding kb in km.KeyBindings.Values)
                 {
-                    // apply the pressed key to it
-                    kbc.SetKey(currentState);
-                                        
-                    // get focus off of the textbox
-                    flpBindings.Focus();
+                    KeyBindingControl kbc = new KeyBindingControl(kb);
+                    
+                    fltp.AddControl(kbc);
                 }
             }
-            
+        }
+
+        /// <summary>
+        /// Processes the current keystate to set a keybinding.
+        /// </summary>
+        /// <param name="currentState"></param>
+        internal void ProcessKey(Microsoft.Xna.Framework.Input.KeyboardState currentState)
+        {
+            foreach (TabPage tp in tcControlGroups.Controls)
+            {
+                // if the tab page is one of the custom tab pages (should always be the case)
+                if (tp is FlowLayoutTabPage)
+                {
+                    // make it so
+                    FlowLayoutTabPage fltp = tp as FlowLayoutTabPage;
+                    // in case this tab page contains the active keybinding control needing to set its binding.
+                    fltp.ProcessKey(currentState);
+                }
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)

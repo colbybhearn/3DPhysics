@@ -22,9 +22,21 @@ namespace Helper.Input
             UpdateBindingKeyAlias();
         }
 
+        public event Helper.Handlers.voidEH BindFieldClicked;
+
         private void tbBinding_Click(object sender, EventArgs e)
         {
+            // 
+            CallBindFieldClicked();
             Editing = true;
+            
+        }
+
+        private void CallBindFieldClicked()
+        {
+            if (BindFieldClicked == null)
+                throw new Exception("You can't not forget to (or purposefully) not wire this up. Wire it up of you'll have people editing multiple bindings at once. It will be anarchy. Wire it up.");
+            BindFieldClicked();
         }
 
         internal void SetKey(KeyboardState curr)

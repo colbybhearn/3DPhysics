@@ -67,6 +67,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -85,6 +86,12 @@
     <Compile Include="Handlers.cs" />
     <Compile Include="Input\ActionBinding.cs" />
     <Compile Include="Input\ActionManager.cs" />
+    <Compile Include="Input\FlowLayoutTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Input\FlowLayoutTabPage.Designer.cs">
+      <DependentUpon>FlowLayoutTabPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="Input\KeyBinding.cs" />
     <Compile Include="Input\KeyBindingControl.cs">
@@ -94,6 +101,7 @@
       <DependentUpon>KeyBindingControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Input\KeyMap.cs" />
+    <Compile Include="Input\KeyMapCollection.cs" />
     <Compile Include="Input\Settings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -136,6 +144,9 @@
     <Folder Include="Graphics\" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Input\FlowLayoutTabPage.resx">
+      <DependentUpon>FlowLayoutTabPage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Input\KeyBindingControl.resx">
       <DependentUpon>KeyBindingControl.cs</DependentUpon>
     </EmbeddedResource>

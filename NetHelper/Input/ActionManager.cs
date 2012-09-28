@@ -78,15 +78,6 @@ namespace Helper.Input
          *   - Forward Prediction
          *   - Interpolation
          * 
-         * Jeffrey:
-         *  - Made packet
-         *  - wiring up in Comm...
-         *  
-         *  Colby:
-         *  - ActionBinding
-         *  - ActionManager
-         * 
-         * 
          */
 
     public delegate void ActionBindingDelegate(object[] actionValues);
@@ -128,21 +119,6 @@ namespace Helper.Input
             int index = uniq;//GetAvailableActionID();
             Bindings.Add(index, new ActionBinding(index, d, indicies));
         }
-
-        //private int GetAvailableActionID()
-        //{
-        //    int id = 1;
-        //    bool found = true;
-        //    while (found)
-        //    {
-
-        //        if (Bindings.ContainsKey(id))
-        //            id++;
-        //        else
-        //            found = false;
-        //    }
-        //    return id;
-        //}
 
         /// <summary>
         /// This is called ServerSide only to simulate the user input

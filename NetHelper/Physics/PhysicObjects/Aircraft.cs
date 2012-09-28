@@ -8,9 +8,33 @@ namespace Helper.Physics.PhysicsObjects
 {
     public class Aircraft : Gobject
     {
+
+        /* Flight dynamics
+         * Craft flies by balancing drag and gravity with thrust and lift.
+         * Main wings produce an upward lift pressure
+         *  - lift coefficient depends upon angle of attack. 
+         *  - increased angle of attack => greater lift and results in slower speed)
+         *  - decreased angle of attack => less lift and allows faster speed
+         *  
+         * Center of gravity
+         *  - http://en.wikipedia.org/wiki/Longitudinal_static_stability
+         *  - should exist within boundaries determined by the design of the craft (wing chord length, wing placement, horizontal stabilizer's restoring moment)
+         *  
+         * 
+         * Tail horizontal stablizer (http://en.wikipedia.org/wiki/Elevator_(aircraft))
+         *  - produces a downward pressure
+         *  - up elevator forces the tail down and nose up (increased angle of attack for main wings => greater lift)
+         * http://adamone.rchomepage.com/cg_calc.htm
+         * //with equations:
+         * http://www.geistware.com/rcmodeling/cg_super_calc.htm
+         * 
+         * 
+         */
+
+
+
         BoostController Yaw;
         BoostController Pitch;
-
         BoostController Thrust;
         BoostController LiftLeft;
         BoostController LiftRight;
@@ -22,10 +46,14 @@ namespace Helper.Physics.PhysicsObjects
         float ForwardThrust =0;
         const float DragCoefficient = .1f;
         float drag = 0;
-        float WingLiftCoefficient = 1.0f;
+        float WingLiftCoefficient = .10f;
         const float AileronFactor = .03f;
         float RollDestination = 0;
         float RollCurrent = 0;
+
+
+        
+
 
         public float AirSpeed
         {
@@ -118,14 +146,6 @@ namespace Helper.Physics.PhysicsObjects
         public void SetAilerons(float v)
         {
             RollDestination = v;
-            if (RollDestination == 0)
-            {
-                // there's a wobble, 
-                // like wrong coordinate systemm..
-                // or like wrong direction of force
-                Debug.WriteLine(leftWingLift + ", " + rightWingLift);    
-            }
-            
 
             float leftAileron = RollCurrent * -1;
             if (leftAileron < 0)
@@ -147,7 +167,7 @@ namespace Helper.Physics.PhysicsObjects
         public override void SetNominalInput()
         {
             drag = AirSpeed * DragCoefficient;
-            RollCurrent = RollCurrent + (RollDestination - RollCurrent) * .3f;
+            RollCurrent = RollCurrent + (RollDestination - RollCurrent) * .9f;
             //System.Diagnostics.Debug.WriteLine(ForwardThrust + ", " + forwardMotion);
             SetThrust(ForwardThrust);
             SetDrag(drag);

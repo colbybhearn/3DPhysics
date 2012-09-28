@@ -1,40 +1,14 @@
 ﻿using System.Collections.Generic;
+using Helper;
+using Helper.Input;
+using Helper.Physics;
+using Helper.Physics.PhysicsObjects;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Helper;
-//using Input;
-using Helper.Input;
-using Helper.Physics.PhysicsObjects;
-using Helper.Physics;
-using Microsoft.Xna.Framework;
-using System;
 
 namespace Game
 {
-
-    /* Todo:
-     * work on having different first person and chase cam views for different object types (car vs. lunar lander vs. aircraft)
-     * Work on what the physicsManager has to know in ProcessObjectAdded. Right now, it has to know the specific physicalObject. (that may or may not be the best we can do - I'd like it to be generic).
-     * work on having the same input do different things, based on the current role or player mode. (car mode and lander mode, both with WASD controls is the goal)
-     */
-
-    /* Adding a Vehicle
-     * Add the specific Gobject under physicsObjects folder
-     * Add Getter method to PhysicsManager with some defaults like location, orientation, etc.
-     * 
-     * In the specific Game,
-     *  - Process the asset type in ProcessObjectAdded
-     *  - Process the asset type in AddNewObject
-     *  - Add InputManager Key Bindings in the specific Game
-     * 
-     * In the specific Gobject, 
-     *  - add the degrees of freedom into an "Actions" enum
-     *  - add generic action methods that take object[] 
-     *  - Add ActionManager Action Bindings in the constructor
-     *  - call ActionManager.SetActionValues in specific action method
-     *  - override SetNominalInput method and define what nominal input is 
-     * 
-     */
     public class CarGame : BaseGame
     {
 
@@ -151,52 +125,74 @@ namespace Game
 
         public override void InitializeInputs()
         {
-            inputManager = new InputManager(this.name, GetDefaultKeyMap());
+            inputManager = new InputManager(this.name, GetDefaultControls());
 
             inputManager.AddInputMode(InputMode.Chat, (ChatDelegate)ChatCallback);
         }
 
-        public override List<KeyBinding> GetDefaultKeyBindings()
+        public override KeyMapCollection GetDefaultControls()
         {
-            List<KeyBinding> defaults = base.GetDefaultKeyBindings();
+            KeyMapCollection defControls = base.GetDefaultControls();
+            defControls.Game = this.name;
+            
             // Car
-            defaults.Add(new KeyBinding("CarAccelerate", Keys.Up, false, false, false, KeyEvent.Down, Accelerate));
-            defaults.Add(new KeyBinding("CarSteerLeft", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
-            defaults.Add(new KeyBinding("CarDecelerate", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
-            defaults.Add(new KeyBinding("CarSteerRight", Keys.Right, false, false, false, KeyEvent.Down, SteerRight));
-            defaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, KeyEvent.Down, ApplyHandbrake));
+            List<KeyBinding> careDefaults = new List<KeyBinding>();
+            careDefaults.Add(new KeyBinding("Spawn", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
+            careDefaults.Add(new KeyBinding("Forward", Keys.Up, false, false, false, KeyEvent.Down, Accelerate));
+            careDefaults.Add(new KeyBinding("Left", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
+            careDefaults.Add(new KeyBinding("Brake / Reverse", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
+            careDefaults.Add(new KeyBinding("Right", Keys.Right, false, false, false, KeyEvent.Down, SteerRight));
+            careDefaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, KeyEvent.Down, ApplyHandbrake));            
+            KeyMap carControls = new KeyMap(SpecificInputGroups.Car.ToString(),careDefaults);
+
             // player 
-            defaults.Add(new KeyBinding("RespawnCar", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
+
             // Spheres
-            defaults.Add(new KeyBinding("SpawnSpheres", Keys.N, false, true, false, KeyEvent.Pressed, SpawnSpheres));
+            //cardefaults.Add(new KeyBinding("SpawnSpheres", Keys.N, false, true, false, KeyEvent.Pressed, SpawnSpheres));
 
-            // Chat
-            defaults.Add(new KeyBinding("ChatKeyPressed", Keys.Enter, false, false, false, KeyEvent.Pressed, ChatKeyPressed));
-
+            
             //Lunar Lander
-            defaults.Add(new KeyBinding("SpawnLunarLander", Keys.Decimal, false, false, false, KeyEvent.Pressed, SpawnLander));
-            defaults.Add(new KeyBinding("LunarThrustUp", Keys.Space, false, false, false, KeyEvent.Down, LunarThrustUp));
-            defaults.Add(new KeyBinding("LunarPitchUp", Keys.NumPad5, false, false, false, KeyEvent.Down, LunarPitchUp));
-            defaults.Add(new KeyBinding("LunarPitchDown", Keys.NumPad8, false, false, false, KeyEvent.Down, LunarPitchDown));
-            defaults.Add(new KeyBinding("LunarRollLeft", Keys.NumPad4, false, false, false, KeyEvent.Down, LunarRollLeft));            
-            defaults.Add(new KeyBinding("LunarRollRight", Keys.NumPad6, false, false, false, KeyEvent.Down, LunarRollRight));
-            defaults.Add(new KeyBinding("LunarYawLeft", Keys.NumPad7, false, false, false, KeyEvent.Down, LunarYawLeft));
-            defaults.Add(new KeyBinding("LunarYawRight", Keys.NumPad9, false, false, false, KeyEvent.Down, LunarYawRight));
+            List<KeyBinding> landerDefaults = new List<KeyBinding>();
+            landerDefaults.Add(new KeyBinding("Spawn", Keys.Decimal, false, false, false, KeyEvent.Pressed, SpawnLander));
+            landerDefaults.Add(new KeyBinding("Thrust Up", Keys.Space, false, false, false, KeyEvent.Down, LunarThrustUp));
+            landerDefaults.Add(new KeyBinding("Pitch Up", Keys.NumPad5, false, false, false, KeyEvent.Down, LunarPitchUp));
+            landerDefaults.Add(new KeyBinding("Pitch Down", Keys.NumPad8, false, false, false, KeyEvent.Down, LunarPitchDown));
+            landerDefaults.Add(new KeyBinding("Roll Left", Keys.NumPad4, false, false, false, KeyEvent.Down, LunarRollLeft));            
+            landerDefaults.Add(new KeyBinding("Roll Right", Keys.NumPad6, false, false, false, KeyEvent.Down, LunarRollRight));
+            landerDefaults.Add(new KeyBinding("Yaw Left", Keys.NumPad7, false, false, false, KeyEvent.Down, LunarYawLeft));
+            landerDefaults.Add(new KeyBinding("Yaw Right", Keys.NumPad9, false, false, false, KeyEvent.Down, LunarYawRight));
+            KeyMap landerControls = new KeyMap(SpecificInputGroups.Lander.ToString(), landerDefaults);
 
-            //
-            defaults.Add(new KeyBinding("SpawnPlane", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
-            defaults.Add(new KeyBinding("IncreaseThrust", Keys.OemPlus, false, false, false, KeyEvent.Down, PlaneThrustIncrease));
-            defaults.Add(new KeyBinding("DecreaseThrust", Keys.OemMinus, false, false, false, KeyEvent.Down, PlaneThrustDecrease));
-            defaults.Add(new KeyBinding("RollLeft", Keys.H, false, false, false, KeyEvent.Down, PlaneRollLeft));
-            defaults.Add(new KeyBinding("RollRight", Keys.K, false, false, false, KeyEvent.Down, PlaneRollRight));
-            defaults.Add(new KeyBinding("PitchUp", Keys.J, false, false, false, KeyEvent.Down, PlanePitchUp));
-            return defaults;
+            
+            // jet
+            List<KeyBinding> jetDefaults = new List<KeyBinding>();
+            jetDefaults.Add(new KeyBinding("Spawn ", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
+            jetDefaults.Add(new KeyBinding("Increase Thrust", Keys.OemPlus, false, false, false, KeyEvent.Down, PlaneThrustIncrease));
+            jetDefaults.Add(new KeyBinding("Decrease Thrust", Keys.OemMinus, false, false, false, KeyEvent.Down, PlaneThrustDecrease));
+            jetDefaults.Add(new KeyBinding("Roll Left", Keys.H, false, false, false, KeyEvent.Down, PlaneRollLeft));
+            jetDefaults.Add(new KeyBinding("Roll Right", Keys.K, false, false, false, KeyEvent.Down, PlaneRollRight));
+            jetDefaults.Add(new KeyBinding("Pitch Up", Keys.J, false, false, false, KeyEvent.Down, PlanePitchUp));
+            KeyMap jetControls = new KeyMap(SpecificInputGroups.Airplane.ToString(), jetDefaults);
+            
+            // Chat
+            List<KeyBinding> chatDefaults = new List<KeyBinding>();
+            chatDefaults.Add(new KeyBinding("ChatKeyPressed", Keys.Enter, false, false, false, KeyEvent.Pressed, ChatKeyPressed));
+            KeyMap chatControls = new KeyMap(SpecificInputGroups.Chat.ToString(), chatDefaults);
+
+            defControls.AddMap(carControls);
+            defControls.AddMap(jetControls);
+            defControls.AddMap(landerControls);
+            defControls.AddMap(chatControls);
+            return defControls;
         }
 
-        
-        public override KeyMap GetDefaultKeyMap()
+        public enum SpecificInputGroups
         {
-            return new KeyMap(this.name, GetDefaultKeyBindings());
+            Chat,
+            Car,
+            Airplane,
+            Zombie,
+            Lander
         }
 
         /// <summary>

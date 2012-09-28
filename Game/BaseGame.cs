@@ -79,7 +79,7 @@ namespace Game
         
         public Matrix view = Matrix.Identity;
         public Matrix proj = Matrix.Identity;
-        KeyMap keyMap;
+        KeyMapCollection keyMapCollections;
         internal List<ObjectUpdatePacket> physicsUpdateList = new List<ObjectUpdatePacket>();
 
         enum CameraModes
@@ -361,33 +361,36 @@ namespace Game
 
         public virtual void InitializeInputs()
         {
-            keyMap = GetDefaultKeyMap();
+            keyMapCollections = GetDefaultControls();
         }
 
         public virtual void InitializeMultiplayer()
         {
         }
 
-        public virtual List<KeyBinding> GetDefaultKeyBindings()
+        public virtual KeyMapCollection GetDefaultControls()
         {
-            List<KeyBinding> defaults = new List<KeyBinding>();
-            defaults.Add(new KeyBinding("CameraMoveForward", Keys.W, false, false, false, KeyEvent.Down, CameraMoveForward));
-            defaults.Add(new KeyBinding("CameraMoveLeft", Keys.A, false, false, false, KeyEvent.Down, CameraMoveLeft));
-            defaults.Add(new KeyBinding("CameraMoveBackward", Keys.S, false, false, false, KeyEvent.Down, CameraMoveBackward));
-            defaults.Add(new KeyBinding("CameraMoveRight", Keys.D, false, false, false, KeyEvent.Down, CameraMoveRight));
-            defaults.Add(new KeyBinding("CameraMoveSpeedIncrease", Keys.Q, false, false, false, KeyEvent.Down, CameraMoveSpeedIncrease));
-            defaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, KeyEvent.Down, CameraMoveSpeedDecrease));
-            defaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, KeyEvent.Pressed, CameraModeCycle));
-            defaults.Add(new KeyBinding("ToggleDebugInfo", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
-            defaults.Add(new KeyBinding("TogglePhysicsDebug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
+            KeyMapCollection defControls = new KeyMapCollection();
+            List<KeyBinding> cameraDefaults = new List<KeyBinding>();
+            cameraDefaults.Add(new KeyBinding("CameraMoveForward", Keys.W, false, false, false, KeyEvent.Down, CameraMoveForward));
+            cameraDefaults.Add(new KeyBinding("CameraMoveLeft", Keys.A, false, false, false, KeyEvent.Down, CameraMoveLeft));
+            cameraDefaults.Add(new KeyBinding("CameraMoveBackward", Keys.S, false, false, false, KeyEvent.Down, CameraMoveBackward));
+            cameraDefaults.Add(new KeyBinding("CameraMoveRight", Keys.D, false, false, false, KeyEvent.Down, CameraMoveRight));
+            cameraDefaults.Add(new KeyBinding("CameraMoveSpeedIncrease", Keys.Q, false, false, false, KeyEvent.Down, CameraMoveSpeedIncrease));
+            cameraDefaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, KeyEvent.Down, CameraMoveSpeedDecrease));
+            cameraDefaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, KeyEvent.Pressed, CameraModeCycle));
+            cameraDefaults.Add(new KeyBinding("ToggleDebugInfo", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
+            cameraDefaults.Add(new KeyBinding("TogglePhysicsDebug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
+            KeyMap camControls = new KeyMap(GenericInputGroups.Camera.ToString(), cameraDefaults);
 
-            return defaults;
+            defControls.AddMap(camControls);
+            return defControls;
         }
 
-        // this should be overriden in every game for the default keys
-        public virtual KeyMap GetDefaultKeyMap()
+        public enum GenericInputGroups
         {
-            return new KeyMap(this.name, GetDefaultKeyBindings());
+            Camera,
+            Chat,
         }
 
         #region Camera Manipulation

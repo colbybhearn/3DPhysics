@@ -30,10 +30,10 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpControls = new System.Windows.Forms.TabPage();
-            this.flpBindings = new System.Windows.Forms.FlowLayoutPanel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.tcControlGroups = new System.Windows.Forms.TabControl();
             this.tabControl1.SuspendLayout();
             this.tpControls.SuspendLayout();
             this.SuspendLayout();
@@ -53,7 +53,7 @@
             // 
             // tpControls
             // 
-            this.tpControls.Controls.Add(this.flpBindings);
+            this.tpControls.Controls.Add(this.tcControlGroups);
             this.tpControls.Location = new System.Drawing.Point(4, 22);
             this.tpControls.Name = "tpControls";
             this.tpControls.Padding = new System.Windows.Forms.Padding(3);
@@ -61,15 +61,6 @@
             this.tpControls.TabIndex = 0;
             this.tpControls.Text = "Controls";
             this.tpControls.UseVisualStyleBackColor = true;
-            // 
-            // flpBindings
-            // 
-            this.flpBindings.AutoScroll = true;
-            this.flpBindings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flpBindings.Location = new System.Drawing.Point(3, 3);
-            this.flpBindings.Name = "flpBindings";
-            this.flpBindings.Size = new System.Drawing.Size(355, 384);
-            this.flpBindings.TabIndex = 0;
             // 
             // tabPage2
             // 
@@ -103,6 +94,15 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // tcControlGroups
+            // 
+            this.tcControlGroups.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tcControlGroups.Location = new System.Drawing.Point(3, 3);
+            this.tcControlGroups.Name = "tcControlGroups";
+            this.tcControlGroups.SelectedIndex = 0;
+            this.tcControlGroups.Size = new System.Drawing.Size(355, 384);
+            this.tcControlGroups.TabIndex = 0;
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -124,8 +124,8 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tpControls;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.FlowLayoutPanel flpBindings;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.TabControl tcControlGroups;
     }
 }

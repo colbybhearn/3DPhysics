@@ -1,8 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-//using System.Windows.Forms;
 using Microsoft.Xna.Framework.Input;
+
+
+/* dynamic input schemes
+ * it makes sense to let the game decide what key bindings should actively be checked
+ * and what those keys should do
+ * so when you change mode, the game knows that and can update the input manager's configuration
+ * so how do we tie the keys to the assets?
+ * any kind of mode identifier can be used
+ * how do we show all the options on the settings form?
+ * We need modes of play
+ * each mode has an alias
+ * when keybindings are added, their added for a specific mode.
+ * when keybindings are shown, their shown grouped by mode
+ * if we add it all into the input manager, we can toggle groups of keys remotely as enabled or not.
+ * This allows the base game to add Camera controls, or other GenericInputGroups
+ * Then the specific game can add it's specific SpecificInputGroups
+ * 
+ */
+
+
 
 /* Keymapping
          * Keep a list of possible bindings
@@ -25,8 +44,6 @@ namespace Helper.Input
 
     public class InputManager
     {
-        
-        
         /* Vision:
          * 
          * KeyMap should be an end-to-end map of possible actions in terms of (alias to key to delegate)
@@ -48,18 +65,33 @@ namespace Helper.Input
 
         KeyboardState lastState = new KeyboardState();
         KeyboardState currentState = new KeyboardState();
-        public KeyMap keyMap;
+        //public KeyMap keyMap;
         public SortedList<InputMode, Delegate> InputModeDelegates;
         public String game;
         Settings frmSettings;
+        KeyMapCollection keyMaps = new KeyMapCollection();
 
-
-        public InputManager(String gameName, KeyMap defaultKeyMap)
+        public InputManager(String gameName, KeyMapCollection defaultKeyMapcollection)
         {
             game = gameName;
-            keyMap = KeyMap.LoadKeyMap(game, defaultKeyMap);
+            keyMaps = KeyMapCollection.Load(game, defaultKeyMapcollection);
             Mode = InputMode.Mapped;
             InputModeDelegates = new SortedList<InputMode, Delegate>();
+        }
+
+        public void DisableAllKeyMaps()
+        {
+            keyMaps.DisableAllKeyGroups();
+        }
+
+        public void EnableKeyMap(string id)
+        {
+            keyMaps.EnableKeyGroups(id);
+        }
+
+        public void DisableKeyMap(string id)
+        {
+            keyMaps.DisableKeyGroups(id);
         }
 
         public void AddInputMode(InputMode m, Delegate d)
@@ -81,8 +113,11 @@ namespace Helper.Input
                         ((ChatDelegate)d)(GetPressedKeysWithShift(lastState, currentState));
                     break;
                 case InputMode.Mapped:
-                    if(keyMap != null)
-                        keyMap.Check(lastState, currentState);
+                    foreach (KeyMap map in keyMaps.keyMaps.Values)
+                    {
+                        if (map != null)
+                            map.Check(lastState, currentState);
+                    }
                     break;
             }
         
@@ -105,18 +140,19 @@ namespace Helper.Input
         
         public void Save()
         {
-            KeyMap.SaveKeyMap(keyMap);
+            KeyMapCollection.Save(keyMaps);
+            //KeyMap.SaveKeyMap(keyMap);
         }
         
         public void EditSettings()
         {
-            frmSettings = new Settings(keyMap);
+            frmSettings = new Settings(keyMaps);
             InputMode lastMode = Mode;
             Mode = InputMode.Setup;            
             System.Windows.Forms.DialogResult dr = frmSettings.ShowDialog();
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
-                keyMap = frmSettings.keyMap;
+                keyMaps = frmSettings.keyMaps;
                 Save();
             }
             frmSettings.Dispose();
