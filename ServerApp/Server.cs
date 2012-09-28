@@ -26,7 +26,7 @@ namespace ServerApp
             iBasePort = (int)numBasePort.Value;
             btnStopServer.Enabled = false;
             
-            game = new Game.CarGame();
+            game = new Game.ExampleGame();
             game.ChatMessageReceived += new Helper.Handlers.ChatMessageEH(game_ChatMessageReceived);
             game.ClientConnected += new Helper.Handlers.IntStringEH(game_ClientConnected); 
             AddXnaPanel(ref game);

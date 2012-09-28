@@ -40,9 +40,6 @@ namespace Helper.Physics.PhysicsObjects
         BoostController LiftRight;
         BoostController Drag;
 
-
-        const float MAX_VERT_MAGNITUDE=30;
-        const float MAX_ROT_JET=10;
         float ForwardThrust =0;
         const float DragCoefficient = .1f;
         float drag = 0;

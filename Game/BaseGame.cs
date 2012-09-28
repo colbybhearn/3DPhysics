@@ -84,12 +84,12 @@ namespace Game
 
         enum CameraModes
         {
-            Fixed,
+            FreeLook,
             ObjectFirstPerson,
             ObjectChase,
             ObjectWatch
         }
-        CameraModes cameraMode = CameraModes.Fixed;
+        CameraModes cameraMode = CameraModes.FreeLook;
 
         #region Communication
         public enum CommTypes
@@ -242,7 +242,7 @@ namespace Game
                 bodyPosition= currentSelectedObject.BodyPosition();
             switch (cameraMode)
             {
-                case CameraModes.Fixed:
+                case CameraModes.FreeLook:
                     view = cam.RhsLevelViewMatrix;
                     proj = cam._projection;
                     break;
@@ -329,7 +329,7 @@ namespace Game
             if (cam == null)
                 return;
             cam.UpdatePosition();
-            if(cameraMode != CameraModes.Fixed)
+            if(cameraMode != CameraModes.FreeLook)
                 cam.UpdateLookAt();
         }
         
@@ -372,15 +372,21 @@ namespace Game
         {
             KeyMapCollection defControls = new KeyMapCollection();
             List<KeyBinding> cameraDefaults = new List<KeyBinding>();
-            cameraDefaults.Add(new KeyBinding("CameraMoveForward", Keys.W, false, false, false, KeyEvent.Down, CameraMoveForward));
-            cameraDefaults.Add(new KeyBinding("CameraMoveLeft", Keys.A, false, false, false, KeyEvent.Down, CameraMoveLeft));
-            cameraDefaults.Add(new KeyBinding("CameraMoveBackward", Keys.S, false, false, false, KeyEvent.Down, CameraMoveBackward));
-            cameraDefaults.Add(new KeyBinding("CameraMoveRight", Keys.D, false, false, false, KeyEvent.Down, CameraMoveRight));
-            cameraDefaults.Add(new KeyBinding("CameraMoveSpeedIncrease", Keys.Q, false, false, false, KeyEvent.Down, CameraMoveSpeedIncrease));
-            cameraDefaults.Add(new KeyBinding("CameraMoveSpeedDecrease", Keys.Z, false, false, false, KeyEvent.Down, CameraMoveSpeedDecrease));
-            cameraDefaults.Add(new KeyBinding("CameraMoveCycle", Keys.C, false, false, false, KeyEvent.Pressed, CameraModeCycle));
-            cameraDefaults.Add(new KeyBinding("ToggleDebugInfo", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
-            cameraDefaults.Add(new KeyBinding("TogglePhysicsDebug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
+            cameraDefaults.Add(new KeyBinding("Camera Move Forward", Keys.NumPad8, false, false, false, KeyEvent.Down, CameraMoveForward));
+            cameraDefaults.Add(new KeyBinding("Camera Move Left", Keys.NumPad4, false, false, false, KeyEvent.Down, CameraMoveLeft));
+            cameraDefaults.Add(new KeyBinding("Camera Move Backward", Keys.NumPad5, false, false, false, KeyEvent.Down, CameraMoveBackward));
+            cameraDefaults.Add(new KeyBinding("Camera Move Right", Keys.NumPad6, false, false, false, KeyEvent.Down, CameraMoveRight));
+            cameraDefaults.Add(new KeyBinding("Camera Move Speed Increase", Keys.NumPad7, false, false, false, KeyEvent.Pressed, CameraMoveSpeedIncrease));
+            cameraDefaults.Add(new KeyBinding("Camera Move Speed Decrease", Keys.NumPad1, false, false, false, KeyEvent.Pressed, CameraMoveSpeedDecrease));
+            cameraDefaults.Add(new KeyBinding("Camera Move Height Increase", Keys.NumPad9, false, false, false, KeyEvent.Down, CameraMoveHeightIncrease));
+            cameraDefaults.Add(new KeyBinding("Camera Move Height Decrease", Keys.NumPad3, false, false, false, KeyEvent.Down, CameraMoveHeightDecrease));
+
+            cameraDefaults.Add(new KeyBinding("Camera Move Cycle", Keys.Decimal, false, false, false, KeyEvent.Pressed, CameraModeCycle));
+            cameraDefaults.Add(new KeyBinding("Camera Home", Keys.Multiply, false, false, false, KeyEvent.Pressed, CameraMoveHome));
+            //
+            cameraDefaults.Add(new KeyBinding("Toggle Debug Info", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
+            cameraDefaults.Add(new KeyBinding("Toggle Physics Debug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
+            
             KeyMap camControls = new KeyMap(GenericInputGroups.Camera.ToString(), cameraDefaults);
 
             defControls.AddMap(camControls);
@@ -390,7 +396,6 @@ namespace Game
         public enum GenericInputGroups
         {
             Camera,
-            Chat,
         }
 
         #region Camera Manipulation
@@ -433,7 +438,7 @@ namespace Game
         {
             switch (cameraMode)
             {
-                case CameraModes.Fixed:
+                case CameraModes.FreeLook:
                     cameraMode = CameraModes.ObjectFirstPerson;
                     break;
                 case CameraModes.ObjectFirstPerson:
@@ -443,12 +448,30 @@ namespace Game
                     cameraMode = CameraModes.ObjectWatch;
                     break;
                 case CameraModes.ObjectWatch:
-                    cameraMode = CameraModes.Fixed;
+                    cameraMode = CameraModes.FreeLook;
                     break;
                 default:
                     break;
             }
-        } 
+        }
+
+
+        public void CameraMoveHeightIncrease()
+        {
+            cam.MoveUp();
+        }
+
+
+        public void CameraMoveHeightDecrease()
+        {
+            cam.MoveDown();
+        }
+
+        public void CameraMoveHome()
+        {
+            cameraMode = CameraModes.FreeLook;
+            cam.MoveHome();
+        }
         #endregion
 
         public void ToggleDebugInfo()

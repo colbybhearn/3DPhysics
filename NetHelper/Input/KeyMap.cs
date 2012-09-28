@@ -40,6 +40,7 @@ namespace Helper.Input
         public KeyMap(string alias, List<KeyBinding> defaultBindings)
         {
             Alias = alias;
+            KeyBindings = new SortedList<string, KeyBinding>();
             foreach (KeyBinding kb in defaultBindings)
                 KeyBindings.Add(kb.Alias, kb);
         }

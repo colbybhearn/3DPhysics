@@ -9,8 +9,16 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Game
 {
-    public class CarGame : BaseGame
+    public class ExampleGame : BaseGame
     {
+
+        public enum GameplayModes
+        {
+            Car,
+            Lander,
+            Aircraft,
+            Spectate,
+        }
 
         Model carModel, wheelModel, landerModel;
         CarObject myCar;
@@ -22,9 +30,9 @@ namespace Game
         LunarVehicle lander;
         Model airplane;
 
-        public CarGame()
+        public ExampleGame()            
         {
-            name = "CarGame";
+            name = "ExampleGame";
         }
 
         public override void InitializeContent()
@@ -66,6 +74,8 @@ namespace Game
             }
 
         }
+
+
         /*
         /// <summary>
         /// CLIENT SIDE
@@ -128,6 +138,7 @@ namespace Game
             inputManager = new InputManager(this.name, GetDefaultControls());
 
             inputManager.AddInputMode(InputMode.Chat, (ChatDelegate)ChatCallback);
+            UpdateInputs();
         }
 
         public override KeyMapCollection GetDefaultControls()
@@ -137,7 +148,7 @@ namespace Game
             
             // Car
             List<KeyBinding> careDefaults = new List<KeyBinding>();
-            careDefaults.Add(new KeyBinding("Spawn", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
+            //careDefaults.Add(new KeyBinding("Spawn", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
             careDefaults.Add(new KeyBinding("Forward", Keys.Up, false, false, false, KeyEvent.Down, Accelerate));
             careDefaults.Add(new KeyBinding("Left", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
             careDefaults.Add(new KeyBinding("Brake / Reverse", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
@@ -153,7 +164,7 @@ namespace Game
             
             //Lunar Lander
             List<KeyBinding> landerDefaults = new List<KeyBinding>();
-            landerDefaults.Add(new KeyBinding("Spawn", Keys.Decimal, false, false, false, KeyEvent.Pressed, SpawnLander));
+            //landerDefaults.Add(new KeyBinding("Spawn", Keys.Decimal, false, false, false, KeyEvent.Pressed, SpawnLander));
             landerDefaults.Add(new KeyBinding("Thrust Up", Keys.Space, false, false, false, KeyEvent.Down, LunarThrustUp));
             landerDefaults.Add(new KeyBinding("Pitch Up", Keys.NumPad5, false, false, false, KeyEvent.Down, LunarPitchUp));
             landerDefaults.Add(new KeyBinding("Pitch Down", Keys.NumPad8, false, false, false, KeyEvent.Down, LunarPitchDown));
@@ -166,33 +177,105 @@ namespace Game
             
             // jet
             List<KeyBinding> jetDefaults = new List<KeyBinding>();
-            jetDefaults.Add(new KeyBinding("Spawn ", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
-            jetDefaults.Add(new KeyBinding("Increase Thrust", Keys.OemPlus, false, false, false, KeyEvent.Down, PlaneThrustIncrease));
-            jetDefaults.Add(new KeyBinding("Decrease Thrust", Keys.OemMinus, false, false, false, KeyEvent.Down, PlaneThrustDecrease));
+            //jetDefaults.Add(new KeyBinding("Spawn ", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
+            jetDefaults.Add(new KeyBinding("Increase Thrust", Keys.OemPlus, false, false, false, KeyEvent.Pressed, PlaneThrustIncrease));
+            jetDefaults.Add(new KeyBinding("Decrease Thrust", Keys.OemMinus, false, false, false, KeyEvent.Pressed, PlaneThrustDecrease));
             jetDefaults.Add(new KeyBinding("Roll Left", Keys.H, false, false, false, KeyEvent.Down, PlaneRollLeft));
             jetDefaults.Add(new KeyBinding("Roll Right", Keys.K, false, false, false, KeyEvent.Down, PlaneRollRight));
             jetDefaults.Add(new KeyBinding("Pitch Up", Keys.J, false, false, false, KeyEvent.Down, PlanePitchUp));
-            KeyMap jetControls = new KeyMap(SpecificInputGroups.Airplane.ToString(), jetDefaults);
+            KeyMap jetControls = new KeyMap(SpecificInputGroups.Aircraft.ToString(), jetDefaults);
             
             // Chat
-            List<KeyBinding> chatDefaults = new List<KeyBinding>();
-            chatDefaults.Add(new KeyBinding("ChatKeyPressed", Keys.Enter, false, false, false, KeyEvent.Pressed, ChatKeyPressed));
-            KeyMap chatControls = new KeyMap(SpecificInputGroups.Chat.ToString(), chatDefaults);
+            List<KeyBinding> commDefaults = new List<KeyBinding>();
+            commDefaults.Add(new KeyBinding("Chat ", Keys.Enter, false, false, false, KeyEvent.Pressed, ChatKeyPressed));
+            KeyMap commControls = new KeyMap(SpecificInputGroups.Communication.ToString(), commDefaults);
+
+            // Interface
+            List<KeyBinding> interfaceDefaults = new List<KeyBinding>();
+            interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.Enter, false, false, false, KeyEvent.Pressed, EnterVehicle));
+            interfaceDefaults.Add(new KeyBinding("Spawn Lander", Keys.L, false, true, false, KeyEvent.Pressed, SpawnLander));
+            interfaceDefaults.Add(new KeyBinding("Spawn Aircraft", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
+            interfaceDefaults.Add(new KeyBinding("Spawn Car", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
+            KeyMap interfaceControls = new KeyMap(SpecificInputGroups.Interface.ToString(), interfaceDefaults);
 
             defControls.AddMap(carControls);
             defControls.AddMap(jetControls);
             defControls.AddMap(landerControls);
-            defControls.AddMap(chatControls);
+            defControls.AddMap(commControls);
+            defControls.AddMap(interfaceControls);
             return defControls;
         }
 
         public enum SpecificInputGroups
         {
-            Chat,
+            Communication,
             Car,
-            Airplane,
+            Aircraft,
             Zombie,
-            Lander
+            Lander,
+            Interface,
+
+        }
+
+        GameplayModes gameplaymode = GameplayModes.Spectate;
+
+        private void EnterVehicle()
+        {
+
+            switch (gameplaymode)
+            {
+                case GameplayModes.Car:
+                    gameplaymode = GameplayModes.Spectate;
+                    break;
+                case GameplayModes.Lander:
+                    gameplaymode = GameplayModes.Spectate;
+                    break;
+                case GameplayModes.Aircraft:
+                    gameplaymode = GameplayModes.Spectate;
+                    break;
+                case GameplayModes.Spectate:
+                    if (currentSelectedObject == null)
+                        return;
+                    // turn on only those appropriate to the current Game mode
+                    if (currentSelectedObject is CarObject)
+                        gameplaymode = GameplayModes.Car;
+                    if (currentSelectedObject is Aircraft)
+                        gameplaymode = GameplayModes.Aircraft;
+                    if (currentSelectedObject is LunarVehicle)
+                        gameplaymode = GameplayModes.Lander;
+                        break;
+                default:
+                    break;
+            }
+
+            UpdateInputs();
+        }
+
+        private void UpdateInputs()
+        {
+            // turn off all
+            inputManager.DisableAllKeyMaps();
+            // turn on always needed inputs
+            inputManager.EnableKeyMap(GenericInputGroups.Camera.ToString());
+            inputManager.EnableKeyMap(SpecificInputGroups.Communication.ToString());
+            inputManager.EnableKeyMap(SpecificInputGroups.Interface.ToString());
+
+            switch (gameplaymode)
+            {
+                case GameplayModes.Car:
+                    inputManager.EnableKeyMap(SpecificInputGroups.Car.ToString());
+                    break;
+                case GameplayModes.Lander:
+                    inputManager.EnableKeyMap(SpecificInputGroups.Lander.ToString());
+                    break;
+                case GameplayModes.Aircraft:
+                    inputManager.EnableKeyMap(SpecificInputGroups.Aircraft.ToString());
+                    break;
+                case GameplayModes.Spectate:
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -302,13 +385,13 @@ namespace Game
         private void PlaneThrustIncrease()
         {
             if(myPlane==null)return;
-            myPlane.AdjustThrust(.1f);
+            myPlane.AdjustThrust(.01f);
         }
 
         private void PlaneThrustDecrease()
         {
             if (myPlane == null) return;
-            myPlane.AdjustThrust(-.1f);
+            myPlane.AdjustThrust(-.01f);
         }
 
         private void PlaneRollLeft()

@@ -13,7 +13,7 @@ namespace Helper
         public Vector3 TargetPosition = new Vector3();
         public Vector3 PitchYawRoll = new Vector3(); // Named this way Becuase X,Y,Z = Pitch,Yaw,Roll when stored
         public Quaternion Orientation;
-        public float Speed = 10;
+        public float Speed = .1f;
         public float SpeedChangeRate = 1.2f;
         public Vector3 CurrentPosition;
         public float positionLagFactor = 1.0f;
@@ -82,6 +82,13 @@ namespace Helper
             return new Ray(nearPoint, direction);
         }
 
+        public Vector3 HomePosition {get; set;}
+        public void MoveHome()
+        {
+            TargetPosition = HomePosition;
+            CurrentPosition = HomePosition;
+        }
+
         public void UpdatePosition()
         {
             CurrentPosition += (TargetPosition - CurrentPosition) * positionLagFactor;
@@ -109,6 +116,7 @@ namespace Helper
         public void DecreaseSpeed()
         {
             Speed /= SpeedChangeRate;
+            System.Diagnostics.Debug.WriteLine("DecreaseSpeeD");
         }
 
         private void AdjustPosition(Vector3 delta)
@@ -159,6 +167,16 @@ namespace Helper
         public void LookToward(Vector3 direction)
         {
             LookAtLocation(TargetPosition + direction);
+        }
+
+        public void MoveDown()
+        {
+            AdjustPosition(Matrix.Identity.Down * .1f);
+        }
+
+        public void MoveUp()
+        {
+            AdjustPosition(Matrix.Identity.Up * .1f);
         }
     }
 }

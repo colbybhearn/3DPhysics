@@ -53,7 +53,7 @@ namespace ClientApp
             btnDisconnect.Enabled = false;
 
             // Create an instance of the game
-            game = new Game.CarGame();
+            game = new Game.ExampleGame();
             //game.ClientDisconnected+=new Helper.Handlers.StringEH(game_ClientDisconnected);
             // Give the xna panel a reference to game.
             // Xna Panel will initialize the game with its graphicsDevice the moment it is ready.
