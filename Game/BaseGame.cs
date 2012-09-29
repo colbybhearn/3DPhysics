@@ -20,6 +20,7 @@ namespace Game
      * Asynchronous sending / receiving in ComServer/Client
      * 
      */
+    // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
     public class BaseGame 
     {
         /* Notes on object locking!
@@ -439,16 +440,16 @@ namespace Game
             switch (cameraMode)
             {
                 case CameraModes.FreeLook:
-                    cameraMode = CameraModes.ObjectFirstPerson;
-                    break;
-                case CameraModes.ObjectFirstPerson:
-                    cameraMode = CameraModes.ObjectChase;
-                    break;
-                case CameraModes.ObjectChase:
                     cameraMode = CameraModes.ObjectWatch;
                     break;
                 case CameraModes.ObjectWatch:
-                    cameraMode = CameraModes.FreeLook;
+                    cameraMode = CameraModes.ObjectChase;
+                    break;
+                case CameraModes.ObjectChase:
+                    cameraMode = CameraModes.ObjectFirstPerson;
+                    break;
+                case CameraModes.ObjectFirstPerson:
+                    cameraMode = CameraModes.FreeLook;                    
                     break;
                 default:
                     break;
@@ -526,7 +527,7 @@ namespace Game
         public virtual void InitializeEnvironment()
         {            
             
-            bool useCustomTerrain = false;
+            bool useCustomTerrain = true;
 
             if (useCustomTerrain)
             {
@@ -534,7 +535,7 @@ namespace Game
                 {
                     terrain = new Terrain(new Vector3(0, -15, 0), // position
                         //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
-                                            new Vector3(150f, .55f, 150f),  // X with, possible y range, Z depth 
+                                            new Vector3(15000f, .55f, 15000f),  // X with, possible y range, Z depth 
                                             100, 100, graphicsDevice, moon);
 
                     newObjects.Add(terrain.ID, terrain);
@@ -549,7 +550,6 @@ namespace Game
                 try
                 {
                     // some video cards can't handle the >16 bit index type of the terrain
-                    
                     HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
                     newObjects.Add(heightmapObj.ID, heightmapObj);
                 }

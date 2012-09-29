@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Game
 {
+    // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
     public class ExampleGame : BaseGame
     {
 
@@ -52,8 +53,6 @@ namespace Game
             chatFont = Content.Load<SpriteFont>("debugFont");
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
-
-           
         }
 
         public override void InitializeMultiplayer(BaseGame.CommTypes CommType)
@@ -72,7 +71,6 @@ namespace Game
                 default:
                     break;
             }
-
         }
 
 
@@ -183,6 +181,7 @@ namespace Game
             jetDefaults.Add(new KeyBinding("Roll Left", Keys.H, false, false, false, KeyEvent.Down, PlaneRollLeft));
             jetDefaults.Add(new KeyBinding("Roll Right", Keys.K, false, false, false, KeyEvent.Down, PlaneRollRight));
             jetDefaults.Add(new KeyBinding("Pitch Up", Keys.J, false, false, false, KeyEvent.Down, PlanePitchUp));
+            jetDefaults.Add(new KeyBinding("Pitch Down", Keys.J, false, false, false, KeyEvent.Down, PlanePitchDown));
             KeyMap jetControls = new KeyMap(SpecificInputGroups.Aircraft.ToString(), jetDefaults);
             
             // Chat
@@ -203,6 +202,13 @@ namespace Game
             defControls.AddMap(landerControls);
             defControls.AddMap(commControls);
             defControls.AddMap(interfaceControls);
+            Vector3 res = new Vector3();
+            Vector3 l = Vector3.Left;
+            Vector3 n = Vector3.Zero;
+
+            Vector3.Subtract(ref l, ref n, out res);
+
+
             return defControls;
         }
 
@@ -385,13 +391,13 @@ namespace Game
         private void PlaneThrustIncrease()
         {
             if(myPlane==null)return;
-            myPlane.AdjustThrust(.01f);
+            myPlane.AdjustThrust(1f);
         }
 
         private void PlaneThrustDecrease()
         {
             if (myPlane == null) return;
-            myPlane.AdjustThrust(-.01f);
+            myPlane.AdjustThrust(-1f);
         }
 
         private void PlaneRollLeft()
@@ -409,9 +415,14 @@ namespace Game
         private void PlanePitchUp()
         {
             if (myPlane == null) return;
-            myPlane.PitchUp(.1f);
+            myPlane.SetElevator(1f);
         }
 
+        private void PlanePitchDown()
+        {
+            if (myPlane == null) return;
+            myPlane.SetElevator(-1f);
+        }
 
         private void SpawnLander()
         {

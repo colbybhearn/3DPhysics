@@ -125,7 +125,7 @@ namespace Helper.Physics
         {
             Box boxPrimitive = new Box(-.5f * size, orient, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
 
-            Aircraft a = new Aircraft(new Vector3(0, 0, 0), new Vector3(1, 1, 1), boxPrimitive, model, "cube");
+            Aircraft a = new Aircraft(new Vector3(0, -14, 0), new Vector3(1, 1, 1), boxPrimitive, model, "cube");
             return a;
         }
 

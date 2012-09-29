@@ -16,8 +16,9 @@ namespace Helper.Physics
         public Vector3 Force;
         public Vector3 Torque;
         public Vector3 ForcePosition;
-        float forceMag = 0;
+        public float forceMag = 0;
         float torqueMag = 0;
+        public bool worldForce = false;
 
         // I'd like to create a controller and tell it how to control from then on.
         // maybe it should be a more abstract body controller, made up of physics controllers
@@ -54,22 +55,43 @@ namespace Helper.Physics
             if (Body == null)
                 return;
 
-
-            if (Force != null && Force != Vector3.Zero)
+            if (worldForce)
             {
-                if (ForcePosition == Vector3.Zero)
-                    Body.AddBodyForce(Force * forceMag);
-                else
-                    Body.AddBodyForce(Force * forceMag, ForcePosition);
+                if (Force != null && Force != Vector3.Zero)
+                {
+                    if (ForcePosition == Vector3.Zero)
+                        Body.AddWorldForce(Force * forceMag);
+                    else
+                        Body.AddWorldForce(Force * forceMag, ForcePosition);
 
-                if (!Body.IsActive)
-                    Body.SetActive();
+                    if (!Body.IsActive)
+                        Body.SetActive();
+                }
+                if (Torque != null && Torque != Vector3.Zero)
+                {
+                    Body.AddWorldTorque(Torque * torqueMag);
+                    if (!Body.IsActive)
+                        Body.SetActive();
+                }
             }
-            if (Torque != null && Torque != Vector3.Zero)
+            else
             {
-                Body.AddBodyTorque(Torque * torqueMag);
-                if (!Body.IsActive)
-                    Body.SetActive();
+                if (Force != null && Force != Vector3.Zero)
+                {
+                    if (ForcePosition == Vector3.Zero)
+                        Body.AddBodyForce(Force * forceMag);
+                    else
+                        Body.AddBodyForce(Force * forceMag, ForcePosition);
+
+                    if (!Body.IsActive)
+                        Body.SetActive();
+                }
+                if (Torque != null && Torque != Vector3.Zero)
+                {
+                    Body.AddBodyTorque(Torque * torqueMag);
+                    if (!Body.IsActive)
+                        Body.SetActive();
+                }
             }
 
         }

@@ -75,6 +75,7 @@ namespace Helper.Physics
                     //currentHeight += (targetHeight - currentHeight) * .009f;
 
                     float height = GetNodeBasedHeight(worldXPosition, worldZPosition);
+                    height = 0;
                     verts[count].Position = new Vector3(worldXPosition, height, worldZPosition);
                     verts[count].Normal = Vector3.Zero;
                     verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
@@ -230,8 +231,8 @@ namespace Helper.Physics
                 Effect.Texture = texture;
                 Effect.Projection = projection;
                 Effect.EnableDefaultLighting();
-                Effect.AmbientLightColor = Color.Gray.ToVector3();
-                //effect.DiffuseColor = Color.LightGray.ToVector3();
+                Effect.AmbientLightColor = Color.Black.ToVector3();
+                Effect.DiffuseColor = Color.DarkGray.ToVector3();
                 Effect.TextureEnabled = true;
 
                 VertexPositionNormalTexture[] worldly = TransformVPNTs(verts); // because the verts are relative to the body, but here we need the real deal for drawing in the world

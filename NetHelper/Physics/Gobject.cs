@@ -19,7 +19,7 @@ namespace Helper.Physics
         public Vector3 Scale { get; private set; }
         public bool Selected;
         public Helper.Input.ActionManager actionManager = new Helper.Input.ActionManager();
-
+        public List<Controller> controllers = new List<Controller>();
         internal BasicEffect Effect { get; set; }
 
         /// <summary>
@@ -112,6 +112,12 @@ namespace Helper.Physics
             
             // MOVED TO BEFORE INTEGRATE
             //FinalizeBody();
+        }
+
+        public void AddController(Controller c)
+        {
+            controllers.Add(c);
+            PhysicsSystem.CurrentPhysicsSystem.AddController(c);
         }
 
         public Vector3 BodyPosition()
@@ -221,10 +227,10 @@ namespace Helper.Physics
                         Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
                         wireFrame, 0, wireFrame.Length - 1);
                 }
-
+                
                 VertexPositionColor[] Velocity = new VertexPositionColor[2];
-                Velocity[0] = new VertexPositionColor(Body.Position, Color.Black);
-                Velocity[1] = new VertexPositionColor(Body.Position + Body.Velocity, Color.Blue);
+                Velocity[0] = new VertexPositionColor(Body.Position, Color.Blue);
+                Velocity[1] = new VertexPositionColor(Body.Position + Body.Velocity, Color.Red);
 
                 foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                 {
@@ -233,6 +239,28 @@ namespace Helper.Physics
                         Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
                         Velocity, 0, Velocity.Length - 1);
                 }
+
+                foreach (Controller c in controllers)
+                {
+                    if (c is BoostController)
+                    {
+                        BoostController bc = c as BoostController;
+                        VertexPositionColor[] Force = new VertexPositionColor[2];
+                        Force[0] = new VertexPositionColor(bc.ForcePosition, Color.Green);
+                        Force[1] = new VertexPositionColor(bc.ForcePosition + (bc.Force*bc.forceMag), Color.Yellow);
+                        if(!bc.worldForce)
+                            Body.TransformWireframe(Force);
+
+                        foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            Graphics.DrawUserPrimitives<VertexPositionColor>(
+                                Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
+                                Force, 0, Force.Length - 1);
+                        }
+                    }
+                }
+
             }
             catch (Exception e)
             {
