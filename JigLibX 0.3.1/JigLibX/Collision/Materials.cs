@@ -63,9 +63,9 @@ namespace JigLibX.Collision
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="e"></param>
-        /// <param name="sr"></param>
-        /// <param name="dr"></param>
+        /// <param name="e">Elasticity</param>
+        /// <param name="sr">Static Roughness</param>
+        /// <param name="dr">Dynamix Roughness</param>
         public MaterialProperties(float e, float sr, float dr)
         {
             this.Elasticity = e;

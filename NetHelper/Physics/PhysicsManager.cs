@@ -124,8 +124,20 @@ namespace Helper.Physics
         public Aircraft GetAircraft(Vector3 pos, Model model, Vector3 size, Matrix orient)
         {
             Box boxPrimitive = new Box(-.5f * size, orient, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
-
-            Aircraft a = new Aircraft(new Vector3(0, -14, 0), new Vector3(1, 1, 1), boxPrimitive, model, "Airplane");
+            Box leftWing = new Box(new Vector3(-6, -.6f, -2.30f), orient, new Vector3(5, .1f, 1.2f));
+            Box rightWing = new Box(new Vector3(.7f, -.6f, -2.30f), orient, new Vector3(5, .1f, 1.2f));
+            Box fuse = new Box(new Vector3(-.9f, -.7f, -2.30f), orient, new Vector3(1.9f, 1f, 6f));
+            
+            //leftWing.Position
+            List<MaterialProperties> props = new List<MaterialProperties>();
+            props.Add(new MaterialProperties(.3f,.3f,.3f));
+            props.Add(new MaterialProperties(.3f, .3f, .3f));
+            props.Add(new MaterialProperties(.3f, .3f, .3f));
+            List<Primitive> prims = new List<Primitive>();
+            prims.Add(leftWing);
+            prims.Add(rightWing);
+            prims.Add(fuse);
+            Aircraft a = new Aircraft(new Vector3(0, -14, 0), new Vector3(1, 1, 1), prims, props, model, "Airplane");
             return a;
         }
 

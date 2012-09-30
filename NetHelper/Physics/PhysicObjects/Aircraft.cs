@@ -3,6 +3,9 @@ using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
+using System.Collections.Generic;
+using JigLibX.Collision;
+using System;
 
 namespace Helper.Physics.PhysicsObjects
 {
@@ -72,6 +75,17 @@ namespace Helper.Physics.PhysicsObjects
         public Aircraft(Vector3 position, Vector3 scale, Primitive primitive, Model model, string asset)
             : base(position, scale, primitive, model, true, asset)
         {
+            Initialize();
+        }
+
+        public Aircraft(Vector3 position, Vector3 scale, List<Primitive> prims, List<MaterialProperties> props, Model model, string asset)
+            :base (position, scale, prims, props, model, asset)
+        {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             //float mass;
             //Vector3 com;
             //Matrix it, itCom;
@@ -84,10 +98,10 @@ namespace Helper.Physics.PhysicsObjects
             Vector3 RightWingLiftLocation = 4 * Vector3.Right;
             RightWingLiftLocation.Z = CenterOfPressure.Z;
 
-            Thrust = new BoostController(Body, Vector3.Forward, 4*Vector3.Forward, Vector3.Zero);
+            Thrust = new BoostController(Body, Vector3.Forward, 4 * Vector3.Forward, Vector3.Zero);
             LiftLeft = new BoostController(Body, Vector3.Up, LeftWingLiftLocation, Vector3.Zero);  // this could be totally different than a force at a position (midwing)
             LiftRight = new BoostController(Body, Vector3.Up, RightWingLiftLocation, Vector3.Zero);
-            Elevator = new BoostController(Body, Vector3.Zero, Vector3.Backward*3, Vector3.Zero);
+            Elevator = new BoostController(Body, Vector3.Zero, Vector3.Backward * 3, Vector3.Zero);
             Drag = new BoostController(Body, Vector3.Zero, Vector3.Zero, Vector3.Zero);
 
             Yaw = new BoostController(Body, Vector3.Zero, Vector3.UnitY);
@@ -98,11 +112,24 @@ namespace Helper.Physics.PhysicsObjects
             AddController(LiftRight);
             AddController(Drag);
             AddController(Elevator);
-            
+
             actionManager.AddBinding((int)Actions.Thrust, new Helper.Input.ActionBindingDelegate(SimulateThrust), 1);
             actionManager.AddBinding((int)Actions.Aileron, new Helper.Input.ActionBindingDelegate(SimulateAileron), 1);
             actionManager.AddBinding((int)Actions.Elevator, new Helper.Input.ActionBindingDelegate(SimulateElevator), 1);
-            SetMass(50);
+        }
+        public override void FinalizeBody()
+        {
+            try
+            {
+                Vector3 com = SetMass(1.0f);
+                Body.MoveTo(Position, Matrix.Identity);
+                //Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
+                Body.EnableBody(); // adds to CurrentPhysicsSystem
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
         }
 
         public enum Actions
@@ -167,7 +194,7 @@ namespace Helper.Physics.PhysicsObjects
             // a small amount of velocity in the direction of forward means we're crooked. We want large drag.
             //float f = BodyOrientation().Forward.Length() - Vector3.Dot(BodyOrientation().Forward, BodyVelocity());
             float f = 1 - Vector3.Dot(Vector3.Normalize(BodyVelocity()), Vector3.Normalize(BodyOrientation().Forward));
-            float area = .1f + (.5f * f);
+            float area = .6f + (.5f * f);
             //if(area >.00001f)
                 //System.Diagnostics.Debug.WriteLine(area);
             // 1/2 * airDensity * Velocity^2 * Cd * area
