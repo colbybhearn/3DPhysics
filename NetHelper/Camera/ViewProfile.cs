@@ -39,15 +39,15 @@ namespace Helper.Camera
         public float OrientationLagFactor;
         public Vector3 MaximumShakiness;
         public Vector3 PositionOffset;
-        public Matrix OrientationOffset;
+        public Vector3 OrientationOffset;
 
-        public ViewProfile(string camAlias, string asset, Vector3 posOffset, float posLag, Matrix orientOffset, float orientLag)
+        public ViewProfile(string camAlias, string asset, Vector3 posOffset, float posLag, Vector3 orientOffsetXYZ, float orientLag)
         {
             assetAlias = asset;
             CameraAlias = camAlias;
             PositionOffset = posOffset;
             PositionLagFactor = posLag;
-            orientOffset = orientOffset;
+            OrientationOffset = orientOffsetXYZ;
             OrientationLagFactor = orientLag;
             MaximumShakiness = Vector3.Zero;
         }

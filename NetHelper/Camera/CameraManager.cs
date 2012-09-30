@@ -64,7 +64,7 @@ namespace Helper.Camera
         #endregion
 
         #region Current Camera
-
+        
         public void SetCurrentCamera(string alias)
         {
             BaseCamera cam = GetCamera(alias);
@@ -113,7 +113,15 @@ namespace Helper.Camera
         {
             currentCamera.DecreaseMovementSpeed();
         }
+        public void ZoomIn()
+        {
+            currentCamera.ZoomIn();
+        }
+        public void ZoomOut()
+        {
+            currentCamera.ZoomOut();
 
+        }
         public void MoveUp()
         {
             currentCamera.MoveUp();

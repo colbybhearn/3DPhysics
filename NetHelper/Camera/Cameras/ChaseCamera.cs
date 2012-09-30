@@ -34,10 +34,10 @@ namespace Helper.Camera.Cameras
             try
             {
                 // the location of where it's headed
-                Vector3 ObjectDirection = gob.BodyVelocity() * 2; // this * 2 value is pointless I think
+                Vector3 ObjectDirection = gob.BodyVelocity(); // this * 2 value is pointless I think
 
                 if (ObjectDirection.Length() < 2) // this may be here just to prevent slow velocities from making a stalker camera
-                    ObjectDirection = gob.BodyOrientation().Right;
+                    ObjectDirection = gob.BodyOrientation().Forward;
 
                 Vector3 WhereItsHeaded = bodyPosition + ObjectDirection;
                 

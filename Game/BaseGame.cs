@@ -372,7 +372,10 @@ namespace Game
         public virtual List<ViewProfile> GetViewProfiles()
         {
             List<ViewProfile> views = new List<ViewProfile>();
-            views.Add(new ViewProfile(GenericCameraModes.ObjectChase.ToString(), "Airplane", new Vector3(0,3,10), .25f, Matrix.Identity, 1.0f));
+            views.Add(new ViewProfile(GenericCameraModes.ObjectChase.ToString(), "Airplane", new Vector3(0,3,10), .25f, Vector3.Zero, 1.0f));
+            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), "car", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2, 0), 1.0f));
+            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), "Airplane", new Vector3(0, 3, 10), .25f, new Vector3(0, 0, 0), 1.0f));
+            
             return views;
 
         }
@@ -502,6 +505,16 @@ namespace Game
         {
             DebugPhysics = !DebugPhysics;
         }
+
+        public void AdjustZoom(float z)
+        {
+            if (z > 0)
+                cameraManager.ZoomOut();
+            else
+                cameraManager.ZoomIn();
+                
+        }
+        
 
         /// <summary>
         /// Should contain all model, and texture loading

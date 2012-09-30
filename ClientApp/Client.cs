@@ -90,9 +90,12 @@ namespace ClientApp
             this.XnaPanelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlMouseDown);
             this.XnaPanelMain.MouseEnter += new System.EventHandler(this.pnlMouseEnter);
             this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlMouseMove);
+            this.XnaPanelMain.MouseWheel += new MouseEventHandler(XnaPanelMain_MouseWheel);
             this.spMain.Panel2.Controls.Add(this.XnaPanelMain);
             //this.Controls.Add(this.XnaPanelMain);
         }
+
+        
 
 
         #endregion
@@ -183,6 +186,10 @@ namespace ClientApp
         private void pnlMouseDown(object sender, MouseEventArgs e)
         {
             XnaPanelMain.ProcessMouseDown(e, XnaPanelMain.Bounds);
+        }
+        void XnaPanelMain_MouseWheel(object sender, MouseEventArgs e)
+        {
+            game.AdjustZoom(e.Delta);
         }
         #endregion
 

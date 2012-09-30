@@ -84,7 +84,6 @@ namespace Helper.Physics.PhysicsObjects
             Vector3 RightWingLiftLocation = 4 * Vector3.Right;
             RightWingLiftLocation.Z = CenterOfPressure.Z;
 
-
             Thrust = new BoostController(Body, Vector3.Forward, 4*Vector3.Forward, Vector3.Zero);
             LiftLeft = new BoostController(Body, Vector3.Up, LeftWingLiftLocation, Vector3.Zero);  // this could be totally different than a force at a position (midwing)
             LiftRight = new BoostController(Body, Vector3.Up, RightWingLiftLocation, Vector3.Zero);
@@ -103,7 +102,7 @@ namespace Helper.Physics.PhysicsObjects
             actionManager.AddBinding((int)Actions.Thrust, new Helper.Input.ActionBindingDelegate(SimulateThrust), 1);
             actionManager.AddBinding((int)Actions.Aileron, new Helper.Input.ActionBindingDelegate(SimulateAileron), 1);
             actionManager.AddBinding((int)Actions.Elevator, new Helper.Input.ActionBindingDelegate(SimulateElevator), 1);
-            SetMass(500);
+            SetMass(50);
         }
 
         public enum Actions

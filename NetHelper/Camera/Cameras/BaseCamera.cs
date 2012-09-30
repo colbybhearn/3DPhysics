@@ -40,6 +40,11 @@ namespace Helper.Camera.Cameras
 
         public Matrix _projection;
 
+        public float fieldOfView = 45.0f;
+        public float zoomRate = 1f;
+        public float MinimumFieldOfView = 10;
+        public float MaximumFieldOfView = 80;
+
         public BaseCamera(Vector3 pos)
         {
             pos = Initialize(pos);
@@ -52,12 +57,18 @@ namespace Helper.Camera.Cameras
 
             TargetPosition = pos;
             CurrentPosition = TargetPosition;
+            SetupProjection();
+            return pos;
+        }
+
+        private void SetupProjection()
+        {
+            BoundFieldOfView();
             _projection = Matrix.CreatePerspectiveFieldOfView(
-                MathHelper.ToRadians(45.0f),
+                MathHelper.ToRadians(fieldOfView),
                 (float)GraphicsDeviceManager.DefaultBackBufferWidth / (float)GraphicsDeviceManager.DefaultBackBufferHeight,
                 0.1f,
                 5000.0f);
-            return pos;
         }
 
         public BaseCamera()
@@ -154,6 +165,11 @@ namespace Helper.Camera.Cameras
             Orientation = Quaternion.CreateFromRotationMatrix(o);
         }
 
+        public void SetTargetOrientation(Quaternion q)
+        {
+            Orientation = q;
+        }
+
         public virtual void IncreaseMovementSpeed()
         {
             Speed *= SpeedChangeRate;
@@ -226,6 +242,29 @@ namespace Helper.Camera.Cameras
             if (Gobjects.Count == 0)
                 return null;
             return Gobjects[0];
+        }
+
+
+        
+        public virtual void ZoomOut()
+        {
+            fieldOfView -= zoomRate;
+            SetupProjection();
+        }
+
+        public virtual void ZoomIn()
+        {
+            fieldOfView += zoomRate;
+            SetupProjection();
+            
+        }
+
+        private void BoundFieldOfView()
+        {
+            if (fieldOfView > MaximumFieldOfView)
+                fieldOfView = MaximumFieldOfView;
+            if (fieldOfView < MinimumFieldOfView)
+                fieldOfView = MinimumFieldOfView;
         }
     }
 }

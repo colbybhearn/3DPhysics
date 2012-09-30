@@ -28,25 +28,30 @@ namespace Helper.Camera.Cameras
             base.Update();
             Gobject gob = GetFirstGobject();
             if (gob == null) return;
-            Matrix bodyOrientation = gob.BodyOrientation();
-            Vector3 bodyPosition = gob.BodyPosition();
-
-            // get the correction value from the profile
-            //float ObjectYaxisCorrectionValue = (float)-Math.PI / 2; // for the car
-            float ObjectYaxisCorrectionValue = 0; // for the airplane
-            // create a correction matrix for the orientation
-            Matrix forward = Matrix.CreateFromAxisAngle(bodyOrientation.Up, ObjectYaxisCorrectionValue);
-            // Create a corrected matrix for orientation
-            Matrix AdjustedOrientation = bodyOrientation * forward;
-            // update the orientation
-            SetTargetOrientation(AdjustedOrientation);
             
-            // get the correction value from the profile
-            Vector3 firstPersonOffsetPosition = new Vector3(-.45f, 1.4f, .05f); // To the driver's seat in car coordinates!
-            // create a correction vector for the position
-            Vector3 firstTransRef = Vector3.Transform(firstPersonOffsetPosition, AdjustedOrientation);
+            Vector3 orientAdjustment = Vector3.Zero;
+            Vector3 positionAdjustment = Vector3.Zero;
+
+            // if this camera has a profile for this asset,
+            if (profiles.ContainsKey(gob.Asset))
+            {
+                // get the adjustment value from the profile
+                orientAdjustment = profiles[gob.Asset].OrientationOffset;
+                // get the adjustment value from the profile
+                positionAdjustment = profiles[gob.Asset].PositionOffset;
+            }
+
+            // create an adjustment quat for the orientation
+            Quaternion orientOffset = Quaternion.CreateFromYawPitchRoll(orientAdjustment.Y, orientAdjustment.X, orientAdjustment.Z);// YXZ
+            // combine body orientation and adjustment quat
+            Quaternion newOrientation = Quaternion.CreateFromRotationMatrix( gob.BodyOrientation()) * orientOffset;
+            // update the orientation
+            SetTargetOrientation(newOrientation);
+
+            // put the adjustment vector for the position into body coordinates
+            positionAdjustment = Vector3.Transform(positionAdjustment, newOrientation);
             // update the position
-            CurrentPosition = bodyPosition + firstTransRef;
+            CurrentPosition = gob.BodyPosition() + positionAdjustment;
 
         }
     }
