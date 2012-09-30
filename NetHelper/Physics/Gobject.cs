@@ -171,8 +171,7 @@ namespace Helper.Physics
             Vector3 com;
             Matrix it, itCom;
 
-            Skin.GetMassProperties(primitiveProperties, out junk, out com, out it, out itCom);
-
+            Skin.GetMassProperties(primitiveProperties, out junk, out com, out it, out itCom);            
             Body.BodyInertia = itCom;
             Body.Mass = junk;
 

@@ -54,7 +54,7 @@ namespace Helper.Physics
         {
             if (Body == null)
                 return;
-
+            //Body.impulse
             if (worldForce)
             {
                 if (Force != null && Force != Vector3.Zero)

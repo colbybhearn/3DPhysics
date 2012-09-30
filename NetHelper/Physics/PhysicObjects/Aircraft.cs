@@ -27,8 +27,8 @@ namespace Helper.Physics.PhysicsObjects
          * http://adamone.rchomepage.com/cg_calc.htm
          * //with equations:
          * http://www.geistware.com/rcmodeling/cg_super_calc.htm
-         * 
-         * 
+         * http://jiglibx.wikidot.com/
+         * http://www.centennialofflight.gov/essay/Theories_of_Flight/Stability/TH26.htm
          */
 
         BoostController Yaw;
@@ -38,23 +38,27 @@ namespace Helper.Physics.PhysicsObjects
         BoostController LiftRight;
         BoostController Drag;
 
+        Vector3 CenterOfPressure;
+        Vector3 CenterOfMass;
+
         float ForwardThrust =0;
         const float DragCoefficient = .1f;
         float dragForce = 0;
         float WingLiftCoefficient = .050f;
-        const float AileronFactor = .03f;
+        const float AileronFactor = .001f;
         float RollDestination = 0;
         float RollCurrent = 0;
         float ElevatorTarget = 0;
         float ElevatorForce=0;
-        float ElevatorCoefficient = .01f;
+        float ElevatorCoefficient = .001f;
         const float MaxThrust = 1000;
         const float MinThrust = -15;
 
         public float ForwardAirSpeed
         {
             get
-            {
+            {               
+                
                 Vector3 vel = BodyVelocity();
                 Vector3 forr = BodyOrientation().Forward;
                 // the amount of vel in the direction of forr
@@ -68,11 +72,24 @@ namespace Helper.Physics.PhysicsObjects
         public Aircraft(Vector3 position, Vector3 scale, Primitive primitive, Model model, string asset)
             : base(position, scale, primitive, model, true, asset)
         {
-            
-            
+
+
+            //float mass;
+            //Vector3 com;
+            //Matrix it, itCom;
+            //Skin.GetMassProperties(new PrimitiveProperties( PrimitiveProperties.MassDistributionEnum.Shell, PrimitiveProperties.MassTypeEnum.Mass, 0), out mass, out com, out it, out itCom);
+            CenterOfMass = new Vector3(0, 0, -.5f);
+            CenterOfPressure = new Vector3(0, 0, 0.0f);
+
+            Vector3 LeftWingLiftLocation = 4 * Vector3.Left;
+            LeftWingLiftLocation.Z = CenterOfPressure.Z;
+            Vector3 RightWingLiftLocation = 4 * Vector3.Right;
+            RightWingLiftLocation.Z = CenterOfPressure.Z;
+
+
             Thrust = new BoostController(Body, Vector3.Forward, 4*Vector3.Forward, Vector3.Zero);
-            LiftLeft = new BoostController(Body, Vector3.Up,  4*Vector3.Left, Vector3.Zero);  // this could be totally different than a force at a position (midwing)
-            LiftRight = new BoostController(Body, Vector3.Up, 4*Vector3.Right, Vector3.Zero);
+            LiftLeft = new BoostController(Body, Vector3.Up, LeftWingLiftLocation, Vector3.Zero);  // this could be totally different than a force at a position (midwing)
+            LiftRight = new BoostController(Body, Vector3.Up, RightWingLiftLocation, Vector3.Zero);
             Elevator = new BoostController(Body, Vector3.Zero, Vector3.Backward*3, Vector3.Zero);
             Drag = new BoostController(Body, Vector3.Zero, Vector3.Zero, Vector3.Zero);
 
@@ -93,6 +110,7 @@ namespace Helper.Physics.PhysicsObjects
             // drag is applied at very back with maximum leverage
             // surface area exposed by inclination may be sketchy
             // Elevator is unreasonably poweful
+            
         }
 
         public enum Actions
@@ -155,7 +173,7 @@ namespace Helper.Physics.PhysicsObjects
             // a small amount of velocity in the direction of forward means we're crooked. We want large drag.
             //float f = BodyOrientation().Forward.Length() - Vector3.Dot(BodyOrientation().Forward, BodyVelocity());
             float f = 1 - Vector3.Dot(Vector3.Normalize(BodyVelocity()), Vector3.Normalize(BodyOrientation().Forward));
-            float area = .01f + (.5f * f);
+            float area = .1f + (.5f * f);
             //if(area >.00001f)
                 //System.Diagnostics.Debug.WriteLine(area);
             // 1/2 * airDensity * Velocity^2 * Cd * area
@@ -163,7 +181,7 @@ namespace Helper.Physics.PhysicsObjects
             //dragForce = BodyVelocity().Length() * DragCoefficient;
             Drag.Force = Vector3.Normalize(-BodyVelocity());
             Matrix orient = BodyOrientation();
-            Drag.ForcePosition = Body.Position + orient.Backward * 4 + orient.Up*.5f;
+            Drag.ForcePosition = Body.Position + Vector3.Transform(CenterOfPressure, orient);
             Drag.SetForceMagnitude(dragForce);
         }
 
@@ -207,9 +225,8 @@ namespace Helper.Physics.PhysicsObjects
         public float ElevatorCurrent=0;
         public override void SetNominalInput()
         {
-            
-            RollCurrent = RollCurrent + (RollDestination - RollCurrent) * .7f;
-            
+            RollCurrent += (RollDestination - RollCurrent) * .7f;
+            System.Diagnostics.Debug.WriteLine(RollCurrent + ", " + RollDestination);
             
             SetThrust(ForwardThrust);
             SetDrag(dragForce);

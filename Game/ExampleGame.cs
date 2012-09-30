@@ -176,8 +176,8 @@ namespace Game
             // jet
             List<KeyBinding> jetDefaults = new List<KeyBinding>();
             //jetDefaults.Add(new KeyBinding("Spawn ", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
-            jetDefaults.Add(new KeyBinding("Increase Thrust", Keys.OemPlus, false, false, false, KeyEvent.Pressed, PlaneThrustIncrease));
-            jetDefaults.Add(new KeyBinding("Decrease Thrust", Keys.OemMinus, false, false, false, KeyEvent.Pressed, PlaneThrustDecrease));
+            jetDefaults.Add(new KeyBinding("Increase Thrust", Keys.OemPlus, false, false, false, KeyEvent.Down, PlaneThrustIncrease));
+            jetDefaults.Add(new KeyBinding("Decrease Thrust", Keys.OemMinus, false, false, false, KeyEvent.Down, PlaneThrustDecrease));
             jetDefaults.Add(new KeyBinding("Roll Left", Keys.H, false, false, false, KeyEvent.Down, PlaneRollLeft));
             jetDefaults.Add(new KeyBinding("Roll Right", Keys.K, false, false, false, KeyEvent.Down, PlaneRollRight));
             jetDefaults.Add(new KeyBinding("Pitch Up", Keys.J, false, false, false, KeyEvent.Down, PlanePitchUp));
@@ -391,13 +391,13 @@ namespace Game
         private void PlaneThrustIncrease()
         {
             if(myPlane==null)return;
-            myPlane.AdjustThrust(1f);
+            myPlane.AdjustThrust(.1f);
         }
 
         private void PlaneThrustDecrease()
         {
             if (myPlane == null) return;
-            myPlane.AdjustThrust(-1f);
+            myPlane.AdjustThrust(-.1f);
         }
 
         private void PlaneRollLeft()

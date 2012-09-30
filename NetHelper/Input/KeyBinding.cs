@@ -13,9 +13,8 @@ namespace Helper.Input
     {
         [DataMember]
         public Keys Key { get; set; }
-        [DataMember]
+        
         public KeyEvent KeyEvent { get; set; }
-
         [XmlIgnore]
         public KeyBindingDelegate Callback { get; set; }
         [DataMember]

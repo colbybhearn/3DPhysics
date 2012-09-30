@@ -58,6 +58,7 @@ namespace Helper.Physics.PhysicsObjects
             try
             {
                 //Vector3 com = SetMass(2.0f);
+                //SetMass(2.0f);
                 //Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
                 Body.MoveTo(Position, Matrix.Identity);
                 Body.EnableBody(); // adds to CurrentPhysicsSystem

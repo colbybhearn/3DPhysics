@@ -77,7 +77,7 @@ namespace Helper.Input
                     kb.Alt = saved.Alt;
                     kb.Ctrl = saved.Ctrl;
                     kb.Key = saved.Key;
-                    kb.KeyEvent = saved.KeyEvent;
+                    //kb.KeyEvent = saved.KeyEvent;
                     kb.Shift = saved.Shift;
                 }
             }
