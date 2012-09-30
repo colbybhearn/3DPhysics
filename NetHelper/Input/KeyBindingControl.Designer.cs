@@ -30,6 +30,7 @@
         {
             this.lblAlias = new System.Windows.Forms.Label();
             this.txtBinding = new System.Windows.Forms.TextBox();
+            this.lblEvent = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblAlias
@@ -50,16 +51,26 @@
             this.txtBinding.TabIndex = 1;
             this.txtBinding.Click += new System.EventHandler(this.tbBinding_Click);
             // 
+            // lblEvent
+            // 
+            this.lblEvent.AutoSize = true;
+            this.lblEvent.Location = new System.Drawing.Point(319, 5);
+            this.lblEvent.Name = "lblEvent";
+            this.lblEvent.Size = new System.Drawing.Size(35, 13);
+            this.lblEvent.TabIndex = 2;
+            this.lblEvent.Text = "Event";
+            // 
             // KeyBindingControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.Controls.Add(this.lblEvent);
             this.Controls.Add(this.txtBinding);
             this.Controls.Add(this.lblAlias);
             this.Margin = new System.Windows.Forms.Padding(1);
             this.Name = "KeyBindingControl";
-            this.Size = new System.Drawing.Size(316, 21);
+            this.Size = new System.Drawing.Size(438, 21);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -69,5 +80,6 @@
 
         private System.Windows.Forms.Label lblAlias;
         private System.Windows.Forms.TextBox txtBinding;
+        private System.Windows.Forms.Label lblEvent;
     }
 }

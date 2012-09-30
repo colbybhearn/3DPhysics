@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using Helper;
+using Helper.Camera.Cameras;
+using Helper.Collections;
+using Helper.Physics;
 using JigLibX.Collision;
 using JigLibX.Geometry;
 using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Helper.Physics;
-using System.Threading;
-using Helper.Collections;
 
 namespace XnaView
 {
@@ -21,7 +20,7 @@ namespace XnaView
     public class XnaPanel : XnaControl
     {
         #region Fields
-        Camera cam;
+        BaseCamera cam;
         Matrix view = Matrix.Identity;
         Matrix proj = Matrix.Identity;
 
@@ -78,12 +77,11 @@ namespace XnaView
             {
                 System.Diagnostics.Trace.WriteLine(e.StackTrace);
             }
-            
         }
         #endregion
 
         #region Camera
-        public void UpdateCamera(Camera c, Matrix v, Matrix p)
+        public void UpdateCamera(BaseCamera c, Matrix v, Matrix p)
         {
             cam = c;
             view = v;

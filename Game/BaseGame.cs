@@ -12,6 +12,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Helper.Physics;
 using Helper.Physics.PhysicsObjects;
+using Helper.Camera;
+using Helper.Camera.Cameras;
 
 namespace Game
 {
@@ -58,9 +60,16 @@ namespace Game
         /// Gets a GraphicsDevice that can be used to draw onto this control.
         /// </summary>
         public GraphicsDevice graphicsDevice;
-        public delegate void myCallbackDelegate(Camera c, Matrix v, Matrix p);
+        public delegate void myCallbackDelegate(BaseCamera c, Matrix v, Matrix p);
+        public enum GenericCameraModes
+        {
+            FreeLook,
+            ObjectWatch,
+            ObjectFirstPerson,
+            ObjectChase
+        }
         myCallbackDelegate UpdateCameraCallback;
-        public Camera cam;
+
         public string name = "BaseGame";
         public bool DebugInfo = false;
         public bool DebugPhysics = false;
@@ -83,14 +92,8 @@ namespace Game
         KeyMapCollection keyMapCollections;
         internal List<ObjectUpdatePacket> physicsUpdateList = new List<ObjectUpdatePacket>();
 
-        enum CameraModes
-        {
-            FreeLook,
-            ObjectFirstPerson,
-            ObjectChase,
-            ObjectWatch
-        }
-        CameraModes cameraMode = CameraModes.FreeLook;
+        internal CameraManager cameraManager = new CameraManager();
+        GenericCameraModes cameraMode = GenericCameraModes.FreeLook;
 
         #region Communication
         public enum CommTypes
@@ -222,18 +225,20 @@ namespace Game
                 }
             }
 
-            if (cam != null)
+            if (cameraManager != null)
             {
                 if (UpdateCameraCallback == null)
                     return;
-                PreUpdateCameraCallback();
-                GetCameraViewProjection();
-                UpdateCameraCallback(cam, view, proj);
+                //PreUpdateCameraCallback();
+                //GetCameraViewProjection();
+                cameraManager.Update();
+
+                UpdateCameraCallback(cameraManager.currentCamera, cameraManager.ViewMatrix(), cameraManager.ProjectionMatrix());
             }
         }
         
         public virtual void GetCameraViewProjection()
-        {
+        {/*
             //Preset just incase an error occurs
             view = Matrix.Identity;
             proj = Matrix.Identity;
@@ -253,7 +258,7 @@ namespace Game
                     Matrix bodyOrientation = currentSelectedObject.BodyOrientation();
                     Matrix forward = Matrix.CreateFromAxisAngle(bodyOrientation.Up, (float)-Math.PI/2);
                     
-                    cam.SetOrientation(bodyOrientation * forward);
+                    cam.SetTargetOrientation(bodyOrientation * forward);
                     Matrix ForwardOrientation = bodyOrientation * forward;
                     Vector3 firstPersonOffsetPosition = new Vector3(-.45f, 1.4f, .05f); // To the driver's seat in car coordinates!
                     Vector3 firstTransRef = Vector3.Transform(firstPersonOffsetPosition, ForwardOrientation);
@@ -311,27 +316,28 @@ namespace Game
                     }
                     break;
                     // If an error occurs in any of the above functions, this needs to have happened, so it WILL get set beforehand and overridden otherwise.
-                /*default:
-                    try
-                    {
-                        view = Matrix.Identity;
-                        proj = Matrix.Identity;
-                    }
-                    catch(Exception E)
-                    {
-                        System.Diagnostics.Debug.WriteLine(E.StackTrace);
-                    }
-                    break;*/
-            }
+                //default:
+                //    try
+                //    {
+                //        view = Matrix.Identity;
+                //        proj = Matrix.Identity;
+                //    }
+                //    catch(Exception E)
+                //    {
+                //        System.Diagnostics.Debug.WriteLine(E.StackTrace);
+                //    }
+                //    break;
+            }*/
         }
 
         public virtual void PreUpdateCameraCallback()
-        {
+        {/*
             if (cam == null)
                 return;
+
             cam.UpdatePosition();
             if(cameraMode != CameraModes.FreeLook)
-                cam.UpdateLookAt();
+                cam.UpdateLookAt();*/
         }
         
         public void Initialize(ServiceContainer services, GraphicsDevice gd, myCallbackDelegate updateCamCallback)
@@ -350,14 +356,25 @@ namespace Game
             {
                 System.Diagnostics.Trace.WriteLine(e.StackTrace);
             }
-
         }
 
         public virtual void InitializeCameras()
         {
-            cam = new Camera(new Vector3(0, 0, 50));
-            cam.AdjustOrientation(-.07f, 0);
-            cam.positionLagFactor = .07f;
+            cameraManager.AddCamera(GenericCameraModes.FreeLook.ToString(), new FreeCamera());
+            cameraManager.AddCamera(GenericCameraModes.ObjectChase.ToString(), new ChaseCamera());
+            cameraManager.AddCamera(GenericCameraModes.ObjectFirstPerson.ToString(), new FirstPersonCamera());
+            cameraManager.AddCamera(GenericCameraModes.ObjectWatch.ToString(), new WatchCamera());
+            cameraManager.SetCurrentCamera(GenericCameraModes.FreeLook.ToString());
+            foreach (ViewProfile vp in GetViewProfiles())
+                cameraManager.AddProfile(vp);
+        }
+
+        public virtual List<ViewProfile> GetViewProfiles()
+        {
+            List<ViewProfile> views = new List<ViewProfile>();
+            views.Add(new ViewProfile(GenericCameraModes.ObjectChase.ToString(), "Airplane", new Vector3(0,3,10), .25f, Matrix.Identity, 1.0f));
+            return views;
+
         }
 
         public virtual void InitializeInputs()
@@ -402,76 +419,77 @@ namespace Game
         #region Camera Manipulation
         public void CameraMoveForward()
         {
-            cam.MoveForward();
+            cameraManager.MoveForward();
         }
 
         public void CameraMoveBackward()
         {
-            cam.MoveBackward();
+            cameraManager.MoveBackward();
         }
 
         public void CameraMoveLeft()
         {
-            cam.MoveLeft();
+            cameraManager.MoveLeft();
         }
 
         public void CameraMoveRight()
         {
-            cam.MoveRight();
+            cameraManager.MoveRight();
         }
 
         public void CameraMoveSpeedIncrease()
         {
-            cam.IncreaseSpeed();
+            cameraManager.IncreaseMovementSpeed();
         }
 
         public void CameraMoveSpeedDecrease()
         {
-            cam.DecreaseSpeed();
+            cameraManager.DecreaseMovementSpeed();
         }
 
         public void AdjustCameraOrientation(float pitch, float yaw)
         {
-            cam.AdjustOrientation(pitch, yaw);
+            cameraManager.AdjustTargetOrientation(pitch, yaw);
         }
 
         public void CameraModeCycle()
         {
             switch (cameraMode)
             {
-                case CameraModes.FreeLook:
-                    cameraMode = CameraModes.ObjectWatch;
+                case GenericCameraModes.FreeLook:
+                    cameraMode = GenericCameraModes.ObjectWatch;
                     break;
-                case CameraModes.ObjectWatch:
-                    cameraMode = CameraModes.ObjectChase;
+                case GenericCameraModes.ObjectWatch:
+                    cameraMode = GenericCameraModes.ObjectChase;
                     break;
-                case CameraModes.ObjectChase:
-                    cameraMode = CameraModes.ObjectFirstPerson;
+                case GenericCameraModes.ObjectChase:
+                    cameraMode = GenericCameraModes.ObjectFirstPerson;
                     break;
-                case CameraModes.ObjectFirstPerson:
-                    cameraMode = CameraModes.FreeLook;                    
+                case GenericCameraModes.ObjectFirstPerson:
+                    cameraMode = GenericCameraModes.FreeLook;                    
                     break;
                 default:
                     break;
             }
+            cameraManager.SetCurrentCamera(cameraMode.ToString());
+            cameraManager.SetGobjectList(cameraMode.ToString(), new List<Gobject> { currentSelectedObject });
         }
 
 
         public void CameraMoveHeightIncrease()
         {
-            cam.MoveUp();
+            cameraManager.MoveUp();
         }
-
 
         public void CameraMoveHeightDecrease()
         {
-            cam.MoveDown();
+            cameraManager.MoveDown();
         }
 
         public void CameraMoveHome()
         {
-            cameraMode = CameraModes.FreeLook;
-            cam.MoveHome();
+            cameraMode = GenericCameraModes.FreeLook;
+            //cam.MoveHome();
         }
         #endregion
 

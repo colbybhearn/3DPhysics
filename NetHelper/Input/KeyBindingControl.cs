@@ -19,6 +19,7 @@ namespace Helper.Input
             binding = kb;
             InitializeComponent();
             lblAlias.Text = binding.Alias;
+            lblEvent.Text = binding.KeyEvent.ToString();
             UpdateBindingKeyAlias();
         }
 

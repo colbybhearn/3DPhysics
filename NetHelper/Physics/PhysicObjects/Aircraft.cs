@@ -72,8 +72,6 @@ namespace Helper.Physics.PhysicsObjects
         public Aircraft(Vector3 position, Vector3 scale, Primitive primitive, Model model, string asset)
             : base(position, scale, primitive, model, true, asset)
         {
-
-
             //float mass;
             //Vector3 com;
             //Matrix it, itCom;
@@ -102,15 +100,10 @@ namespace Helper.Physics.PhysicsObjects
             AddController(Drag);
             AddController(Elevator);
             
-            actionManager.AddBinding((int)Actions.Thrust, new Helper.Input.ActionBindingDelegate(GenericThrust), 1);
-            actionManager.AddBinding((int)Actions.Aileron, new Helper.Input.ActionBindingDelegate(GenericAileron), 1);
-            actionManager.AddBinding((int)Actions.Elevator, new Helper.Input.ActionBindingDelegate(GenericElevator), 1);
+            actionManager.AddBinding((int)Actions.Thrust, new Helper.Input.ActionBindingDelegate(SimulateThrust), 1);
+            actionManager.AddBinding((int)Actions.Aileron, new Helper.Input.ActionBindingDelegate(SimulateAileron), 1);
+            actionManager.AddBinding((int)Actions.Elevator, new Helper.Input.ActionBindingDelegate(SimulateElevator), 1);
             SetMass(500);
-            // airplane wobbles
-            // drag is applied at very back with maximum leverage
-            // surface area exposed by inclination may be sketchy
-            // Elevator is unreasonably poweful
-            
         }
 
         public enum Actions
@@ -122,24 +115,26 @@ namespace Helper.Physics.PhysicsObjects
             Elevator,
         }
 
-        private void GenericAileron(object[] v)
+        private void SimulateAileron(object[] v)
         {
             SetAilerons((float)v[0]);
         }
-        private void GenericElevator(object[] v)
+        private void SimulateElevator(object[] v)
         {
             SetElevator((float)v[10]);
         }
+        // simulated input
+        private void SimulateThrust(object[] v)
+        {
+            SetThrust((float)v[0]);
+        }
+
         //user input
         public void AdjustThrust(float v)
         {
             SetThrust(ForwardThrust + v);
         }
-        // simulated input
-        private void GenericThrust(object[] v)
-        {
-            SetThrust((float)v[0]);
-        }
+        
         // common
         public void SetThrust(float v)
         {
@@ -226,7 +221,6 @@ namespace Helper.Physics.PhysicsObjects
         public override void SetNominalInput()
         {
             RollCurrent += (RollDestination - RollCurrent) * .7f;
-            System.Diagnostics.Debug.WriteLine(RollCurrent + ", " + RollDestination);
             
             SetThrust(ForwardThrust);
             SetDrag(dragForce);

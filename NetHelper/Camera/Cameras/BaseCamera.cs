@@ -4,28 +4,52 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Helper.Physics;
 
-namespace Helper
+namespace Helper.Camera.Cameras
 {
-    public class Camera
+    /*This is the base class for all cameras
+     * A specifc camera class defines the behavior of the camera, but not the properties or attributes of a camera.
+     * For example, a chase camera and free-look camera have very different behavior.
+     * Meanwhile, a ViewProfile defines the properties or attributes for a specific camera.
+     * For example, a first-person camera for a car and first-person camera for an airplane might need to have very different properties, but same behavior.
+     * 
+     * 
+     * 
+     * 
+     */
+    public class BaseCamera
     {
-        public Matrix _projection;
-        public Vector3 TargetPosition = new Vector3();
+        public SortedList<string, ViewProfile> profiles;
+        public Matrix view;
+        // allows multiple Gobjects to be used by a camera for calculation, or reference points.
+        public List<Gobject> Gobjects = new List<Gobject>();
         public Vector3 PitchYawRoll = new Vector3(); // Named this way Becuase X,Y,Z = Pitch,Yaw,Roll when stored
-        public Quaternion Orientation;
+        
         public float Speed = .1f;
         public float SpeedChangeRate = 1.2f;
+
+        public Quaternion Orientation;
         public Vector3 CurrentPosition;
+        public Vector3 TargetPosition = new Vector3(); 
         public float positionLagFactor = 1.0f;
-        public Vector3 TargetLookAt;
-        Vector3 CurrentLookAt;
+
+        public Vector3 CurrentLookAt;
+        public Vector3 TargetLookAt;        
         public float lookAtLagFactor = .1f;
 
-        public Camera(Vector3 pos)
+        public Matrix _projection;
+
+        public BaseCamera(Vector3 pos)
+        {
+            pos = Initialize(pos);
+        }
+
+        private Vector3 Initialize(Vector3 pos)
         {
             PitchYawRoll = Vector3.Zero;
             Orientation = Quaternion.Identity;
-            
+
             TargetPosition = pos;
             CurrentPosition = TargetPosition;
             _projection = Matrix.CreatePerspectiveFieldOfView(
@@ -33,6 +57,18 @@ namespace Helper
                 (float)GraphicsDeviceManager.DefaultBackBufferWidth / (float)GraphicsDeviceManager.DefaultBackBufferHeight,
                 0.1f,
                 5000.0f);
+            return pos;
+        }
+
+        public BaseCamera()
+        {
+            Initialize(Vector3.Zero);
+        }
+
+        public void SetProfiles(SortedList<string, ViewProfile> vps)
+        {
+            profiles = vps;
+            Update();
         }
 
         public Matrix RhsLevelViewMatrix
@@ -108,58 +144,49 @@ namespace Helper
             }
         }
 
-        public void IncreaseSpeed()
+        public void AdjustTargetPosition(Vector3 delta)
+        {
+            TargetPosition += delta * Speed;
+        }
+        
+        public void SetTargetOrientation(Matrix o)
+        {
+            Orientation = Quaternion.CreateFromRotationMatrix(o);
+        }
+
+        public virtual void IncreaseMovementSpeed()
         {
             Speed *= SpeedChangeRate;
         }
-
-        public void DecreaseSpeed()
+        public virtual void DecreaseMovementSpeed()
         {
             Speed /= SpeedChangeRate;
             System.Diagnostics.Debug.WriteLine("DecreaseSpeeD");
         }
 
-        private void AdjustPosition(Vector3 delta)
+        public virtual void MoveRight()
         {
-            TargetPosition += delta * Speed;
         }
-        public void MoveRight()
+        public virtual void MoveLeft()
         {
-            AdjustPosition(LhsLevelViewMatrix.Right * .1f);
         }
-        public void MoveLeft()
+        public virtual void MoveForward()
         {
-            AdjustPosition(LhsLevelViewMatrix.Left * .1f);
         }
-        public void MoveForward()
+        public virtual void MoveBackward()
         {
-            AdjustPosition(Vector3.Normalize(LhsLevelViewMatrix.Forward) * .1f);
         }
-        public void MoveBackward()
+        public virtual void MoveDown()
         {
-            AdjustPosition(LhsLevelViewMatrix.Backward * .1f);
         }
-        public void AdjustOrientation(float pitch, float yaw)
+        public virtual void MoveUp()
         {
-            PitchYawRoll.X = (PitchYawRoll.X + pitch);
-            PitchYawRoll.Y = (PitchYawRoll.Y + yaw);
+        }
+        public virtual void AdjustTargetOrientation(float pitch, float yaw)
+        {
 
-            //prevents camera from flipping over, Math.Pi/2 = 1.57f with rounding
-            // I use 1.57f because Math.PI causes constant "flipping"
-            PitchYawRoll = Vector3.Clamp(PitchYawRoll, new Vector3(-1.57f, float.MinValue, float.MinValue), new Vector3(1.57f, float.MaxValue, float.MaxValue));
+        }
 
-            //Quaternion cameraChange =
-            Orientation = 
-            Quaternion.CreateFromAxisAngle(Vector3.UnitY, PitchYawRoll.Y) *
-            Quaternion.CreateFromAxisAngle(Vector3.UnitX, PitchYawRoll.X);
-            //Quaternion.CreateFromAxisAngle(GetLevelCameraLhs.Right, -dY * .001f) *
-            //Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
-            //Orientation = Orientation * cameraChange;
-        }
-        public void SetOrientation(Matrix o)
-        {
-            Orientation = Quaternion.CreateFromRotationMatrix(o);
-        }
         public void LookAtLocation(Vector3 location)
         {
             Orientation = Quaternion.CreateFromRotationMatrix(Matrix.Invert(Matrix.CreateLookAt(TargetPosition, location, Vector3.Up)));
@@ -169,14 +196,36 @@ namespace Helper
             LookAtLocation(TargetPosition + direction);
         }
 
-        public void MoveDown()
+        /*NEW METHODS!!!*/
+
+        public void SetGobjectList(List<Gobject> gobs)
         {
-            AdjustPosition(Matrix.Identity.Down * .1f);
+            Gobjects = gobs;
         }
 
-        public void MoveUp()
+        public virtual Matrix GetViewMatrix()
         {
-            AdjustPosition(Matrix.Identity.Up * .1f);
+            return Matrix.Identity;
+        }
+
+        public virtual Matrix GetProjectionMatrix()
+        {
+            return Matrix.Identity;
+        }
+
+        public virtual void Update()
+        {
+            UpdatePosition();
+            UpdateLookAt();
+        }
+
+        public Gobject GetFirstGobject()
+        {
+            if (Gobjects == null)
+                return null;
+            if (Gobjects.Count == 0)
+                return null;
+            return Gobjects[0];
         }
     }
 }

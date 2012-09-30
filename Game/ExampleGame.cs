@@ -384,9 +384,10 @@ namespace Game
             myPlane = physicsManager.GetAircraft(airplane);
             myPlane.ID = gameObjects.Count;
             physicsManager.AddNewObject(myPlane);
+            currentSelectedObject = myPlane;
 
             if (commClient != null)
-                commClient.SendObjectRequest("cube");
+                commClient.SendObjectRequest("Airplane");
         }
         private void PlaneThrustIncrease()
         {
@@ -590,9 +591,9 @@ namespace Game
             for (int i = 0; i < pos.Count; i++)
             {
                 // TODO - magic number
-                if (Vector3.Distance(cam.CurrentPosition, pos[i]) < 100)
+                if (Vector3.Distance(cameraManager.currentCamera.CurrentPosition, pos[i]) < 100)
                 {
-                    Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cam._projection, cam.RhsLevelViewMatrix, Matrix.Identity);
+                    Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cameraManager.ProjectionMatrix(), cameraManager.currentCamera.RhsLevelViewMatrix, Matrix.Identity);
                     
                     int size = (int)chatFont.MeasureString(text[i]).X;
                     sb.Draw(BlankBackground, new Rectangle((int)screen.X - size/2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);
