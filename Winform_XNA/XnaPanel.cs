@@ -10,6 +10,7 @@ using JigLibX.Geometry;
 using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Helper.Lighting;
 
 namespace XnaView
 {
@@ -58,6 +59,7 @@ namespace XnaView
             PhysicsSystem = g.physicsManager.PhysicsSystem;
             gameObjects = g.gameObjects;
             newObjects = g.newObjects;
+            
         }
         protected override void Initialize()
         {
@@ -134,10 +136,11 @@ namespace XnaView
                 Counter.AddTick("average_fps", Counter.GetAveragePerSecond("fps"));
 
                 Matrix proj = Matrix.Identity;
-                GraphicsDevice.Clear(Color.Gray);
+                GraphicsDevice.Clear(Color.LightSkyBlue);
 
                 DrawObjects();
 
+                
                 // SpriteBatch drawing!
                 
                 spriteBatch.Begin();
@@ -185,6 +188,10 @@ namespace XnaView
                 System.Diagnostics.Debug.WriteLine(e.StackTrace);
             }
         }
+        
+        
+        
+
         private Vector2 DebugShowVector(SpriteBatch sb, SpriteFont font, Vector2 p, string s, Vector3 vector)
         {
             sb.DrawString(font, s + ".X = " + vector.X, p, Color.LightGray);

@@ -6,6 +6,8 @@ using Helper.Physics.PhysicsObjects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Helper.Lighting;
+using System;
 
 namespace Game
 {
@@ -53,6 +55,20 @@ namespace Game
             chatFont = Content.Load<SpriteFont>("debugFont");
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
+            
+            SetUpVertices(this.graphicsDevice);
+            try
+            {
+                // this is where Colby is, current: http://www.riemers.net/eng/Tutorials/XNA/Csharp/Series3/Pixel_shader.php 
+                lighteffect = Content.Load<Effect>(@"Lighting\LightingEffect1");
+            }
+            catch (Exception E)
+            {
+            }
+
+            
+            //lighteffect.Parameters["xViewProjection"].SetValue(cameraManager.currentCamera.GetViewMatrix() * cameraManager.currentCamera.GetProjectionMatrix());
+
         }
 
         public override void InitializeMultiplayer(BaseGame.CommTypes CommType)
@@ -563,6 +579,8 @@ namespace Game
         {
             base.Draw(sb);
 
+            
+
             // Lets draw names for cars!
             List<Vector3> pos = new List<Vector3>();
             List<string> text = new List<string>();
@@ -603,6 +621,48 @@ namespace Game
             }
 
             ChatManager.Draw(sb);
+            DrawLightTest(this.graphicsDevice);
+        }
+        
+        VertexBuffer vertexBuffer;
+        private void SetUpVertices(GraphicsDevice device)
+        {
+            LightingVertexFormat[] vertices = new LightingVertexFormat[3];
+
+            vertices[0] = new LightingVertexFormat(new Vector3(0, 8, -2), Color.Red);
+            vertices[1] = new LightingVertexFormat(new Vector3(8, -8, 4), Color.Green);
+            vertices[2] = new LightingVertexFormat(new Vector3(-8, 0, 8), Color.Yellow);
+
+            vertexBuffer = new VertexBuffer(device, LightingVertexFormat.VertexDeclaration, vertices.Length, BufferUsage.WriteOnly);
+            vertexBuffer.SetData(vertices);
+        }
+
+        private void DrawLightTest(GraphicsDevice device)
+        {
+            if (cameraManager.currentCamera == null)
+                return;
+            lighteffect.CurrentTechnique = lighteffect.Techniques["Simplest"];
+            lighteffect.Parameters["xViewProjection"].SetValue(cameraManager.currentCamera.GetViewMatrix() * cameraManager.currentCamera.GetProjectionMatrix());
+
+            try
+            {
+                BasicEffect Effect = new BasicEffect(device);
+                Effect.TextureEnabled = false;
+                Effect.LightingEnabled = false;
+                Effect.View = cameraManager.currentCamera.GetViewMatrix();
+                Effect.Projection = cameraManager.currentCamera.GetProjectionMatrix();
+                foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+
+                    device.SetVertexBuffer(vertexBuffer);
+                    device.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleList, 0, 1);
+                }
+            }
+            catch (Exception E)
+            {
+
+            }
         }
 
         

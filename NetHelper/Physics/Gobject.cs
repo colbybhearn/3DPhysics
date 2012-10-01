@@ -6,6 +6,7 @@ using JigLibX.Geometry;
 using System.Collections.Generic;
 using System;
 using Helper.Physics.PhysicsObjects;
+using Helper.Lighting;
 
 namespace Helper.Physics
 {
@@ -243,19 +244,28 @@ namespace Helper.Physics
                 {
                     if (c is BoostController)
                     {
-                        BoostController bc = c as BoostController;
                         VertexPositionColor[] Force = new VertexPositionColor[2];
+                        BoostController bc = c as BoostController;
                         Force[0] = new VertexPositionColor(bc.ForcePosition, Color.Green);
-                        Force[1] = new VertexPositionColor(bc.ForcePosition + (bc.Force*bc.forceMag), Color.Yellow);
-                        if(!bc.worldForce)
+                        Force[1] = new VertexPositionColor(bc.ForcePosition + (bc.Force * bc.forceMag), Color.Yellow);
+                        if (!bc.worldForce)
                             Body.TransformWireframe(Force);
+
+                        LightingVertexFormat[] myForce = new LightingVertexFormat[2];
+                        myForce[0] = new LightingVertexFormat(Force[0]);
+                        myForce[1] = new LightingVertexFormat(Force[1]);
+
+                        VertexBuffer verts = new VertexBuffer(Graphics, Lighting.LightingVertexFormat.VertexDeclaration, myForce.Length, BufferUsage.WriteOnly);
+                        verts.SetData(myForce);
 
                         foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                         {
                             pass.Apply();
-                            Graphics.DrawUserPrimitives<VertexPositionColor>(
+                            Graphics.SetVertexBuffer(verts);
+                            Graphics.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip, 0, myForce.Length - 1);
+                            /*Graphics.DrawUserPrimitives<VertexPositionColor>(
                                 Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
-                                Force, 0, Force.Length - 1);
+                                Force, 0, Force.Length - 1, LightingVertexFormat.VertexDeclaration);*/
                         }
                     }
                 }

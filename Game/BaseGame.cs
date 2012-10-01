@@ -50,6 +50,9 @@ namespace Game
         #endregion
 
         #region Graphics
+
+        public Effect lighteffect;
+
         /// <summary>
         /// Gets an IServiceProvider containing our IGraphicsDeviceService.
         /// This can be used with components such as the ContentManager,
@@ -87,8 +90,8 @@ namespace Game
         public Gobject currentSelectedObject;
         #endregion
         
-        public Matrix view = Matrix.Identity;
-        public Matrix proj = Matrix.Identity;
+        //public Matrix view = Matrix.Identity;
+        //public Matrix proj = Matrix.Identity;
         KeyMapCollection keyMapCollections;
         internal List<ObjectUpdatePacket> physicsUpdateList = new List<ObjectUpdatePacket>();
 
@@ -476,6 +479,7 @@ namespace Game
             }
             cameraManager.SetCurrentCamera(cameraMode.ToString());
             cameraManager.SetGobjectList(cameraMode.ToString(), new List<Gobject> { currentSelectedObject });
+            
         }
 
 

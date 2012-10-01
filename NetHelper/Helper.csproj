@@ -113,6 +113,7 @@
     <Compile Include="Input\Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Lighting\LightingVertexFormat.cs" />
     <Compile Include="Multiplayer\ClientPacketInfo.cs" />
     <Compile Include="Multiplayer\CommClient.cs" />
     <Compile Include="Multiplayer\CommServer.cs" />
