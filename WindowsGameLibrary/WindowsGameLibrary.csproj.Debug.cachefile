@@ -10,8 +10,11 @@ Content\Lunar Lander.xnb
 Content\Airplane.xnb
 Content\Moon.xnb
 Content\terrain.xnb
+Content\metal3_scr.xnb
 Content\StaticMesh.xnb
 Content\plane.xnb
-Content\Lighting\LightingEffect1.xnb
+Content\Lighting\FirstEffect.xnb
+Content\Lighting\TexturedEffect.xnb
+Content\Lighting\LightEffect.xnb
 Content\car_0.xnb
 Content\Checker_0.xnb

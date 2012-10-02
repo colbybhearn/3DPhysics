@@ -11,6 +11,7 @@ using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Helper.Lighting;
+using Helper.Physics.PhysicsObjects;
 
 namespace XnaView
 {
@@ -53,8 +54,10 @@ namespace XnaView
         #endregion
 
         #region Init
+        PointLight pl;
         public XnaPanel(ref Game.BaseGame g)
         {
+            pl = new PointLight();
             game = g;
             PhysicsSystem = g.physicsManager.PhysicsSystem;
             gameObjects = g.gameObjects;

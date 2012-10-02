@@ -251,18 +251,14 @@ namespace Helper.Physics
                         if (!bc.worldForce)
                             Body.TransformWireframe(Force);
 
-                        LightingVertexFormat[] myForce = new LightingVertexFormat[2];
-                        myForce[0] = new LightingVertexFormat(Force[0]);
-                        myForce[1] = new LightingVertexFormat(Force[1]);
-
-                        VertexBuffer verts = new VertexBuffer(Graphics, Lighting.LightingVertexFormat.VertexDeclaration, myForce.Length, BufferUsage.WriteOnly);
-                        verts.SetData(myForce);
+                        VertexBuffer verts = new VertexBuffer(Graphics, VertexPositionColor.VertexDeclaration, Force.Length, BufferUsage.WriteOnly);
+                        verts.SetData(Force);
 
                         foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                         {
                             pass.Apply();
                             Graphics.SetVertexBuffer(verts);
-                            Graphics.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip, 0, myForce.Length - 1);
+                            Graphics.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip, 0, Force.Length - 1);
                             /*Graphics.DrawUserPrimitives<VertexPositionColor>(
                                 Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
                                 Force, 0, Force.Length - 1, LightingVertexFormat.VertexDeclaration);*/

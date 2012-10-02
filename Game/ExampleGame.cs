@@ -23,6 +23,7 @@ namespace Game
             Spectate,
         }
 
+        Texture2D wallTexture;
         Model carModel, wheelModel, landerModel;
         CarObject myCar;
         Model terrainModel;
@@ -53,6 +54,7 @@ namespace Game
             landerModel = Content.Load<Model>("Lunar Lander");
             airplane = Content.Load<Model>("Airplane");
             chatFont = Content.Load<SpriteFont>("debugFont");
+            
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
             
@@ -60,7 +62,9 @@ namespace Game
             try
             {
                 // this is where Colby is, current: http://www.riemers.net/eng/Tutorials/XNA/Csharp/Series3/Pixel_shader.php 
-                lighteffect = Content.Load<Effect>(@"Lighting\LightingEffect1");
+                lighteffect = Content.Load<Effect>(@"Lighting\LightEffect");
+                wallTexture = Content.Load<Texture2D>("metal3_scr");
+                
             }
             catch (Exception E)
             {
@@ -70,6 +74,7 @@ namespace Game
             //lighteffect.Parameters["xViewProjection"].SetValue(cameraManager.currentCamera.GetViewMatrix() * cameraManager.currentCamera.GetProjectionMatrix());
 
         }
+        PointLight firstLight;
 
         public override void InitializeMultiplayer(BaseGame.CommTypes CommType)
         {
@@ -145,6 +150,8 @@ namespace Game
         public override void InitializeEnvironment()
         {
             base.InitializeEnvironment();
+            SpawnCar(1, 1);
+            firstLight = new PointLight();
         }
 
         public override void InitializeInputs()
@@ -210,7 +217,7 @@ namespace Game
             interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.Enter, false, false, false, KeyEvent.Pressed, EnterVehicle));
             interfaceDefaults.Add(new KeyBinding("Spawn Lander", Keys.L, false, true, false, KeyEvent.Pressed, SpawnLander));
             interfaceDefaults.Add(new KeyBinding("Spawn Aircraft", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
-            interfaceDefaults.Add(new KeyBinding("Spawn Car", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
+            interfaceDefaults.Add(new KeyBinding("Spawn Car", Keys.R, false, true, false, KeyEvent.Pressed, Request_Car));
             KeyMap interfaceControls = new KeyMap(SpecificInputGroups.Interface.ToString(), interfaceDefaults);
 
             defControls.AddMap(carControls);
@@ -336,12 +343,14 @@ namespace Game
         /// CLIENT SIDE
         /// 
         /// </summary>
-        private void SpawnCar()
+        private void Request_Car()
         {
             if(commClient!=null)
                 // send a request to the server for an object of asset type "car"
                 commClient.SendObjectRequest("car");
         }
+
+        
 
         Aircraft myPlane;
         /// <summary>
@@ -364,14 +373,7 @@ namespace Game
                     physicsManager.AddNewObject(newobject);
                     break;
                 case "car":
-                    newobject = physicsManager.GetCar(carModel, wheelModel);
-                    newobject.ID = objectid;
-                    physicsManager.AddNewObject(newobject);
-                    if (ownerid == MyClientID) // Only select the new car if its OUR new car
-                    {
-                        myCar = (CarObject)newobject;
-                        SelectGameObject(myCar);
-                    }
+                    newobject = SpawnCar(ownerid, objectid);
                     break;
                 case "lunar lander":
                     lander = physicsManager.GetLunarLander(landerModel);
@@ -391,6 +393,19 @@ namespace Game
                 default:
                     break;
             }
+        }
+
+        private Gobject SpawnCar(int ownerid, int objectid)
+        {
+            Gobject newobject  = physicsManager.GetCar(carModel, wheelModel);
+            newobject.ID = objectid;
+            physicsManager.AddNewObject(newobject);
+            if (ownerid == MyClientID) // Only select the new car if its OUR new car
+            {
+                myCar = (CarObject)newobject;
+                SelectGameObject(myCar);
+            }
+            return newobject;
         }
 
 
@@ -627,13 +642,30 @@ namespace Game
         VertexBuffer vertexBuffer;
         private void SetUpVertices(GraphicsDevice device)
         {
-            LightingVertexFormat[] vertices = new LightingVertexFormat[3];
+            TexturedVertexFormat[] vertices = new TexturedVertexFormat[18];
 
-            vertices[0] = new LightingVertexFormat(new Vector3(0, 8, -2), Color.Red);
-            vertices[1] = new LightingVertexFormat(new Vector3(8, -8, 4), Color.Green);
-            vertices[2] = new LightingVertexFormat(new Vector3(-8, 0, 8), Color.Yellow);
-
-            vertexBuffer = new VertexBuffer(device, LightingVertexFormat.VertexDeclaration, vertices.Length, BufferUsage.WriteOnly);
+            vertices[0] = new TexturedVertexFormat(new Vector3(-20, .0f, 10), new Vector2(-0.25f, 25.0f), new Vector3(0, 1, 0));
+            vertices[1] = new TexturedVertexFormat(new Vector3(-20, .0f, -100), new Vector2(-0.25f, 0.0f), new Vector3(0, 1, 0));
+            vertices[2] = new TexturedVertexFormat(new Vector3(2, .0f, 10), new Vector2(0.25f, 25.0f), new Vector3(0, 1, 0));
+            vertices[3] = new TexturedVertexFormat(new Vector3(2, .0f, -100), new Vector2(0.25f, 0.0f), new Vector3(0, 1, 0));
+            vertices[4] = new TexturedVertexFormat(new Vector3(2, .0f, 10), new Vector2(0.25f, 25.0f), new Vector3(-1, 0, 0));
+            vertices[5] = new TexturedVertexFormat(new Vector3(2, .0f, -100), new Vector2(0.25f, 0.0f), new Vector3(-1, 0, 0));
+            vertices[6] = new TexturedVertexFormat(new Vector3(2, 1, 10), new Vector2(0.375f, 25.0f), new Vector3(-1, 0, 0));
+            vertices[7] = new TexturedVertexFormat(new Vector3(2, 1, -100), new Vector2(0.375f, 0.0f), new Vector3(-1, 0, 0));
+            vertices[8] = new TexturedVertexFormat(new Vector3(2, 1, 10), new Vector2(0.375f, 25.0f), new Vector3(0, 1, 0));
+            vertices[9] = new TexturedVertexFormat(new Vector3(2, 1, -100), new Vector2(0.375f, 0.0f), new Vector3(0, 1, 0));
+            vertices[10] = new TexturedVertexFormat(new Vector3(3, 1, 10), new Vector2(0.5f, 25.0f), new Vector3(0, 1, 0));
+            vertices[11] = new TexturedVertexFormat(new Vector3(3, 1, -100), new Vector2(0.5f, 0.0f), new Vector3(0, 1, 0));
+            vertices[12] = new TexturedVertexFormat(new Vector3(13, 1, 10), new Vector2(0.75f, 25.0f), new Vector3(0, 1, 0));
+            vertices[13] = new TexturedVertexFormat(new Vector3(13, 1, -100), new Vector2(0.75f, 0.0f), new Vector3(0, 1, 0));
+            vertices[14] = new TexturedVertexFormat(new Vector3(13, 1, 10), new Vector2(0.75f, 25.0f), new Vector3(-1, 0, 0));
+            vertices[15] = new TexturedVertexFormat(new Vector3(13, 1, -100), new Vector2(0.75f, 0.0f), new Vector3(-1, 0, 0));
+            vertices[16] = new TexturedVertexFormat(new Vector3(13, 21, 10), new Vector2(1.25f, 25.0f), new Vector3(-1, 0, 0));
+            vertices[17] = new TexturedVertexFormat(new Vector3(13, 21, -100), new Vector2(1.25f, 0.0f), new Vector3(-1, 0, 0));
+            
+            for(int i=0;i<vertices.Length;i++)
+                vertices[i].position.Y -= 14.9f;
+            vertexBuffer = new VertexBuffer(device, TexturedVertexFormat.VertexDeclaration, vertices.Length, BufferUsage.WriteOnly);
             vertexBuffer.SetData(vertices);
         }
 
@@ -642,21 +674,22 @@ namespace Game
             if (cameraManager.currentCamera == null)
                 return;
             lighteffect.CurrentTechnique = lighteffect.Techniques["Simplest"];
-            lighteffect.Parameters["xViewProjection"].SetValue(cameraManager.currentCamera.GetViewMatrix() * cameraManager.currentCamera.GetProjectionMatrix());
+            Matrix vp = cameraManager.currentCamera.GetViewMatrix() * cameraManager.currentCamera.GetProjectionMatrix();
+            lighteffect.Parameters["xViewProjection"].SetValue(vp);
+            lighteffect.Parameters["xTexture"].SetValue(wallTexture);
+            lighteffect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            lighteffect.Parameters["xLightPos"].SetValue(firstLight.lightPos);
+            lighteffect.Parameters["xLightPower"].SetValue(firstLight.lightPower);
+            lighteffect.Parameters["xAmbient"].SetValue(firstLight.ambientPower);
 
             try
             {
-                BasicEffect Effect = new BasicEffect(device);
-                Effect.TextureEnabled = false;
-                Effect.LightingEnabled = false;
-                Effect.View = cameraManager.currentCamera.GetViewMatrix();
-                Effect.Projection = cameraManager.currentCamera.GetProjectionMatrix();
-                foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+                foreach (EffectPass pass in lighteffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
 
                     device.SetVertexBuffer(vertexBuffer);
-                    device.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleList, 0, 1);
+                    device.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleStrip, 0, 16);
                 }
             }
             catch (Exception E)
