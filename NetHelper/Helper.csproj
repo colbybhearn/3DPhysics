@@ -113,6 +113,7 @@
     <Compile Include="Input\Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Lighting\DeferredRenderer.cs" />
     <Compile Include="Lighting\VertexFormats\LightingVertexFormat.cs" />
     <Compile Include="Lighting\PointLight.cs" />
     <Compile Include="Lighting\VertexFormats\TexturedVertexFormat.cs" />

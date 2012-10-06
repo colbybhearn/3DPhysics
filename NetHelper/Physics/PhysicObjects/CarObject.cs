@@ -41,9 +41,9 @@ namespace Helper.Physics.PhysicsObjects
             CommonInit(pos, new Vector3(1, 1, 1), model, true, asset);
             SetCarMass(100.1f);
 
-            actionManager.AddBinding((int)Actions.Acceleration, new Helper.Input.ActionBindingDelegate(GenericAcceleration), 1);
-            actionManager.AddBinding((int)Actions.Steering, new Helper.Input.ActionBindingDelegate(GenericSteering), 1);
-            actionManager.AddBinding((int)Actions.Handbrake, new Helper.Input.ActionBindingDelegate(GenericHandbrake), 1);
+            actionManager.AddBinding((int)Actions.Acceleration, new Helper.Input.ActionBindingDelegate(SimulateAcceleration), 1);
+            actionManager.AddBinding((int)Actions.Steering, new Helper.Input.ActionBindingDelegate(SimulateSteering), 1);
+            actionManager.AddBinding((int)Actions.Handbrake, new Helper.Input.ActionBindingDelegate(SimulateHandbrake), 1);
         }
 
         public enum Actions
@@ -154,7 +154,7 @@ namespace Helper.Physics.PhysicsObjects
         }
 
         #region Input
-        public void GenericAcceleration(object[] vals)
+        public void SimulateAcceleration(object[] vals)
         {
             SetAcceleration((float)vals[0]);
         }
@@ -164,7 +164,7 @@ namespace Helper.Physics.PhysicsObjects
             actionManager.SetActionValues((int)Actions.Acceleration, new object[] {p});
         }
 
-        public void GenericSteering(object[] vals)
+        public void SimulateSteering(object[] vals)
         {
             SetSteering((float)vals[0]);
         }
@@ -174,7 +174,7 @@ namespace Helper.Physics.PhysicsObjects
             actionManager.SetActionValues((int)Actions.Steering, new object[] { p });
         }
 
-        public void GenericHandbrake(object[] vals)
+        public void SimulateHandbrake(object[] vals)
         {
             setHandbrake((float)vals[0]);
         }

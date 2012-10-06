@@ -54,8 +54,12 @@ namespace Helper.Physics.PhysicsObjects
         float ElevatorTarget = 0;
         float ElevatorForce=0;
         float ElevatorCoefficient = .001f;
+        public float ElevatorCurrent = 0;
         const float MaxThrust = 1000;
         const float MinThrust = -15;
+
+        float airDensity = 1.2f;
+
 
         public float ForwardAirSpeed
         {
@@ -141,15 +145,15 @@ namespace Helper.Physics.PhysicsObjects
             Elevator,
         }
 
+        // simulated input
         private void SimulateAileron(object[] v)
         {
             SetAilerons((float)v[0]);
         }
         private void SimulateElevator(object[] v)
         {
-            SetElevator((float)v[10]);
+            SetElevator((float)v[0]);
         }
-        // simulated input
         private void SimulateThrust(object[] v)
         {
             SetThrust((float)v[0]);
@@ -172,21 +176,16 @@ namespace Helper.Physics.PhysicsObjects
             
             Thrust.SetForceMagnitude(ForwardThrust);
             actionManager.SetActionValues((int)Actions.Thrust, new object[] { ForwardThrust });
+            
         }
-
-        //common
         private void SetRightWingLift(float right)
         {
             LiftRight.SetForceMagnitude(right);
         }
-
         private void SetLeftWingLift(float left)
         {
             LiftLeft.SetForceMagnitude(left);
         }
-
-        float airDensity = 1.2f;
-
         private void SetDrag(float v)
         {
             // amount of velocity 
@@ -205,10 +204,6 @@ namespace Helper.Physics.PhysicsObjects
             Drag.ForcePosition = Body.Position + Vector3.Transform(CenterOfPressure, orient);
             Drag.SetForceMagnitude(dragForce);
         }
-
-        float leftWingLift = 0;
-        float rightWingLift = 0;
-
         public void SetAilerons(float v)
         {
             RollDestination = v;
@@ -223,13 +218,13 @@ namespace Helper.Physics.PhysicsObjects
                 rightAileron = 0;
             float RightWingLiftCoefficient = WingLiftCoefficient - (AileronFactor * rightAileron);
 
-            leftWingLift = ForwardAirSpeed * LeftWingLiftCoefficient;
-            rightWingLift = ForwardAirSpeed * RightWingLiftCoefficient;
+            float leftWingLift = ForwardAirSpeed * LeftWingLiftCoefficient;
+            float rightWingLift = ForwardAirSpeed * RightWingLiftCoefficient;
+            
             SetLeftWingLift(leftWingLift);
-            //actionManager.SetActionValues((int)Actions.Aileron, new object[] { v });
             SetRightWingLift(rightWingLift);
+            actionManager.SetActionValues((int)Actions.Aileron, new object[] { RollDestination });
         }
-
         public void SetElevator(float v)
         {
             ElevatorTarget = v;
@@ -239,11 +234,11 @@ namespace Helper.Physics.PhysicsObjects
                 Elevator.Force = Vector3.Down;
             else
                 Elevator.Force = Vector3.Down;
+            
             Elevator.SetForceMagnitude(ElevatorForce);
-
             actionManager.SetActionValues((int)Actions.Elevator, new object[] { ElevatorTarget });
         }
-        public float ElevatorCurrent=0;
+        
         public override void SetNominalInput()
         {
             RollCurrent += (RollDestination - RollCurrent) * .7f;

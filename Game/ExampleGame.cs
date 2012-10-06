@@ -150,7 +150,7 @@ namespace Game
         public override void InitializeEnvironment()
         {
             base.InitializeEnvironment();
-            SpawnCar(1, 1);
+            //SpawnCar(1, 1);
             firstLight = new PointLight();
         }
 
@@ -168,14 +168,14 @@ namespace Game
             defControls.Game = this.name;
             
             // Car
-            List<KeyBinding> careDefaults = new List<KeyBinding>();
+            List<KeyBinding> carDefaults = new List<KeyBinding>();
             //careDefaults.Add(new KeyBinding("Spawn", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
-            careDefaults.Add(new KeyBinding("Forward", Keys.Up, false, false, false, KeyEvent.Down, Accelerate));
-            careDefaults.Add(new KeyBinding("Left", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
-            careDefaults.Add(new KeyBinding("Brake / Reverse", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
-            careDefaults.Add(new KeyBinding("Right", Keys.Right, false, false, false, KeyEvent.Down, SteerRight));
-            careDefaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, KeyEvent.Down, ApplyHandbrake));            
-            KeyMap carControls = new KeyMap(SpecificInputGroups.Car.ToString(),careDefaults);
+            carDefaults.Add(new KeyBinding("Forward", Keys.Up, false, false, false, KeyEvent.Down, Accelerate));
+            carDefaults.Add(new KeyBinding("Left", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
+            carDefaults.Add(new KeyBinding("Brake / Reverse", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
+            carDefaults.Add(new KeyBinding("Right", Keys.Right, false, false, false, KeyEvent.Down, SteerRight));
+            carDefaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, KeyEvent.Down, ApplyHandbrake));            
+            KeyMap carControls = new KeyMap(SpecificInputGroups.Car.ToString(),carDefaults);
 
             // player 
 
@@ -216,7 +216,7 @@ namespace Game
             List<KeyBinding> interfaceDefaults = new List<KeyBinding>();
             interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.Enter, false, false, false, KeyEvent.Pressed, EnterVehicle));
             interfaceDefaults.Add(new KeyBinding("Spawn Lander", Keys.L, false, true, false, KeyEvent.Pressed, SpawnLander));
-            interfaceDefaults.Add(new KeyBinding("Spawn Aircraft", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
+            interfaceDefaults.Add(new KeyBinding("Spawn Aircraft", Keys.P, false, true, false, KeyEvent.Pressed, Request_Plane));
             interfaceDefaults.Add(new KeyBinding("Spawn Car", Keys.R, false, true, false, KeyEvent.Pressed, Request_Car));
             KeyMap interfaceControls = new KeyMap(SpecificInputGroups.Interface.ToString(), interfaceDefaults);
 
@@ -328,7 +328,7 @@ namespace Game
                 case "lunar lander":
                     newobject = physicsManager.GetLunarLander(landerModel);
                     break;
-                case "cube":
+                case "airplane":
                     newobject = physicsManager.GetAircraft(model);
                     break;
                 default:
@@ -348,6 +348,13 @@ namespace Game
             if(commClient!=null)
                 // send a request to the server for an object of asset type "car"
                 commClient.SendObjectRequest("car");
+        }
+
+        private void Request_Plane()
+        {
+            if (commClient != null)
+                // send a request to the server for an object of asset type "car"
+                commClient.SendObjectRequest("airplane");
         }
 
         
@@ -383,12 +390,8 @@ namespace Game
                         SelectGameObject(lander);
 
                     break;
-                case "Airplane":
-                    myPlane = physicsManager.GetAircraft(model);
-                    myPlane.ID = objectid;
-                    physicsManager.AddNewObject(myPlane);
-                    if (ownerid == MyClientID) // Only select the new plane if its OUR new plane
-                        SelectGameObject(myPlane);
+                case "airplane":
+                    newobject = SpawnPlane(ownerid, objectid);
                     break;
                 default:
                     break;
@@ -409,16 +412,18 @@ namespace Game
         }
 
 
-        private void SpawnPlane()
+        private Gobject SpawnPlane(int ownerid, int objectid)
         {
             // test code for client-side aircraft/plane spawning
-            myPlane = physicsManager.GetAircraft(airplane);
-            myPlane.ID = gameObjects.Count;
-            physicsManager.AddNewObject(myPlane);
-            currentSelectedObject = myPlane;
-
-            if (commClient != null)
-                commClient.SendObjectRequest("Airplane");
+            Gobject newobject = physicsManager.GetAircraft(airplane);
+            newobject.ID = gameObjects.Count;
+            physicsManager.AddNewObject(newobject);
+            if (ownerid == MyClientID) // Only select the new car if its OUR new car
+            {
+                myPlane = (Aircraft)newobject;
+                SelectGameObject(myPlane);
+            }
+            return newobject;
         }
         private void PlaneThrustIncrease()
         {
@@ -636,7 +641,7 @@ namespace Game
             }
 
             ChatManager.Draw(sb);
-            DrawLightTest(this.graphicsDevice);
+            //DrawLightTest(this.graphicsDevice);
         }
         
         VertexBuffer vertexBuffer;

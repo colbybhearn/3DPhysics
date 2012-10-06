@@ -332,7 +332,7 @@ namespace Helper.Physics
             Vector3 intvelocity = BodyVelocity() + (velocity - BodyVelocity()) * .5f;
             MoveTo(intPosition, orientation);
             SetVelocity(intvelocity);
-            //SetVelocity(intvelocity);
+            //SetVelocity(intvelocity);            
         }
 
         public virtual void SetNominalInput()
