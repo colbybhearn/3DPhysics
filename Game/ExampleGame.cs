@@ -33,6 +33,7 @@ namespace Game
         Model sphereModel;
         LunarVehicle lander;
         Model airplane;
+        PointLight firstLight;
 
         public ExampleGame()            
         {
@@ -59,9 +60,10 @@ namespace Game
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
             
             SetUpVertices(this.graphicsDevice);
+            
             try
             {
-                // this is where Colby is, current: http://www.riemers.net/eng/Tutorials/XNA/Csharp/Series3/Pixel_shader.php 
+                // http://www.riemers.net/eng/Tutorials/XNA/Csharp/Series3/Pixel_shader.php 
                 lighteffect = Content.Load<Effect>(@"Lighting\LightEffect");
                 wallTexture = Content.Load<Texture2D>("metal3_scr");
                 
@@ -69,12 +71,9 @@ namespace Game
             catch (Exception E)
             {
             }
-
-            
-            //lighteffect.Parameters["xViewProjection"].SetValue(cameraManager.currentCamera.GetViewMatrix() * cameraManager.currentCamera.GetProjectionMatrix());
-
         }
-        PointLight firstLight;
+
+        
 
         public override void InitializeMultiplayer(BaseGame.CommTypes CommType)
         {

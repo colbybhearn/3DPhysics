@@ -186,12 +186,21 @@ namespace Helper.Physics.PhysicsObjects
         {
             LiftLeft.SetForceMagnitude(left);
         }
-        private void SetDrag(float v)
+        private void UpdateDrag()
         {
             // amount of velocity 
             // a large amount of velocity in the direction of forward means we're going very straight. We want small drag.
             // a small amount of velocity in the direction of forward means we're crooked. We want large drag.
             //float f = BodyOrientation().Forward.Length() - Vector3.Dot(BodyOrientation().Forward, BodyVelocity());
+            Vector3 velo = BodyVelocity();
+            Vector3 forw = BodyOrientation().Forward;
+            if (velo == Vector3.Zero ||
+                forw == Vector3.Zero)
+            {
+                Drag.SetForceMagnitude(0);
+                return;
+            }
+
             float f = 1 - Vector3.Dot(Vector3.Normalize(BodyVelocity()), Vector3.Normalize(BodyOrientation().Forward));
             float area = .6f + (.5f * f);
             //if(area >.00001f)
@@ -244,7 +253,7 @@ namespace Helper.Physics.PhysicsObjects
             RollCurrent += (RollDestination - RollCurrent) * .7f;
             
             SetThrust(ForwardThrust);
-            SetDrag(dragForce);
+            UpdateDrag();
             SetAilerons(0);
             SetElevator(0);
         }

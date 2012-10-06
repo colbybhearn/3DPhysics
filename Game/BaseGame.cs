@@ -232,115 +232,16 @@ namespace Game
             {
                 if (UpdateCameraCallback == null)
                     return;
-                //PreUpdateCameraCallback();
-                //GetCameraViewProjection();
                 cameraManager.Update();
 
                 UpdateCameraCallback(cameraManager.currentCamera, cameraManager.ViewMatrix(), cameraManager.ProjectionMatrix());
             }
         }
         
-        public virtual void GetCameraViewProjection()
-        {/*
-            //Preset just incase an error occurs
-            view = Matrix.Identity;
-            proj = Matrix.Identity;
-
-            Vector3 bodyPosition = new Vector3(0,0,0);
-            if(currentSelectedObject!=null)
-                bodyPosition= currentSelectedObject.BodyPosition();
-            switch (cameraMode)
-            {
-                case CameraModes.FreeLook:
-                    view = cam.RhsLevelViewMatrix;
-                    proj = cam._projection;
-                    break;
-                case CameraModes.ObjectFirstPerson:
-                    if (currentSelectedObject == null)
-                        return;
-                    Matrix bodyOrientation = currentSelectedObject.BodyOrientation();
-                    Matrix forward = Matrix.CreateFromAxisAngle(bodyOrientation.Up, (float)-Math.PI/2);
-                    
-                    cam.SetTargetOrientation(bodyOrientation * forward);
-                    Matrix ForwardOrientation = bodyOrientation * forward;
-                    Vector3 firstPersonOffsetPosition = new Vector3(-.45f, 1.4f, .05f); // To the driver's seat in car coordinates!
-                    Vector3 firstTransRef = Vector3.Transform(firstPersonOffsetPosition, ForwardOrientation);
-                    cam.CurrentPosition = bodyPosition + firstTransRef;
-
-                    view = cam.RhsViewMatrix;
-                    proj = cam._projection;
-
-                    cam.positionLagFactor = .1f;
-                    cam.lookAtLagFactor = .1f;
-                    break;
-                case CameraModes.ObjectChase:
-                    if (currentSelectedObject == null)
-                        return;
-                    try
-                    {
-                        // bodyPosition is the physical location of the body
-                        // the location of where it's headed
-                        Vector3 ObjectDirection = currentSelectedObject.BodyVelocity() * 2;
-                        if (ObjectDirection.Length() < 2)
-                            ObjectDirection = currentSelectedObject.BodyOrientation().Right;
-                        Vector3 WhereItsHeaded = bodyPosition + ObjectDirection;
-                        // a vector point toward direction of travel
-                        //Vector3 Direction = (WhereItsHeaded - bodyPosition);
-                        ObjectDirection.Normalize();
-                        ObjectDirection *= 10f;
-                        Vector3 WhereItCameFrom = bodyPosition - (ObjectDirection);
-                        WhereItCameFrom += new Vector3(0, 3, 0);
-                        cam.TargetPosition = WhereItCameFrom; // this line causes the problem
-                        //cam.LookAtLocation(bodyPosition);
-                        cam.TargetLookAt = WhereItsHeaded;
-
-                        view = cam.RhsViewMatrix;
-                        proj = cam._projection;
-                        cam.positionLagFactor = .25f;
-                        cam.lookAtLagFactor = .2f;
-                    }
-                    catch (Exception E)
-                    {
-                        System.Diagnostics.Debug.WriteLine(E.StackTrace);
-                    }
-                    break;
-                case CameraModes.ObjectWatch:
-                    try
-                    {
-                        if (currentSelectedObject == null)
-                            return;
-                        cam.LookAtLocation(currentSelectedObject.BodyPosition());
-                        view = cam.RhsLevelViewMatrix;
-                        proj = cam._projection;
-                    }
-                    catch (Exception E)
-                    {
-                        System.Diagnostics.Debug.WriteLine(E.StackTrace);
-                    }
-                    break;
-                    // If an error occurs in any of the above functions, this needs to have happened, so it WILL get set beforehand and overridden otherwise.
-                //default:
-                //    try
-                //    {
-                //        view = Matrix.Identity;
-                //        proj = Matrix.Identity;
-                //    }
-                //    catch(Exception E)
-                //    {
-                //        System.Diagnostics.Debug.WriteLine(E.StackTrace);
-                //    }
-                //    break;
-            }*/
-        }
+       
 
         public virtual void PreUpdateCameraCallback()
-        {/*
-            if (cam == null)
-                return;
-
-            cam.UpdatePosition();
-            if(cameraMode != CameraModes.FreeLook)
-                cam.UpdateLookAt();*/
+        {
         }
         
         public void Initialize(ServiceContainer services, GraphicsDevice gd, myCallbackDelegate updateCamCallback)

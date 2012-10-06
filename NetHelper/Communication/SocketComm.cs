@@ -61,7 +61,7 @@ namespace Helper.Communication
                     length = BitConverter.ToInt32(lenBytes, 0);
                     //Debug.WriteLine(length);
                     if (length > 5000)
-                        throw new FormatException("packet length "+length+" is unreasonably long.");
+                      throw new FormatException("packet length "+length+" is unreasonably long.");
                 }
                 
                 if (length > 0 && socket.Available>=length)

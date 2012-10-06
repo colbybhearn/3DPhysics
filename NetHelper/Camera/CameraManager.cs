@@ -51,7 +51,7 @@ namespace Helper.Camera
             {
                 SortedList<string, ViewProfile> camViews = Views[camAlias];
                 foreach (Gobject gob in gobs)
-                    if (!camViews.ContainsKey(gob.Asset))
+                    if (camViews.ContainsKey(gob.Asset))
                         camViews.Add(gob.Asset, camViews[gob.Asset]);
                 cam.SetProfiles(camViews);
             }

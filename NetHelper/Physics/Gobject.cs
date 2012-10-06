@@ -330,6 +330,11 @@ namespace Helper.Physics
             //SetVelocity(velocity);
             Vector3 intPosition = BodyPosition() + (position - BodyPosition()) * .5f;
             Vector3 intvelocity = BodyVelocity() + (velocity - BodyVelocity()) * .5f;
+            if(float.IsNaN(intPosition.X) || 
+                float.IsNaN(intvelocity.X))
+            {
+                return;
+            }
             MoveTo(intPosition, orientation);
             SetVelocity(intvelocity);
             //SetVelocity(intvelocity);            
