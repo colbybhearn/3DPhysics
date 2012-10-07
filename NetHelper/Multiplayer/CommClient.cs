@@ -112,30 +112,30 @@ namespace Helper.Multiplayer
             {
                 ClientDisconnectPacket cdp = packet as ClientDisconnectPacket;
 
-                CallClientDisconnected(cdp.id);
+                CallDisconnectedFromServer(cdp.id);
             }
             else if (packet is ClientConnectedPacket)
             {
                 ClientConnectedPacket ccp = packet as ClientConnectedPacket;
 
-                CallClientConnected(ccp.ID, ccp.Alias);
+                CallConnectedToServer(ccp.ID, ccp.Alias);
             }
         }
 
-        public event Handlers.ClientConnectedEH ClientConnected;
-        private void CallClientConnected(int id, string alias)
+        public event Handlers.ClientConnectedEH ConnectedToServer;
+        private void CallConnectedToServer(int id, string alias)
         {
-            if(ClientConnected == null)
+            if(ConnectedToServer == null)
                 return;
-            ClientConnected(id, alias);
+            ConnectedToServer(id, alias);
         }
 
-        public event Handlers.IntEH ClientDisconnected;
-        private void CallClientDisconnected(int id)
+        public event Handlers.IntEH DisconnectedFromServer;
+        private void CallDisconnectedFromServer(int id)
         {
-            if (ClientDisconnected == null)
+            if (DisconnectedFromServer == null)
                 return;
-            ClientDisconnected(id);
+            DisconnectedFromServer(id);
         }
 
         public event Helper.Handlers.ObjectActionEH ObjectActionReceived;

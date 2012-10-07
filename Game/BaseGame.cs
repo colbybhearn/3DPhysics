@@ -79,9 +79,9 @@ namespace Game
         #endregion
 
         #region Input
-        internal InputManager inputManager;
-        internal Chat ChatManager;
-        internal SpriteFont chatFont;
+        public InputManager inputManager;
+        public Chat ChatManager;
+        public SpriteFont chatFont;
         #endregion
 
         #region Game
@@ -95,7 +95,7 @@ namespace Game
         KeyMapCollection keyMapCollections;
         internal List<ObjectUpdatePacket> physicsUpdateList = new List<ObjectUpdatePacket>();
 
-        internal CameraManager cameraManager = new CameraManager();
+        public  CameraManager cameraManager = new CameraManager();
         GenericCameraModes cameraMode = GenericCameraModes.FreeLook;
 
         #region Communication
@@ -104,6 +104,15 @@ namespace Game
             Client,
             Server
         }
+        private bool isConnectedToServer;
+        public bool IsConnectedToServer
+        {
+            get
+            {
+                return isConnectedToServer;
+            }
+        }
+
         public CommTypes CommType;
         public CommClient commClient;
         public CommServer commServer;
@@ -580,8 +589,8 @@ namespace Game
                     commClient.ObjectAddedReceived += new Handlers.ObjectAddedResponseEH(commClient_ObjectAddedReceived);
                     commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
                     commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-                    commClient.ClientDisconnected += new Handlers.IntEH(commClient_ClientDisconnected);
-                    commClient.ClientConnected += new Handlers.ClientConnectedEH(commClient_ClientConnected);
+                    commClient.DisconnectedFromServer += new Handlers.IntEH(commClient_NotConnectedToServer);
+                    commClient.ConnectedToServer += new Handlers.ClientConnectedEH(commClient_ClientConnected);
                     break;
                 case CommTypes.Server: // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
                     commServer.ClientConnected += new Handlers.IntStringEH(commServer_ClientConnected);
@@ -594,23 +603,26 @@ namespace Game
             }
         }
 
-        //public event Handlers.ClientConnectedEH ClientConnected2; // TODO - name this better ... it conflicts with the server side one
+        public event Handlers.ClientConnectedEH ConnectedToServer; 
         void commClient_ClientConnected(int id, string alias)
         {
             if (players.ContainsKey(id) == false)
                 players.Add(id, alias);
 
-            /*if (ClientConnected2 == null)
+            isConnectedToServer = true;
+            if (ConnectedToServer == null)
                 return;
-            ClientConnected2(id, alias);*/
+            ConnectedToServer(id, alias);
         }
 
-        public event Handlers.IntEH ClientDisconnected;
-        void commClient_ClientDisconnected(int id)
+        public event Handlers.IntEH DiconnectedFromServer;
+        void commClient_NotConnectedToServer(int id)
         {
-            if (ClientDisconnected == null)
+            isConnectedToServer = false;
+            if (DiconnectedFromServer == null)
                 return;
-            ClientDisconnected(id);
+            DiconnectedFromServer(id);
+            
         }
 
         void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
@@ -877,7 +889,7 @@ namespace Game
         /// CLIENT SIDE
         /// calls this to disconnect from the server
         /// </summary>
-        public void ClientDisconnect()
+        public void DisconnectFromServer()
         {
             commClient.Stop();
         }

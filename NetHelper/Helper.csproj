@@ -88,6 +88,12 @@
     <Compile Include="Communication\ClientInfoSocket.cs" />
     <Compile Include="Communication\SocketComm.cs" />
     <Compile Include="Communication\TcpEventClient2.cs" />
+    <Compile Include="Gui\Containers\DynamicContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Containers\DynamicContainer.Designer.cs">
+      <DependentUpon>DynamicContainer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Handlers.cs" />
     <Compile Include="Input\ActionBinding.cs" />
     <Compile Include="Input\ActionManager.cs" />
@@ -152,6 +158,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <EmbeddedResource Include="Gui\Containers\DynamicContainer.resx">
+      <DependentUpon>DynamicContainer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Input\FlowLayoutTabPage.resx">
       <DependentUpon>FlowLayoutTabPage.cs</DependentUpon>
     </EmbeddedResource>

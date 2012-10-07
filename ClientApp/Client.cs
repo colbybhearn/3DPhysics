@@ -127,7 +127,7 @@ namespace ClientApp
         {
             btnConnect.Enabled = true;
             btnDisconnect.Enabled = false;
-            game.ClientDisconnect();
+            game.DisconnectFromServer();
         }
 
         

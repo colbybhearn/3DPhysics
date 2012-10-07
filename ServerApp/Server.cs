@@ -27,7 +27,6 @@ namespace ServerApp
             btnStopServer.Enabled = false;
             
             game = new Game.ExampleGame();
-            game.ChatMessageReceived += new Helper.Handlers.ChatMessageEH(game_ChatMessageReceived);
             game.ClientConnected += new Helper.Handlers.IntStringEH(game_ClientConnected); 
             AddXnaPanel(ref game);
         }
@@ -42,14 +41,6 @@ namespace ServerApp
             lstClients.Items.Add(alias);
         }
 
-        void game_ChatMessageReceived(ChatMessage cm)
-        {
-            /*if (InvokeRequired)
-            {
-                this.Invoke(new Helper.Handlers.ChatMessageEH(game_ChatMessageReceived), new object[] { cm });
-                return;
-            }*/
-        }
         XnaView.XnaPanel XnaPanelMain;
         private void AddXnaPanel(ref Game.BaseGame game)
         {

@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Performance3.psess = Performance3.psess
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboGame", "RoboClient\RoboGame.csproj", "{E39A1EC6-7BBE-4881-86EC-9A43521E6647}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,18 @@ Global
 		{76420BD4-8577-47F3-82FA-12FB5D088939}.Release|x86.ActiveCfg = Release|x86
 		{76420BD4-8577-47F3-82FA-12FB5D088939}.Release|x86.Build.0 = Release|x86
 		{76420BD4-8577-47F3-82FA-12FB5D088939}.Release|Xbox 360.ActiveCfg = Release|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Debug|x86.ActiveCfg = Debug|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Debug|x86.Build.0 = Debug|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Release|Any CPU.ActiveCfg = Release|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Release|Mixed Platforms.Build.0 = Release|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Release|x86.ActiveCfg = Release|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Release|x86.Build.0 = Release|x86
+		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Release|Xbox 360.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

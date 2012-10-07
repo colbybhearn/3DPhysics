@@ -8,11 +8,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Helper.Lighting;
 using System;
+using Helper.Camera;
+using Game;
 
-namespace Game
+
+namespace RoboGame
 {
     // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
-    public class RoBoGame : BaseGame
+    public class RoboGame : BaseGame
     {
 
         public enum GameplayModes
@@ -34,7 +37,7 @@ namespace Game
         LunarVehicle lander;
         Model airplane;
 
-        public RoBoGame()            
+        public RoboGame()            
         {
             name = "RoBo Game";
         }
