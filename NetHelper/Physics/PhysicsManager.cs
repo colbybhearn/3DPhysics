@@ -205,6 +205,25 @@ namespace Helper.Physics
             return box;
         }
 
+        public Gobject GetBoxHighFriction(Vector3 pos, Vector3 size, Matrix orient, Model model, bool moveable)
+        {
+            // position of box was upper leftmost corner
+            // body has world position
+            // skin is relative to the body
+            Box boxPrimitive = new Box(-.5f * size, orient, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
+
+            Gobject box = new Gobject(
+                pos,
+                size / 2,
+                boxPrimitive, 
+                MaterialTable.MaterialID.NotBouncyRough,
+                model,
+                "cube"
+                );
+
+            return box;
+        }
+
         public void AddSpheres(int n, Model s)
         {
             Random r = new Random();
@@ -287,7 +306,7 @@ namespace Helper.Physics
                 carObject = new RoverObject("Rover2",
                     //new Vector3(-60, 0.5f, 8), // camera's left
                     new Vector3(0, 2.5f, 0),
-                    roverModel, wheelModel, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 520.0f, PhysicsSystem.Gravity.Length());
+                    roverModel, wheelModel, 30.0f, 5.0f, 1.7f, 2.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 50.0f, PhysicsSystem.Gravity.Length());
                 carObject.Car.EnableCar();
                 carObject.Car.Chassis.Body.AllowFreezing = false;
             }
