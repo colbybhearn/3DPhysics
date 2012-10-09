@@ -247,7 +247,6 @@ namespace Helper.Physics.PhysicsObjects
         {
             if (chassis != null)
                 chassis.DisableChassis();
-
         }
 
         /// <summary>
@@ -312,8 +311,8 @@ namespace Helper.Physics.PhysicsObjects
             float alpha = System.Math.Abs(maxSteerAngle * steering);
             float angleSgn = steering > 0.0f ? 1.0f : -1.0f;
 
-            wheels[inner].SteerAngle = (angleSgn * alpha);
-            wheels[inner2].SteerAngle = (angleSgn * -alpha);
+            wheels[outer].SteerAngle = (angleSgn * alpha);
+            wheels[outer2].SteerAngle = (angleSgn * -alpha);
 
             float beta;
 
@@ -329,8 +328,8 @@ namespace Helper.Physics.PhysicsObjects
                 beta = (float)System.Math.Atan2(MathHelper.ToRadians(dy), MathHelper.ToRadians(dx + (dy / (float)System.Math.Tan(MathHelper.ToRadians(alpha)))));
                 beta = MathHelper.ToDegrees(beta);
             }
-            wheels[outer].SteerAngle = (angleSgn * beta);
-            wheels[outer2].SteerAngle = (angleSgn * -beta);
+            wheels[inner].SteerAngle = (angleSgn * beta);
+            wheels[inner2].SteerAngle = (angleSgn * -beta);
         }
 
         /// <summary>

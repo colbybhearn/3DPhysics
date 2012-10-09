@@ -437,6 +437,13 @@ namespace RoboGame
                 }
             return true;
         }
+        public override List<ViewProfile> GetViewProfiles()
+        {
+            List<ViewProfile> profiles = base.GetViewProfiles();
+            profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
+                "rover2", new Vector3(0, 0, 0), 1.0f, new Vector3(0, 90, 0), 1.0f));
+            return profiles;
+        }
 
         private void SpawnLander()
         {
