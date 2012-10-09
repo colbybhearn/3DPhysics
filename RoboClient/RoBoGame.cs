@@ -84,6 +84,7 @@ namespace RoboGame
         {
             base.InitializeEnvironment();
             SpawnRover(0, 1);
+            SpawnPickups();
         }
 
         public override void InitializeInputs()
@@ -285,6 +286,42 @@ namespace RoboGame
                 default:
                     break;
             }
+        }
+
+
+        private void SpawnPickups()
+        {
+            Random r = new Random((int)DateTime.Now.ToOADate());
+            float x, z;
+            
+            for (int i = 0; i < 10; i++)
+            {
+                x = (float)(r.NextDouble()-.5);
+                z = (float)(r.NextDouble()-.5);
+
+                x= x*250;
+                z= z*250;
+
+                //Gobject sphere = physicsManager.GetSphere(new Vector3(x, 3.0f, z), 1.0f, sphereModel, true);
+                Gobject box = physicsManager.GetBoxHighFriction(new Vector3(x, 3.0f, z), new Vector3(1.0f, 1.0f, 1.0f), Matrix.Identity, cubeModel, true);
+                box.ID = 1000 + i;                
+                physicsManager.AddNewObject(box);
+            }
+
+
+            for (int i = 0; i < 10; i++)
+            {
+                x = (float)(r.NextDouble() - .5);
+                z = (float)(r.NextDouble() - .5);
+
+                x = x * 250;
+                z = z * 250;
+
+                Gobject sphere = physicsManager.GetSphere(new Vector3(x, 3.0f, z), 0.4f, sphereModel, true);                
+                sphere.ID = 2000 + i;
+                physicsManager.AddNewObject(sphere);
+            }
+
         }
 
         #region Lunar
