@@ -47,7 +47,7 @@ namespace RoboGame
             roverModel = Content.Load<Model>("car");
             wheelModel = Content.Load<Model>("wheel");
             moon = Content.Load<Texture2D>("Moon");
-            terrainModel = Content.Load<Model>("terrain");
+            terrainModel = Content.Load<Model>("terrain2");
             roverModel = Content.Load<Model>("Rover2");
             wheelModel = Content.Load<Model>("wheel");
             landerModel = Content.Load<Model>("Lunar Lander");
@@ -82,7 +82,42 @@ namespace RoboGame
 
         public override void InitializeEnvironment()
         {
-            base.InitializeEnvironment();
+            bool useCustomTerrain = false;
+
+            if (useCustomTerrain)
+            {
+                try
+                {
+                    //terrain = new Terrain(new Vector3(0, -15, 0), // position
+                    //    //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
+                    //                        new Vector3(15000f, .55f, 15000f),  // X with, possible y range, Z depth 
+                    //                        100, 100, graphicsDevice, moon);
+
+                    //newObjects.Add(terrain.ID, terrain);
+                }
+                catch (Exception E)
+                {
+                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
+                }
+            }
+            else
+            {
+                try
+                {
+                    // some video cards can't handle the >16 bit index type of the terrain
+                    HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
+                    newObjects.Add(heightmapObj.ID, heightmapObj);
+                }
+                catch (Exception E)
+                {
+                    // if that happens just create a ground plane 
+                    //planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0), "");
+                    //newObjects.Add(planeObj.ID, planeObj);
+                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
+                }
+            }
+
+
             SpawnRover(0, 1);
             SpawnPickups();
         }
