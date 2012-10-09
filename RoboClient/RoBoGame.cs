@@ -434,7 +434,6 @@ namespace RoboGame
                         gameObjects.Remove(go.ID);
                         return false;
                     }
-                    
                 }
             return true;
         }

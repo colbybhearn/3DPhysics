@@ -280,38 +280,40 @@ namespace Helper.Physics.PhysicsObjects
             if (fWDrive && bWDrive)
                 maxTorque *= 0.5f;
 
-            if (fWDrive)
-            {
-                wheels[(int)WheelId.WheelFL].AddTorque(maxTorque * accelerate);
-                wheels[(int)WheelId.WheelFR].AddTorque(maxTorque * accelerate);
-            }
-            if (bWDrive)
-            {
-                wheels[(int)WheelId.WheelBL].AddTorque(maxTorque * accelerate);
-                wheels[(int)WheelId.WheelBR].AddTorque(maxTorque * accelerate);
-            }
+            wheels[(int)WheelId.WheelFL].AddTorque(maxTorque * accelerate);
+            wheels[(int)WheelId.WheelML].AddTorque(maxTorque * accelerate);
+            wheels[(int)WheelId.WheelBL].AddTorque(maxTorque * accelerate);
+            
+            wheels[(int)WheelId.WheelFR].AddTorque(maxTorque * accelerate);            
+            wheels[(int)WheelId.WheelMR].AddTorque(maxTorque * accelerate);
+            wheels[(int)WheelId.WheelBR].AddTorque(maxTorque * accelerate);
 
             wheels[(int)WheelId.WheelBL].Lock = (hBrake > 0.5f);
             wheels[(int)WheelId.WheelBR].Lock = (hBrake > 0.5f);
 
             // steering angle applies to the inner wheel. The outer one needs to match it
-            int inner, outer;
+            int inner, outer, inner2, outer2;
 
             if (steering > 0.0f)
             {
                 inner = (int)WheelId.WheelFL;
                 outer = (int)WheelId.WheelFR;
+                inner2 = (int)WheelId.WheelBL;
+                outer2 = (int)WheelId.WheelBR;
             }
             else
             {
                 inner = (int)WheelId.WheelFR;
                 outer = (int)WheelId.WheelFL;
+                inner2 = (int)WheelId.WheelBR;
+                outer2 = (int)WheelId.WheelBL;
             }
 
             float alpha = System.Math.Abs(maxSteerAngle * steering);
             float angleSgn = steering > 0.0f ? 1.0f : -1.0f;
 
             wheels[inner].SteerAngle = (angleSgn * alpha);
+            wheels[inner2].SteerAngle = (angleSgn * -alpha);
 
             float beta;
 
@@ -328,6 +330,7 @@ namespace Helper.Physics.PhysicsObjects
                 beta = MathHelper.ToDegrees(beta);
             }
             wheels[outer].SteerAngle = (angleSgn * beta);
+            wheels[outer2].SteerAngle = (angleSgn * -beta);
         }
 
         /// <summary>
