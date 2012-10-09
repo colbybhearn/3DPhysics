@@ -278,5 +278,24 @@ namespace Helper.Physics
         {
             return GetAircraft(new Vector3(0, 0, 0), model, new Vector3(1,1,1), Matrix.Identity);
         }
+
+        public Gobject GetRover(Model roverModel, Model wheelModel)
+        {
+            RoverObject carObject = null;
+            try
+            {
+                carObject = new RoverObject("Rover2",
+                    //new Vector3(-60, 0.5f, 8), // camera's left
+                    new Vector3(0, 2.5f, 0),
+                    roverModel, wheelModel, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 520.0f, PhysicsSystem.Gravity.Length());
+                carObject.Car.EnableCar();
+                carObject.Car.Chassis.Body.AllowFreezing = false;
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
+            return carObject;
+        }
     }
 }

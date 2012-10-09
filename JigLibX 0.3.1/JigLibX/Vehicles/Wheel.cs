@@ -17,7 +17,7 @@ namespace JigLibX.Vehicles
     public class Wheel
     {
         #region private fields
-        private Car car;
+        private RollingVehicle vehicle;
 
         /// local mount position
         private Vector3 pos;
@@ -62,7 +62,7 @@ namespace JigLibX.Vehicles
         /// <param name="fwdFriction"></param>
         /// <param name="damping"></param>
         /// <param name="numRays"></param>
-        public void Setup(Car car,
+        public void Setup(RollingVehicle car,
               Vector3 pos, //< position relative to car, in car's space
               Vector3 axisUp, //< in car's space
               float spring,  //< force per suspension offset
@@ -74,7 +74,7 @@ namespace JigLibX.Vehicles
               float damping,
               int numRays)
         {
-            this.car = car;
+            this.vehicle = car;
             this.pos = pos;
             this.axisUp = axisUp;
             this.spring = spring;
@@ -86,7 +86,7 @@ namespace JigLibX.Vehicles
             this.damping = damping;
             this.numRays = numRays;
 
-            pred = new WheelPred(car.Chassis.Body.CollisionSkin);
+            pred = new WheelPred(car.chassis.Body.CollisionSkin);
 
             Reset();
         }
@@ -131,7 +131,7 @@ namespace JigLibX.Vehicles
             lastDisplacement = displacement;
             displacement = 0.0f;
 
-            Body carBody = car.Chassis.Body;
+            Body carBody = vehicle.chassis.Body;
 
             Vector3 worldPos = carBody.Position + Vector3.TransformNormal(pos, carBody.Orientation);// *mPos;
             Vector3 worldAxis = Vector3.TransformNormal(axisUp, carBody.Orientation);// *mAxisUp;

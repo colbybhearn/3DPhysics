@@ -17,25 +17,23 @@ namespace RoboGame
     // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
     public class RoboGame : BaseGame
     {
-
         public enum GameplayModes
         {
-            Car,
+            Rover,
             Lander,
             Aircraft,
             Spectate,
         }
 
         Texture2D wallTexture;
-        Model carModel, wheelModel, landerModel;
-        CarObject myCar;
+        Model roverModel, wheelModel, landerModel;
+        RoverObject myRover;
         Model terrainModel;
         Model planeModel;
         Texture2D moon;
         Model cubeModel;
         Model sphereModel;
         LunarVehicle lander;
-        Model airplane;
 
         public RoboGame()            
         {
@@ -47,15 +45,14 @@ namespace RoboGame
             base.InitializeContent();
             cubeModel = Content.Load<Model>("Cube");
             sphereModel = Content.Load<Model>("Sphere");
-            carModel = Content.Load<Model>("car");
+            roverModel = Content.Load<Model>("car");
             wheelModel = Content.Load<Model>("wheel");
             moon = Content.Load<Texture2D>("Moon");
             planeModel = Content.Load<Model>("plane");
             terrainModel = Content.Load<Model>("terrain");
-            carModel = Content.Load<Model>("car");
+            roverModel = Content.Load<Model>("Rover2");
             wheelModel = Content.Load<Model>("wheel");
             landerModel = Content.Load<Model>("Lunar Lander");
-            airplane = Content.Load<Model>("Airplane");
             chatFont = Content.Load<SpriteFont>("debugFont");
             
             ChatManager = new Chat(chatFont);
@@ -89,7 +86,7 @@ namespace RoboGame
         public override void InitializeEnvironment()
         {
             base.InitializeEnvironment();
-            //SpawnCar(1, 1);
+            SpawnRover(0, 1);
             firstLight = new PointLight();
         }
 
@@ -107,14 +104,14 @@ namespace RoboGame
             defControls.Game = this.name;
             
             // Car
-            List<KeyBinding> carDefaults = new List<KeyBinding>();
+            List<KeyBinding> roverDefaults = new List<KeyBinding>();
             //careDefaults.Add(new KeyBinding("Spawn", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
-            carDefaults.Add(new KeyBinding("Forward", Keys.Up, false, false, false, KeyEvent.Down, Accelerate));
-            carDefaults.Add(new KeyBinding("Left", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
-            carDefaults.Add(new KeyBinding("Brake / Reverse", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
-            carDefaults.Add(new KeyBinding("Right", Keys.Right, false, false, false, KeyEvent.Down, SteerRight));
-            carDefaults.Add(new KeyBinding("Handbrake", Keys.B, false, false, false, KeyEvent.Down, ApplyHandbrake));            
-            KeyMap carControls = new KeyMap(SpecificInputGroups.Car.ToString(),carDefaults);
+            roverDefaults.Add(new KeyBinding("Forward", Keys.Up, false, false, false, KeyEvent.Down, Accelerate));
+            roverDefaults.Add(new KeyBinding("Left", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
+            roverDefaults.Add(new KeyBinding("Backward", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
+            roverDefaults.Add(new KeyBinding("Right", Keys.Right, false, false, false, KeyEvent.Down, SteerRight));
+            roverDefaults.Add(new KeyBinding("Laser", Keys.B, false, false, false, KeyEvent.Down, UseLaser));            
+            KeyMap roverControls = new KeyMap(SpecificInputGroups.Rover.ToString(),roverDefaults);
 
             // player 
 
@@ -133,18 +130,6 @@ namespace RoboGame
             landerDefaults.Add(new KeyBinding("Yaw Left", Keys.NumPad7, false, false, false, KeyEvent.Down, LunarYawLeft));
             landerDefaults.Add(new KeyBinding("Yaw Right", Keys.NumPad9, false, false, false, KeyEvent.Down, LunarYawRight));
             KeyMap landerControls = new KeyMap(SpecificInputGroups.Lander.ToString(), landerDefaults);
-
-            
-            // jet
-            List<KeyBinding> jetDefaults = new List<KeyBinding>();
-            //jetDefaults.Add(new KeyBinding("Spawn ", Keys.P, false, true, false, KeyEvent.Pressed, SpawnPlane));
-            jetDefaults.Add(new KeyBinding("Increase Thrust", Keys.OemPlus, false, false, false, KeyEvent.Down, PlaneThrustIncrease));
-            jetDefaults.Add(new KeyBinding("Decrease Thrust", Keys.OemMinus, false, false, false, KeyEvent.Down, PlaneThrustDecrease));
-            jetDefaults.Add(new KeyBinding("Roll Left", Keys.H, false, false, false, KeyEvent.Down, PlaneRollLeft));
-            jetDefaults.Add(new KeyBinding("Roll Right", Keys.K, false, false, false, KeyEvent.Down, PlaneRollRight));
-            jetDefaults.Add(new KeyBinding("Pitch Up", Keys.J, false, false, false, KeyEvent.Down, PlanePitchUp));
-            jetDefaults.Add(new KeyBinding("Pitch Down", Keys.J, false, false, false, KeyEvent.Down, PlanePitchDown));
-            KeyMap jetControls = new KeyMap(SpecificInputGroups.Aircraft.ToString(), jetDefaults);
             
             // Chat
             List<KeyBinding> commDefaults = new List<KeyBinding>();
@@ -153,15 +138,13 @@ namespace RoboGame
 
             // Interface
             List<KeyBinding> interfaceDefaults = new List<KeyBinding>();
-            interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.Enter, false, false, false, KeyEvent.Pressed, EnterVehicle));
+            interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.E, false, true, false, KeyEvent.Pressed, EnterExitVehicle));
             interfaceDefaults.Add(new KeyBinding("Spawn Lander", Keys.L, false, true, false, KeyEvent.Pressed, SpawnLander));
-            interfaceDefaults.Add(new KeyBinding("Spawn Aircraft", Keys.P, false, true, false, KeyEvent.Pressed, Request_Plane));
-            interfaceDefaults.Add(new KeyBinding("Spawn Car", Keys.R, false, true, false, KeyEvent.Pressed, Request_Car));
+            interfaceDefaults.Add(new KeyBinding("Spawn Rover", Keys.R, false, true, false, KeyEvent.Pressed, Request_Rover));
             KeyMap interfaceControls = new KeyMap(SpecificInputGroups.Interface.ToString(), interfaceDefaults);
             
 
-            defControls.AddMap(carControls);
-            defControls.AddMap(jetControls);
+            defControls.AddMap(roverControls);
             defControls.AddMap(landerControls);
             defControls.AddMap(commControls);
             defControls.AddMap(interfaceControls);
@@ -179,28 +162,22 @@ namespace RoboGame
         public enum SpecificInputGroups
         {
             Communication,
-            Car,
-            Aircraft,
-            Zombie,
+            Rover,
             Lander,
             Interface,
-
         }
 
-        GameplayModes gameplaymode = GameplayModes.Spectate;
+        GameplayModes gameplaymode = GameplayModes.Rover;
 
-        private void EnterVehicle()
+        private void EnterExitVehicle()
         {
 
             switch (gameplaymode)
             {
-                case GameplayModes.Car:
+                case GameplayModes.Rover:
                     gameplaymode = GameplayModes.Spectate;
                     break;
                 case GameplayModes.Lander:
-                    gameplaymode = GameplayModes.Spectate;
-                    break;
-                case GameplayModes.Aircraft:
                     gameplaymode = GameplayModes.Spectate;
                     break;
                 case GameplayModes.Spectate:
@@ -208,9 +185,7 @@ namespace RoboGame
                         return;
                     // turn on only those appropriate to the current Game mode
                     if (currentSelectedObject is CarObject)
-                        gameplaymode = GameplayModes.Car;
-                    if (currentSelectedObject is Aircraft)
-                        gameplaymode = GameplayModes.Aircraft;
+                        gameplaymode = GameplayModes.Rover;
                     if (currentSelectedObject is LunarVehicle)
                         gameplaymode = GameplayModes.Lander;
                         break;
@@ -233,14 +208,13 @@ namespace RoboGame
 
             switch (gameplaymode)
             {
-                case GameplayModes.Car:
-                    inputManager.EnableKeyMap(SpecificInputGroups.Car.ToString());
+                case GameplayModes.Rover:
+                    inputManager.EnableKeyMap(SpecificInputGroups.Rover.ToString());
                     break;
                 case GameplayModes.Lander:
                     inputManager.EnableKeyMap(SpecificInputGroups.Lander.ToString());
                     break;
                 case GameplayModes.Aircraft:
-                    inputManager.EnableKeyMap(SpecificInputGroups.Aircraft.ToString());
                     break;
                 case GameplayModes.Spectate:
                     break;
@@ -262,7 +236,7 @@ namespace RoboGame
             switch (asset.ToLower())
             {
                 case "sphere":          newobject = physicsManager.GetDefaultSphere(model);         break;
-                case "car":             newobject = physicsManager.GetCar(carModel, wheelModel);    break;
+                case "rover2":          newobject = physicsManager.GetRover(roverModel, wheelModel);    break;
                 case "lunar lander":    newobject = physicsManager.GetLunarLander(landerModel);     break;
                 case "airplane":        newobject = physicsManager.GetAircraft(model);              break;
                 default:                                                                            break;
@@ -276,20 +250,12 @@ namespace RoboGame
         /// CLIENT SIDE
         /// 
         /// </summary>
-        private void Request_Car()
+        private void Request_Rover()
         {
             if(commClient!=null)
                 // send a request to the server for an object of asset type "car"
-                commClient.SendObjectRequest("car");
+                commClient.SendObjectRequest("rover2");
         }
-
-        private void Request_Plane()
-        {
-            if (commClient != null)
-                // send a request to the server for an object of asset type "car"
-                commClient.SendObjectRequest("airplane");
-        }
-
         
 
         Aircraft myPlane;
@@ -312,8 +278,8 @@ namespace RoboGame
                     newobject.ID = objectid;
                     physicsManager.AddNewObject(newobject);
                     break;
-                case "car":
-                    newobject = SpawnCar(ownerid, objectid);
+                case "rover2":
+                    newobject = SpawnRover(ownerid, objectid);
                     break;
                 case "lunar lander":
                     lander = physicsManager.GetLunarLander(landerModel);
@@ -323,39 +289,23 @@ namespace RoboGame
                         SelectGameObject(lander);
 
                     break;
-                case "airplane":
-                    newobject = SpawnPlane(ownerid, objectid);
-                    break;
                 default:
                     break;
             }
         }
 
-        private Gobject SpawnCar(int ownerid, int objectid)
+        private Gobject SpawnRover(int ownerid, int objectid)
         {
-            Gobject newobject  = physicsManager.GetCar(carModel, wheelModel);
+            Gobject newobject  = physicsManager.GetRover(roverModel, wheelModel);
             newobject.ID = objectid;
             physicsManager.AddNewObject(newobject);
             if (ownerid == MyClientID) // Only select the new car if its OUR new car
             {
-                myCar = (CarObject)newobject;
-                SelectGameObject(myCar);
+                myRover = (RoverObject)newobject;
+                SelectGameObject(myRover);
             }
             return newobject;
-        }        
-        private Gobject SpawnPlane(int ownerid, int objectid)
-        {
-            // test code for client-side aircraft/plane spawning
-            Gobject newobject = physicsManager.GetAircraft(airplane);
-            newobject.ID = gameObjects.Count;
-            physicsManager.AddNewObject(newobject);
-            if (ownerid == MyClientID) // Only select the new car if its OUR new car
-            {
-                myPlane = (Aircraft)newobject;
-                SelectGameObject(myPlane);
-            }
-            return newobject;
-        }
+        }                
         private void SpawnLander()
         {
             if (commClient != null)
@@ -363,40 +313,6 @@ namespace RoboGame
                 commClient.SendObjectRequest("lunar lander");
             }
         }
-        
-        #region Plane
-        private void PlaneThrustIncrease()
-        {
-            if(myPlane==null)return;
-            myPlane.AdjustThrust(.1f);
-        }
-        private void PlaneThrustDecrease()
-        {
-            if (myPlane == null) return;
-            myPlane.AdjustThrust(-.1f);
-        }
-        private void PlaneRollLeft()
-        {
-            if (myPlane == null) return;
-            myPlane.SetAilerons(-1f);
-        }
-        private void PlaneRollRight()
-        {
-            if (myPlane == null) return;
-            myPlane.SetAilerons(1f);
-        }
-        private void PlanePitchUp()
-        {
-            if (myPlane == null) return;
-            myPlane.SetElevator(1f);
-        }
-        private void PlanePitchDown()
-        {
-            if (myPlane == null) return;
-            myPlane.SetElevator(-1f);
-        }
-        
-        #endregion
 
         #region Lunar
         private void LunarThrustUp()
@@ -444,48 +360,36 @@ namespace RoboGame
         }
         #endregion
 
-        #region Car
+        #region Rover
         private void Accelerate()
         {
-            if (myCar == null)
+            if (myRover == null)
                 return;
-            myCar.SetAcceleration(1.0f);
+            myRover.SetAcceleration(1.0f);
         }
         private void Deccelerate()
         {
-            if (myCar == null)
+            if (myRover == null)
                 return;
-            myCar.SetAcceleration(-1.0f);
+            myRover.SetAcceleration(-1.0f);
         }
         private void SteerLeft()
         {
-            if (myCar == null)
+            if (myRover == null)
                 return;
-            myCar.SetSteering(1.0f);
+            myRover.SetSteering(1.0f);
         }
         private void SteerRight()
         {
-            if (myCar == null)
+            if (myRover == null)
                 return;
-            myCar.SetSteering(-1.0f);
+            myRover.SetSteering(-1.0f);
         }
-        private void ApplyHandbrake()
+        private void UseLaser()
         {
-            if (myCar == null)
+            if (myRover == null)
                 return;
-            myCar.setHandbrake(1.0f);
-        }
-        private void ShiftUp()
-        {
-            // shift from 1st to 2nd gear
-        }
-        private void ShiftDown()
-        {
-            // shift from 2nd to 1st gear
-        }
-        private void ChangeTransmissionType()
-        {
-            // manual vs. automatic
+            myRover.setLaser(1.0f);
         }
         #endregion
 

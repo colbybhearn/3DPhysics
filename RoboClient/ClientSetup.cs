@@ -30,8 +30,7 @@ namespace RoboGame
             {
                 if (game.ConnectToServer(txtIPAddress.Text, iPort, txtAlias.Text))
                 {
-                    roboclient = new frmClient(ref game);
-                    roboclient.Show();
+                    LaunchClient();
                 }
             }
         }
@@ -62,8 +61,7 @@ namespace RoboGame
         
         private void btnConnectLocal_Click(object sender, EventArgs e)
         {
-            roboclient = new frmClient(ref game);
-            roboclient.Show();
+            LaunchClient();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -89,9 +87,23 @@ namespace RoboGame
         {
             if (e.KeyChar == 27)
                 this.Close();
-
         }
 
-        
+        private void ClientSetup_Load(object sender, EventArgs e)
+        {
+            // Comment me to stop auto-launching
+            LaunchClient();
+        }
+
+        private void LaunchClient()
+        {
+            roboclient = new frmClient(ref game);
+            roboclient.Show();
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            game.EditSettings();
+        }
     }
 }

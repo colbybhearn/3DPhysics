@@ -173,6 +173,7 @@
     <Compile Include="Utils\JiggleUnsafe.cs" />
     <Compile Include="Vehicles\Car.cs" />
     <Compile Include="Vehicles\Chassis.cs" />
+    <Compile Include="Vehicles\RollingVehicle.cs" />
     <Compile Include="Vehicles\Wheel.cs" />
   </ItemGroup>
   <ItemGroup>

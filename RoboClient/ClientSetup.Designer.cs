@@ -38,6 +38,7 @@
             this.btnConnect = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.btnConnectLocal = new System.Windows.Forms.Button();
+            this.btnSettings = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).BeginInit();
             this.SuspendLayout();
@@ -151,11 +152,22 @@
             this.btnConnectLocal.UseVisualStyleBackColor = true;
             this.btnConnectLocal.Click += new System.EventHandler(this.btnConnectLocal_Click);
             // 
+            // btnSettings
+            // 
+            this.btnSettings.Location = new System.Drawing.Point(185, 12);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(75, 23);
+            this.btnSettings.TabIndex = 47;
+            this.btnSettings.Text = "Settings";
+            this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
             // ClientSetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(451, 210);
+            this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.btnConnectLocal);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.groupBox1);
@@ -164,6 +176,7 @@
             this.Name = "ClientSetup";
             this.Text = "RoboGame Setup";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientSetup_FormClosing);
+            this.Load += new System.EventHandler(this.ClientSetup_Load);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ClientSetup_KeyPress);
             this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.ClientSetup_PreviewKeyDown);
             this.groupBox1.ResumeLayout(false);
@@ -185,5 +198,6 @@
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnConnectLocal;
+        private System.Windows.Forms.Button btnSettings;
     }
 }

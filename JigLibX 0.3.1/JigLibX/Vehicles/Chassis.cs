@@ -17,17 +17,17 @@ namespace JigLibX.Vehicles
     /// </summary>
     public class Chassis
     {
-        private ChassisBody body;
-        private CollisionSkin collisionSkin;
+        public ChassisBody body;
+        public CollisionSkin collisionSkin;
 
-        private Vector3 dimsMin;
-        private Vector3 dimsMax;
+        public Vector3 dimsMin;
+        public Vector3 dimsMax;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="car"></param>
-        public Chassis(Car car)
+        public Chassis(RollingVehicle car)
         {
             body = new ChassisBody(car);
             collisionSkin = new CollisionSkin(body);
@@ -79,7 +79,7 @@ namespace JigLibX.Vehicles
             collisionSkin.AddPrimitive(box1, new MaterialProperties(0.3f, 0.5f, 0.3f));
             collisionSkin.AddPrimitive(box2, new MaterialProperties(0.3f, 0.5f, 0.3f));
 
-            body.Car.SetupDefaultWheels();
+            body.Vehicle.SetupDefaultWheels();
         }
 
         /// <summary>
@@ -137,13 +137,13 @@ namespace JigLibX.Vehicles
     /// </summary>
     public class ChassisBody : Body
     {
-        private Car mCar;
+        private RollingVehicle mCar;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="car"></param>
-        public ChassisBody(Car car)
+        public ChassisBody(RollingVehicle car)
         {
             mCar = car;
         }
@@ -179,7 +179,7 @@ namespace JigLibX.Vehicles
         /// <summary>
         /// Gets mCar
         /// </summary>
-        public Car Car
+        public RollingVehicle Vehicle
         {
             get { return mCar; }
         }

@@ -150,6 +150,8 @@
     <Compile Include="Physics\PhysicObjects\PhysicObject.cs" />
     <Compile Include="Physics\PhysicObjects\PlaneObject.cs" />
     <Compile Include="Physics\PhysicObjects\RagdollObject.cs" />
+    <Compile Include="Physics\PhysicObjects\Rover.cs" />
+    <Compile Include="Physics\PhysicObjects\RoverObject.cs" />
     <Compile Include="Physics\PhysicObjects\TriangleMeshObject.cs" />
     <Compile Include="Physics\PhysicsManager.cs" />
     <Compile Include="Physics\Terrain.cs" />

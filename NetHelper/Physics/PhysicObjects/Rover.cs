@@ -1,29 +1,30 @@
-#region Using Statements
+﻿#region Using Statements
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using JigLibX.Vehicles;
 #endregion
 
-namespace JigLibX.Vehicles
+namespace Helper.Physics.PhysicsObjects
 {
     /// <summary>
     /// Class Car
     /// </summary>
-    public class Car : RollingVehicle
+    public class Rover : RollingVehicle
     {
         enum WheelId
         {
             WheelBR = 0,
-            WheelFR = 1,
-            WheelBL = 2,
-            WheelFL = 3,
-            MaxWheels = 4
+            WheelMR = 1,
+            WheelFR = 2,
+            WheelBL = 3,
+            WheelML = 4,
+            WheelFL = 5,
+            MaxWheels = 6
         }
 
         #region private fields
-        
-       
 
         private bool fWDrive;
         private bool bWDrive;
@@ -67,9 +68,9 @@ namespace JigLibX.Vehicles
         /// <param name="wheelNumRays"></param>
         /// <param name="driveTorque"></param>
         /// <param name="gravity"></param>
-        public Car(bool FWDrive, bool RWDrive, float maxSteerAngle, float steerRate, float wheelSideFriction,
-             float wheelFwdFriction, float wheelTravel, float wheelRadius, float wheelZOffset, float wheelRestingFrac,
-             float wheelDampingFrac, int wheelNumRays, float driveTorque, float gravity)
+        public Rover(bool FWDrive, bool RWDrive, float maxSteerAngle, float steerRate, float wheelSideFriction,
+                float wheelFwdFriction, float wheelTravel, float wheelRadius, float wheelZOffset, float wheelRestingFrac,
+                float wheelDampingFrac, int wheelNumRays, float driveTorque, float gravity)
         {
             this.fWDrive = FWDrive;
             this.bWDrive = RWDrive;
@@ -86,8 +87,9 @@ namespace JigLibX.Vehicles
             this.driveTorque = driveTorque;
             this.gravity = gravity;
 
-            chassis = new Chassis(this);
-
+            chassis = new RoverChassis(this);
+            // TODO: still need to fix ground clearance in chassis!
+            chassis.SetDims(new Vector3(-1, -.7f, -1.45f), new Vector3(1, .3f, 1.45f)); 
             SetupDefaultWheels();
         }
 
@@ -122,20 +124,22 @@ namespace JigLibX.Vehicles
             float damping = 2.0f * (float)System.Math.Sqrt(System.Math.Abs(spring * mass));
             damping *= 0.25f; // assume wheels act together
             damping *= wheelDampingFrac;  // a bit bouncy
-
+            /*
             // the wheels aren't quite at the corners
             min.X += 3.0f * wheelRadius;
             max.X -= 3.1f * wheelRadius;
             min.Z += wheelRadius * 0.35f;
             max.Z -= wheelRadius * 0.35f;
-
+            */
             Vector3 delta = max - min;
 
             min.Y += wheelZOffset;
 
             Vector3 BRPos = min;
+            Vector3 MRPos = min + new Vector3(delta.X  / 2.0f, 0.0f, 0.0f);
             Vector3 FRPos = min + new Vector3(delta.X, 0.0f, 0.0f);
             Vector3 BLPos = min + new Vector3(0.0f, 0.0f, delta.Z);
+            Vector3 MLPos = min + new Vector3(delta.X / 2.0f, 0.0f, delta.Z);
             Vector3 FLPos = min + new Vector3(delta.X, 0.0f, delta.Z);
 
             if (wheels == null)
@@ -147,56 +151,83 @@ namespace JigLibX.Vehicles
                 wheels.Add(new Wheel());
                 wheels.Add(new Wheel());
                 wheels.Add(new Wheel());
+                wheels.Add(new Wheel());
+                wheels.Add(new Wheel());
             }
 
 
             wheels[(int)WheelId.WheelBR].Setup(this,
-                          BRPos,
-                          axis,
-                          spring,
-                          wheelTravel,
-                          inertia,
-                          wheelRadius,
-                          wheelSideFriction,
-                          wheelFwdFriction,
-                          damping,
-                          wheelNumRays);
+                            BRPos,
+                            axis,
+                            spring,
+                            wheelTravel,
+                            inertia,
+                            wheelRadius,
+                            wheelSideFriction,
+                            wheelFwdFriction,
+                            damping,
+                            wheelNumRays);
+
+            wheels[(int)WheelId.WheelMR].Setup(this,
+                            MRPos,
+                            axis,
+                            spring,
+                            wheelTravel,
+                            inertia,
+                            wheelRadius,
+                            wheelSideFriction,
+                            wheelFwdFriction,
+                            damping,
+                            wheelNumRays);
 
             wheels[(int)WheelId.WheelFR].Setup(this,
-                          FRPos,
-                          axis,
-                          spring,
-                          wheelTravel,
-                          inertia,
-                          wheelRadius,
-                          wheelSideFriction,
-                          wheelFwdFriction,
-                          damping,
-                          wheelNumRays);
+                            FRPos,
+                            axis,
+                            spring,
+                            wheelTravel,
+                            inertia,
+                            wheelRadius,
+                            wheelSideFriction,
+                            wheelFwdFriction,
+                            damping,
+                            wheelNumRays);
 
             wheels[(int)WheelId.WheelBL].Setup(this,
-                          BLPos,
-                          axis,
-                          spring,
-                          wheelTravel,
-                          inertia,
-                          wheelRadius,
-                          wheelSideFriction,
-                          wheelFwdFriction,
-                          damping,
-                          wheelNumRays);
+                            BLPos,
+                            axis,
+                            spring,
+                            wheelTravel,
+                            inertia,
+                            wheelRadius,
+                            wheelSideFriction,
+                            wheelFwdFriction,
+                            damping,
+                            wheelNumRays);
+
+            wheels[(int)WheelId.WheelML].Setup(this,
+                            MLPos,
+                            axis,
+                            spring,
+                            wheelTravel,
+                            inertia,
+                            wheelRadius,
+                            wheelSideFriction,
+                            wheelFwdFriction,
+                            damping,
+                            wheelNumRays);
+
 
             wheels[(int)WheelId.WheelFL].Setup(this,
-                          FLPos,
-                          axis,
-                          spring,
-                          wheelTravel,
-                          inertia,
-                          wheelRadius,
-                          wheelSideFriction,
-                          wheelFwdFriction,
-                          damping,
-                          wheelNumRays);
+                            FLPos,
+                            axis,
+                            spring,
+                            wheelTravel,
+                            inertia,
+                            wheelRadius,
+                            wheelSideFriction,
+                            wheelFwdFriction,
+                            damping,
+                            wheelNumRays);
         }
 
         /// <summary>
@@ -218,8 +249,6 @@ namespace JigLibX.Vehicles
                 chassis.DisableChassis();
 
         }
-
-        
 
         /// <summary>
         /// Update stuff at the end of physics
@@ -301,26 +330,6 @@ namespace JigLibX.Vehicles
             wheels[outer].SteerAngle = (angleSgn * beta);
         }
 
-
-        /// <summary>
-        /// Gets or Sets back-wheel drive
-        /// </summary>
-        public bool BWDrive
-        {
-            get { return bWDrive; }
-            set { bWDrive = value; }
-        }
-
-        /// <summary>
-        /// Gets or Sets front-wheel drive
-        /// </summary>
-        public bool FWDrive
-        {
-            get { return fWDrive; }
-            set { fWDrive = value; }
-        }
-
-
         /// <summary>
         /// Gets or Sets chassis (There will always be a chassis)
         /// </summary>
@@ -330,13 +339,6 @@ namespace JigLibX.Vehicles
             set { chassis = value; }
         }
 
-        /// <summary>
-        /// Allow access to all the wheels
-        /// </summary>
-        public List<Wheel> Wheels
-        {
-            get { return wheels; }
-        }
 
         /// <summary>
         /// Accelerate control - values -1/0 to 1
@@ -357,15 +359,6 @@ namespace JigLibX.Vehicles
         }
 
         /// <summary>
-        /// HBrake control - values -1/0 to 1
-        /// </summary>
-        public float HBrake
-        {
-            get { return hBrake; }
-            set { hBrake = value; }
-        }
-
-        /// <summary>
         /// Gets count NumWheelsOnFloor
         /// </summary>
         public int NumWheelsOnFloor
@@ -380,12 +373,7 @@ namespace JigLibX.Vehicles
                         count++;
                 }
                 return count;
-
             }
         }
-
     }
-
-
-
 }
