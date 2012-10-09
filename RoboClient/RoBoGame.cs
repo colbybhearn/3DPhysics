@@ -10,6 +10,7 @@ using Helper.Lighting;
 using System;
 using Helper.Camera;
 using Game;
+using JigLibX.Collision;
 
 
 namespace RoboGame
@@ -21,21 +22,19 @@ namespace RoboGame
         {
             Rover,
             Lander,
-            Aircraft,
             Spectate,
         }
+        GameplayModes gameplaymode = GameplayModes.Rover;
 
-        Texture2D wallTexture;
         Model roverModel, wheelModel, landerModel;
         RoverObject myRover;
         Model terrainModel;
-        Model planeModel;
         Texture2D moon;
         Model cubeModel;
         Model sphereModel;
         LunarVehicle lander;
 
-        public RoboGame()            
+        public RoboGame()
         {
             name = "RoBo Game";
         }
@@ -48,7 +47,6 @@ namespace RoboGame
             roverModel = Content.Load<Model>("car");
             wheelModel = Content.Load<Model>("wheel");
             moon = Content.Load<Texture2D>("Moon");
-            planeModel = Content.Load<Model>("plane");
             terrainModel = Content.Load<Model>("terrain");
             roverModel = Content.Load<Model>("Rover2");
             wheelModel = Content.Load<Model>("wheel");
@@ -58,7 +56,6 @@ namespace RoboGame
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
         }
-        PointLight firstLight;
 
         public override void InitializeMultiplayer(BaseGame.CommTypes CommType)
         {
@@ -87,7 +84,6 @@ namespace RoboGame
         {
             base.InitializeEnvironment();
             SpawnRover(0, 1);
-            firstLight = new PointLight();
         }
 
         public override void InitializeInputs()
@@ -157,7 +153,6 @@ namespace RoboGame
 
             return defControls;
         }
-
         
         public enum SpecificInputGroups
         {
@@ -166,8 +161,6 @@ namespace RoboGame
             Lander,
             Interface,
         }
-
-        GameplayModes gameplaymode = GameplayModes.Rover;
 
         private void EnterExitVehicle()
         {
@@ -214,8 +207,6 @@ namespace RoboGame
                 case GameplayModes.Lander:
                     inputManager.EnableKeyMap(SpecificInputGroups.Lander.ToString());
                     break;
-                case GameplayModes.Aircraft:
-                    break;
                 case GameplayModes.Spectate:
                     break;
                 default:
@@ -235,10 +226,10 @@ namespace RoboGame
             Gobject newobject = null;
             switch (asset.ToLower())
             {
+                case "cube":            newobject = physicsManager.GetBox(model);                   break;
                 case "sphere":          newobject = physicsManager.GetDefaultSphere(model);         break;
-                case "rover2":          newobject = physicsManager.GetRover(roverModel, wheelModel);    break;
+                case "rover2":          newobject = physicsManager.GetRover(roverModel, wheelModel, sphereModel, cubeModel);    break;
                 case "lunar lander":    newobject = physicsManager.GetLunarLander(landerModel);     break;
-                case "airplane":        newobject = physicsManager.GetAircraft(model);              break;
                 default:                                                                            break;
             }
             
@@ -256,9 +247,7 @@ namespace RoboGame
                 // send a request to the server for an object of asset type "car"
                 commClient.SendObjectRequest("rover2");
         }
-        
 
-        Aircraft myPlane;
         /// <summary>
         /// CLIENT SIDE
         /// client should do something oriented to the specific game here, like player bullets or cars.
@@ -273,6 +262,11 @@ namespace RoboGame
             Gobject newobject = null;
             switch (asset.ToLower())
             {
+                case "cube":
+                    newobject = physicsManager.GetBox(model);
+                    newobject.ID = objectid;
+                    physicsManager.AddNewObject(newobject);
+                    break;
                 case "sphere":
                     newobject = physicsManager.GetDefaultSphere(model);
                     newobject.ID = objectid;
@@ -287,30 +281,9 @@ namespace RoboGame
                     physicsManager.AddNewObject(lander);
                     if (ownerid == MyClientID) // Only select the new object if its OUR new object
                         SelectGameObject(lander);
-
                     break;
                 default:
                     break;
-            }
-        }
-
-        private Gobject SpawnRover(int ownerid, int objectid)
-        {
-            Gobject newobject  = physicsManager.GetRover(roverModel, wheelModel);
-            newobject.ID = objectid;
-            physicsManager.AddNewObject(newobject);
-            if (ownerid == MyClientID) // Only select the new car if its OUR new car
-            {
-                myRover = (RoverObject)newobject;
-                SelectGameObject(myRover);
-            }
-            return newobject;
-        }                
-        private void SpawnLander()
-        {
-            if (commClient != null)
-            {
-                commClient.SendObjectRequest("lunar lander");
             }
         }
 
@@ -393,6 +366,49 @@ namespace RoboGame
         }
         #endregion
 
+        private Gobject SpawnRover(int ownerid, int objectid)
+        {
+            Gobject newobject = physicsManager.GetRover(roverModel, wheelModel, sphereModel,cubeModel);
+            newobject.ID = objectid;
+            physicsManager.AddNewObject(newobject);
+            if (ownerid == MyClientID) // Only select the new car if its OUR new car
+            {
+                myRover = (RoverObject)newobject;
+                SelectGameObject(myRover);
+            }
+            myRover.AddCollisionCallback(CollisionSkin_callbackFn);
+            return newobject;
+        }
+        bool CollisionSkin_callbackFn(CollisionSkin skin0, CollisionSkin skin1)
+        {
+            foreach(Gobject go in gameObjects.Values)
+                if (go.Skin.Equals(skin1))
+                {
+                    string type = go.Asset.ToLower();
+                    if (type == "cube")
+                    {
+                        myRover.AddLaser();
+                        gameObjects.Remove(go.ID);
+                        return false;
+                    }
+                    if (type == "sphere")
+                    {
+                        myRover.AddRadar();
+                        gameObjects.Remove(go.ID);
+                        return false;
+                    }
+                    
+                }
+            return true;
+        }
+
+        private void SpawnLander()
+        {
+            if (commClient != null)
+            {
+                commClient.SendObjectRequest("lunar lander");
+            }
+        }
         private void SpawnSpheres()
         {
             physicsManager.AddSpheres(5, sphereModel);
@@ -464,65 +480,5 @@ namespace RoboGame
             ChatManager.Draw(sb);
             //DrawLightTest(this.graphicsDevice);
         }
-        
-        VertexBuffer vertexBuffer;
-        private void SetUpVertices(GraphicsDevice device)
-        {
-            TexturedVertexFormat[] vertices = new TexturedVertexFormat[18];
-
-            vertices[0] = new TexturedVertexFormat(new Vector3(-20, .0f, 10), new Vector2(-0.25f, 25.0f), new Vector3(0, 1, 0));
-            vertices[1] = new TexturedVertexFormat(new Vector3(-20, .0f, -100), new Vector2(-0.25f, 0.0f), new Vector3(0, 1, 0));
-            vertices[2] = new TexturedVertexFormat(new Vector3(2, .0f, 10), new Vector2(0.25f, 25.0f), new Vector3(0, 1, 0));
-            vertices[3] = new TexturedVertexFormat(new Vector3(2, .0f, -100), new Vector2(0.25f, 0.0f), new Vector3(0, 1, 0));
-            vertices[4] = new TexturedVertexFormat(new Vector3(2, .0f, 10), new Vector2(0.25f, 25.0f), new Vector3(-1, 0, 0));
-            vertices[5] = new TexturedVertexFormat(new Vector3(2, .0f, -100), new Vector2(0.25f, 0.0f), new Vector3(-1, 0, 0));
-            vertices[6] = new TexturedVertexFormat(new Vector3(2, 1, 10), new Vector2(0.375f, 25.0f), new Vector3(-1, 0, 0));
-            vertices[7] = new TexturedVertexFormat(new Vector3(2, 1, -100), new Vector2(0.375f, 0.0f), new Vector3(-1, 0, 0));
-            vertices[8] = new TexturedVertexFormat(new Vector3(2, 1, 10), new Vector2(0.375f, 25.0f), new Vector3(0, 1, 0));
-            vertices[9] = new TexturedVertexFormat(new Vector3(2, 1, -100), new Vector2(0.375f, 0.0f), new Vector3(0, 1, 0));
-            vertices[10] = new TexturedVertexFormat(new Vector3(3, 1, 10), new Vector2(0.5f, 25.0f), new Vector3(0, 1, 0));
-            vertices[11] = new TexturedVertexFormat(new Vector3(3, 1, -100), new Vector2(0.5f, 0.0f), new Vector3(0, 1, 0));
-            vertices[12] = new TexturedVertexFormat(new Vector3(13, 1, 10), new Vector2(0.75f, 25.0f), new Vector3(0, 1, 0));
-            vertices[13] = new TexturedVertexFormat(new Vector3(13, 1, -100), new Vector2(0.75f, 0.0f), new Vector3(0, 1, 0));
-            vertices[14] = new TexturedVertexFormat(new Vector3(13, 1, 10), new Vector2(0.75f, 25.0f), new Vector3(-1, 0, 0));
-            vertices[15] = new TexturedVertexFormat(new Vector3(13, 1, -100), new Vector2(0.75f, 0.0f), new Vector3(-1, 0, 0));
-            vertices[16] = new TexturedVertexFormat(new Vector3(13, 21, 10), new Vector2(1.25f, 25.0f), new Vector3(-1, 0, 0));
-            vertices[17] = new TexturedVertexFormat(new Vector3(13, 21, -100), new Vector2(1.25f, 0.0f), new Vector3(-1, 0, 0));
-            
-            for(int i=0;i<vertices.Length;i++)
-                vertices[i].position.Y -= 14.9f;
-            vertexBuffer = new VertexBuffer(device, TexturedVertexFormat.VertexDeclaration, vertices.Length, BufferUsage.WriteOnly);
-            vertexBuffer.SetData(vertices);
-        }
-
-        private void DrawLightTest(GraphicsDevice device)
-        {
-            if (cameraManager.currentCamera == null)
-                return;
-            lighteffect.CurrentTechnique = lighteffect.Techniques["Simplest"];
-            Matrix vp = cameraManager.currentCamera.GetViewMatrix() * cameraManager.currentCamera.GetProjectionMatrix();
-            lighteffect.Parameters["xViewProjection"].SetValue(vp);
-            lighteffect.Parameters["xTexture"].SetValue(wallTexture);
-            lighteffect.Parameters["xWorld"].SetValue(Matrix.Identity);
-            lighteffect.Parameters["xLightPos"].SetValue(firstLight.lightPos);
-            lighteffect.Parameters["xLightPower"].SetValue(firstLight.lightPower);
-            lighteffect.Parameters["xAmbient"].SetValue(firstLight.ambientPower);
-
-            try
-            {
-                foreach (EffectPass pass in lighteffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-
-                    device.SetVertexBuffer(vertexBuffer);
-                    device.DrawPrimitives(Microsoft.Xna.Framework.Graphics.PrimitiveType.TriangleStrip, 0, 16);
-                }
-            }
-            catch (Exception E)
-            {
-
-            }
-        }
-                
     }
 }

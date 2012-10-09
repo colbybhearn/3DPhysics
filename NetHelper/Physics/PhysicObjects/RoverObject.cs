@@ -11,10 +11,17 @@ namespace Helper.Physics.PhysicsObjects
     {
         private Rover rover;
         private Model wheel;
+        private Model Radar;
+        private Model Laser;
+        private bool hasRadar = true;
+        private bool hasLaser = true;
 
         public RoverObject(string asset,
             Vector3 pos,
-            Model model, Model wheels,
+            Model model, 
+            Model wheels,
+            Model radar,
+            Model laser,
             float maxSteerAngle,
             float steerRate,
             float wheelSideFriction,
@@ -29,6 +36,8 @@ namespace Helper.Physics.PhysicsObjects
             float gravity)
             : base()
         {
+            Radar = radar;
+            Laser = laser;
             rover = new Rover(true, true, maxSteerAngle, steerRate,
                 wheelSideFriction, wheelFwdFriction, wheelTravel, wheelRadius,
                 wheelZOffset, wheelRestingFrac, wheelDampingFrac,
@@ -127,7 +136,65 @@ namespace Helper.Physics.PhysicsObjects
                 }
                 mesh.Draw();
             }
+
+            if (hasRadar)
+            {
+                foreach (ModelMesh mesh in Radar.Meshes)
+                {
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.EnableDefaultLighting();
+                        effect.PreferPerPixelLighting = true;
+                        effect.AmbientLightColor = Color.Gray.ToVector3();
+                        effect.World = GetRadarWorldMatrix();
+                        effect.View = View;
+                        effect.Projection = Projection;
+                    }
+                    mesh.Draw();
+                }
+            }
+
+            if (hasLaser)
+            {
+                Matrix[] ltransforms = new Matrix[Laser.Bones.Count];
+                Laser.CopyAbsoluteBoneTransformsTo(ltransforms);
+                foreach (ModelMesh mesh in Laser.Meshes)
+                {
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.EnableDefaultLighting();
+                        effect.PreferPerPixelLighting = true;
+                        effect.AmbientLightColor = Color.Gold.ToVector3();
+                        effect.World = ltransforms[mesh.ParentBone.Index] * GetLaserWorldMatrix();
+                        effect.View = View;
+                        effect.Projection = Projection;
+                    }
+                    mesh.Draw();
+                }
+            }
         }
+
+        /// <summary>
+        /// only used for the model
+        /// </summary>
+        /// <returns></returns>
+        public Matrix GetLaserWorldMatrix()
+        {
+            //return Matrix.CreateScale(Scale*.3f) * Body.Orientation * Matrix.CreateTranslation(Body.Position + new Vector3(1, .2f, 0));  WRONG
+            return Matrix.CreateScale(Scale * .3f) * Matrix.CreateTranslation(new Vector3(1, .2f, -.5f)) * rover.Chassis.Body.Orientation * Matrix.CreateTranslation(rover.Chassis.Body.Position);
+
+        }
+
+        /// <summary>
+        /// only used for the model
+        /// </summary>
+        /// <returns></returns>
+        public Matrix GetRadarWorldMatrix()
+        {
+            
+            return Matrix.CreateScale(Scale * .4f) * Matrix.CreateTranslation(new Vector3(-1, .4f, .5f)) * rover.Chassis.Body.Orientation * Matrix.CreateTranslation(rover.Chassis.Body.Position);
+        }
+
 
         public Rover Car
         {
@@ -194,6 +261,16 @@ namespace Helper.Physics.PhysicsObjects
             SetAcceleration(0);
             SetSteering(0);
             setLaser(0);
+        }
+
+        public void AddRadar()
+        {
+            hasRadar = true;
+        }
+
+        public void AddLaser()
+        {
+            hasLaser = true;
         }
     }
 

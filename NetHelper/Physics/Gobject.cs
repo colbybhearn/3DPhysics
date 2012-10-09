@@ -35,7 +35,7 @@ namespace Helper.Physics
             Body = new Body();
             Skin = new CollisionSkin(Body);
             Body.CollisionSkin = Skin;
-            Body.ExternalData = this;
+            Body.ExternalData = this;            
         }
 
         /// <summary>
@@ -114,6 +114,13 @@ namespace Helper.Physics
             // MOVED TO BEFORE INTEGRATE
             //FinalizeBody();
         }
+
+        public void AddCollisionCallback(CollisionCallbackFn cbf)
+        {
+            this.Body.CollisionSkin.callbackFn += cbf;
+        }
+
+        
 
         public void AddController(Controller c)
         {
@@ -281,6 +288,8 @@ namespace Helper.Physics
         {
             return Matrix.CreateScale(Scale) * Skin.GetPrimitiveLocal(0).Transform.Orientation * Body.Orientation * Matrix.CreateTranslation(Body.Position);
         }
+
+        
 
         public void MoveTo(Vector3 pos, Matrix orient)
         {
