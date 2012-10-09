@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework.Input;
 using RoboGame;
+using Game;
 
 namespace RoboGame
 {
@@ -17,58 +18,35 @@ namespace RoboGame
     public partial class frmClient : Form
     {
         #region Properties
-
         public string sKey;
-        public int iPort;
-
-        public string sAlias;
-        public string sIPAddress;
-
 
         System.Windows.Forms.Timer ProcessPacketTimer;
 
-        ArrayList ActiveGames = new ArrayList();
-        ArrayList GamesToPlay = new ArrayList();
-
-        Queue<string> StatusMsgQueue = new Queue<string>();
-        Queue<Packet> InputQueue = new Queue<Packet>();
-        Queue<Packet> OutputQueue = new Queue<Packet>();
-
-        Game.BaseGame game;
+        BaseGame game;
         #endregion
 
         #region Constructor
 
 
 
-        public frmClient()
+        public frmClient(ref BaseGame bg)
         {
+            game = bg;
             Mouse.WindowHandle = this.Handle;
-            //Microsoft.Xna.Framework.Input.Keyboard.
 
             InitializeComponent();
-            InitializeScene();
             sKey = "";// System.Guid.NewGuid().ToString();
-            iPort = (int)numLobbyPort.Value;
 
-            // Create an instance of the game
-            game = new RoboGame();
-            game.ConnectedToServer += new Helper.Handlers.ClientConnectedEH(game_ConnectedToServer);
-            game.DiconnectedFromServer += new Helper.Handlers.IntEH(game_DiconnectedFromServer);
+
+            this.TopMost = true;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+
             // Give the xna panel a reference to game.
             // Xna Panel will initialize the game with its graphicsDevice the moment it is ready.
             AddXnaPanel(ref game);
+
             Application.Idle += new EventHandler(Application_Idle);
-        }
-
-        void game_DiconnectedFromServer(int i)
-        {
-            btnConnect.Text = "Connect";
-        }
-
-        void game_ConnectedToServer(int id, string alias)
-        {
-            btnConnect.Text = "Disconnect";
         }
 
         void Application_Idle(object sender, EventArgs e)
@@ -76,10 +54,8 @@ namespace RoboGame
             game.ProcessInput();
         }
 
-        private void InitializeScene()
-        {
-        }
-        XnaView.XnaPanel XnaPanelMain;
+
+        
         private void AddXnaPanel(ref Game.BaseGame game)
         {
             // 
@@ -87,14 +63,14 @@ namespace RoboGame
             // 
             this.XnaPanelMain = new XnaView.XnaPanel(ref game);
             //this.XnaPanelMain.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top                 | System.Windows.Forms.AnchorStyles.Bottom                | System.Windows.Forms.AnchorStyles.Left                     | System.Windows.Forms.AnchorStyles.Right);
-            this.XnaPanelMain.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            //this.XnaPanelMain.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            this.XnaPanelMain.Dock = DockStyle.Fill;
             this.XnaPanelMain.Debug = false;
             this.XnaPanelMain.DebugPhysics = false;
             this.XnaPanelMain.DrawingEnabled = true;
-            
             this.XnaPanelMain.Name = "XnaPanelMain";
             this.XnaPanelMain.PhysicsEnabled = true;
-            RepositionXnaPanel();
+            //RepositionXnaPanel();
             this.XnaPanelMain.TabIndex = 46;
             this.XnaPanelMain.Text = "XnaPanel";
             this.XnaPanelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlMouseDown);
@@ -120,37 +96,13 @@ namespace RoboGame
         #region Form Event Handlers
 
 
-        private void btnConnect_Click(object sender, EventArgs e)
-        {
-            if (game.IsConnectedToServer)
-            {
-                game.DisconnectFromServer();
-            }
-            else
-            {
-
-                if (game.ConnectToServer(txtIPAddress.Text, iPort, txtAlias.Text))
-                {
-                }
-            }
-        }
+       
 
         
 
         private void Client_Load(object sender, EventArgs e)
         {
         }
-
-        private void numLobbyPort_ValueChanged(object sender, EventArgs e)
-        {
-            iPort = (int)numLobbyPort.Value;
-        }
-
-        private void btnDisconnet_Click(object sender, EventArgs e)
-        {
-            
-        }
-
 
         private void ClientApp_MainFormClosed(object sender, FormClosedEventArgs e)
         {
@@ -161,10 +113,6 @@ namespace RoboGame
         #endregion
 
         #region Timer Ticks
-        public void SendPacketToServer(Packet p)
-        {
-            OutputQueue.Enqueue(p);
-        }
 
 
         #endregion
