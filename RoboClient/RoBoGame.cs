@@ -60,22 +60,6 @@ namespace RoboGame
             
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
-            
-            SetUpVertices(this.graphicsDevice);
-            try
-            {
-                // this is where Colby is, current: http://www.riemers.net/eng/Tutorials/XNA/Csharp/Series3/Pixel_shader.php 
-                lighteffect = Content.Load<Effect>(@"Lighting\LightEffect");
-                wallTexture = Content.Load<Texture2D>("metal3_scr");
-                
-            }
-            catch (Exception E)
-            {
-            }
-
-            
-            //lighteffect.Parameters["xViewProjection"].SetValue(cameraManager.currentCamera.GetViewMatrix() * cameraManager.currentCamera.GetProjectionMatrix());
-
         }
         PointLight firstLight;
 
@@ -96,55 +80,7 @@ namespace RoboGame
                     break;
             }
         }
-
-
-        /*
-        /// <summary>
-        /// CLIENT SIDE
-        /// Client has received an object update from the server
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="asset"></param>
-        /// <param name="pos"></param>
-        /// <param name="orient"></param>
-        /// <param name="vel"></param>
-        void commClient_ObjectUpdateReceived(int id, string asset, Microsoft.Xna.Framework.Vector3 pos, Microsoft.Xna.Framework.Matrix orient, Microsoft.Xna.Framework.Vector3 vel)
-        {
-            ProcessObjectUpdate(id, asset, pos, orient, vel);
-        }
-
-        /// <summary>
-        /// CLIENT SIDE
-        /// Client should take the information from the server and use it here
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="asset"></param>
-        /// <param name="pos"></param>
-        /// <param name="orient"></param>
-        /// <param name="vel"></param>
-        private void ProcessObjectUpdate(int id, string asset, Microsoft.Xna.Framework.Vector3 pos, Microsoft.Xna.Framework.Matrix orient, Microsoft.Xna.Framework.Vector3 vel)
-        {
-
-            physicsUpdateList.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel));
-            //lock (gameObjects)
-            //{
-
-            //    if (!gameObjects.ContainsKey(id))
-            //    {
-            //        AddNewObject(id, asset); // which will only put it on newObjects;
-            //    }
-            //    if (newObjects.ContainsKey(id))
-            //        return;
-            //    Gobject go = gameObjects[id];
-            //    //go.SetOrientation(orient);
-            //    if (id == 1)
-            //    {
-            //    }
-            //    go.MoveTo(pos, go.BodyOrientation());
-            //    go.SetVelocity(vel);
-            //}
-        }*/
-
+        
         void commServer_ObjectRequestReceived(int clientId, string asset)
         {
             ProcessObjectRequest(clientId, asset);
@@ -222,6 +158,7 @@ namespace RoboGame
             interfaceDefaults.Add(new KeyBinding("Spawn Aircraft", Keys.P, false, true, false, KeyEvent.Pressed, Request_Plane));
             interfaceDefaults.Add(new KeyBinding("Spawn Car", Keys.R, false, true, false, KeyEvent.Pressed, Request_Car));
             KeyMap interfaceControls = new KeyMap(SpecificInputGroups.Interface.ToString(), interfaceDefaults);
+            
 
             defControls.AddMap(carControls);
             defControls.AddMap(jetControls);
@@ -238,6 +175,7 @@ namespace RoboGame
             return defControls;
         }
 
+        
         public enum SpecificInputGroups
         {
             Communication,
@@ -288,6 +226,7 @@ namespace RoboGame
             // turn off all
             inputManager.DisableAllKeyMaps();
             // turn on always needed inputs
+            inputManager.EnableKeyMap(GenericInputGroups.Client.ToString());
             inputManager.EnableKeyMap(GenericInputGroups.Camera.ToString());
             inputManager.EnableKeyMap(SpecificInputGroups.Communication.ToString());
             inputManager.EnableKeyMap(SpecificInputGroups.Interface.ToString());

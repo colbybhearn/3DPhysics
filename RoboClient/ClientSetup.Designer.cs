@@ -36,7 +36,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.numLobbyPort = new System.Windows.Forms.NumericUpDown();
             this.btnConnect = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
             this.btnConnectLocal = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).BeginInit();
@@ -128,17 +128,17 @@
             this.btnConnect.UseVisualStyleBackColor = true;
             this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
-            // btnCancel
+            // btnClose
             // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCancel.Location = new System.Drawing.Point(355, 175);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 45;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClose.Location = new System.Drawing.Point(355, 175);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(75, 23);
+            this.btnClose.TabIndex = 45;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnConnectLocal
             // 
@@ -157,11 +157,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(451, 210);
             this.Controls.Add(this.btnConnectLocal);
-            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnConnect);
+            this.KeyPreview = true;
             this.Name = "ClientSetup";
             this.Text = "RoboGame Setup";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientSetup_FormClosing);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ClientSetup_KeyPress);
+            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.ClientSetup_PreviewKeyDown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).EndInit();
@@ -179,7 +183,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown numLobbyPort;
         private System.Windows.Forms.Button btnConnect;
-        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnConnectLocal;
     }
 }

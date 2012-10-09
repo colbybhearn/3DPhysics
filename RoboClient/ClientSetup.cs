@@ -68,8 +68,30 @@ namespace RoboGame
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            roboclient.Close();
             this.Close();
         }
+
+        private void ClientSetup_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                this.Close();
+            }
+        }
+
+        private void ClientSetup_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (roboclient != null)
+                roboclient.Close();
+        }
+
+        private void ClientSetup_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 27)
+                this.Close();
+
+        }
+
+        
     }
 }

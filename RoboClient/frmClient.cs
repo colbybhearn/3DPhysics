@@ -45,8 +45,14 @@ namespace RoboGame
             // Give the xna panel a reference to game.
             // Xna Panel will initialize the game with its graphicsDevice the moment it is ready.
             AddXnaPanel(ref game);
+            game.Stopped += new Helper.Handlers.voidEH(game_Stopped);
 
             Application.Idle += new EventHandler(Application_Idle);
+        }
+
+        void game_Stopped()
+        {
+            this.Close();
         }
 
         void Application_Idle(object sender, EventArgs e)
@@ -76,7 +82,7 @@ namespace RoboGame
             this.XnaPanelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlMouseDown);
             this.XnaPanelMain.MouseEnter += new System.EventHandler(this.pnlMouseEnter);
             this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlMouseMove);
-            this.XnaPanelMain.MouseWheel += new MouseEventHandler(XnaPanelMain_MouseWheel);
+            this.XnaPanelMain.MouseWheel += new MouseEventHandler(XnaPanelMain_MouseWheel);            
             this.Controls.Add(this.XnaPanelMain);
         }
 

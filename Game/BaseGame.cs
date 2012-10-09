@@ -142,6 +142,7 @@ namespace Game
             CommonInit(10, camUpdateInterval);
         }
 
+
         private void CommonInit(double physicsUpdateInterval, double cameraUpdateInterval)
         {
             graphicsDevice = null;
@@ -323,13 +324,19 @@ namespace Game
             
             KeyMap camControls = new KeyMap(GenericInputGroups.Camera.ToString(), cameraDefaults);
 
+            List<KeyBinding> ClientDefs = new List<KeyBinding>();
+            ClientDefs.Add(new KeyBinding("Escape", Keys.Escape, false, false, false, KeyEvent.Pressed, Stop));
+            KeyMap clientControls = new KeyMap(GenericInputGroups.Client.ToString(), ClientDefs);
+
             defControls.AddMap(camControls);
+            defControls.AddMap(clientControls);
             return defControls;
         }
 
         public enum GenericInputGroups
         {
             Camera,
+            Client,
         }
 
         #region Camera Manipulation
@@ -883,7 +890,17 @@ namespace Game
                 commClient.Stop();
             if(commServer!=null)
                 commServer.Stop();
+            CallStopped();
         }
+
+        public event Helper.Handlers.voidEH Stopped;
+        private void CallStopped()
+        {
+            if (Stopped == null)
+                return;
+            Stopped();
+        }
+
 
         /// <summary>
         /// CLIENT SIDE

@@ -287,6 +287,7 @@ namespace Game
             inputManager.EnableKeyMap(GenericInputGroups.Camera.ToString());
             inputManager.EnableKeyMap(SpecificInputGroups.Communication.ToString());
             inputManager.EnableKeyMap(SpecificInputGroups.Interface.ToString());
+            
 
             switch (gameplaymode)
             {
