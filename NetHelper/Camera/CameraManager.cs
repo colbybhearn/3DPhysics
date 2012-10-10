@@ -47,18 +47,20 @@ namespace Helper.Camera
 
             cam.SetGobjectList(gobs);
 
+            SortedList<string, ViewProfile> camViews = new SortedList<string, ViewProfile>();
             try
             {
                 if (Views.ContainsKey(camAlias))
                 {
-                    SortedList<string, ViewProfile> camViews = new SortedList<string, ViewProfile>();
                     foreach (Gobject gob in gobs)
                     {
+                        System.Diagnostics.Debug.WriteLine("CamAlias: "+camAlias);
                         string assetname = gob.Asset.ToLower();
                         if (Views[camAlias].ContainsKey(assetname))
                             camViews.Add(assetname, Views[camAlias][assetname]);
                     }
-                    cam.SetProfiles(camViews);
+
+                    System.Diagnostics.Debug.WriteLine("CamView count: " + camViews.Count);
                 }
             }
             catch (Exception E)
@@ -66,7 +68,7 @@ namespace Helper.Camera
             }
             finally
             {
-                cam.SetProfiles(new SortedList<string, ViewProfile>());
+                cam.SetProfiles(camViews);
             }
             
         }

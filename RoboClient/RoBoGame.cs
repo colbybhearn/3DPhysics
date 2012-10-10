@@ -272,7 +272,20 @@ namespace RoboGame
         {
             if (Content == null)
                 return;
-            Model model = Content.Load<Model>(asset);
+            Model model = null;
+            try
+            {
+                model = Content.Load<Model>(asset);
+            }
+            catch (Exception E)
+            {
+
+            }
+            if (model == null)
+            {
+                return;
+            }
+
             
             Gobject newobject = null;
             switch (asset.ToLower())
@@ -513,7 +526,7 @@ namespace RoboGame
             // CameraManager ViewProfiles for selected Gobjects?
             List<ViewProfile> profiles = base.GetViewProfiles();
             profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
-                "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)0, 0), 1.0f));
+                "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI/2.0f, 0), 1.0f));
             return profiles;
         }
 
