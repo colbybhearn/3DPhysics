@@ -20,7 +20,7 @@ namespace Helper.Camera.Cameras
      */
     public class BaseCamera
     {
-        public SortedList<string, ViewProfile> profiles;
+        public SortedList<string, ViewProfile> profiles = new SortedList<string,ViewProfile>();
         public Matrix view;
         // allows multiple Gobjects to be used by a camera for calculation, or reference points.
         public List<Gobject> Gobjects = new List<Gobject>();
@@ -78,7 +78,10 @@ namespace Helper.Camera.Cameras
 
         public void SetProfiles(SortedList<string, ViewProfile> vps)
         {
-            profiles = vps;
+            lock (profiles)
+            {
+                profiles = vps;
+            }
             Update();
         }
 

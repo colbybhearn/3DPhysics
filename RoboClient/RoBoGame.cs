@@ -258,7 +258,20 @@ namespace RoboGame
         {
             if (Content == null)
                 return;
-            Model model = Content.Load<Model>(asset);
+            Model model = null;
+            try
+            {
+                model = Content.Load<Model>(asset);
+            }
+            catch (Exception E)
+            {
+
+            }
+            if (model == null)
+            {
+                return;
+            }
+
             
             Gobject newobject = null;
             switch (asset.ToLower())
@@ -499,7 +512,7 @@ namespace RoboGame
             // CameraManager ViewProfiles for selected Gobjects?
             List<ViewProfile> profiles = base.GetViewProfiles();
             profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
-                "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)0, 0), 1.0f));
+                "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI/2.0f, 0), 1.0f));
             return profiles;
         }
 
@@ -580,7 +593,7 @@ namespace RoboGame
             //DrawLightTest(this.graphicsDevice);
 
             if (myRover.hasRadar)
-            {
+            {/*
                 // The radar map
                 Texture2D radar = new Texture2D(sb.GraphicsDevice, 1, 1);
                 radar.SetData(new Color[] { Color.White });
@@ -591,16 +604,16 @@ namespace RoboGame
                 Texture2D radarIcon = new Texture2D(sb.GraphicsDevice, 1, 1);
                 radarIcon.SetData(new Color[] { Color.White });
                 radarIcon = Texture2D.FromStream(sb.GraphicsDevice, File.OpenRead(@"C:\Users\Kernel\Documents\GitHub\3DPhysics\Content\radar_icon.png"));
-                sb.Draw(radarIcon, new Rectangle(10, 10, 50, 50), Color.White);
+                sb.Draw(radarIcon, new Rectangle(10, 10, 50, 50), Color.White);*/
             }
 
             if (myRover.hasLaser)
-            {
+            {/*
                 // The Icon
                 Texture2D LaserIcon = new Texture2D(sb.GraphicsDevice, 1, 1);
                 LaserIcon.SetData(new Color[] { Color.White });
                 LaserIcon = Texture2D.FromStream(sb.GraphicsDevice, File.OpenRead(@"C:\Users\Kernel\Documents\GitHub\3DPhysics\Content\laser_icon.png"));
-                sb.Draw(LaserIcon, new Rectangle(70, 10, 50, 50), Color.White);
+                sb.Draw(LaserIcon, new Rectangle(70, 10, 50, 50), Color.White);*/
             }
 
         }
