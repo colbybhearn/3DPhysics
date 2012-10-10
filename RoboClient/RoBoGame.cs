@@ -11,6 +11,7 @@ using System;
 using Helper.Camera;
 using Game;
 using JigLibX.Collision;
+using System.IO;
 
 
 namespace RoboGame
@@ -34,6 +35,11 @@ namespace RoboGame
         Model sphereModel;
         LunarVehicle lander;
 
+        Texture2D radar;
+        Texture2D radar_icon;
+        Texture2D laser_icon;
+
+
         public RoboGame()
         {
             name = "RoBo Game";
@@ -52,9 +58,15 @@ namespace RoboGame
             wheelModel = Content.Load<Model>("wheel");
             landerModel = Content.Load<Model>("Lunar Lander");
             chatFont = Content.Load<SpriteFont>("debugFont");
+
+            radar = Content.Load<Texture2D>("radar");
+            radar_icon = Content.Load<Texture2D>("radar_icon");
+            laser_icon = Content.Load<Texture2D>("laser_icon");
             
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
+
+
         }
 
         public override void InitializeMultiplayer()
@@ -581,26 +593,17 @@ namespace RoboGame
 
             if (myRover.hasRadar)
             {
-                // The radar map
-                Texture2D radar = new Texture2D(sb.GraphicsDevice, 1, 1);
-                radar.SetData(new Color[] { Color.White });
-                radar = Texture2D.FromStream(sb.GraphicsDevice, File.OpenRead(@"C:\Users\Kernel\Documents\GitHub\3DPhysics\Content\radar.png"));
+                // The radar map                
                 sb.Draw(radar, new Rectangle(10, 900, 100, 100), Color.White);
 
                 // The Icon
-                Texture2D radarIcon = new Texture2D(sb.GraphicsDevice, 1, 1);
-                radarIcon.SetData(new Color[] { Color.White });
-                radarIcon = Texture2D.FromStream(sb.GraphicsDevice, File.OpenRead(@"C:\Users\Kernel\Documents\GitHub\3DPhysics\Content\radar_icon.png"));
-                sb.Draw(radarIcon, new Rectangle(10, 10, 50, 50), Color.White);
+                sb.Draw(radar_icon, new Rectangle(10, 10, 50, 50), Color.White);
             }
 
             if (myRover.hasLaser)
             {
                 // The Icon
-                Texture2D LaserIcon = new Texture2D(sb.GraphicsDevice, 1, 1);
-                LaserIcon.SetData(new Color[] { Color.White });
-                LaserIcon = Texture2D.FromStream(sb.GraphicsDevice, File.OpenRead(@"C:\Users\Kernel\Documents\GitHub\3DPhysics\Content\laser_icon.png"));
-                sb.Draw(LaserIcon, new Rectangle(70, 10, 50, 50), Color.White);
+                sb.Draw(laser_icon, new Rectangle(70, 10, 50, 50), Color.White);
             }
 
         }
