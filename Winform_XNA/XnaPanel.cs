@@ -99,6 +99,7 @@ namespace XnaView
         {
             try
             {
+                bool guiClick = false;
                 Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
                 Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
                 Microsoft.Xna.Framework.Ray r = cam.GetMouseRay(mouse, view);
@@ -107,15 +108,32 @@ namespace XnaView
                 Vector3 norm;
                 CollisionSkin cs = new CollisionSkin();
 
-                lock (gameObjects)
+                if (mouse.X > 10 && mouse.X < 60 &&
+                    mouse.Y > 10 && mouse.Y < 60)
                 {
-                    if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
+                    guiClick = true;
+                    // Remove laser
+                }
+                if (mouse.X > 70 && mouse.X < 120 &&
+                    mouse.Y > 10 && mouse.Y < 60)
+                {
+                    guiClick = true;
+                    // Remove laser
+                }
+
+
+                if (!guiClick)
+                {
+                    lock (gameObjects)
                     {
-                        Body b = cs.Owner;
-                        if (b == null)
-                            return;
-                        Gobject go = b.ExternalData as Gobject;
-                        game.SelectGameObject(go);
+                        if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
+                        {
+                            Body b = cs.Owner;
+                            if (b == null)
+                                return;
+                            Gobject go = b.ExternalData as Gobject;
+                            game.SelectGameObject(go);
+                        }
                     }
                 }
             }

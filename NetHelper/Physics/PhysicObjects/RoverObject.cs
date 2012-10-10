@@ -15,6 +15,7 @@ namespace Helper.Physics.PhysicsObjects
         private Model Laser;
         public bool hasRadar = false;
         public bool hasLaser = false;
+        public float energy = 100.0f;        
 
         public RoverObject(string asset,
             Vector3 pos,
@@ -194,8 +195,7 @@ namespace Helper.Physics.PhysicsObjects
             
             return Matrix.CreateScale(Scale * .4f) * Matrix.CreateTranslation(new Vector3(-1, .4f, .5f)) * rover.Chassis.Body.Orientation * Matrix.CreateTranslation(rover.Chassis.Body.Position);
         }
-
-
+        
         public Rover Rover
         {
             get { return this.rover; }
@@ -263,16 +263,16 @@ namespace Helper.Physics.PhysicsObjects
             setLaser(0);
         }
 
-        public void AddRadar()
+        public void SetRadar(bool hasit)
         {
-            hasAttributeChanged = true;
-            hasRadar = true;
+            hasAttributeChanged = hasRadar != hasit;
+            hasRadar = hasit;
         }
 
-        public void AddLaser()
+        public void SetLaser(bool hasit)
         {
-            hasAttributeChanged = true;
-            hasLaser = true;
+            hasAttributeChanged = hasLaser != hasit;
+            hasLaser = hasit;
         }
 
         /// <summary>

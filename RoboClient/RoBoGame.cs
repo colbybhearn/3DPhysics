@@ -38,6 +38,7 @@ namespace RoboGame
         Texture2D radar;
         Texture2D radar_icon;
         Texture2D laser_icon;
+        Texture2D energy;
 
 
         public RoboGame()
@@ -62,7 +63,8 @@ namespace RoboGame
             radar = Content.Load<Texture2D>("radar");
             radar_icon = Content.Load<Texture2D>("radar_icon");
             laser_icon = Content.Load<Texture2D>("laser_icon");
-            
+            energy = Content.Load<Texture2D>("Energy");
+
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
 
@@ -492,13 +494,13 @@ namespace RoboGame
             string type = obj.Asset.ToLower();
             if (type == "cube")
             {
-                rover.AddLaser();
+                rover.SetLaser(true);
                 gameObjects.Remove(obj.ID);
                 return false;
             }
             if (type == "sphere")
             {
-                rover.AddRadar();
+                rover.SetRadar(true);
                 gameObjects.Remove(obj.ID);
                 return false;
             }
@@ -591,7 +593,10 @@ namespace RoboGame
             //DrawLightTest(this.graphicsDevice);
 
             if (myRover != null)
-            {
+            {            
+                int nrg = (int)myRover.energy;
+                sb.Draw(energy, new Rectangle(5, 5, nrg, 5), Color.White);
+
                 if (myRover.hasRadar)
                 {
                     // The radar map                
