@@ -35,13 +35,10 @@ namespace Helper.Camera.Cameras
             // if this camera has a profile for this asset,
             if (profiles.ContainsKey(assetname))
             {
-                lock (profiles)
-                {
-                    // get the adjustment value from the profile
-                    orientAdjustment = profiles[assetname].OrientationOffset;
-                    // get the adjustment value from the profile
-                    positionAdjustment = profiles[assetname].PositionOffset;
-                }
+                // get the adjustment value from the profile
+                orientAdjustment = profiles[assetname].OrientationOffset;
+                // get the adjustment value from the profile
+                positionAdjustment = profiles[assetname].PositionOffset;
             }
 
             // create an adjustment quat for the orientation

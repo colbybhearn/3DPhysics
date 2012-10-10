@@ -78,10 +78,7 @@ namespace Helper.Camera.Cameras
 
         public void SetProfiles(SortedList<string, ViewProfile> vps)
         {
-            lock (profiles)
-            {
-                profiles = vps;
-            }
+            profiles = vps;
             Update();
         }
 
