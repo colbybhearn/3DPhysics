@@ -15,7 +15,7 @@ namespace Helper.Physics.PhysicsObjects
         private Model Laser;
         public bool hasRadar = false;
         public bool hasLaser = false;
-        public float energy = 100.0f;        
+        public float Energy = 100.0f;   // Should be reduced by server and value passed to client        
 
         public RoverObject(string asset,
             Vector3 pos,

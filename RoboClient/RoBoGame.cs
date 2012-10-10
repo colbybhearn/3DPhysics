@@ -5,6 +5,7 @@ using Helper.Physics;
 using Helper.Physics.PhysicsObjects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 using Helper.Lighting;
 using System;
@@ -40,10 +41,23 @@ namespace RoboGame
         Texture2D laser_icon;
         Texture2D energy;
 
+        // Sound fx
+        SoundEffect spawn;
+        SoundEffect motor;
+        SoundEffect radar_noise;
+        SoundEffect solar_wind;
+
+        // Looping sounds (requires soundfx)
+        SoundEffectInstance solar_wind_loop;
+        SoundEffectInstance motor_running;
+        SoundEffectInstance radar_noise_loop;
+        
 
         public RoboGame()
         {
             name = "RoBo Game";
+
+            
         }
 
         public override void InitializeContent()
@@ -68,7 +82,24 @@ namespace RoboGame
             ChatManager = new Chat(chatFont);
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
 
+            spawn = Content.Load<SoundEffect>("spawn");
+            motor = Content.Load<SoundEffect>("motor");
+            radar_noise = Content.Load<SoundEffect>("radar_noise");
+            solar_wind = Content.Load<SoundEffect>("solar_wind");
 
+            motor_running = motor.CreateInstance();
+            //motor_running.IsLooped = true; // should be looped, but need to know when rover stops to call .Stop();
+
+            solar_wind_loop = solar_wind.CreateInstance();
+            solar_wind_loop.Volume = 0.5f;
+            solar_wind_loop.IsLooped = true;
+
+            radar_noise_loop = radar_noise.CreateInstance();
+            radar_noise_loop.Volume = 0.5f;
+            radar_noise_loop.IsLooped = true;
+
+            // Let play this right away;  should not play on the server through
+            solar_wind_loop.Play();
         }
 
         public override void InitializeMultiplayer()
@@ -313,6 +344,8 @@ namespace RoboGame
             if(commClient!=null)
                 // send a request to the server for an object of asset type "car"
                 commClient.SendObjectRequest("rover2");
+
+            spawn.Play();
         }
 
         /// <summary>
@@ -442,6 +475,13 @@ namespace RoboGame
             if (myRover == null)
                 return;
             myRover.SetAcceleration(1.0f);
+
+            if (motor_running != null)
+            {
+                motor_running.Volume = 0.3f;
+                motor_running.Play();
+            }
+
         }
         private void Deccelerate()
         {
@@ -605,13 +645,26 @@ namespace RoboGame
             ChatManager.Draw(sb);
             //DrawLightTest(this.graphicsDevice);
 
+
+            FrameworkDispatcher.Update(); // Sounds like this called early and often
+
             if (myRover != null)
             {            
-                int nrg = (int)myRover.energy;
+                int nrg = (int)myRover.Energy;
                 sb.Draw(energy, new Rectangle(5, 5, nrg, 5), Color.White);
 
                 if (myRover.hasRadar)
                 {
+                    try
+                    {
+                        if (radar_noise_loop != null)
+                            radar_noise_loop.Play();                        
+                    }
+                    catch(Exception x)
+                    {
+                        string tacos = x.Message;
+                    }
+
                     // The radar map                
                     if(radar!=null)                    
                         sb.Draw(radar, new Rectangle(10, 900, 100, 100), Color.White);

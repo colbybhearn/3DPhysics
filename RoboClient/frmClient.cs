@@ -57,7 +57,7 @@ namespace RoboGame
 
         void Application_Idle(object sender, EventArgs e)
         {
-            game.ProcessInput();
+            game.ProcessInput();            
         }
 
 

@@ -61,8 +61,9 @@ namespace XnaView
             game = g;
             PhysicsSystem = g.physicsManager.PhysicsSystem;
             gameObjects = g.gameObjects;
-            newObjects = g.newObjects;
+            newObjects = g.newObjects;           
             
+
         }
         protected override void Initialize()
         {
@@ -99,7 +100,6 @@ namespace XnaView
         {
             try
             {
-                bool guiClick = false;
                 Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
                 Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
                 Microsoft.Xna.Framework.Ray r = cam.GetMouseRay(mouse, view);
@@ -107,33 +107,16 @@ namespace XnaView
                 Vector3 pos;
                 Vector3 norm;
                 CollisionSkin cs = new CollisionSkin();
-
-                if (mouse.X > 10 && mouse.X < 60 &&
-                    mouse.Y > 10 && mouse.Y < 60)
+                                
+                lock (gameObjects)
                 {
-                    guiClick = true;
-                    // Remove laser
-                }
-                if (mouse.X > 70 && mouse.X < 120 &&
-                    mouse.Y > 10 && mouse.Y < 60)
-                {
-                    guiClick = true;
-                    // Remove laser
-                }
-
-
-                if (!guiClick)
-                {
-                    lock (gameObjects)
+                    if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
                     {
-                        if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
-                        {
-                            Body b = cs.Owner;
-                            if (b == null)
-                                return;
-                            Gobject go = b.ExternalData as Gobject;
-                            game.SelectGameObject(go);
-                        }
+                        Body b = cs.Owner;
+                        if (b == null)
+                            return;
+                        Gobject go = b.ExternalData as Gobject;
+                        game.SelectGameObject(go);
                     }
                 }
             }
@@ -161,6 +144,7 @@ namespace XnaView
 
                 DrawObjects();
 
+                
                 
                 // SpriteBatch drawing!
                 
