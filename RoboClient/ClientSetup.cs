@@ -7,9 +7,9 @@ namespace RoboGame
     public partial class ClientSetup : Form
     {
         BaseGame game;
-        public int iPort;
-        public string sAlias;
-        public string sIPAddress;
+        public int iPort = 2302;
+        public string sAlias = "Alias";
+        public string sIPAddress = "127.0.0.1";
         frmClient roboclient;
 
         public ClientSetup()
@@ -79,6 +79,7 @@ namespace RoboGame
 
         private void ClientSetup_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Properties.Settings.Default.Save();
             if (roboclient != null)
                 roboclient.Close();
         }
@@ -91,8 +92,10 @@ namespace RoboGame
 
         private void ClientSetup_Load(object sender, EventArgs e)
         {
+            
+
             // Comment me to stop auto-launching
-            LaunchClient();
+            //LaunchClient();
         }
 
         private void LaunchClient()

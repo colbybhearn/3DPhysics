@@ -47,17 +47,26 @@ namespace Helper.Camera
 
             cam.SetGobjectList(gobs);
 
-            if (Views.ContainsKey(camAlias))
+            try
             {
-                SortedList<string, ViewProfile> camViews = Views[camAlias];
-                foreach (Gobject gob in gobs)
-                    if (camViews.ContainsKey(gob.Asset))
-                        camViews.Add(gob.Asset, camViews[gob.Asset]);
-                cam.SetProfiles(camViews);
+                if (Views.ContainsKey(camAlias))
+                {
+                    SortedList<string, ViewProfile> camViews = new SortedList<string, ViewProfile>();
+                    foreach (Gobject gob in gobs)
+                    {
+                        string assetname = gob.Asset.ToLower();
+                        if (Views[camAlias].ContainsKey(assetname))
+                            camViews.Add(assetname, Views[camAlias][assetname]);
+                    }
+                    cam.SetProfiles(camViews);
+                }
             }
-            else
+            catch (Exception E)
             {
-                cam.SetProfiles(new SortedList<string,ViewProfile>());
+            }
+            finally
+            {
+                cam.SetProfiles(new SortedList<string, ViewProfile>());
             }
             
         }

@@ -120,6 +120,19 @@ namespace Helper.Multiplayer
 
                 CallConnectedToServer(ccp.ID, ccp.Alias);
             }
+            else if (packet is ObjectAttributePacket)
+            {
+                ObjectAttributePacket oap = packet as ObjectAttributePacket;
+                CallObjectAttributeReceived(oap);
+            }
+        }
+
+        public event Handlers.ObjectAttributeEH ObjectAttributeReceived;
+        private void CallObjectAttributeReceived(ObjectAttributePacket oap)
+        {
+            if (ObjectAttributeReceived == null)
+                return;
+            ObjectAttributeReceived(oap);
         }
 
         public event Handlers.ClientConnectedEH ConnectedToServer;

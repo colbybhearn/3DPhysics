@@ -25,13 +25,8 @@ namespace Game
     // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
     public class BaseGame 
     {
-        /* Notes on object locking!
-         * Ordering I have used so far for locking is
-         * GameObjects > NewObjects
-         * GameObjects > MultiplayerUpdateQueue
-         * 
-         * Please update the locks and this if the order changes, or obey this order to prevent deadlocks!
-         */
+
+
 
         #region Physics
         public PhysicsManager physicsManager;
@@ -82,6 +77,12 @@ namespace Game
         public InputManager inputManager;
         public Chat ChatManager;
         public SpriteFont chatFont;
+        public enum GenericInputGroups
+        {
+            Camera,
+            Client,
+        }
+        KeyMapCollection keyMapCollections;
         #endregion
 
         #region Game
@@ -90,20 +91,12 @@ namespace Game
         public Gobject currentSelectedObject;
         #endregion
         
-        //public Matrix view = Matrix.Identity;
-        //public Matrix proj = Matrix.Identity;
-        KeyMapCollection keyMapCollections;
+        
         internal List<ObjectUpdatePacket> physicsUpdateList = new List<ObjectUpdatePacket>();
-
         public  CameraManager cameraManager = new CameraManager();
         GenericCameraModes cameraMode = GenericCameraModes.FreeLook;
 
         #region Communication
-        public enum CommTypes
-        {
-            Client,
-            Server
-        }
         private bool isConnectedToServer;
         public bool IsConnectedToServer
         {
@@ -113,12 +106,12 @@ namespace Game
             }
         }
 
-        public CommTypes CommType;
         public CommClient commClient;
         public CommServer commServer;
         #endregion
 
         #region Events
+        public event Helper.Handlers.voidEH Stopped;
         public event Handlers.ChatMessageEH ChatMessageReceived;
         #endregion
 
@@ -130,6 +123,8 @@ namespace Game
         public List<int> clientControlledObjects = new List<int>(); // TODO - Client Side only, merge with ownedObjects somehow?
         public List<object> MultiplayerUpdateQueue = new List<object>();
         public int MyClientID; // Used by the client
+        public bool isClient=false;
+        public bool isServer=false;
         #endregion
 
         public BaseGame()
@@ -141,7 +136,6 @@ namespace Game
         {
             CommonInit(10, camUpdateInterval);
         }
-
 
         private void CommonInit(double physicsUpdateInterval, double cameraUpdateInterval)
         {
@@ -155,12 +149,20 @@ namespace Game
             physicsManager.PostIntegrate += new Handlers.voidEH(physicsManager_PostIntegrate);
         }
 
+        /// <summary>
+        /// The physics engine is about to integrate, so we need to process things from the server about "reality"
+        /// now is the time for the client to send ObjectUpdatePackets the server about inputs
+        /// now is the tine for the client to process ObjectAttributePackets from the server about changes (shape, mode, behavior).
+        /// now is the time for the client to process ObjectUpdatePackets from the server about pos/orient/vel
+        /// now is the time for the server to process ObjectActionPackets the client about pos/orient/vel
+        /// </summary>
         void physicsManager_PreIntegrate()
         {
-            if (CommType == CommTypes.Client)
+            if (isClient)
             {
                 lock (gameObjects)
                 {
+                    #region Send Action Updates to the server
                     foreach (int i in clientControlledObjects)
                     {
                         if (!gameObjects.ContainsKey(i))
@@ -173,34 +175,53 @@ namespace Game
                         go.actionManager.ValueSwap();
                         commClient.SendObjectAction(go.ID, vals);
                     }
-                    
+                    #endregion
+
+                    #region Process packets from the server
                     while (MultiplayerUpdateQueue.Count > 0)
                     {
                         lock (MultiplayerUpdateQueue)
                         {
-                            ObjectUpdatePacket oup = MultiplayerUpdateQueue[0] as ObjectUpdatePacket;
-
-                            if (!gameObjects.ContainsKey(oup.objectId))
-                            {
-                                AddNewObject(oup.objectId, oup.assetName);
-                                MultiplayerUpdateQueue.RemoveAt(0);
-                                continue;
-                                // TODO -  Should we continue instead of not updating this frame?
-                                // (can't yet due to AddNewObject waiting until the next integrate to actually add it)
-                            }
-                            Gobject go = gameObjects[oup.objectId];
-                            go.Interpoladate(oup.position, oup.orientation, oup.velocity);
-                            //go.MoveTo(oup.position, oup.orientation);
-                            //go.SetVelocity(oup.velocity);
+                            Packet p = MultiplayerUpdateQueue[0] as Packet;
                             MultiplayerUpdateQueue.RemoveAt(0);
+
+                            if (p is ObjectUpdatePacket)
+                            {
+                                #region Process Update Packets from the server
+                                ObjectUpdatePacket oup = p as ObjectUpdatePacket;
+
+                                if (!gameObjects.ContainsKey(oup.objectId))
+                                {
+                                    AddNewObject(oup.objectId, oup.assetName);
+                                    continue;
+                                    // TODO -  Should we continue instead of not updating this frame?
+                                }
+                                // (can't yet due to AddNewObject waiting until the next integrate to actually add it)
+                                Gobject go = gameObjects[oup.objectId];
+                                go.Interpoladate(oup.position, oup.orientation, oup.velocity);
+                                #endregion
+                            }
+                            else if (p is ObjectAttributePacket)
+                            {
+                                #region Process Attribute Packets from the server
+                                ObjectAttributePacket oap = p as ObjectAttributePacket;
+                                if (gameObjects.ContainsKey(oap.objectId))
+                                {
+                                    Gobject go = gameObjects[oap.objectId];
+                                    go.SetObjectAttributes(oap.booleans, oap.ints, oap.floats);
+                                }
+                                #endregion
+                            }                            
                         }
                     }
+                    #endregion
                 }
             }
-            else if (CommType == CommTypes.Server)
+            else if (isServer)
             {
                 lock (gameObjects)
                 {
+                    #region Process Action Updates from the client
                     lock (MultiplayerUpdateQueue)
                     {
                         while (MultiplayerUpdateQueue.Count > 0)
@@ -213,27 +234,50 @@ namespace Game
                             MultiplayerUpdateQueue.RemoveAt(0);
                         }
                     }
+                    #endregion
                 }
             }
         }
 
+        /// <summary>
+        /// the physics engine just integrated, so this is the newest information about "reality"
+        /// now is the time for the server to send ObjectUpdatePackets to the client for objects that can move
+        /// now is the time for the server to send ObjectAttributePackets to the client for objects whose attributes have changed
+        /// </summary>
         void physicsManager_PostIntegrate()
         {
-            if (CommType == CommTypes.Client)
+            if (isClient)
             {
                 
             }
-            else if (CommType == CommTypes.Server)
+            else if (isServer)
             {
-                lock (gameObjects)
+                if (commServer != null)
                 {
-                    foreach (Gobject go in gameObjects.Values)
+                    lock (gameObjects)
                     {
-                        if (!go.isMoveable)
-                            continue;
+                        foreach (Gobject go in gameObjects.Values)
+                        {
+                            #region Send Attribute Updates to the client
+                            if (go.hasAttributeChanged)
+                            {
+                                bool[] bools = null;
+                                int[] ints = null;
+                                float[] floats = null;
+                                go.GetObjectAttributes(out bools, out ints, out floats);
+                                ObjectAttributePacket oap = new ObjectAttributePacket(go.ID, bools, ints, floats);
+                                commServer.BroadcastPacket(oap);
+                            }
+                            #endregion
 
-                        ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
-                        commServer.BroadcastObjectUpdate(oup);
+                            #region Send Object Updates to the client
+                            if (go.isMoveable && go.IsActive)
+                            {
+                                ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
+                                commServer.BroadcastObjectUpdate(oup);
+                            }
+                            #endregion
+                        }
                     }
                 }
             }
@@ -247,8 +291,6 @@ namespace Game
                 UpdateCameraCallback(cameraManager.currentCamera, cameraManager.ViewMatrix(), cameraManager.ProjectionMatrix());
             }
         }
-        
-       
 
         public virtual void PreUpdateCameraCallback()
         {
@@ -299,10 +341,6 @@ namespace Game
             keyMapCollections = GetDefaultControls();
         }
 
-        public virtual void InitializeMultiplayer()
-        {
-        }
-
         public virtual KeyMapCollection GetDefaultControls()
         {
             KeyMapCollection defControls = new KeyMapCollection();
@@ -331,12 +369,6 @@ namespace Game
             defControls.AddMap(camControls);
             defControls.AddMap(clientControls);
             return defControls;
-        }
-
-        public enum GenericInputGroups
-        {
-            Camera,
-            Client,
         }
 
         #region Camera Manipulation
@@ -435,7 +467,6 @@ namespace Game
                 cameraManager.ZoomIn();
                 
         }
-        
 
         /// <summary>
         /// Should contain all model, and texture loading
@@ -586,27 +617,34 @@ namespace Game
 
         #region Common to Server and Client
 
-        public virtual void InitializeMultiplayer(CommTypes CommType)
+        public virtual void InitializeMultiplayer()
         {
-            switch (CommType)
+            if(isClient)
             {
-                case CommTypes.Client:
-                    commClient.ClientInfoRequestReceived += new Handlers.IntEH(commClient_ClientInfoRequestReceived);
-                    commClient.ChatMessageReceived += new Handlers.ChatMessageEH(commClient_ChatMessageReceived);
-                    commClient.ObjectAddedReceived += new Handlers.ObjectAddedResponseEH(commClient_ObjectAddedReceived);
-                    commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
-                    commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-                    commClient.DisconnectedFromServer += new Handlers.IntEH(commClient_NotConnectedToServer);
-                    commClient.ConnectedToServer += new Handlers.ClientConnectedEH(commClient_ClientConnected);
-                    break;
-                case CommTypes.Server: // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
-                    commServer.ClientConnected += new Handlers.IntStringEH(commServer_ClientConnected);
-                    commServer.ChatMessageReceived += new Handlers.ChatMessageEH(commServer_ChatMessageReceived);
-                    commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
-                    commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
-                    break;
-                default:
-                    break;
+                commClient.ClientInfoRequestReceived += new Handlers.IntEH(commClient_ClientInfoRequestReceived);
+                commClient.ChatMessageReceived += new Handlers.ChatMessageEH(commClient_ChatMessageReceived);
+                commClient.ObjectAddedReceived += new Handlers.ObjectAddedResponseEH(commClient_ObjectAddedReceived);
+                commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
+                commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
+                commClient.DisconnectedFromServer += new Handlers.IntEH(commClient_NotConnectedToServer);
+                commClient.ConnectedToServer += new Handlers.ClientConnectedEH(commClient_ClientConnected);
+                commClient.ObjectAttributeReceived += new Handlers.ObjectAttributeEH(commClient_ObjectAttributeReceived);
+            }
+            else if(isServer)
+            {
+                // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
+                commServer.ClientConnected += new Handlers.IntStringEH(commServer_ClientConnected);
+                commServer.ChatMessageReceived += new Handlers.ChatMessageEH(commServer_ChatMessageReceived);
+                commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
+                commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
+            }
+        }
+
+        void commClient_ObjectAttributeReceived(ObjectAttributePacket oap)
+        {
+            lock (MultiplayerUpdateQueue)
+            {
+                MultiplayerUpdateQueue.Add(oap);
             }
         }
 
@@ -640,6 +678,8 @@ namespace Game
             }
         }
 
+
+
         // CLIENT
         private void CallChatMessageReceived(ChatMessage cm)
         {
@@ -654,7 +694,7 @@ namespace Game
         }
         public void SendChatPacket(ChatMessage msg)
         {
-            if (CommType == CommTypes.Client)
+            if (isClient)
             {
                 if (commClient != null)
                     commClient.SendChatPacket(msg.Message, MyClientID);
@@ -671,9 +711,9 @@ namespace Game
         // CLIENT only
         public virtual bool ConnectToServer(string ip, int port, string alias)
         {
-            CommType = CommTypes.Client;
+            isClient = true;
             commClient = new CommClient(ip, port, alias);
-            InitializeMultiplayer(CommType);
+            InitializeMultiplayer();
             //ChatManager.PlayerAlias = alias;
             return commClient.Connect();
         }
@@ -732,8 +772,6 @@ namespace Game
         {
 
         } 
-
-        
         #endregion
 
         #region Server Side
@@ -763,10 +801,8 @@ namespace Game
         /// <param name="objectId"></param>
         public void ServeObjectRequest(int clientId, string asset, out int objectId)
         {
-
             objectId = AddOwnedObject(clientId, asset);
             commServer.BroadcastObjectAddedPacket(clientId, objectId, asset);
-
         }
 
         SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
@@ -825,9 +861,9 @@ namespace Game
         // SERVER only
         public void ListenForClients(int port)
         {
-            CommType = CommTypes.Server;
+            isServer = true;
             commServer = new CommServer(port);
-            InitializeMultiplayer(CommType);
+            InitializeMultiplayer();
             commServer.Start();
 
         }
@@ -851,6 +887,7 @@ namespace Game
         public virtual void ProcessClientConnected(int id, string alias)
         {
             CallClientConnected(id, alias);
+            commServer.BroadcastChatMessage("Player " + alias + " has joined.", -1);
         }
 
         public event Helper.Handlers.IntStringEH ClientConnected;
@@ -892,15 +929,12 @@ namespace Game
                 commServer.Stop();
             CallStopped();
         }
-
-        public event Helper.Handlers.voidEH Stopped;
         private void CallStopped()
         {
             if (Stopped == null)
                 return;
             Stopped();
         }
-
 
         /// <summary>
         /// CLIENT SIDE

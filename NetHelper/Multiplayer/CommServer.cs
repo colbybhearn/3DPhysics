@@ -157,6 +157,7 @@ namespace Helper.Multiplayer
                 CallObjectActionReceived(oap.objectId, oap.actionParameters);
             }
             
+            
         }
 
         public event Helper.Handlers.ObjectActionEH ObjectActionReceived;
@@ -201,7 +202,7 @@ namespace Helper.Multiplayer
         #endregion
 
         #region Packet Sending
-        private void BroadcastPacket(Packet p)
+        public void BroadcastPacket(Packet p)
         {
             tcpServer.Send(p);
         }

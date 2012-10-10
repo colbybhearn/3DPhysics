@@ -131,6 +131,7 @@
     <Compile Include="Multiplayer\Packets\ClientDisconnectPacket.cs" />
     <Compile Include="Multiplayer\Packets\KeepAlivePacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectActionPacket.cs" />
+    <Compile Include="Multiplayer\Packets\ObjectAttributePacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectRequestPacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectAddedPacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectUpdatePacket.cs" />

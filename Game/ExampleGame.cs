@@ -75,21 +75,17 @@ namespace Game
 
         
 
-        public override void InitializeMultiplayer(BaseGame.CommTypes CommType)
+        public override void InitializeMultiplayer()
         {
-            base.InitializeMultiplayer(CommType);
+            base.InitializeMultiplayer();
 
-            switch (CommType)
+            if(isClient)
             {
-                case CommTypes.Client:
-                    //commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-                    break;
-                case CommTypes.Server:
-                    commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
-                    break;
-
-                default:
-                    break;
+                //commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
+            }
+            else if(isServer)
+            {
+                commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
             }
         }
 

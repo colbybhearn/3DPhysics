@@ -57,21 +57,17 @@ namespace RoboGame
             ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
         }
 
-        public override void InitializeMultiplayer(BaseGame.CommTypes CommType)
+        public override void InitializeMultiplayer()
         {
-            base.InitializeMultiplayer(CommType);
+            base.InitializeMultiplayer();
 
-            switch (CommType)
+            if(isClient)
             {
-                case CommTypes.Client:
-                    //commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-                    break;
-                case CommTypes.Server:
-                    commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
-                    break;
-
-                default:
-                    break;
+                //commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
+            }
+            else if(isServer)
+            {
+                commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
             }
         }
         
@@ -117,8 +113,7 @@ namespace RoboGame
                 }
             }
 
-
-            SpawnRover(0, 1);
+            //SpawnRover(0, 1);
             SpawnPickups();
         }
 
@@ -251,20 +246,29 @@ namespace RoboGame
         }
 
         /// <summary>
-        /// CLIENT SIDE
-        /// When a client receives an object update for an object it does not know about, instantiate one!
+        /// CLIENT SIDE  and  SERVER SIDE
+        /// Called when a client receives an object update for an object it does not know about, instantiate one!
+        /// 
+        /// 
+        /// Called when a server goes to add an object requested by a client
         /// </summary>
         /// <param name="objectid"></param>
         /// <param name="asset"></param>
         public override void AddNewObject(int objectid, string asset)
         {
+            if (Content == null)
+                return;
             Model model = Content.Load<Model>(asset);
+            
             Gobject newobject = null;
             switch (asset.ToLower())
             {
                 case "cube":            newobject = physicsManager.GetBox(model);                   break;
                 case "sphere":          newobject = physicsManager.GetDefaultSphere(model);         break;
-                case "rover2":          newobject = physicsManager.GetRover(roverModel, wheelModel, sphereModel, cubeModel);    break;
+                case "rover2":
+                    newobject = physicsManager.GetRover(roverModel, wheelModel, sphereModel, cubeModel);
+                    newobject.AddCollisionCallback(CollisionSkin_callbackFn);
+                    break;
                 case "lunar lander":    newobject = physicsManager.GetLunarLander(landerModel);     break;
                 default:                                                                            break;
             }
@@ -448,35 +452,54 @@ namespace RoboGame
                 myRover = (RoverObject)newobject;
                 SelectGameObject(myRover);
             }
-            myRover.AddCollisionCallback(CollisionSkin_callbackFn);
+            
             return newobject;
         }
+
+        
         bool CollisionSkin_callbackFn(CollisionSkin skin0, CollisionSkin skin1)
         {
+            RoverObject rover = null;
+            Gobject obj = null;
+
             foreach(Gobject go in gameObjects.Values)
+            {
                 if (go.Skin.Equals(skin1))
                 {
-                    string type = go.Asset.ToLower();
-                    if (type == "cube")
-                    {
-                        myRover.AddLaser();
-                        gameObjects.Remove(go.ID);
-                        return false;
-                    }
-                    if (type == "sphere")
-                    {
-                        myRover.AddRadar();
-                        gameObjects.Remove(go.ID);
-                        return false;
-                    }
+                    obj = go;
                 }
+                else if(go.Skin.Equals(skin0))
+                {
+                    rover = go as RoverObject;
+                }
+            }
+
+            if(rover==null || obj == null)
+                return true;
+
+            string type = obj.Asset.ToLower();
+            if (type == "cube")
+            {
+                rover.AddLaser();
+                gameObjects.Remove(obj.ID);
+                return false;
+            }
+            if (type == "sphere")
+            {
+                rover.AddRadar();
+                gameObjects.Remove(obj.ID);
+                return false;
+            }
             return true;
         }
         public override List<ViewProfile> GetViewProfiles()
         {
+            // TODO: Why is this not working as expected?
+            // Capitalization of asset name?
+            // CameraManager ViewProfiles for selected Gobjects?
             List<ViewProfile> profiles = base.GetViewProfiles();
             profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
-                "rover2", new Vector3(0, 0, 0), 1.0f, new Vector3(0, 90, 0), 1.0f));
+                "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)0, 0), 1.0f));
             return profiles;
         }
 
@@ -513,9 +536,7 @@ namespace RoboGame
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
-
             
-
             // Lets draw names for cars!
             List<Vector3> pos = new List<Vector3>();
             List<string> text = new List<string>();

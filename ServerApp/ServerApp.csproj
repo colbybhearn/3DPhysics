@@ -85,6 +85,10 @@
       <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
       <Name>Helper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RoboClient\RoboGame.csproj">
+      <Project>{E39A1EC6-7BBE-4881-86EC-9A43521E6647}</Project>
+      <Name>RoboGame</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WindowsGameLibrary\WindowsGameLibrary.csproj">
       <Project>{080DD9B6-4867-457A-9B9B-2400CCD30AAD}</Project>
       <Name>WindowsGameLibrary</Name>

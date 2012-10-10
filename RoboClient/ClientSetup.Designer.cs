@@ -31,7 +31,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtAlias = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.txtIPAddress = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.numLobbyPort = new System.Windows.Forms.NumericUpDown();
@@ -39,6 +38,7 @@
             this.btnClose = new System.Windows.Forms.Button();
             this.btnConnectLocal = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
+            this.txtIPAddress = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numLobbyPort)).BeginInit();
             this.SuspendLayout();
@@ -62,10 +62,12 @@
             // 
             // txtAlias
             // 
+            this.txtAlias.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::RoboGame.Properties.Settings.Default, "Alias", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.txtAlias.Location = new System.Drawing.Point(9, 111);
             this.txtAlias.Name = "txtAlias";
             this.txtAlias.Size = new System.Drawing.Size(134, 20);
             this.txtAlias.TabIndex = 1;
+            this.txtAlias.Text = global::RoboGame.Properties.Settings.Default.Alias;
             // 
             // label2
             // 
@@ -75,13 +77,6 @@
             this.label2.Size = new System.Drawing.Size(29, 13);
             this.label2.TabIndex = 24;
             this.label2.Text = "Port:";
-            // 
-            // txtIPAddress
-            // 
-            this.txtIPAddress.Location = new System.Drawing.Point(9, 33);
-            this.txtIPAddress.Name = "txtIPAddress";
-            this.txtIPAddress.Size = new System.Drawing.Size(134, 20);
-            this.txtIPAddress.TabIndex = 0;
             // 
             // label5
             // 
@@ -161,6 +156,15 @@
             this.btnSettings.Text = "Settings";
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
+            // txtIPAddress
+            // 
+            this.txtIPAddress.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::RoboGame.Properties.Settings.Default, "Ip", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.txtIPAddress.Location = new System.Drawing.Point(9, 33);
+            this.txtIPAddress.Name = "txtIPAddress";
+            this.txtIPAddress.Size = new System.Drawing.Size(134, 20);
+            this.txtIPAddress.TabIndex = 0;
+            this.txtIPAddress.Text = global::RoboGame.Properties.Settings.Default.Ip;
             // 
             // ClientSetup
             // 

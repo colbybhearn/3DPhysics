@@ -23,6 +23,7 @@ namespace Helper.Physics
         public List<Controller> controllers = new List<Controller>();
         internal BasicEffect Effect { get; set; }
 
+
         /// <summary>
         /// Default Constructor
         /// Initalizes the Body and a CollisionSkin
@@ -352,6 +353,25 @@ namespace Helper.Physics
         public virtual void SetNominalInput()
         {
             
+        }
+
+        public bool hasAttributeChanged = false;
+        public virtual void GetObjectAttributes(out bool[] bv, out int[] iv, out float[] fv)
+        {
+            bv = null;
+            iv = null;
+            fv = null;
+        }
+        public virtual void SetObjectAttributes(bool[] bv, int[] iv, float[] fv)
+        {
+        }
+
+        public bool IsActive 
+        {
+            get
+            {
+                return Body.IsActive;
+            }
         }
     }
 }

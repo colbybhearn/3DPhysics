@@ -31,14 +31,14 @@ namespace Helper.Camera.Cameras
             
             Vector3 orientAdjustment = Vector3.Zero;
             Vector3 positionAdjustment = Vector3.Zero;
-
+            string assetname = gob.Asset.ToLower();
             // if this camera has a profile for this asset,
-            if (profiles.ContainsKey(gob.Asset))
+            if (profiles.ContainsKey(assetname))
             {
                 // get the adjustment value from the profile
-                orientAdjustment = profiles[gob.Asset].OrientationOffset;
+                orientAdjustment = profiles[assetname].OrientationOffset;
                 // get the adjustment value from the profile
-                positionAdjustment = profiles[gob.Asset].PositionOffset;
+                positionAdjustment = profiles[assetname].PositionOffset;
             }
 
             // create an adjustment quat for the orientation

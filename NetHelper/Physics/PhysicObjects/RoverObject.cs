@@ -196,7 +196,7 @@ namespace Helper.Physics.PhysicsObjects
         }
 
 
-        public Rover Car
+        public Rover Rover
         {
             get { return this.rover; }
         }
@@ -265,12 +265,38 @@ namespace Helper.Physics.PhysicsObjects
 
         public void AddRadar()
         {
+            hasAttributeChanged = true;
             hasRadar = true;
         }
 
         public void AddLaser()
         {
+            hasAttributeChanged = true;
             hasLaser = true;
+        }
+
+        /// <summary>
+        /// Used by the server to gather up info to distribute to all clients
+        /// </summary>
+        /// <param name="bv"></param>
+        /// <param name="iv"></param>
+        /// <param name="fv"></param>
+        public override void GetObjectAttributes(out bool[] bv, out int[] iv, out float[] fv)
+        {
+            bv = new bool[] {hasRadar, hasLaser};
+            iv = null;
+            fv = null;
+        }
+
+        public override void SetObjectAttributes(bool[] bv, int[] iv, float[] fv)
+        {
+            int index = -1;
+            if (bv != null && bv.Length>=2)
+            {
+                hasRadar = bv[++index];
+                hasLaser = bv[++index];
+            }
+            index = -1;
         }
     }
 
