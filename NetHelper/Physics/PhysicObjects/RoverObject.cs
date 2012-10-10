@@ -13,8 +13,8 @@ namespace Helper.Physics.PhysicsObjects
         private Model wheel;
         private Model Radar;
         private Model Laser;
-        private bool hasRadar = false;
-        private bool hasLaser = false;
+        public bool hasRadar = false;
+        public bool hasLaser = false;
 
         public RoverObject(string asset,
             Vector3 pos,

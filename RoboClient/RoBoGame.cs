@@ -578,6 +578,31 @@ namespace RoboGame
 
             ChatManager.Draw(sb);
             //DrawLightTest(this.graphicsDevice);
+
+            if (myRover.hasRadar)
+            {
+                // The radar map
+                Texture2D radar = new Texture2D(sb.GraphicsDevice, 1, 1);
+                radar.SetData(new Color[] { Color.White });
+                radar = Texture2D.FromStream(sb.GraphicsDevice, File.OpenRead(@"C:\Users\Kernel\Documents\GitHub\3DPhysics\Content\radar.png"));
+                sb.Draw(radar, new Rectangle(10, 900, 100, 100), Color.White);
+
+                // The Icon
+                Texture2D radarIcon = new Texture2D(sb.GraphicsDevice, 1, 1);
+                radarIcon.SetData(new Color[] { Color.White });
+                radarIcon = Texture2D.FromStream(sb.GraphicsDevice, File.OpenRead(@"C:\Users\Kernel\Documents\GitHub\3DPhysics\Content\radar_icon.png"));
+                sb.Draw(radarIcon, new Rectangle(10, 10, 50, 50), Color.White);
+            }
+
+            if (myRover.hasLaser)
+            {
+                // The Icon
+                Texture2D LaserIcon = new Texture2D(sb.GraphicsDevice, 1, 1);
+                LaserIcon.SetData(new Color[] { Color.White });
+                LaserIcon = Texture2D.FromStream(sb.GraphicsDevice, File.OpenRead(@"C:\Users\Kernel\Documents\GitHub\3DPhysics\Content\laser_icon.png"));
+                sb.Draw(LaserIcon, new Rectangle(70, 10, 50, 50), Color.White);
+            }
+
         }
     }
 }

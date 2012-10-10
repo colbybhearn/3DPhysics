@@ -304,10 +304,21 @@ namespace Helper.Physics
             RoverObject carObject = null;
             try
             {
-                carObject = new RoverObject("Rover2",
-                    //new Vector3(-60, 0.5f, 8), // camera's left
-                    new Vector3(0, 2.5f, 0),
-                    roverModel, wheelModel, radar, laser, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 80.0f, PhysicsSystem.Gravity.Length());
+                Vector3 pos = new Vector3(0, 2.5f, 0);
+                float maxSteerAngle = 30.0f;
+                float steerRate = 5.0f;
+                float wheelSideFriction = 4.7f;
+                float wheelFwdFriction = 5.0f;
+                float wheelTravel = 0.2f;
+                float wheelRadius = 0.4f;
+                float wheelZOffset = 0.05f;
+                float wheelRestingFrac = 0.45f;
+                float wheeldampingFrac = 0.3f;
+                int wheelNumRays = 1;
+                float driveTorque = 200.0f;
+
+                carObject = new RoverObject("Rover2", pos, roverModel, wheelModel, radar, laser, maxSteerAngle, steerRate,
+                    wheelSideFriction, wheelFwdFriction, wheelTravel, wheelRadius, wheelZOffset, wheelRestingFrac, wheeldampingFrac, wheelNumRays, driveTorque, PhysicsSystem.Gravity.Length());
                 carObject.Rover.EnableCar();
                 carObject.Rover.Chassis.Body.AllowFreezing = false;
             }
