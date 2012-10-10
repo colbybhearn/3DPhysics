@@ -583,7 +583,6 @@ namespace RoboGame
                     
                     int size = (int)chatFont.MeasureString(text[i]).X;
                     sb.Draw(BlankBackground, new Rectangle((int)screen.X - size/2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);
-
                     sb.DrawString(chatFont, text[i], new Vector2(screen.X - size/2, screen.Y), Color.White);
                 }
             }
@@ -591,19 +590,25 @@ namespace RoboGame
             ChatManager.Draw(sb);
             //DrawLightTest(this.graphicsDevice);
 
-            if (myRover.hasRadar)
+            if (myRover != null)
             {
-                // The radar map                
-                sb.Draw(radar, new Rectangle(10, 900, 100, 100), Color.White);
+                if (myRover.hasRadar)
+                {
+                    // The radar map                
+                    if(radar!=null)                    
+                        sb.Draw(radar, new Rectangle(10, 900, 100, 100), Color.White);
 
-                // The Icon
-                sb.Draw(radar_icon, new Rectangle(10, 10, 50, 50), Color.White);
-            }
+                    // The Icon
+                    if(radar_icon != null)
+                        sb.Draw(radar_icon, new Rectangle(10, 10, 50, 50), Color.White);
+                }
 
-            if (myRover.hasLaser)
-            {
-                // The Icon
-                sb.Draw(laser_icon, new Rectangle(70, 10, 50, 50), Color.White);
+                if (myRover.hasLaser)
+                {
+                    // The Icon
+                    if(laser_icon!=null)
+                        sb.Draw(laser_icon, new Rectangle(70, 10, 50, 50), Color.White);
+                }
             }
 
         }
