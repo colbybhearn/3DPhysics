@@ -20,16 +20,18 @@ namespace Helper.Physics
         private Stopwatch tmrPhysicsElapsed;
         private double lastPhysicsElapsed;
         private SortedList<int, Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
-        private SortedList<int, Gobject> newObjects;
+        private SortedList<int, Gobject> ObjectsToAdd;
+        private List<int> ObjectsToDelete; 
         public bool DebugPhysics { get; set; }
         public bool PhysicsEnabled { get; set; }
         double TIME_STEP = .01; // Recommended timestep
         float SimFactor = 1.0f;
 
-        public PhysicsManager(ref SortedList<int, Gobject> gObjects, ref SortedList<int, Gobject> nObjects, double updateInterval = 10)
+        public PhysicsManager(ref SortedList<int, Gobject> gObjects, ref SortedList<int, Gobject> nObjects, ref List<int> dObjects, double updateInterval = 10)
         {
             gameObjects = gObjects;
-            newObjects= nObjects;
+            ObjectsToAdd= nObjects;
+            ObjectsToDelete = dObjects;
             InitializePhysics(updateInterval);
         }
 
@@ -67,6 +69,7 @@ namespace Helper.Physics
             Counter.AddTick("average_pups", Counter.GetAverageValue("pups"));
             //Add our new objects
             FinalizeNewObjects();
+            RemoveDeletedObjects();
 
             CallPreIntegrate();
             // Should use a variable timerate to keep up a steady "feel" if we bog down?
@@ -80,6 +83,27 @@ namespace Helper.Physics
             lastPhysicsElapsed = tmrPhysicsElapsed.ElapsedMilliseconds;
 
             ResetTimer();
+        }
+
+        private void RemoveDeletedObjects()
+        {
+            lock (gameObjects)
+            {
+                lock (ObjectsToDelete)
+                {
+                    foreach (int id in ObjectsToDelete)
+                    {
+                        if (gameObjects.ContainsKey(id))
+                        {
+                            // Remove the body inbetween updates
+                            // don't collide on it in the mean time
+                            Body b = gameObjects[id].Body;
+                            b.DisableBody();
+                            gameObjects.Remove(id);
+                        }
+                    }
+                }
+            }
         }
         public event Helper.Handlers.voidEH PostIntegrate;
         private void CallPostIntegrate()
@@ -100,15 +124,15 @@ namespace Helper.Physics
         {
             lock (gameObjects)
             {
-                lock (newObjects)
+                lock (ObjectsToAdd)
                 {
-                    while (newObjects.Count > 0)
+                    while (ObjectsToAdd.Count > 0)
                     {
                         // Remove from end of list so no shuffling occurs? (maybe)
-                        int id = newObjects.Values[0].ID;
-                        newObjects[id].FinalizeBody();
-                        gameObjects.Add(newObjects[id].ID, newObjects[id]);
-                        newObjects.Remove(id);
+                        int id = ObjectsToAdd.Values[0].ID;
+                        ObjectsToAdd[id].FinalizeBody();
+                        gameObjects.Add(ObjectsToAdd[id].ID, ObjectsToAdd[id]);
+                        ObjectsToAdd.Remove(id);
                     }
                 }
             }
@@ -168,18 +192,35 @@ namespace Helper.Physics
         {
             lock (gameObjects)
             {
-                lock (newObjects)
+                lock (ObjectsToAdd)
                 {
                     if (gameObjects.ContainsKey(gob.ID) ||
-                        newObjects.ContainsKey(gob.ID))
+                        ObjectsToAdd.ContainsKey(gob.ID))
                         return false;
 
-                    newObjects.Add(gob.ID, gob);
+                    ObjectsToAdd.Add(gob.ID, gob);
                 }
             }
             return true;
         }
 
+        public void RemoveObject(int id)
+        {
+            if(ObjectsToAdd.ContainsKey(id))  // if it's not yet in the game, 
+                ObjectsToAdd.Remove(id); // rip it out
+
+            if (!gameObjects.ContainsKey(id)) // if it's not in the game
+                return; // we're good
+            
+            // it's already in the game
+
+            if (ObjectsToDelete.Contains(id)) // if it's already in the delete list
+                return; // we're good
+
+            // add it to the list so it gets deleted at the correct time.
+            ObjectsToDelete.Add(id);
+            
+        }
 
         
         public Gobject GetBox(Model model)
@@ -212,7 +253,7 @@ namespace Helper.Physics
             // body has world position
             // skin is relative to the body
             Box boxPrimitive = new Box(-.5f * size, orient, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
-
+            
             Gobject box = new Gobject(
                 pos,
                 size / 2,

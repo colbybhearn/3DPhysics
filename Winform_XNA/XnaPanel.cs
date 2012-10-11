@@ -61,7 +61,7 @@ namespace XnaView
             game = g;
             PhysicsSystem = g.physicsManager.PhysicsSystem;
             gameObjects = g.gameObjects;
-            newObjects = g.newObjects;           
+            newObjects = g.objectsToAdd;           
             
 
         }

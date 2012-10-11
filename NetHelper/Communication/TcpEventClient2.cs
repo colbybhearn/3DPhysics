@@ -22,20 +22,24 @@ namespace Helper.Communication
 
         }
 
-        public void Connect(IPEndPoint remoteEndPoint)
+        public bool Connect(IPEndPoint remoteEndPoint)
         {
             TcpClient client = new TcpClient();
+            bool connected = false;
             try
             {
                 client.Connect(remoteEndPoint);
                 socket = new SocketComm(client.Client);
                 socket.PacketReceived += new SocketComm.PacketReceivedEventHandler(socket_PacketReceived);
                 socket.ClientDisconnected += new Handlers.voidEH(socket_ClientDisconnected);
+                connected = true;
             }
             catch (Exception E)
             {
+                connected = false;
                 System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
+            return connected;
         }
 
         void socket_PacketReceived(byte[] data)

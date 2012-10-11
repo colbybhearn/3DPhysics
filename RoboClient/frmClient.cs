@@ -52,10 +52,12 @@ namespace RoboGame
 
         void game_Stopped()
         {
+            Application.Idle -= Application_Idle;
             this.Close();
+
         }
 
-        void Application_Idle(object sender, EventArgs e)
+        public void Application_Idle(object sender, EventArgs e)
         {
             game.ProcessInput();            
         }

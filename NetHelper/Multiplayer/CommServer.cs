@@ -126,8 +126,8 @@ namespace Helper.Multiplayer
             Packet packet = cpi.packet;
             if (packet is ClientInfoResponsePacket)
             {
+                //client connects. Server sends infoRequest, Client sends infoResponse.
                 ClientInfoResponsePacket cirp = packet as ClientInfoResponsePacket;
-                //cpi.client.alias = cirp.Alias;
                 CallClientConnected(cpi.id, cirp.Alias);
 
                 // Let everyone know they joined
@@ -156,9 +156,21 @@ namespace Helper.Multiplayer
                 ObjectActionPacket oap = packet as ObjectActionPacket;
                 CallObjectActionReceived(oap.objectId, oap.actionParameters);
             }
-            
-            
+            else if (packet is ObjectAttributePacket)
+            {
+                ObjectAttributePacket oap = packet as ObjectAttributePacket;
+                CallObjectAttributeReceived(oap);
+            }
         }
+
+        public event Handlers.ObjectAttributeEH ObjectAttributeReceived;
+        private void CallObjectAttributeReceived(ObjectAttributePacket oap)
+        {
+            if (ObjectAttributeReceived == null)
+                return;
+            ObjectAttributeReceived(oap);
+        }
+
 
         public event Helper.Handlers.ObjectActionEH ObjectActionReceived;
         private void CallObjectActionReceived(int id, object[] parameters)
@@ -184,6 +196,7 @@ namespace Helper.Multiplayer
             ChatMessageReceived(cm);
         }
 
+        // Colby fixed the name of this 2012.10.10
         public event Helper.Handlers.IntStringEH ClientConnected;
         private void CallClientConnected(int id, string alias)
         {
@@ -242,23 +255,5 @@ namespace Helper.Multiplayer
             BroadcastPacket(p);
         } 
         #endregion
-
-        /*private int GetAvailableClientId()
-        {
-            int newId = 0;
-            bool found = true;
-            while (found)
-            {
-                newId++;
-                found = false;
-                foreach (ClientInfo ci in Clients.Values)
-                    if (ci.id == newId)
-                    {
-                        found = true;
-                        break;
-                    }
-            }
-            return newId;
-        }*/
     }
 }

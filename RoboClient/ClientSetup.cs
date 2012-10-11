@@ -15,31 +15,32 @@ namespace RoboGame
         public ClientSetup()
         {
             InitializeComponent();
-            game = new RoboGame();
-            game.ConnectedToServer += new Helper.Handlers.ClientConnectedEH(game_ConnectedToServer);
-            game.DiconnectedFromServer += new Helper.Handlers.IntEH(game_DiconnectedFromServer);
+            
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            if (game.IsConnectedToServer)
-            {
-                game.DisconnectFromServer();
+            if (game !=null && game.IsConnectedToServer)
+            {                
+                CloseClient();
             }
             else
             {
+                game = new RoboGame();
+                game.OtherClientConnectedToServer += new Helper.Handlers.ClientConnectedEH(game_ConnectedToServer);
+                game.ThisClientDisconnectedFromServer += new Helper.Handlers.voidEH(game_ThisClientDiconnectedFromServer);
                 if (game.ConnectToServer(txtIPAddress.Text, iPort, txtAlias.Text))
                 {
-                    LaunchClient();
+                    LaunchClient();                    
                 }
             }
         }
 
-        void game_DiconnectedFromServer(int i)
+        void game_ThisClientDiconnectedFromServer()
         {
             if (InvokeRequired)
             {
-                this.Invoke(new Helper.Handlers.IntEH(game_DiconnectedFromServer), new object[] { i });
+                this.Invoke(new Helper.Handlers.voidEH(game_ThisClientDiconnectedFromServer));
                 return;
             }
             btnConnect.Text = "Connect";
@@ -53,6 +54,7 @@ namespace RoboGame
                 return;
             }
             btnConnect.Text = "Disconnect";
+            
         }
         private void numLobbyPort_ValueChanged(object sender, EventArgs e)
         {
@@ -102,6 +104,11 @@ namespace RoboGame
         {
             roboclient = new frmClient(ref game);
             roboclient.Show();
+        }
+
+        private void CloseClient()
+        {
+            game.Stop(); // this closes the client form via a stopped event handled by the client form
         }
 
         private void btnSettings_Click(object sender, EventArgs e)

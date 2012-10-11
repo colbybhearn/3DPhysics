@@ -36,7 +36,8 @@ namespace Game
         public static BaseGame Instance { get; private set; }
         SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
         public SortedList<int, Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
-        public SortedList<int, Gobject> newObjects; // This member is accessed from multiple threads and needs to be locked
+        public SortedList<int, Gobject> objectsToAdd; // This member is accessed from multiple threads and needs to be locked
+        public List<int> objectsToDelete;
         public Gobject currentSelectedObject;
         internal List<ObjectUpdatePacket> physicsUpdateList = new List<ObjectUpdatePacket>();
         #endregion
@@ -113,8 +114,9 @@ namespace Game
         public event Helper.Handlers.voidEH Stopped;
         public event Handlers.ChatMessageEH ChatMessageReceived;
         public event Helper.Handlers.IntStringEH ClientConnected;
-        public event Handlers.ClientConnectedEH ConnectedToServer;
-        public event Handlers.IntEH DiconnectedFromServer;
+        public event Handlers.ClientConnectedEH OtherClientConnectedToServer;
+        public event Handlers.IntEH OtherClientDiconnectedFromServer;
+        public event Handlers.voidEH ThisClientDisconnectedFromServer;
         #endregion
 
         #region Content
@@ -143,10 +145,11 @@ namespace Game
         {
             graphicsDevice = null;
             gameObjects = new SortedList<int, Gobject>();
-            newObjects = new SortedList<int, Gobject>();
+            objectsToAdd = new SortedList<int, Gobject>();
+            objectsToDelete = new List<int>();
             Instance = this;
 
-            physicsManager = new PhysicsManager(ref gameObjects, ref newObjects, physicsUpdateInterval);
+            physicsManager = new PhysicsManager(ref gameObjects, ref objectsToAdd, ref objectsToDelete, physicsUpdateInterval);
             physicsManager.PreIntegrate += new Handlers.voidEH(physicsManager_PreIntegrate);
             physicsManager.PostIntegrate += new Handlers.voidEH(physicsManager_PostIntegrate);
         }
@@ -222,7 +225,7 @@ namespace Game
         }
 
         /// <summary>
-        /// Should contain all model, and texture loading
+        /// Should do all model, and texture loading
         /// </summary>
         public virtual void InitializeContent()
         {
@@ -258,7 +261,7 @@ namespace Game
         }
 
         /// <summary>
-        /// Should contain scene and object initialization
+        /// Should do scene and object initialization
         /// </summary>
         public virtual void InitializeEnvironment()
         {
@@ -274,7 +277,7 @@ namespace Game
                                             new Vector3(15000f, .55f, 15000f),  // X with, possible y range, Z depth 
                                             100, 100, graphicsDevice, moon);
 
-                    newObjects.Add(terrain.ID, terrain);
+                    objectsToAdd.Add(terrain.ID, terrain);
                 }
                 catch (Exception E)
                 {
@@ -287,17 +290,57 @@ namespace Game
                 {
                     // some video cards can't handle the >16 bit index type of the terrain
                     HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
-                    newObjects.Add(heightmapObj.ID, heightmapObj);
+                    objectsToAdd.Add(heightmapObj.ID, heightmapObj);
                 }
                 catch (Exception E)
                 {
                     // if that happens just create a ground plane 
                     planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0), "");
-                    newObjects.Add(planeObj.ID, planeObj);
+                    objectsToAdd.Add(planeObj.ID, planeObj);
                     System.Diagnostics.Debug.WriteLine(E.StackTrace);
                 }
             }
         }
+
+        /// <summary>
+        /// should do client and server communication initialization
+        /// </summary>
+        public virtual void InitializeMultiplayer()
+        {
+            if (isClient)
+            {
+                commClient.ClientInfoRequestReceived += new Handlers.IntEH(commClient_ClientInfoRequestReceived);
+                commClient.ChatMessageReceived += new Handlers.ChatMessageEH(commClient_ChatMessageReceived);
+                commClient.ObjectAddedReceived += new Handlers.ObjectAddedResponseEH(commClient_ObjectAddedReceived);
+                commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
+                commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
+                commClient.ThisClientDisconnectedFromServer += new Handlers.voidEH(commClient_ThisClientDisconnectedFromServer);
+                commClient.OtherClientConnectedToServer += new Handlers.ClientConnectedEH(commClient_OtherClientConnected);
+                commClient.OtherClientDisconnectedFromServer += new Handlers.IntEH(commClient_OtherClientDisconnectedFromServer);
+                
+                commClient.ObjectAttributeReceived += new Handlers.ObjectAttributeEH(commClient_ObjectAttributeReceived);
+                commClient.ObjectDeleteReceived += new Handlers.IntEH(commClient_ObjectDeleteReceived);
+            }
+            else if (isServer)
+            {
+                // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
+                commServer.ClientConnected += new Handlers.IntStringEH(commServer_ClientConnected);
+                commServer.ChatMessageReceived += new Handlers.ChatMessageEH(commServer_ChatMessageReceived);
+                commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
+                commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
+                commServer.ObjectRequestReceived += new Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
+                commServer.ObjectAttributeReceived += new Handlers.ObjectAttributeEH(commServer_ObjectAttributeReceived);
+            }
+        }
+
+        void commClient_ThisClientDisconnectedFromServer()
+        {
+            isConnectedToServer = false;
+            if (ThisClientDisconnectedFromServer == null)
+                return;
+            ThisClientDisconnectedFromServer();
+        }
+
         
         #endregion
 
@@ -314,13 +357,13 @@ namespace Game
             currentSelectedObject.Selected = true;
             //objectCam.TargetPosition = currentSelectedObject.Position;
         }
-        private int GetAvailableObjectId()
+        public int GetAvailableObjectId()
         {
             int id = 1;
             bool found = true;
             while (found)
             {
-                if (gameObjects.ContainsKey(id) || newObjects.ContainsKey(id))
+                if (gameObjects.ContainsKey(id) || objectsToAdd.ContainsKey(id))
                     id++;
                 else
                     found = false;
@@ -328,12 +371,12 @@ namespace Game
 
             return id;
         }
-        public void Stop()
+        public virtual void Stop()
         {
             physicsManager.Stop();
-            if (commClient != null)
-                commClient.Stop();
-            if (commServer != null)
+            if(isConnectedToServer) // Client Side
+                DisconnectFromServer();
+            if (commServer != null) // Server Side
                 commServer.Stop();
             CallStopped();
         }
@@ -394,12 +437,10 @@ namespace Game
 
         public virtual void DeleteObject(int objectid)
         {
-            lock (gameObjects)
-            {
-                if (gameObjects.ContainsKey(objectid))
-                    gameObjects.Remove(objectid);
-            }
+            // let it handle the physics-related concerns 
+            physicsManager.RemoveObject(objectid);
 
+            // we'll handle the game-related concerns
             if (isServer)
                 commServer.BroadcastPacket(new ObjectDeletedPacket(objectid));
         }
@@ -407,7 +448,7 @@ namespace Game
 
         /// <summary>
         /// The physics engine is about to integrate, so we need to process things from the server about "reality"
-        /// now is the time for the client to send ObjectUpdatePackets the server about inputs
+        /// now is the time for the client to send ObjectActionPackets the server about inputs
         /// now is the tine for the client to process ObjectAttributePackets from the server about changes (shape, mode, behavior).
         /// now is the time for the client to process ObjectUpdatePackets from the server about pos/orient/vel
         /// now is the time for the server to process ObjectActionPackets the client about pos/orient/vel
@@ -427,6 +468,9 @@ namespace Game
                         if (!go.actionManager.actionApplied)
                             continue;
 
+                        if (go is RoverObject)
+                        {
+                        }
                         object[] vals = go.actionManager.GetActionValues();
                         go.actionManager.ValueSwap();
                         commClient.SendObjectAction(go.ID, vals);
@@ -678,29 +722,57 @@ namespace Game
 
         #region Common to Server and Client
 
-        public virtual void InitializeMultiplayer()
-        {
-            if(isClient)
-            {
-                commClient.ClientInfoRequestReceived += new Handlers.IntEH(commClient_ClientInfoRequestReceived);
-                commClient.ChatMessageReceived += new Handlers.ChatMessageEH(commClient_ChatMessageReceived);
-                commClient.ObjectAddedReceived += new Handlers.ObjectAddedResponseEH(commClient_ObjectAddedReceived);
-                commClient.ObjectActionReceived += new Handlers.ObjectActionEH(commClient_ObjectActionReceived);
-                commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-                commClient.DisconnectedFromServer += new Handlers.IntEH(commClient_NotConnectedToServer);
-                commClient.ConnectedToServer += new Handlers.ClientConnectedEH(commClient_ClientConnected);
-                commClient.ObjectAttributeReceived += new Handlers.ObjectAttributeEH(commClient_ObjectAttributeReceived);
-                commClient.ObjectDeleteReceived += new Handlers.IntEH(commClient_ObjectDeleteReceived);
-            }
-            else if(isServer)
-            {
-                // TODO: Should client connected and ChatMessage Received be handled elsewhere (not in BaseGame) for the server?
-                commServer.ClientConnected += new Handlers.IntStringEH(commServer_ClientConnected);
-                commServer.ChatMessageReceived += new Handlers.ChatMessageEH(commServer_ChatMessageReceived);
-                commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
-                commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
-                commServer.ObjectRequestReceived += new Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
-            }
+        void commServer_ObjectAttributeReceived(ObjectAttributePacket oap)
+        { // DO NOTHING, READ BELOW for WHY we should DO NOTHING.
+            /*
+             * If the client and server send a change at the same time
+             * the server could tell the client, you just got a radar.
+             * the client could have requested to drop a laser
+             * 
+             * if the server sends before it receives the client's request, then it tells the client, you now have a laser and a radar.
+             * When the server gets the client's request, the server won't know (currently) what changed, so it has to take the client at face value (no laser and no radar)
+             * this is a more general version of the issue with ActionValues and detecting what changed.
+             * 
+             * solutions:
+             *  1 the messages need to be true deltas (The server needs to know what, specifically, changed that caused the attribute packet so that it can do only that which was requested. Drop the laser!)
+             *  2  
+             *  
+             * Implementations:
+             *  1 Put old and new in the AttributePacket
+             *  2 relay which value to change and to what value. (this can be done by sending the delta, not the actual value)
+             *  
+             * Example: 
+             * Say a rover's laser is dropped.
+             * For the rover, that is boolean value number 2 at index 1
+             * instead of sending a false for hasLaser, signify the delta with a true (it did change [flipped])
+             * Instead of sending a 70 for energy left, signify the delta with a -5 (it did change by -5)
+             * Instead of sending a 20.5 for throttle, signify the delta with a +1.5 (it did change by +1.5)
+             * 
+             * What about synchronization?
+             * Will the client get out of sync with the server or vice-a-versa?
+             * What if the server sends hard values and the client reports deltas as requests?
+             * The client doesn't modify its attributes.
+             * The client sends input to the server.
+             * the server modifies attributes.
+             * 
+             * Currently, the server processes input.
+             * To go forward, the ActionManager is updated about the requets to go forward.
+             * Before the client integrates, ActionManager wraps up the input for the object into an Object Action Packet sent to the server.
+             * Sever simulates the input, does integration, and replies with an Object Update Packet
+             * the client applies that Object Update Packet before integrating.
+             * 
+             * The server needing to process Object Attribute Packets is based on the client processing input which affects other clients.
+             * ULTIMATE SOLUTION: If the laser drop were just another ActionValue for the server to simulate, the server would not need to process object attribute requests from the client.
+             * 
+             * That being said, how much needs to be simulated on the server?
+             * ANYTHING THAT AFFECTS ANOTHER CLIENT
+             *  - changes in Appearance
+             *  - changes in Behavior
+             * 
+             * If it only affects the source client, it doesn't need to be sent.
+             * Thus, managing internal inventory, or changing where energy is routed can be done locally without server involvement.
+             * 
+             */
         }
 
         void commServer_ObjectRequestReceived(int clientId, string asset)
@@ -721,23 +793,24 @@ namespace Game
             }
         }
         
-        void commClient_ClientConnected(int id, string alias)
+        void commClient_OtherClientConnected(int id, string alias)
         {
             if (players.ContainsKey(id) == false)
                 players.Add(id, alias);
 
             isConnectedToServer = true;
-            if (ConnectedToServer == null)
+            if (OtherClientConnectedToServer == null)
                 return;
-            ConnectedToServer(id, alias);
+            OtherClientConnectedToServer(id, alias);
         }
         
-        void commClient_NotConnectedToServer(int id)
+        // Colby fixed the name of this handler
+        void commClient_OtherClientDisconnectedFromServer(int id)
         {
-            isConnectedToServer = false;
-            if (DiconnectedFromServer == null)
+            isConnectedToServer = false; // this is wrong 2012.10.09
+            if (OtherClientDiconnectedFromServer == null)
                 return;
-            DiconnectedFromServer(id);
+            OtherClientDiconnectedFromServer(id);
             
         }
 
@@ -849,6 +922,7 @@ namespace Game
         public void DisconnectFromServer()
         {
             commClient.Stop();
+            isConnectedToServer = false;            
         }
         #endregion
 

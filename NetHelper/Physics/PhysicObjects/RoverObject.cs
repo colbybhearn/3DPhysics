@@ -9,6 +9,7 @@ namespace Helper.Physics.PhysicsObjects
 {
     public class RoverObject : Gobject
     {
+        #region Properties and Fields
         private Rover rover;
         private Model wheel;
         private Model Radar;
@@ -16,6 +17,22 @@ namespace Helper.Physics.PhysicsObjects
         public bool hasRadar = false;
         public bool hasLaser = false;
         public float Energy = 100.0f;   // Should be reduced by server and value passed to client        
+        public Rover Rover
+        {
+            get { return this.rover; }
+        }
+        #endregion
+
+        // These must be actions like dropRadar,
+        // not properties like hasRadar.
+        public enum Actions
+        {
+            Acceleration,
+            Steering,
+            DropLaser,
+            DropRadar,
+            ShootLaser,
+        }
 
         public RoverObject(string asset,
             Vector3 pos,
@@ -52,16 +69,12 @@ namespace Helper.Physics.PhysicsObjects
             CommonInit(pos, new Vector3(1, 1, 1), model, true, asset);
             SetCarMass(400.1f);
 
+            // allow different types of bindings. bool, int, float
             actionManager.AddBinding((int)Actions.Acceleration, new Helper.Input.ActionBindingDelegate(SimulateAcceleration), 1);
             actionManager.AddBinding((int)Actions.Steering, new Helper.Input.ActionBindingDelegate(SimulateSteering), 1);
-            actionManager.AddBinding((int)Actions.Laser, new Helper.Input.ActionBindingDelegate(SimulateLaser), 1);
-        }
-
-        public enum Actions
-        {
-            Acceleration,
-            Steering,
-            Laser
+            actionManager.AddBinding((int)Actions.ShootLaser, new Helper.Input.ActionBindingDelegate(SimulateShootLaser), 1);
+            actionManager.AddBinding((int)Actions.DropLaser, new Helper.Input.ActionBindingDelegate(SimulateDropLaser), 1);
+            actionManager.AddBinding((int)Actions.DropRadar, new Helper.Input.ActionBindingDelegate(SimulateDropRadar), 1);
         }
 
         public override void FinalizeBody()
@@ -195,11 +208,6 @@ namespace Helper.Physics.PhysicsObjects
             
             return Matrix.CreateScale(Scale * .4f) * Matrix.CreateTranslation(new Vector3(-1, .4f, .5f)) * rover.Chassis.Body.Orientation * Matrix.CreateTranslation(rover.Chassis.Body.Position);
         }
-        
-        public Rover Rover
-        {
-            get { return this.rover; }
-        }
 
         private void SetCarMass(float mass)
         {
@@ -224,43 +232,59 @@ namespace Helper.Physics.PhysicsObjects
         }
 
         #region Input
+        public override void SetNominalInput()
+        {
+            SetAcceleration(0);
+            SetSteering(0);
+            SetShootLaser(0);
+        }
+
         public void SimulateAcceleration(object[] vals)
         {
             SetAcceleration((float)vals[0]);
         }
+        public void SimulateSteering(object[] vals)
+        {
+            SetSteering((float)vals[0]);
+        }
+        public void SimulateShootLaser(object[] vals)
+        {
+            SetShootLaser((float)vals[0]);
+        }
+        public void SimulateDropLaser(object[] vals)
+        {
+            // we need more generic ActionValues.
+            // different types, like ObjectAttributes so that this next procedure is cleaner
+            if ((float)vals[0] > .5f)
+                SetLaser(false);
+        }
+        public void SimulateDropRadar(object[] vals)
+        {
+            if ((float)vals[0] > .5f)
+                SetRadar(false);
+        }
+        
         public void SetAcceleration(float p)
         {
             rover.Accelerate = p;
             actionManager.SetActionValues((int)Actions.Acceleration, new object[] { p });
-        }
-
-        public void SimulateSteering(object[] vals)
-        {
-            SetSteering((float)vals[0]);
         }
         public void SetSteering(float p)
         {
             rover.Steer = p;
             actionManager.SetActionValues((int)Actions.Steering, new object[] { p });
         }
-
-        public void SimulateLaser(object[] vals)
+        public void SetShootLaser(float p)
         {
-            setLaser((float)vals[0]);
+            actionManager.SetActionValues((int)Actions.DropLaser, new object[] { p });
         }
-        public void setLaser(float p)
+        public void DropRadar()
         {
-            // Anything physical to do here?
-
-            actionManager.SetActionValues((int)Actions.Laser, new object[] { p });
+            actionManager.SetActionValues((int)Actions.DropRadar, new object[] { 1 });
         }
-        #endregion
-
-        public override void SetNominalInput()
+        public void DropLaser()
         {
-            SetAcceleration(0);
-            SetSteering(0);
-            setLaser(0);
+            actionManager.SetActionValues((int)Actions.DropLaser, new object[] { 1 });
         }
 
         public void SetRadar(bool hasit)
@@ -268,12 +292,12 @@ namespace Helper.Physics.PhysicsObjects
             hasAttributeChanged = hasRadar != hasit;
             hasRadar = hasit;
         }
-
         public void SetLaser(bool hasit)
         {
             hasAttributeChanged = hasLaser != hasit;
             hasLaser = hasit;
         }
+        #endregion
 
         /// <summary>
         /// Used by the server to gather up info to distribute to all clients
@@ -288,13 +312,27 @@ namespace Helper.Physics.PhysicsObjects
             fv = null;
         }
 
+        /// <summary>
+        /// Used by the client to apply authoritative attributes described by the server
+        /// </summary>
+        /// <param name="bv"></param>
+        /// <param name="iv"></param>
+        /// <param name="fv"></param>
         public override void SetObjectAttributes(bool[] bv, int[] iv, float[] fv)
         {
+            // user presses forward and coasts into a radar
+            // server detects and calls SetRadar(true)
+            // server now hasAttributeChanged = true;
+            // during PostIntegrate, server will send objectattribute update to client with radar=true;
+            // client receives and calls SetObjectAttributes.
+            // if hasRadar is just set to true, the next ObjectActionPacket sent to the server says radar=false. // it should say dropRadar = false;
+
+
             int index = -1;
             if (bv != null && bv.Length>=2)
             {
-                hasRadar = bv[++index];
-                hasLaser = bv[++index];
+                SetRadar(bv[++index]);
+                SetLaser(bv[++index]);
             }
             index = -1;
         }

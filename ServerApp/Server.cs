@@ -29,6 +29,14 @@ namespace ServerApp
             game = new RoboGame.RoboGame();
             game.ClientConnected += new Helper.Handlers.IntStringEH(game_ClientConnected); 
             AddXnaPanel(ref game);
+
+            bool autoStart = false;
+            bool autoMinimize = false;
+            if (autoStart)
+                StartServer();
+
+            if (autoMinimize)
+                this.WindowState = FormWindowState.Minimized;
         }
 
         void game_ClientConnected(int id, string alias)
@@ -97,6 +105,11 @@ namespace ServerApp
         #region Events Handlers
 
         private void btnStartServer_Click(object sender, EventArgs e)
+        {
+            StartServer();
+        }
+
+        private void StartServer()
         {
             game.ListenForClients(iLobbyPort);
             btnStartServer.Enabled = false;

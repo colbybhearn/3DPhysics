@@ -115,6 +115,9 @@ namespace RoboGame
         public override void InitializeMultiplayer()
         {
             base.InitializeMultiplayer();
+
+            if (isServer)
+                SpawnPickups();
         }
         public override void InitializeEnvironment()
         {
@@ -142,7 +145,7 @@ namespace RoboGame
                 {
                     // some video cards can't handle the >16 bit index type of the terrain
                     HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
-                    newObjects.Add(heightmapObj.ID, heightmapObj);
+                    objectsToAdd.Add(heightmapObj.ID, heightmapObj);
                 }
                 catch (Exception E)
                 {
@@ -153,8 +156,7 @@ namespace RoboGame
                 }
             }
 
-            //SpawnRover(0, 1);
-            SpawnPickups();
+            
         }
 
         public override List<ViewProfile> GetViewProfiles()
@@ -233,6 +235,13 @@ namespace RoboGame
         #endregion
 
         #region Methods
+
+        public override void Stop()
+        {
+            base.Stop();
+            radar_noise_loop.Stop();
+            solar_wind_loop.Stop();
+        }
 
         private void EnterExitVehicle()
         {
@@ -395,7 +404,8 @@ namespace RoboGame
 
                 //Gobject sphere = physicsManager.GetSphere(new Vector3(x, 3.0f, z), 1.0f, sphereModel, true);
                 Gobject box = physicsManager.GetBoxHighFriction(new Vector3(x, 3.0f, z), new Vector3(1.0f, 1.0f, 1.0f), Matrix.Identity, cubeModel, true);
-                box.ID = 1000 + i;                
+                box.ID = GetAvailableObjectId();  
+                
                 physicsManager.AddNewObject(box);
             }
 
@@ -408,8 +418,8 @@ namespace RoboGame
                 x = x * 250;
                 z = z * 250;
 
-                Gobject sphere = physicsManager.GetSphere(new Vector3(x, 3.0f, z), 0.4f, sphereModel, true);                
-                sphere.ID = 2000 + i;
+                Gobject sphere = physicsManager.GetSphere(new Vector3(x, 3.0f, z), 0.4f, sphereModel, true);
+                sphere.ID = GetAvailableObjectId();
                 physicsManager.AddNewObject(sphere);
             }
 
@@ -497,7 +507,7 @@ namespace RoboGame
         {
             if (myRover == null)
                 return;
-            myRover.setLaser(1.0f);
+            myRover.SetShootLaser(1.0f);
         }
         #endregion
 
@@ -528,6 +538,9 @@ namespace RoboGame
 
             if(rover==null || obj == null)
                 return true;
+
+            if (objectsToDelete.Contains(obj.ID)) // if the object is going to be deleted soon,
+                return false; // don't bother doing any collision with it
 
             string type = obj.Asset.ToLower();
             if (type == "cube")

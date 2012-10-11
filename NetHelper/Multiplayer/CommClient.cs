@@ -31,19 +31,20 @@ namespace Helper.Multiplayer
             Server = new ServerInfo(new IPEndPoint(a, iPort));
         }
 
+        bool connected = false;
         public bool Connect()
         {
             Debug.WriteLine("Client: Connection " + Server.endPoint.Address.ToString() + " " + iPort);
-            bool connected = false;
+            
             try
             {
                 ShouldBeRunning = true;
                 inputThread = new Thread(new ThreadStart(inputWorker));
                 inputThread.Start();
                 client = new TcpEventClient2();
-                client.Connect(Server.endPoint);
                 client.PacketReceived += new Helper.Handlers.PacketReceivedEH(PacketReceived);
-                connected = true;
+                client.Disconnected += new Handlers.voidEH(client_ThisClientDisconnectedFromServer);                
+                connected = client.Connect(Server.endPoint);
             }
             catch (Exception ex)
             {
@@ -52,6 +53,14 @@ namespace Helper.Multiplayer
             }
 
             return connected;
+        }
+
+        public event Handlers.voidEH ThisClientDisconnectedFromServer;
+        void client_ThisClientDisconnectedFromServer()
+        {
+            if (ThisClientDisconnectedFromServer == null)
+                return;
+            ThisClientDisconnectedFromServer();
         }
 
         void PacketReceived(Helper.Multiplayer.Packets.Packet p)
@@ -111,14 +120,12 @@ namespace Helper.Multiplayer
             else if (packet is ClientDisconnectPacket)
             {
                 ClientDisconnectPacket cdp = packet as ClientDisconnectPacket;
-
-                CallDisconnectedFromServer(cdp.id);
+                CallOtherClientDisconnectedFromServer(cdp.id);
             }
             else if (packet is ClientConnectedPacket)
             {
                 ClientConnectedPacket ccp = packet as ClientConnectedPacket;
-
-                CallConnectedToServer(ccp.ID, ccp.Alias);
+                CallOtherClientConnectedToServer(ccp.ID, ccp.Alias);
             }
             else if (packet is ObjectAttributePacket)
             {
@@ -132,6 +139,14 @@ namespace Helper.Multiplayer
             }
         }
 
+        public event Handlers.IntEH OtherClientDisconnectedFromServer;
+        private void CallOtherClientDisconnectedFromServer(int id)
+        {
+            if (OtherClientDisconnectedFromServer == null)
+                return;
+            OtherClientDisconnectedFromServer(id);
+        }
+        
         public event Handlers.IntEH ObjectDeleteReceived;
         private void CallObjectDeleteReceived(ObjectDeletedPacket odp)
         {
@@ -148,20 +163,12 @@ namespace Helper.Multiplayer
             ObjectAttributeReceived(oap);
         }
 
-        public event Handlers.ClientConnectedEH ConnectedToServer;
-        private void CallConnectedToServer(int id, string alias)
+        public event Handlers.ClientConnectedEH OtherClientConnectedToServer;
+        private void CallOtherClientConnectedToServer(int id, string alias)
         {
-            if(ConnectedToServer == null)
+            if(OtherClientConnectedToServer == null)
                 return;
-            ConnectedToServer(id, alias);
-        }
-
-        public event Handlers.IntEH DisconnectedFromServer;
-        private void CallDisconnectedFromServer(int id)
-        {
-            if (DisconnectedFromServer == null)
-                return;
-            DisconnectedFromServer(id);
+            OtherClientConnectedToServer(id, alias);
         }
 
         public event Helper.Handlers.ObjectActionEH ObjectActionReceived;

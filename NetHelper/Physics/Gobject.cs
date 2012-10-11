@@ -22,7 +22,6 @@ namespace Helper.Physics
         public Helper.Input.ActionManager actionManager = new Helper.Input.ActionManager();
         public List<Controller> controllers = new List<Controller>();
         internal BasicEffect Effect { get; set; }
-        public bool ShouldDelete = false;
 
         /// <summary>
         /// Default Constructor
