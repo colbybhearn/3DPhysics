@@ -20,6 +20,7 @@ namespace RoboGame
     // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
     public class RoboGame : BaseGame
     {
+        #region Properties / Fields
         public enum GameplayModes
         {
             Rover,
@@ -52,14 +53,23 @@ namespace RoboGame
         SoundEffectInstance motor_running;
         SoundEffectInstance radar_noise_loop;
         
+        Texture2D BlankBackground;
+        public enum SpecificInputGroups
+        {
+            Communication,
+            Rover,
+            Lander,
+            Interface,
+        }
+        #endregion
 
+        #region Initialization
         public RoboGame()
         {
             name = "RoBo Game";
 
             
         }
-
         public override void InitializeContent()
         {
             base.InitializeContent();
@@ -99,28 +109,13 @@ namespace RoboGame
             radar_noise_loop.IsLooped = true;
 
             // Let play this right away;  should not play on the server through
-            solar_wind_loop.Play();
+            if(isClient)
+                solar_wind_loop.Play();
         }
-
         public override void InitializeMultiplayer()
         {
             base.InitializeMultiplayer();
-
-            if(isClient)
-            {
-                //commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-            }
-            else if(isServer)
-            {
-                commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
-            }
         }
-        
-        void commServer_ObjectRequestReceived(int clientId, string asset)
-        {
-            ProcessObjectRequest(clientId, asset);
-        }
-
         public override void InitializeEnvironment()
         {
             bool useCustomTerrain = false;
@@ -162,6 +157,14 @@ namespace RoboGame
             SpawnPickups();
         }
 
+        public override List<ViewProfile> GetViewProfiles()
+        {
+            List<ViewProfile> profiles = base.GetViewProfiles();
+            profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
+                "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2.0f, 0), 1.0f));
+            return profiles;
+        }
+
         public override void InitializeInputs()
         {
             inputManager = new InputManager(this.name, GetDefaultControls());
@@ -169,7 +172,6 @@ namespace RoboGame
             inputManager.AddInputMode(InputMode.Chat, (ChatDelegate)ChatCallback);
             UpdateInputs();
         }
-
         public override KeyMapCollection GetDefaultControls()
         {
             KeyMapCollection defControls = base.GetDefaultControls();
@@ -210,7 +212,7 @@ namespace RoboGame
 
             // Interface
             List<KeyBinding> interfaceDefaults = new List<KeyBinding>();
-            interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.E, false, true, false, KeyEvent.Pressed, EnterExitVehicle));
+            //interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.E, false, true, false, KeyEvent.Pressed, EnterExitVehicle));
             interfaceDefaults.Add(new KeyBinding("Spawn Lander", Keys.L, false, true, false, KeyEvent.Pressed, SpawnLander));
             interfaceDefaults.Add(new KeyBinding("Spawn Rover", Keys.R, false, true, false, KeyEvent.Pressed, Request_Rover));
             KeyMap interfaceControls = new KeyMap(SpecificInputGroups.Interface.ToString(), interfaceDefaults);
@@ -226,17 +228,11 @@ namespace RoboGame
 
             Vector3.Subtract(ref l, ref n, out res);
 
-
             return defControls;
         }
-        
-        public enum SpecificInputGroups
-        {
-            Communication,
-            Rover,
-            Lander,
-            Interface,
-        }
+        #endregion
+
+        #region Methods
 
         private void EnterExitVehicle()
         {
@@ -264,7 +260,6 @@ namespace RoboGame
 
             UpdateInputs();
         }
-
         private void UpdateInputs()
         {
             // turn off all
@@ -293,8 +288,6 @@ namespace RoboGame
         /// <summary>
         /// CLIENT SIDE  and  SERVER SIDE
         /// Called when a client receives an object update for an object it does not know about, instantiate one!
-        /// 
-        /// 
         /// Called when a server goes to add an object requested by a client
         /// </summary>
         /// <param name="objectid"></param>
@@ -351,7 +344,7 @@ namespace RoboGame
         /// <summary>
         /// CLIENT SIDE
         /// client should do something oriented to the specific game here, like player bullets or cars.
-        /// The server has granted the object request and this is where we handle the response it has sent back to the client
+        /// The server has granted the object request and this is where the client handle the response the server has sent back 
         /// This is called from the Network code, thus in the Network threads
         /// </summary>
         /// <param name="objectid"></param>
@@ -386,7 +379,6 @@ namespace RoboGame
                     break;
             }
         }
-
 
         private void SpawnPickups()
         {
@@ -523,14 +515,14 @@ namespace RoboGame
             return newobject;
         }
 
-        
         bool CollisionSkin_callbackFn(CollisionSkin skin0, CollisionSkin skin1)
         {
             RoverObject rover = null;
             Gobject obj = null;
             if (skin0.Owner.ExternalData is RoverObject)
                 rover = skin0.Owner.ExternalData as RoverObject;
-
+            if (skin1.Owner == null)
+                return true;
             if (skin1.Owner.ExternalData is Gobject)
                 obj = skin1.Owner.ExternalData as Gobject;
 
@@ -553,14 +545,6 @@ namespace RoboGame
             return true;
         }
 
-        public override List<ViewProfile> GetViewProfiles()
-        {
-            List<ViewProfile> profiles = base.GetViewProfiles();
-            profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
-                "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI/2.0f, 0), 1.0f));
-            return profiles;
-        }
-
         private void SpawnLander()
         {
             if (commClient != null)
@@ -568,16 +552,11 @@ namespace RoboGame
                 commClient.SendObjectRequest("lunar lander");
             }
         }
-        private void SpawnSpheres()
-        {
-            physicsManager.AddSpheres(5, sphereModel);
-        }
         private void ChatKeyPressed()
         {
             inputManager.Mode = InputMode.Chat;
             ChatManager.Typing = true;
         }
-
         private void ChatCallback(List<Microsoft.Xna.Framework.Input.Keys> pressed)
         {
             ChatMessage message;
@@ -590,7 +569,7 @@ namespace RoboGame
             }
         }
 
-        Texture2D BlankBackground;
+        #region Graphics
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
@@ -648,8 +627,9 @@ namespace RoboGame
                 {
                     try
                     {
-                        if (radar_noise_loop != null)
-                            radar_noise_loop.Play();                        
+                        if (isClient)
+                            if (radar_noise_loop != null)
+                                radar_noise_loop.Play();                        
                     }
                     catch(Exception x)
                     {
@@ -674,5 +654,9 @@ namespace RoboGame
             }
 
         }
+        #endregion
+
+        #endregion
+
     }
 }

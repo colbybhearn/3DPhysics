@@ -79,67 +79,6 @@ namespace Game
         {
             base.InitializeMultiplayer();
 
-            if(isClient)
-            {
-                //commClient.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commClient_ObjectUpdateReceived);
-            }
-            else if(isServer)
-            {
-                commServer.ObjectRequestReceived += new Helper.Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
-            }
-        }
-
-
-        /*
-        /// <summary>
-        /// CLIENT SIDE
-        /// Client has received an object update from the server
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="asset"></param>
-        /// <param name="pos"></param>
-        /// <param name="orient"></param>
-        /// <param name="vel"></param>
-        void commClient_ObjectUpdateReceived(int id, string asset, Microsoft.Xna.Framework.Vector3 pos, Microsoft.Xna.Framework.Matrix orient, Microsoft.Xna.Framework.Vector3 vel)
-        {
-            ProcessObjectUpdate(id, asset, pos, orient, vel);
-        }
-
-        /// <summary>
-        /// CLIENT SIDE
-        /// Client should take the information from the server and use it here
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="asset"></param>
-        /// <param name="pos"></param>
-        /// <param name="orient"></param>
-        /// <param name="vel"></param>
-        private void ProcessObjectUpdate(int id, string asset, Microsoft.Xna.Framework.Vector3 pos, Microsoft.Xna.Framework.Matrix orient, Microsoft.Xna.Framework.Vector3 vel)
-        {
-
-            physicsUpdateList.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel));
-            //lock (gameObjects)
-            //{
-
-            //    if (!gameObjects.ContainsKey(id))
-            //    {
-            //        AddNewObject(id, asset); // which will only put it on newObjects;
-            //    }
-            //    if (newObjects.ContainsKey(id))
-            //        return;
-            //    Gobject go = gameObjects[id];
-            //    //go.SetOrientation(orient);
-            //    if (id == 1)
-            //    {
-            //    }
-            //    go.MoveTo(pos, go.BodyOrientation());
-            //    go.SetVelocity(vel);
-            //}
-        }*/
-
-        void commServer_ObjectRequestReceived(int clientId, string asset)
-        {
-            ProcessObjectRequest(clientId, asset);
         }
 
         public override void InitializeEnvironment()

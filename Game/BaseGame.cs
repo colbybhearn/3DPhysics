@@ -699,7 +699,13 @@ namespace Game
                 commServer.ChatMessageReceived += new Handlers.ChatMessageEH(commServer_ChatMessageReceived);
                 commServer.ObjectUpdateReceived += new Handlers.ObjectUpdateEH(commServer_ObjectUpdateReceived);
                 commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
+                commServer.ObjectRequestReceived += new Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
             }
+        }
+
+        void commServer_ObjectRequestReceived(int clientId, string asset)
+        {
+            ProcessObjectRequest(clientId, asset);
         }
 
         void commClient_ObjectDeleteReceived(int id)
@@ -921,10 +927,6 @@ namespace Game
             commServer = new CommServer(port);
             InitializeMultiplayer();
             commServer.Start();
-
-        }
-        void commServer_ObjectRequestReceived(int clientId, string asset)
-        {
 
         }
         void commServer_ChatMessageReceived(ChatMessage cm)
