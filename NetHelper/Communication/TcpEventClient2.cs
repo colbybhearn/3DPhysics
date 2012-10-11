@@ -61,7 +61,7 @@ namespace Helper.Communication
         public void Send(Packet packet)
         {
             Counter.AddTick("pps_out");
-            Counter.AddTick("average_pps_out", Counter.GetAverageValue("pps_out"));
+            //Counter.AddTick("average_pps_out", Counter.GetAverageValue("pps_out"));
 
             if (socket == null)
                 return;

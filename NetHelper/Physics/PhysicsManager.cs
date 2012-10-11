@@ -64,7 +64,7 @@ namespace Helper.Physics
         void tmrPhysicsUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             Counter.AddTick("pups");
-            Counter.AddTick("average_pups", Counter.GetAverageValue("pups"));
+            //Counter.AddTick("average_pups", Counter.GetAverageValue("pups"));
             //Add our new objects
             FinalizeNewObjects();
 

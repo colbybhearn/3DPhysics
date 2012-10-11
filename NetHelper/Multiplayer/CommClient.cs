@@ -72,7 +72,7 @@ namespace Helper.Multiplayer
                 if (count > 0)
                 {
                     Counter.AddTick("pps_in", count);
-                    Counter.AddTick("average_pps_in", Counter.GetAverageValue("pps_in"));
+                    //Counter.AddTick("average_pps_in", Counter.GetAverageValue("pps_in"));
                 }
 
                 Thread.Sleep(1);
