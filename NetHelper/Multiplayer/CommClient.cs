@@ -125,6 +125,19 @@ namespace Helper.Multiplayer
                 ObjectAttributePacket oap = packet as ObjectAttributePacket;
                 CallObjectAttributeReceived(oap);
             }
+            else if (packet is ObjectDeletedPacket)
+            {
+                ObjectDeletedPacket odp = packet as ObjectDeletedPacket;
+                CallObjectDeleteReceived(odp);
+            }
+        }
+
+        public event Handlers.IntEH ObjectDeleteReceived;
+        private void CallObjectDeleteReceived(ObjectDeletedPacket odp)
+        {
+            if (ObjectDeleteReceived == null)
+                return;
+            ObjectDeleteReceived(odp.objectId);
         }
 
         public event Handlers.ObjectAttributeEH ObjectAttributeReceived;

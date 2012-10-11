@@ -486,18 +486,11 @@ namespace RoboGame
         {
             RoverObject rover = null;
             Gobject obj = null;
+            if (skin0.Owner.ExternalData is RoverObject)
+                rover = skin0.Owner.ExternalData as RoverObject;
 
-            foreach(Gobject go in gameObjects.Values)
-            {
-                if (go.Skin.Equals(skin1))
-                {
-                    obj = go;
-                }
-                else if(go.Skin.Equals(skin0))
-                {
-                    rover = go as RoverObject;
-                }
-            }
+            if (skin1.Owner.ExternalData is Gobject)
+                obj = skin1.Owner.ExternalData as Gobject;
 
             if(rover==null || obj == null)
                 return true;
@@ -506,22 +499,20 @@ namespace RoboGame
             if (type == "cube")
             {
                 rover.AddLaser();
-                gameObjects.Remove(obj.ID);
+                DeleteObject(obj.ID);
                 return false;
             }
             if (type == "sphere")
             {
                 rover.AddRadar();
-                gameObjects.Remove(obj.ID);
+                DeleteObject(obj.ID);
                 return false;
             }
             return true;
         }
+
         public override List<ViewProfile> GetViewProfiles()
         {
-            // TODO: Why is this not working as expected?
-            // Capitalization of asset name?
-            // CameraManager ViewProfiles for selected Gobjects?
             List<ViewProfile> profiles = base.GetViewProfiles();
             profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
                 "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI/2.0f, 0), 1.0f));

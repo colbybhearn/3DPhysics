@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Timers;
 using Helper;
+using Helper.Camera;
+using Helper.Camera.Cameras;
 using Helper.Input;
 using Helper.Multiplayer;
 using Helper.Multiplayer.Packets;
+using Helper.Physics;
+using Helper.Physics.PhysicsObjects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Helper.Physics;
-using Helper.Physics.PhysicsObjects;
-using Helper.Camera;
-using Helper.Camera.Cameras;
 
 namespace Game
 {
@@ -23,25 +22,35 @@ namespace Game
      * 
      */
     // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
-    public class BaseGame 
+    public class BaseGame
     {
+        #region Fields / Properties
 
-
-
-        #region Physics
-        public PhysicsManager physicsManager;
-        public static BaseGame Instance { get; private set; }
+        #region Diagnostic
+        public bool DebugInfo = false;
+        public bool DebugPhysics = false;
         #endregion
 
-        #region Content
-        public ContentManager Content { get; private set; }
-        Model terrainModel;
-        Model planeModel;
-        Model staticFloatObjects;
-        Model carModel, wheelModel;
-        Texture2D moon;
-        Terrain terrain;
-        PlaneObject planeObj;
+        #region Physics / Object Management
+        public PhysicsManager physicsManager;
+        public static BaseGame Instance { get; private set; }
+        SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
+        public SortedList<int, Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
+        public SortedList<int, Gobject> newObjects; // This member is accessed from multiple threads and needs to be locked
+        public Gobject currentSelectedObject;
+        internal List<ObjectUpdatePacket> physicsUpdateList = new List<ObjectUpdatePacket>();
+        #endregion
+
+        #region Input
+        public InputManager inputManager;
+        public Chat ChatManager;
+        public SpriteFont chatFont;
+        public enum GenericInputGroups
+        {
+            Camera,
+            Client,
+        }
+        KeyMapCollection keyMapCollections;
         #endregion
 
         #region Graphics
@@ -69,32 +78,12 @@ namespace Game
         myCallbackDelegate UpdateCameraCallback;
 
         public string name = "BaseGame";
-        public bool DebugInfo = false;
-        public bool DebugPhysics = false;
-        #endregion
-
-        #region Input
-        public InputManager inputManager;
-        public Chat ChatManager;
-        public SpriteFont chatFont;
-        public enum GenericInputGroups
-        {
-            Camera,
-            Client,
-        }
-        KeyMapCollection keyMapCollections;
-        #endregion
-
-        #region Game
-        public SortedList<int, Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
-        public SortedList<int, Gobject> newObjects; // This member is accessed from multiple threads and needs to be locked
-        public Gobject currentSelectedObject;
-        #endregion
         
-        
-        internal List<ObjectUpdatePacket> physicsUpdateList = new List<ObjectUpdatePacket>();
-        public  CameraManager cameraManager = new CameraManager();
+
+        public CameraManager cameraManager = new CameraManager();
         GenericCameraModes cameraMode = GenericCameraModes.FreeLook;
+
+        #endregion
 
         #region Communication
         private bool isConnectedToServer;
@@ -108,14 +97,7 @@ namespace Game
 
         public CommClient commClient;
         public CommServer commServer;
-        #endregion
 
-        #region Events
-        public event Helper.Handlers.voidEH Stopped;
-        public event Handlers.ChatMessageEH ChatMessageReceived;
-        #endregion
-
-        #region Multiplayer
         // Todo - turn the players into a SortedList<int, Player> type? (thus allowing more information than an alias to be stored
         // This can also be used server side
         public SortedList<int, string> players = new SortedList<int, string>(); // User ID, User ID Alias
@@ -123,20 +105,40 @@ namespace Game
         public List<int> clientControlledObjects = new List<int>(); // TODO - Client Side only, merge with ownedObjects somehow?
         public List<object> MultiplayerUpdateQueue = new List<object>();
         public int MyClientID; // Used by the client
-        public bool isClient=false;
-        public bool isServer=false;
+        public bool isClient = false;
+        public bool isServer = false;
         #endregion
 
+        #region Events
+        public event Helper.Handlers.voidEH Stopped;
+        public event Handlers.ChatMessageEH ChatMessageReceived;
+        public event Helper.Handlers.IntStringEH ClientConnected;
+        public event Handlers.ClientConnectedEH ConnectedToServer;
+        public event Handlers.IntEH DiconnectedFromServer;
+        #endregion
+
+        #region Content
+        public ContentManager Content { get; private set; }
+        Model terrainModel;
+        Model planeModel;
+        Model staticFloatObjects;
+        Model carModel, wheelModel;
+        Texture2D moon;
+        Terrain terrain;
+        PlaneObject planeObj;
+        #endregion
+
+        #endregion
+
+        #region Initialization
         public BaseGame()
         {
             CommonInit(10, 10);
         }
-
         public BaseGame(int camUpdateInterval)
         {
             CommonInit(10, camUpdateInterval);
         }
-
         private void CommonInit(double physicsUpdateInterval, double cameraUpdateInterval)
         {
             graphicsDevice = null;
@@ -148,6 +150,260 @@ namespace Game
             physicsManager.PreIntegrate += new Handlers.voidEH(physicsManager_PreIntegrate);
             physicsManager.PostIntegrate += new Handlers.voidEH(physicsManager_PostIntegrate);
         }
+        
+        public void Initialize(ServiceContainer services, GraphicsDevice gd, myCallbackDelegate updateCamCallback)
+        {
+            Services = services;
+            graphicsDevice = gd;
+            UpdateCameraCallback = updateCamCallback;
+            try
+            {
+                InitializeContent();
+                InitializeCameras();
+                InitializeEnvironment();
+                InitializeInputs();
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Trace.WriteLine(e.StackTrace);
+            }
+        }
+
+        public virtual void InitializeCameras()
+        {
+            cameraManager.AddCamera(GenericCameraModes.FreeLook.ToString(), new FreeCamera());
+            cameraManager.AddCamera(GenericCameraModes.ObjectChase.ToString(), new ChaseCamera());
+            cameraManager.AddCamera(GenericCameraModes.ObjectFirstPerson.ToString(), new FirstPersonCamera());
+            cameraManager.AddCamera(GenericCameraModes.ObjectWatch.ToString(), new WatchCamera());
+            cameraManager.SetCurrentCamera(GenericCameraModes.FreeLook.ToString());
+            foreach (ViewProfile vp in GetViewProfiles())
+                cameraManager.AddProfile(vp);
+        }
+        public virtual List<ViewProfile> GetViewProfiles()
+        {
+            List<ViewProfile> views = new List<ViewProfile>();
+            views.Add(new ViewProfile(GenericCameraModes.ObjectChase.ToString(), "Airplane", new Vector3(0, 3, 10), .25f, Vector3.Zero, 1.0f));
+            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), "car", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2, 0), 1.0f));
+            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), "Airplane", new Vector3(0, 3, 10), .25f, new Vector3(0, 0, 0), 1.0f));
+            return views;
+        }
+
+        public virtual void InitializeInputs()
+        {
+            keyMapCollections = GetDefaultControls();
+        }
+        public virtual KeyMapCollection GetDefaultControls()
+        {
+            KeyMapCollection defControls = new KeyMapCollection();
+            List<KeyBinding> cameraDefaults = new List<KeyBinding>();
+            cameraDefaults.Add(new KeyBinding("Forward", Keys.NumPad8, false, false, false, KeyEvent.Down, CameraMoveForward));
+            cameraDefaults.Add(new KeyBinding("Left", Keys.NumPad4, false, false, false, KeyEvent.Down, CameraMoveLeft));
+            cameraDefaults.Add(new KeyBinding("Backward", Keys.NumPad5, false, false, false, KeyEvent.Down, CameraMoveBackward));
+            cameraDefaults.Add(new KeyBinding("Right", Keys.NumPad6, false, false, false, KeyEvent.Down, CameraMoveRight));
+            cameraDefaults.Add(new KeyBinding("Speed Increase", Keys.NumPad7, false, false, false, KeyEvent.Pressed, CameraMoveSpeedIncrease));
+            cameraDefaults.Add(new KeyBinding("Speed Decrease", Keys.NumPad1, false, false, false, KeyEvent.Pressed, CameraMoveSpeedDecrease));
+            cameraDefaults.Add(new KeyBinding("Height Increase", Keys.NumPad9, false, false, false, KeyEvent.Down, CameraMoveHeightIncrease));
+            cameraDefaults.Add(new KeyBinding("Height Decrease", Keys.NumPad3, false, false, false, KeyEvent.Down, CameraMoveHeightDecrease));
+
+            cameraDefaults.Add(new KeyBinding("Change Mode", Keys.Decimal, false, false, false, KeyEvent.Pressed, CameraModeCycle));
+            cameraDefaults.Add(new KeyBinding("Home", Keys.Multiply, false, false, false, KeyEvent.Pressed, CameraMoveHome));
+            //
+            cameraDefaults.Add(new KeyBinding("Toggle Debug Info", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
+            cameraDefaults.Add(new KeyBinding("Toggle Physics Debug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
+            KeyMap camControls = new KeyMap(GenericInputGroups.Camera.ToString(), cameraDefaults);
+
+            List<KeyBinding> ClientDefs = new List<KeyBinding>();
+            ClientDefs.Add(new KeyBinding("Escape", Keys.Escape, false, false, false, KeyEvent.Pressed, Stop));
+            KeyMap clientControls = new KeyMap(GenericInputGroups.Client.ToString(), ClientDefs);
+
+            defControls.AddMap(camControls);
+            defControls.AddMap(clientControls);
+            return defControls;
+        }
+
+        /// <summary>
+        /// Should contain all model, and texture loading
+        /// </summary>
+        public virtual void InitializeContent()
+        {
+            Content = new ContentManager(Services, "content");
+
+            try
+            {
+                //cubeModel = Content.Load<Model>("Cube");
+                //sphereModel = Content.Load<Model>("Sphere");
+                moon = Content.Load<Texture2D>("Moon");
+                staticFloatObjects = Content.Load<Model>("StaticMesh");
+                planeModel = Content.Load<Model>("plane");
+                terrainModel = Content.Load<Model>("terrain");
+                carModel = Content.Load<Model>("car");
+                wheelModel = Content.Load<Model>("wheel");
+                //debugFont = Content.Load<SpriteFont>("DebugFont");
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
+        }
+        private void LoadModel(Model m, string name)
+        {
+            try
+            {
+                m = Content.Load<Model>(name);
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// Should contain scene and object initialization
+        /// </summary>
+        public virtual void InitializeEnvironment()
+        {
+
+            bool useCustomTerrain = false;
+
+            if (useCustomTerrain)
+            {
+                try
+                {
+                    terrain = new Terrain(new Vector3(0, -15, 0), // position
+                        //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
+                                            new Vector3(15000f, .55f, 15000f),  // X with, possible y range, Z depth 
+                                            100, 100, graphicsDevice, moon);
+
+                    newObjects.Add(terrain.ID, terrain);
+                }
+                catch (Exception E)
+                {
+                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
+                }
+            }
+            else
+            {
+                try
+                {
+                    // some video cards can't handle the >16 bit index type of the terrain
+                    HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
+                    newObjects.Add(heightmapObj.ID, heightmapObj);
+                }
+                catch (Exception E)
+                {
+                    // if that happens just create a ground plane 
+                    planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0), "");
+                    newObjects.Add(planeObj.ID, planeObj);
+                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
+                }
+            }
+        }
+        
+        #endregion
+
+        #region Methods
+
+        #region Common
+        public void SelectGameObject(Gobject go)
+        {
+            if (go == null)
+                return;
+            if (currentSelectedObject != null)
+                currentSelectedObject.Selected = false;
+            currentSelectedObject = go;
+            currentSelectedObject.Selected = true;
+            //objectCam.TargetPosition = currentSelectedObject.Position;
+        }
+        private int GetAvailableObjectId()
+        {
+            int id = 1;
+            bool found = true;
+            while (found)
+            {
+                if (gameObjects.ContainsKey(id) || newObjects.ContainsKey(id))
+                    id++;
+                else
+                    found = false;
+            }
+
+            return id;
+        }
+        public void Stop()
+        {
+            physicsManager.Stop();
+            if (commClient != null)
+                commClient.Stop();
+            if (commServer != null)
+                commServer.Stop();
+            CallStopped();
+        }
+        private void CallStopped()
+        {
+            if (Stopped == null)
+                return;
+            Stopped();
+        }
+        #endregion
+
+        #region Diagnostic
+        public void ToggleDebugInfo()
+        {
+            DebugInfo = !DebugInfo;
+        }
+        public void SetSimFactor(float value)
+        {
+            physicsManager.SetSimFactor(value);
+        }
+        public void TogglePhsyicsDebug()
+        {
+            DebugPhysics = !DebugPhysics;
+        }
+        #endregion
+
+        #region Physics / Object Management
+
+
+        /// <summary>
+        /// SERVER SIDE
+        /// Add the object being requested 
+        /// Reply to the client to let them know that their object was added, what ID it has, and what type of asset they originally requested.
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="asset"></param>
+        /// <param name="objectId"></param>
+        public void ServeObjectRequest(int clientId, string asset, out int objectId)
+        {
+            objectId = AddOwnedObject(clientId, asset);
+            commServer.BroadcastObjectAddedPacket(clientId, objectId, asset);
+        }
+        
+        /// <summary>
+        /// SERVER SIDE
+        /// allows flexibility with that is added, accoding to the asset requested
+        /// </summary>
+        /// <param name="objectid"></param>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        public virtual void AddNewObject(int objectid, string asset)
+        {
+            // all we have here is the name.
+            // that tells us a model to load
+            // but we don't know the primitives or 
+            // if we were in CarObject, we would know the model, and have specific logic
+        }
+
+        public virtual void DeleteObject(int objectid)
+        {
+            lock (gameObjects)
+            {
+                if (gameObjects.ContainsKey(objectid))
+                    gameObjects.Remove(objectid);
+            }
+
+            if (isServer)
+                commServer.BroadcastPacket(new ObjectDeletedPacket(objectid));
+        }
+
 
         /// <summary>
         /// The physics engine is about to integrate, so we need to process things from the server about "reality"
@@ -170,7 +426,7 @@ namespace Game
                         Gobject go = gameObjects[i];
                         if (!go.actionManager.actionApplied)
                             continue;
-                        
+
                         object[] vals = go.actionManager.GetActionValues();
                         go.actionManager.ValueSwap();
                         commClient.SendObjectAction(go.ID, vals);
@@ -211,7 +467,7 @@ namespace Game
                                     go.SetObjectAttributes(oap.booleans, oap.ints, oap.floats);
                                 }
                                 #endregion
-                            }                            
+                            }
                         }
                     }
                     #endregion
@@ -248,7 +504,7 @@ namespace Game
         {
             if (isClient)
             {
-                
+
             }
             else if (isServer)
             {
@@ -292,275 +548,9 @@ namespace Game
             }
         }
 
-        public virtual void PreUpdateCameraCallback()
-        {
-        }
-        
-        public void Initialize(ServiceContainer services, GraphicsDevice gd, myCallbackDelegate updateCamCallback)
-        {
-            Services = services;
-            graphicsDevice = gd;
-            UpdateCameraCallback = updateCamCallback;
-            try
-            {
-                InitializeContent();
-                InitializeCameras();
-                InitializeEnvironment();
-                InitializeInputs();
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Trace.WriteLine(e.StackTrace);
-            }
-        }
-
-        public virtual void InitializeCameras()
-        {
-            cameraManager.AddCamera(GenericCameraModes.FreeLook.ToString(), new FreeCamera());
-            cameraManager.AddCamera(GenericCameraModes.ObjectChase.ToString(), new ChaseCamera());
-            cameraManager.AddCamera(GenericCameraModes.ObjectFirstPerson.ToString(), new FirstPersonCamera());
-            cameraManager.AddCamera(GenericCameraModes.ObjectWatch.ToString(), new WatchCamera());
-            cameraManager.SetCurrentCamera(GenericCameraModes.FreeLook.ToString());
-            foreach (ViewProfile vp in GetViewProfiles())
-                cameraManager.AddProfile(vp);
-        }
-
-        public virtual List<ViewProfile> GetViewProfiles()
-        {
-            List<ViewProfile> views = new List<ViewProfile>();
-            views.Add(new ViewProfile(GenericCameraModes.ObjectChase.ToString(), "Airplane", new Vector3(0,3,10), .25f, Vector3.Zero, 1.0f));
-            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), "car", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2, 0), 1.0f));
-            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), "Airplane", new Vector3(0, 3, 10), .25f, new Vector3(0, 0, 0), 1.0f));
-            
-            return views;
-
-        }
-
-        public virtual void InitializeInputs()
-        {
-            keyMapCollections = GetDefaultControls();
-        }
-
-        public virtual KeyMapCollection GetDefaultControls()
-        {
-            KeyMapCollection defControls = new KeyMapCollection();
-            List<KeyBinding> cameraDefaults = new List<KeyBinding>();
-            cameraDefaults.Add(new KeyBinding("Camera Move Forward", Keys.NumPad8, false, false, false, KeyEvent.Down, CameraMoveForward));
-            cameraDefaults.Add(new KeyBinding("Camera Move Left", Keys.NumPad4, false, false, false, KeyEvent.Down, CameraMoveLeft));
-            cameraDefaults.Add(new KeyBinding("Camera Move Backward", Keys.NumPad5, false, false, false, KeyEvent.Down, CameraMoveBackward));
-            cameraDefaults.Add(new KeyBinding("Camera Move Right", Keys.NumPad6, false, false, false, KeyEvent.Down, CameraMoveRight));
-            cameraDefaults.Add(new KeyBinding("Camera Move Speed Increase", Keys.NumPad7, false, false, false, KeyEvent.Pressed, CameraMoveSpeedIncrease));
-            cameraDefaults.Add(new KeyBinding("Camera Move Speed Decrease", Keys.NumPad1, false, false, false, KeyEvent.Pressed, CameraMoveSpeedDecrease));
-            cameraDefaults.Add(new KeyBinding("Camera Move Height Increase", Keys.NumPad9, false, false, false, KeyEvent.Down, CameraMoveHeightIncrease));
-            cameraDefaults.Add(new KeyBinding("Camera Move Height Decrease", Keys.NumPad3, false, false, false, KeyEvent.Down, CameraMoveHeightDecrease));
-
-            cameraDefaults.Add(new KeyBinding("Camera Move Cycle", Keys.Decimal, false, false, false, KeyEvent.Pressed, CameraModeCycle));
-            cameraDefaults.Add(new KeyBinding("Camera Home", Keys.Multiply, false, false, false, KeyEvent.Pressed, CameraMoveHome));
-            //
-            cameraDefaults.Add(new KeyBinding("Toggle Debug Info", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
-            cameraDefaults.Add(new KeyBinding("Toggle Physics Debug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
-            
-            KeyMap camControls = new KeyMap(GenericInputGroups.Camera.ToString(), cameraDefaults);
-
-            List<KeyBinding> ClientDefs = new List<KeyBinding>();
-            ClientDefs.Add(new KeyBinding("Escape", Keys.Escape, false, false, false, KeyEvent.Pressed, Stop));
-            KeyMap clientControls = new KeyMap(GenericInputGroups.Client.ToString(), ClientDefs);
-
-            defControls.AddMap(camControls);
-            defControls.AddMap(clientControls);
-            return defControls;
-        }
-
-        #region Camera Manipulation
-        public void CameraMoveForward()
-        {
-            cameraManager.MoveForward();
-        }
-
-        public void CameraMoveBackward()
-        {
-            cameraManager.MoveBackward();
-        }
-
-        public void CameraMoveLeft()
-        {
-            cameraManager.MoveLeft();
-        }
-
-        public void CameraMoveRight()
-        {
-            cameraManager.MoveRight();
-        }
-
-        public void CameraMoveSpeedIncrease()
-        {
-            cameraManager.IncreaseMovementSpeed();
-        }
-
-        public void CameraMoveSpeedDecrease()
-        {
-            cameraManager.DecreaseMovementSpeed();
-        }
-
-        public void AdjustCameraOrientation(float pitch, float yaw)
-        {
-            cameraManager.AdjustTargetOrientation(pitch, yaw);
-        }
-
-        public void CameraModeCycle()
-        {
-            switch (cameraMode)
-            {
-                case GenericCameraModes.FreeLook:
-                    cameraMode = GenericCameraModes.ObjectWatch;
-                    break;
-                case GenericCameraModes.ObjectWatch:
-                    cameraMode = GenericCameraModes.ObjectChase;
-                    break;
-                case GenericCameraModes.ObjectChase:
-                    cameraMode = GenericCameraModes.ObjectFirstPerson;
-                    break;
-                case GenericCameraModes.ObjectFirstPerson:
-                    cameraMode = GenericCameraModes.FreeLook;                    
-                    break;
-                default:
-                    break;
-            }
-            cameraManager.SetCurrentCamera(cameraMode.ToString());
-            cameraManager.SetGobjectList(cameraMode.ToString(), new List<Gobject> { currentSelectedObject });
-            
-        }
-
-
-        public void CameraMoveHeightIncrease()
-        {
-            cameraManager.MoveUp();
-        }
-
-        public void CameraMoveHeightDecrease()
-        {
-            cameraManager.MoveDown();
-        }
-
-        public void CameraMoveHome()
-        {
-            cameraMode = GenericCameraModes.FreeLook;
-            //cam.MoveHome();
-        }
         #endregion
 
-        public void ToggleDebugInfo()
-        {
-            DebugInfo = !DebugInfo;
-        }
-
-        public void TogglePhsyicsDebug()
-        {
-            DebugPhysics = !DebugPhysics;
-        }
-
-        public void AdjustZoom(float z)
-        {
-            if (z > 0)
-                cameraManager.ZoomOut();
-            else
-                cameraManager.ZoomIn();
-                
-        }
-
-        /// <summary>
-        /// Should contain all model, and texture loading
-        /// </summary>
-        public virtual void InitializeContent()
-        {
-            Content = new ContentManager(Services, "content");
-
-            try
-            {
-                //cubeModel = Content.Load<Model>("Cube");
-                //sphereModel = Content.Load<Model>("Sphere");
-                moon = Content.Load<Texture2D>("Moon");
-                staticFloatObjects = Content.Load<Model>("StaticMesh");
-                planeModel = Content.Load<Model>("plane");
-                terrainModel = Content.Load<Model>("terrain");
-                carModel = Content.Load<Model>("car");
-                wheelModel = Content.Load<Model>("wheel");
-                //debugFont = Content.Load<SpriteFont>("DebugFont");
-            }
-            catch (Exception E)
-            {
-                System.Diagnostics.Debug.WriteLine(E.StackTrace);
-            }
-        }
-        private void LoadModel(Model m, string name)
-        {
-            try
-            {
-                m = Content.Load<Model>(name);
-            }
-            catch (Exception E)
-            {
-                System.Diagnostics.Debug.WriteLine(E.StackTrace);
-            }
-        }
-
-        /// <summary>
-        /// Should contain scene and object initialization
-        /// </summary>
-        public virtual void InitializeEnvironment()
-        {            
-            
-            bool useCustomTerrain = false;
-
-            if (useCustomTerrain)
-            {
-                try
-                {
-                    terrain = new Terrain(new Vector3(0, -15, 0), // position
-                        //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
-                                            new Vector3(15000f, .55f, 15000f),  // X with, possible y range, Z depth 
-                                            100, 100, graphicsDevice, moon);
-
-                    newObjects.Add(terrain.ID, terrain);
-                }
-                catch (Exception E)
-                {
-                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
-                }
-            }
-            else
-            {
-                try
-                {
-                    // some video cards can't handle the >16 bit index type of the terrain
-                    HeightmapObject heightmapObj = new HeightmapObject(terrainModel, Vector2.Zero, new Vector3(0, 0, 0));
-                    newObjects.Add(heightmapObj.ID, heightmapObj);
-                }
-                catch (Exception E)
-                {
-                    // if that happens just create a ground plane 
-                    planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0), "");
-                    newObjects.Add(planeObj.ID, planeObj);
-                    System.Diagnostics.Debug.WriteLine(E.StackTrace);
-                }
-            }
-        }
-
-        public void SelectGameObject(Gobject go)
-        {
-            if (go == null)
-                return;
-            if (currentSelectedObject != null)
-                currentSelectedObject.Selected = false;
-            currentSelectedObject = go;
-            currentSelectedObject.Selected = true;
-            //objectCam.TargetPosition = currentSelectedObject.Position;
-        }
-
-        public void SetSimFactor(float value)
-        {
-            physicsManager.SetSimFactor(value);
-        }
+        #region Input
 
         /// <summary>
         /// override SetNominalInputState to set nominal states (like zero acceleration on a car)
@@ -593,27 +583,98 @@ namespace Game
             inputManager.EditSettings();
         }
 
+        #endregion
+
+        #region Graphics
+
+        #region Camera
+        public void CameraMoveForward()
+        {
+            cameraManager.MoveForward();
+        }
+        public void CameraMoveBackward()
+        {
+            cameraManager.MoveBackward();
+        }
+        public void CameraMoveLeft()
+        {
+            cameraManager.MoveLeft();
+        }
+        public void CameraMoveRight()
+        {
+            cameraManager.MoveRight();
+        }
+        public void CameraMoveSpeedIncrease()
+        {
+            cameraManager.IncreaseMovementSpeed();
+        }
+        public void CameraMoveSpeedDecrease()
+        {
+            cameraManager.DecreaseMovementSpeed();
+        }
+
+        public void AdjustCameraOrientation(float pitch, float yaw)
+        {
+            cameraManager.AdjustTargetOrientation(pitch, yaw);
+        }
+
+        public void CameraModeCycle()
+        {
+            switch (cameraMode)
+            {
+                case GenericCameraModes.FreeLook:
+                    cameraMode = GenericCameraModes.ObjectWatch;
+                    break;
+                case GenericCameraModes.ObjectWatch:
+                    cameraMode = GenericCameraModes.ObjectChase;
+                    break;
+                case GenericCameraModes.ObjectChase:
+                    cameraMode = GenericCameraModes.ObjectFirstPerson;
+                    break;
+                case GenericCameraModes.ObjectFirstPerson:
+                    cameraMode = GenericCameraModes.FreeLook;
+                    break;
+                default:
+                    break;
+            }
+            cameraManager.SetCurrentCamera(cameraMode.ToString());
+            cameraManager.SetGobjectList(cameraMode.ToString(), new List<Gobject> { currentSelectedObject });
+
+        }
+        public void CameraMoveHeightIncrease()
+        {
+            cameraManager.MoveUp();
+        }
+        public void CameraMoveHeightDecrease()
+        {
+            cameraManager.MoveDown();
+        }
+        public void CameraMoveHome()
+        {
+            cameraMode = GenericCameraModes.FreeLook;
+            //cam.MoveHome();
+        }
+
+        public virtual void PreUpdateCameraCallback()
+        {
+        }
+        #endregion
+
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             
         }
-
-        private int GetAvailableObjectId()
+        public void AdjustZoom(float z)
         {
-            int id=1;
-            bool found =true;
-            while(found)
-            {
-                if (gameObjects.ContainsKey(id) || newObjects.ContainsKey(id))
-                    id++;
-                else
-                    found = false;
-            }
+            if (z > 0)
+                cameraManager.ZoomOut();
+            else
+                cameraManager.ZoomIn();
 
-            return id;
         }
+        #endregion
 
-        #region Communication Methods
+        #region Communication
 
         #region Common to Server and Client
 
@@ -629,6 +690,7 @@ namespace Game
                 commClient.DisconnectedFromServer += new Handlers.IntEH(commClient_NotConnectedToServer);
                 commClient.ConnectedToServer += new Handlers.ClientConnectedEH(commClient_ClientConnected);
                 commClient.ObjectAttributeReceived += new Handlers.ObjectAttributeEH(commClient_ObjectAttributeReceived);
+                commClient.ObjectDeleteReceived += new Handlers.IntEH(commClient_ObjectDeleteReceived);
             }
             else if(isServer)
             {
@@ -640,6 +702,11 @@ namespace Game
             }
         }
 
+        void commClient_ObjectDeleteReceived(int id)
+        {
+            DeleteObject(id);
+        }
+
         void commClient_ObjectAttributeReceived(ObjectAttributePacket oap)
         {
             lock (MultiplayerUpdateQueue)
@@ -647,8 +714,7 @@ namespace Game
                 MultiplayerUpdateQueue.Add(oap);
             }
         }
-
-        public event Handlers.ClientConnectedEH ConnectedToServer; 
+        
         void commClient_ClientConnected(int id, string alias)
         {
             if (players.ContainsKey(id) == false)
@@ -659,8 +725,7 @@ namespace Game
                 return;
             ConnectedToServer(id, alias);
         }
-
-        public event Handlers.IntEH DiconnectedFromServer;
+        
         void commClient_NotConnectedToServer(int id)
         {
             isConnectedToServer = false;
@@ -677,8 +742,6 @@ namespace Game
                 MultiplayerUpdateQueue.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel));
             }
         }
-
-
 
         // CLIENT
         private void CallChatMessageReceived(ChatMessage cm)
@@ -771,41 +834,34 @@ namespace Game
         public virtual void ProcessObjectAdded(int owner, int id, string asset)
         {
 
-        } 
+        }
+
+        /// <summary>
+        /// CLIENT SIDE
+        /// calls this to disconnect from the server
+        /// </summary>
+        public void DisconnectFromServer()
+        {
+            commClient.Stop();
+        }
         #endregion
 
         #region Server Side
 
-        /// <summary>
-        /// SERVER SIDE
-        /// allows flexibility with that is added, accoding to the asset requested
-        /// </summary>
-        /// <param name="objectid"></param>
-        /// <param name="asset"></param>
-        /// <returns></returns>
-        public virtual void AddNewObject(int objectid, string asset)
-        {
-            // all we have here is the name.
-            // that tells us a model to load
-            // but we don't know the primitives or 
-            // if we were in CarObject, we would know the model, and have specific logic
-        }
 
         /// <summary>
         /// SERVER SIDE
-        /// Add the object being requested 
-        /// Reply to the client to let them know that their object was added, what ID it has, and what type of asset they originally requested.
+        /// the server received an object request
         /// </summary>
         /// <param name="clientId"></param>
         /// <param name="asset"></param>
-        /// <param name="objectId"></param>
-        public void ServeObjectRequest(int clientId, string asset, out int objectId)
+        public virtual int ProcessObjectRequest(int clientId, string asset)
         {
-            objectId = AddOwnedObject(clientId, asset);
-            commServer.BroadcastObjectAddedPacket(clientId, objectId, asset);
-        }
-
-        SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
+            int objectId = -1;
+            ServeObjectRequest(clientId, asset, out objectId);
+            return objectId;
+        } 
+        
         /// <summary>
         /// SERVER SIDE
         /// Server adds an object and associates it with its owning client
@@ -890,7 +946,7 @@ namespace Game
             commServer.BroadcastChatMessage("Player " + alias + " has joined.", -1);
         }
 
-        public event Helper.Handlers.IntStringEH ClientConnected;
+        
         private void CallClientConnected(int id, string alias)
         {
             players.Add(id, alias);
@@ -904,45 +960,11 @@ namespace Game
             ClientConnected(id, alias);
 
         }
-        /// <summary>
-        /// SERVER SIDE
-        /// the server received an object request
-        /// </summary>
-        /// <param name="clientId"></param>
-        /// <param name="asset"></param>
-        public virtual int ProcessObjectRequest(int clientId, string asset)
-        {
-            int objectId = -1;
-            ServeObjectRequest(clientId, asset, out objectId);
-            return objectId;
-        } 
+
         #endregion
         
         #endregion
 
-        public void Stop()
-        {
-            physicsManager.Stop();
-            if (commClient != null)
-                commClient.Stop();
-            if(commServer!=null)
-                commServer.Stop();
-            CallStopped();
-        }
-        private void CallStopped()
-        {
-            if (Stopped == null)
-                return;
-            Stopped();
-        }
-
-        /// <summary>
-        /// CLIENT SIDE
-        /// calls this to disconnect from the server
-        /// </summary>
-        public void DisconnectFromServer()
-        {
-            commClient.Stop();
-        }
+        #endregion
     }
 }
