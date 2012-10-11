@@ -31,10 +31,8 @@ namespace Helper.Multiplayer
     {
         
         // list of client information with socket to communicate back
-        //SortedList<int, ClientInfo> Clients = new SortedList<int, ClientInfo>();
         List<int> Clients = new List<int>();
         TcpEventServer tcpServer;
-        //private System.Timers.Timer tmrUpdateClients;
         Queue<ClientPacketInfo> InputQueue = new Queue<ClientPacketInfo>();
         Thread inputThread;
         bool ShouldBeRunning = false;
@@ -49,25 +47,12 @@ namespace Helper.Multiplayer
             tcpServer = new TcpEventServer(ip, lobbyport);
             tcpServer.ClientAccepted += new Helper.Handlers.IntEH(listener_ClientAccepted);
             tcpServer.PacketReceived += new Handlers.IntPacketEH(PacketReceived);
-
-            //tmrUpdateClients = new System.Timers.Timer();
-            //tmrUpdateClients.Interval = 200;
-            //tmrUpdateClients.Elapsed += new System.Timers.ElapsedEventHandler(tProcessClientsTimer_Elapsed);
         }
-
-        /*void tProcessClientsTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            foreach (ClientInfo ci in Clients.Values)
-            {               
-
-            }
-        }*/
 
         public void Start()
         {
             ShouldBeRunning = true;
             tcpServer.Start();
-            //tmrUpdateClients.Start();
             inputThread = new Thread(new ThreadStart(inputWorker));
             inputThread.Start();
         }
@@ -76,10 +61,7 @@ namespace Helper.Multiplayer
         {
             ShouldBeRunning = false;
             tcpServer.Stop();
-            //tmrUpdateClients.Stop();
             Clients.Clear();
-            //foreach (ClientInfo ci in Clients.Values)
-            //   ci.Stop();
         }
 
         void listener_ClientAccepted(int id)
@@ -94,7 +76,6 @@ namespace Helper.Multiplayer
             BroadcastPacket(new ClientDisconnectPacket(id));
             Clients.Remove(id);
         }
-
 
         private void inputWorker()
         {
@@ -114,7 +95,6 @@ namespace Helper.Multiplayer
         {
             if (!Clients.Contains(id))
                 return;
-            //ClientInfo ci = Clients[id];
             ClientPacketInfo cpi = new ClientPacketInfo(id, p);
             InputQueue.Enqueue(cpi);
         }
@@ -248,7 +228,6 @@ namespace Helper.Multiplayer
                 return;
             tcpServer.Send(new ObjectAddedPacket(owner, objectId, asset), receivingClient);
         }
-
 
         public void BroadcastObjectUpdate(Packet p)
         {

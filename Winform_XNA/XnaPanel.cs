@@ -137,7 +137,7 @@ namespace XnaView
             try
             {
                 Counter.AddTick("fps");
-                Counter.AddTick("average_fps", Counter.GetAveragePerSecond("fps"));
+                //Counter.AddTick("average_fps", Counter.GetAveragePerSecond("fps"));
 
                 Matrix proj = Matrix.Identity;
                 GraphicsDevice.Clear(Color.Black);
@@ -155,26 +155,24 @@ namespace XnaView
                 if (Debug)
                 {
                     double time = tmrDrawElapsed.ElapsedMilliseconds;
-                    Vector2 position = new Vector2(5, 5);
-                    Color debugfontColor = Color.Black;
-                    spriteBatch.DrawString(debugFont, "FPS: " + String.Format("{0:0}", Counter.GetAverageValue("average_fps")), position, debugfontColor);
+                    Vector2 position = new Vector2(5, 50);
+                    Color debugfontColor = Color.LightGray;
+                    spriteBatch.DrawString(debugFont, "FPS: " + String.Format("{0:0}", Counter.GetAveragePerSecond("fps")), position, debugfontColor);
                     position.Y += debugFont.LineSpacing;
-                    //spriteBatch.DrawString(debugFont, "FPS: " + (1000.0 / time), position, debugfontColor);
-                    //position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "Physics Updates PS: " + String.Format("{0:0}", Counter.GetAveragePerSecond("average_pups")), position, debugfontColor); // physics Ticks Per Second
+
+                    spriteBatch.DrawString(debugFont, "Physics Updates PS: " + String.Format("{0:0}", Counter.GetAveragePerSecond("pups")), position, debugfontColor); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "Packets PS Out: " + String.Format("{0:0.0}", Counter.GetAveragePerSecond("average_pps_out")), position, debugfontColor); // physics Ticks Per Second
+
+                    spriteBatch.DrawString(debugFont, "Packets PS Out: " + String.Format("{0:0.0}", Counter.GetAveragePerSecond("pps_out")), position, debugfontColor); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "Packets PS In: " + String.Format("{0:0.0}", Counter.GetAveragePerSecond("average_pps_in")), position, debugfontColor); // physics Ticks Per Second
+                    spriteBatch.DrawString(debugFont, "Packets PS In: " + String.Format("{0:0.0}", Counter.GetAveragePerSecond("pps_in")), position, debugfontColor); // physics Ticks Per Second
                     position.Y += debugFont.LineSpacing;
+
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraPosition", cam.TargetPosition);
                     position = DebugShowVector(spriteBatch, debugFont, position, "CameraOrientation", Matrix.CreateFromQuaternion(cam.Orientation).Forward);
+
+                    spriteBatch.DrawString(debugFont, "Objects Drawn: " + ObjectsDrawn + "/" + gameObjects.Count, position, debugfontColor);
                     position.Y += debugFont.LineSpacing;
-                    spriteBatch.DrawString(debugFont, "Objects Drawn: " + gameObjects.Count + "/" + ObjectsDrawn, position, debugfontColor);
-                    position.Y += debugFont.LineSpacing;
-                    //spriteBatch.DrawString(debugFont, "Cam Mode: " + cameraMode.ToString(), position, debugfontColor); // physics Ticks Per Second
-                    position.Y += debugFont.LineSpacing;
-                    //spriteBatch.DrawString(debugFont, "Input Mode: " + inputMode.ToString(), position, debugfontColor); // physics Ticks Per Second
 
                     tmrDrawElapsed.Restart();
                 }
