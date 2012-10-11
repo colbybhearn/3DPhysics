@@ -61,8 +61,9 @@ namespace XnaView
             game = g;
             PhysicsSystem = g.physicsManager.PhysicsSystem;
             gameObjects = g.gameObjects;
-            newObjects = g.newObjects;
+            newObjects = g.newObjects;           
             
+
         }
         protected override void Initialize()
         {
@@ -106,7 +107,7 @@ namespace XnaView
                 Vector3 pos;
                 Vector3 norm;
                 CollisionSkin cs = new CollisionSkin();
-
+                                
                 lock (gameObjects)
                 {
                     if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
@@ -143,6 +144,7 @@ namespace XnaView
 
                 DrawObjects();
 
+                
                 
                 // SpriteBatch drawing!
                 

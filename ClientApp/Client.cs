@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 
 namespace ClientApp
 {
@@ -80,7 +81,7 @@ namespace ClientApp
             this.XnaPanelMain.Dock = DockStyle.Fill;
             this.XnaPanelMain.Debug = false;
             this.XnaPanelMain.DebugPhysics = false;
-            this.XnaPanelMain.DrawingEnabled = true;
+            this.XnaPanelMain.DrawingEnabled = true;            
             this.XnaPanelMain.Location = new System.Drawing.Point(296, 3);
             this.XnaPanelMain.Name = "XnaPanelMain";
             this.XnaPanelMain.PhysicsEnabled = true;
@@ -143,6 +144,7 @@ namespace ClientApp
         public void SendPacketToServer(Packet p)
         {
             OutputQueue.Enqueue(p);
+            FrameworkDispatcher.Update();
         }
 
         private void tStatus_Tick(object sender, EventArgs e)
