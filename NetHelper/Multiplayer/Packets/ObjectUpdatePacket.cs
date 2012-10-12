@@ -12,9 +12,8 @@ namespace Helper.Multiplayer.Packets
         public Vector3 position;
         public Matrix orientation;
         public Vector3 velocity;
-        public Vector3 scale;
         
-        public ObjectUpdatePacket(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel, Vector3 scl) 
+        public ObjectUpdatePacket(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel) 
             : base(Types.scObjectUpdate)
         {
             objectId = id;
@@ -22,7 +21,6 @@ namespace Helper.Multiplayer.Packets
             position = pos;
             orientation = orient;
             velocity = vel;
-            scale = scl;
         }
 
         public ObjectUpdatePacket() 
@@ -74,11 +72,6 @@ namespace Helper.Multiplayer.Packets
             index += 4;
             Array.Copy(BitConverter.GetBytes(velocity.Z), 0, data, index, 4);
             index += 4;
-            Array.Copy(BitConverter.GetBytes(scale.X), 0, data, index, 4);
-            index += 4;
-            Array.Copy(BitConverter.GetBytes(scale.Y), 0, data, index, 4);
-            index += 4;
-            Array.Copy(BitConverter.GetBytes(scale.Z), 0, data, index, 4);
             return data;
         }
 
@@ -140,12 +133,6 @@ namespace Helper.Multiplayer.Packets
             index+=4;
             velocity.Z = BitConverter.ToSingle(data, index);
             index+=4;
-            scale.X = BitConverter.ToSingle(data, index);
-            index += 4;
-            scale.Y = BitConverter.ToSingle(data, index);
-            index += 4;
-            scale.Z = BitConverter.ToSingle(data, index);
-            index += 4;
 
             return this;
         }

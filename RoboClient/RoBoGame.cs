@@ -22,12 +22,7 @@ namespace RoboGame
     public class RoboGame : BaseGame
     {
         #region Properties / Fields
-        public enum GameplayModes
-        {
-            Rover,
-            Lander,
-            Spectate,
-        }
+        
         GameplayModes gameplaymode = GameplayModes.Rover;
 
         Model roverModel, wheelModel, landerModel;
@@ -55,6 +50,9 @@ namespace RoboGame
         SoundEffectInstance radar_noise_loop;
         
         Texture2D BlankBackground;
+        #endregion
+
+        #region Enumerations
         public enum SpecificInputGroups
         {
             Communication,
@@ -62,15 +60,25 @@ namespace RoboGame
             Lander,
             Interface,
         }
-        #endregion
-
-        #region Enumerations
         public enum AssetTypes
         {
             Rover,
             Radar1Pickup,
             Laser1Pickup,
             Lander,
+        }
+        public enum GameplayModes
+        {
+            Rover,
+            Lander,
+            Spectate,
+        }
+        public enum Sounds
+        {
+            SolarWind, // not a real thing, but is still awesome
+            RoverMotor,
+            RadarNoise, 
+            RoverSpawn,
         }
         #endregion
 
@@ -110,21 +118,6 @@ namespace RoboGame
                 radar_noise = Content.Load<SoundEffect>("radar_noise");
                 solar_wind = Content.Load<SoundEffect>("solar_wind");
 
-                motor_running = motor.CreateInstance();
-                //motor_running.IsLooped = true; // should be looped, but need to know when rover stops to call .Stop();
-
-                solar_wind_loop = solar_wind.CreateInstance();
-                solar_wind_loop.Volume = 0.5f;
-                solar_wind_loop.IsLooped = true;
-
-                radar_noise_loop = radar_noise.CreateInstance();
-                radar_noise_loop.Volume = 0.5f;
-                radar_noise_loop.IsLooped = true;
-
-                // Let's play this right away;  should not play on the server through
-                if (isClient)
-                    solar_wind_loop.Play();
-
 
                 #region Initialize Assets
                 assetManager.AddAsset(AssetTypes.Rover.ToString(), CreateRover);
@@ -137,8 +130,6 @@ namespace RoboGame
             {
 
             }
-
-
         }
         public override void InitializeMultiplayer()
         {
@@ -191,7 +182,7 @@ namespace RoboGame
         {
             List<ViewProfile> profiles = base.GetViewProfiles();
             profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
-                "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2.0f, 0), 1.0f));
+                AssetTypes.Rover.ToString(), new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2.0f, 0), 1.0f));
             return profiles;
         }
         public override void InitializeInputs()
@@ -258,6 +249,20 @@ namespace RoboGame
             Vector3.Subtract(ref l, ref n, out res);
 
             return defControls;
+        }
+
+        public override void InitializeSound()
+        {
+            base.InitializeSound();
+
+            soundManager.AddSoundEffect(Sounds.RoverSpawn.ToString(), spawn, false);
+            soundManager.AddSound(Sounds.RoverMotor.ToString(), motor, false, .3f, Helper.Audio.SoundTypes.Effect);
+            soundManager.AddSound(Sounds.RadarNoise.ToString(), radar_noise, true, .5f, Helper.Audio.SoundTypes.Effect);
+            soundManager.AddSound(Sounds.SolarWind.ToString(), solar_wind, true, .5f, Helper.Audio.SoundTypes.Effect);
+
+            // Let's play this right away;  should not play on the server through
+            if (isClient)
+                soundManager.Play(Sounds.SolarWind.ToString());
         }
 
         #region Assets
@@ -374,8 +379,6 @@ namespace RoboGame
         public override void Stop()
         {
             base.Stop();
-            radar_noise_loop.Stop();
-            solar_wind_loop.Stop();
         }
 
         private void EnterExitVehicle()
@@ -448,20 +451,6 @@ namespace RoboGame
             if (Content == null)
                 return;
             
-            
-            /*
-            switch (asset.ToLower())
-            {
-                case "cube":            newobject = physicsManager.GetBox(model);                   break;
-                case "sphere":          newobject = physicsManager.GetDefaultSphere(model);         break;
-                case "rover2":
-                    newobject = physicsManager.GetRover(roverModel, wheelModel, sphereModel, cubeModel);
-                    newobject.AddCollisionCallback(CollisionSkin_callbackFn);
-                    break;
-                case "lunar lander":    newobject = physicsManager.GetLunarLander(landerModel);     break;
-                default:                                                                            break;
-            }
-            */
             Gobject newobject = assetManager.GetNewInstance(asset);
             newobject.ID = objectid; // override whatever object ID the assetManager came up with, if it is safe to do so
             physicsManager.AddNewObject(newobject);
@@ -477,7 +466,8 @@ namespace RoboGame
                 // send a request to the server for an object of asset type "car"
                 commClient.SendObjectRequest(AssetTypes.Rover.ToString());
 
-            spawn.Play();
+            //spawn.Play();
+            soundManager.Play(Sounds.RoverSpawn.ToString());
         }
 
         /// <summary>
@@ -490,7 +480,6 @@ namespace RoboGame
         /// <param name="asset"></param>
         public override void ProcessObjectAdded(int ownerid, int objectid, string asset)
         {
-            //Model model = Content.Load<Model>(asset);
             Gobject newobject = assetManager.GetNewInstance(asset);
             newobject.ID = objectid;
             physicsManager.AddNewObject(newobject);
@@ -502,33 +491,6 @@ namespace RoboGame
                     SelectGameObject(myRover);
                 }
             }
-            
-            /*
-            switch (asset.ToLower())
-            {
-                case "cube":
-                    newobject = physicsManager.GetBox(model);
-                    newobject.ID = objectid;
-                    physicsManager.AddNewObject(newobject);
-                    break;
-                case "sphere":
-                    newobject = physicsManager.GetDefaultSphere(model);
-                    newobject.ID = objectid;
-                    physicsManager.AddNewObject(newobject);
-                    break;
-                case "rover2":
-                    newobject = SpawnRover(ownerid, objectid);
-                    break;
-                case "lunar lander":
-                    lander = physicsManager.GetLunarLander(landerModel);
-                    lander.ID = objectid;
-                    physicsManager.AddNewObject(lander);
-                    if (ownerid == MyClientID) // Only select the new object if its OUR new object
-                        SelectGameObject(lander);
-                    break;
-                default:
-                    break;
-            }*/
         }
 
         private void SpawnPickups()
@@ -618,9 +580,11 @@ namespace RoboGame
                 return;
             myRover.SetAcceleration(1.0f);
 
+            soundManager.Play(Sounds.RoverMotor.ToString());
             if (motor_running != null)
             {
                 motor_running.Volume = 0.3f;
+
                 motor_running.Play();
             }
 
@@ -681,7 +645,7 @@ namespace RoboGame
             if (objectsToDelete.Contains(obj.ID)) // if the object is going to be deleted soon,
                 return false; // don't bother doing any collision with it
 
-            string type = obj.Asset.ToLower();
+            string type = obj.Asset;
             if (type == AssetTypes.Laser1Pickup.ToString())
             {
                 rover.SetLaser(true);
@@ -765,10 +729,9 @@ namespace RoboGame
             }
 
             ChatManager.Draw(sb);
-            //DrawLightTest(this.graphicsDevice);
-
-
-            FrameworkDispatcher.Update(); // Sounds like this called early and often
+            
+            if(isClient) // only clients need sound
+                FrameworkDispatcher.Update(); // Sounds like this called early and often
 
             if (myRover != null)
             {            
@@ -780,8 +743,7 @@ namespace RoboGame
                     try
                     {
                         if (isClient)
-                            if (radar_noise_loop != null)
-                                radar_noise_loop.Play();                        
+                            soundManager.Play(Sounds.RadarNoise.ToString());
                     }
                     catch(Exception x)
                     {

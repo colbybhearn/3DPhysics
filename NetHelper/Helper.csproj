@@ -76,6 +76,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audio\Sound.cs" />
+    <Compile Include="Audio\SoundManager.cs" />
     <Compile Include="Camera\Cameras\BaseCamera.cs" />
     <Compile Include="Camera\CameraManager.cs" />
     <Compile Include="Camera\Cameras\ChaseCamera.cs" />

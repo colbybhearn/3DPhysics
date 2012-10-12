@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Helper.Audio;
 
 namespace Game
 {
@@ -75,6 +76,10 @@ namespace Game
             Client,
         }
         KeyMapCollection keyMapCollections;
+        #endregion
+
+        #region Audio
+        protected SoundManager soundManager;
         #endregion
 
         #region Graphics
@@ -188,11 +193,17 @@ namespace Game
                 InitializeCameras();
                 InitializeEnvironment();
                 InitializeInputs();
+                InitializeSound();
             }
             catch (Exception e)
             {
                 System.Diagnostics.Trace.WriteLine(e.StackTrace);
             }
+        }
+
+        public virtual void InitializeSound()
+        {
+            soundManager = new SoundManager();
         }
 
         public virtual void InitializeCameras()
@@ -385,6 +396,7 @@ namespace Game
         public virtual void Stop()
         {
             physicsManager.Stop();
+            soundManager.StopAll();
             if(isConnectedToServer) // Client Side
                 DisconnectFromServer();
             if (commServer != null) // Server Side
@@ -587,7 +599,7 @@ namespace Game
                             #region Send Object Updates to the client
                             if (go.isMoveable && go.IsActive)
                             {
-                                ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity(), go.Scale);
+                                ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
                                 commServer.BroadcastObjectUpdate(oup);
                             }
                             #endregion
@@ -828,11 +840,11 @@ namespace Game
             
         }
 
-        void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel, Vector3 scl)
+        void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
             lock (MultiplayerUpdateQueue)
             {
-                MultiplayerUpdateQueue.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel, scl));
+                MultiplayerUpdateQueue.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel));
             }
         }
 
@@ -1004,9 +1016,9 @@ namespace Game
         /// <param name="pos"></param>
         /// <param name="orient"></param>
         /// <param name="vel"></param>
-        void commServer_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel, Vector3 scl)
+        void commServer_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
-            physicsUpdateList.Add(new ObjectUpdatePacket(id, asset, pos, orient, vel, scl));
+            physicsUpdateList.Add(new ObjectUpdatePacket(id, asset, pos, orient, vel));
         }
 
         // SERVER only
