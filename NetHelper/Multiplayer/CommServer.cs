@@ -129,7 +129,7 @@ namespace Helper.Multiplayer
             else if (packet is ObjectUpdatePacket)
             {
                 ObjectUpdatePacket oup = packet as ObjectUpdatePacket;
-                CallObjectUpdateReceived(oup.objectId, oup.assetName, oup.position, oup.orientation, oup.velocity);
+                CallObjectUpdateReceived(oup.objectId, oup.assetName, oup.position, oup.orientation, oup.velocity, oup.scale);
             }
             else if (packet is ObjectActionPacket)
             {
@@ -186,11 +186,11 @@ namespace Helper.Multiplayer
         }
 
         public event Helper.Handlers.ObjectUpdateEH ObjectUpdateReceived;
-        private void CallObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        private void CallObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel, Vector3 scl)
         {
             if (ObjectUpdateReceived == null)
                 return;
-            ObjectUpdateReceived(id, asset, pos, orient, vel);
+            ObjectUpdateReceived(id, asset, pos, orient, vel, scl);
         } 
         #endregion
 

@@ -61,9 +61,7 @@ namespace XnaView
             game = g;
             PhysicsSystem = g.physicsManager.PhysicsSystem;
             gameObjects = g.gameObjects;
-            newObjects = g.objectsToAdd;           
-            
-
+            newObjects = g.objectsToAdd;
         }
         protected override void Initialize()
         {

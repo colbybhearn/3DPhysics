@@ -26,14 +26,19 @@ namespace RoboGame
             }
             else
             {
-                game = new RoboGame();
-                game.OtherClientConnectedToServer += new Helper.Handlers.ClientConnectedEH(game_ConnectedToServer);
-                game.ThisClientDisconnectedFromServer += new Helper.Handlers.voidEH(game_ThisClientDiconnectedFromServer);
+                CreateGame();
                 if (game.ConnectToServer(txtIPAddress.Text, iPort, txtAlias.Text))
                 {
                     LaunchClient();                    
                 }
             }
+        }
+
+        private void CreateGame()
+        {
+            game = new RoboGame();
+            game.OtherClientConnectedToServer += new Helper.Handlers.ClientConnectedEH(game_ConnectedToServer);
+            game.ThisClientDisconnectedFromServer += new Helper.Handlers.voidEH(game_ThisClientDiconnectedFromServer);
         }
 
         void game_ThisClientDiconnectedFromServer()
@@ -63,6 +68,7 @@ namespace RoboGame
         
         private void btnConnectLocal_Click(object sender, EventArgs e)
         {
+            CreateGame();
             LaunchClient();
         }
 

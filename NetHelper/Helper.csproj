@@ -142,6 +142,8 @@
     <Compile Include="Multiplayer\Packets\Packet.cs" />
     <Compile Include="Multiplayer\ServerInfo.cs" />
     <Compile Include="Communication\TcpEventClient.cs" />
+    <Compile Include="Physics\Asset.cs" />
+    <Compile Include="Physics\AssetManager.cs" />
     <Compile Include="Physics\BoostController.cs" />
     <Compile Include="Physics\Gobject.cs" />
     <Compile Include="Physics\HeightMapInfo.cs" />

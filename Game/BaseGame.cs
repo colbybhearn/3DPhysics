@@ -22,6 +22,28 @@ namespace Game
      * 
      */
     // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
+
+    /* We may need an object manager or some kind of Object data structure.
+     *  A specific game will have specific objects in it.
+     *  We could have a sphere model 
+     *  But the same sphere model could be two different sizes, which are essentially two different assets.
+     *  Thus, we can save some inefficient communication effort by having the client and server load a common set of assets.
+     *  Each asset has a name, a gobject, and a callback for retrieving a new one
+     *  
+     * Both the client and the server should load these common assets.
+     * Then, assets can essentially be created simply by requesting one by name, as is needed.
+     * The callback is used to organize distinct initialization methods for each asset type.
+     * For example:
+     * a small cube needs a small scale.
+     * A big cube needs a big scale.
+     * When the server describes a big cube by name to a client, the server would not also have to tell the client, how big.
+     * The client will know, based on the name, what object to create.
+     *  
+     * 
+     * 
+     *
+     */
+
     public class BaseGame
     {
         #region Fields / Properties
@@ -32,6 +54,7 @@ namespace Game
         #endregion
 
         #region Physics / Object Management
+        public AssetManager assetManager;
         public PhysicsManager physicsManager;
         public static BaseGame Instance { get; private set; }
         SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
@@ -229,6 +252,7 @@ namespace Game
         /// </summary>
         public virtual void InitializeContent()
         {
+            assetManager = new AssetManager(ref gameObjects, ref objectsToAdd, ref objectsToDelete);
             Content = new ContentManager(Services, "content");
 
             try
@@ -357,20 +381,7 @@ namespace Game
             currentSelectedObject.Selected = true;
             //objectCam.TargetPosition = currentSelectedObject.Position;
         }
-        public int GetAvailableObjectId()
-        {
-            int id = 1;
-            bool found = true;
-            while (found)
-            {
-                if (gameObjects.ContainsKey(id) || objectsToAdd.ContainsKey(id))
-                    id++;
-                else
-                    found = false;
-            }
-
-            return id;
-        }
+        
         public virtual void Stop()
         {
             physicsManager.Stop();
@@ -498,7 +509,10 @@ namespace Game
                                 }
                                 // (can't yet due to AddNewObject waiting until the next integrate to actually add it)
                                 Gobject go = gameObjects[oup.objectId];
-                                go.Interpoladate(oup.position, oup.orientation, oup.velocity);
+                                if(go.hasNotDoneFirstInterpoladation)
+                                    go.Interpoladate(oup.position, oup.orientation, oup.velocity, 1.0f); // Server knows best!
+                                else
+                                    go.Interpoladate(oup.position, oup.orientation, oup.velocity); // split realities 50/50
                                 #endregion
                             }
                             else if (p is ObjectAttributePacket)
@@ -573,7 +587,7 @@ namespace Game
                             #region Send Object Updates to the client
                             if (go.isMoveable && go.IsActive)
                             {
-                                ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
+                                ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity(), go.Scale);
                                 commServer.BroadcastObjectUpdate(oup);
                             }
                             #endregion
@@ -814,11 +828,11 @@ namespace Game
             
         }
 
-        void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel, Vector3 scl)
         {
             lock (MultiplayerUpdateQueue)
             {
-                MultiplayerUpdateQueue.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel));
+                MultiplayerUpdateQueue.Add(new Helper.Multiplayer.Packets.ObjectUpdatePacket(id, asset, pos, orient, vel, scl));
             }
         }
 
@@ -940,8 +954,8 @@ namespace Game
             int objectId = -1;
             ServeObjectRequest(clientId, asset, out objectId);
             return objectId;
-        } 
-        
+        }
+
         /// <summary>
         /// SERVER SIDE
         /// Server adds an object and associates it with its owning client
@@ -952,7 +966,7 @@ namespace Game
         /// <returns></returns>
         private int AddOwnedObject(int clientId, string asset)
         {
-            int objectid = GetAvailableObjectId();
+            int objectid = assetManager.GetAvailableObjectId();
             // setup dual reference for flexible and speedy accesses, whether by objectID, or by clientId 
             if (!ClientObjectIds.ContainsKey(clientId))
                 ClientObjectIds.Add(clientId, new List<int>());
@@ -964,6 +978,7 @@ namespace Game
 
             return objectid;
         }
+        
 
         /// <summary>
         /// SERVER SIDE
@@ -989,9 +1004,9 @@ namespace Game
         /// <param name="pos"></param>
         /// <param name="orient"></param>
         /// <param name="vel"></param>
-        void commServer_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        void commServer_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel, Vector3 scl)
         {
-            physicsUpdateList.Add(new ObjectUpdatePacket(id, asset, pos, orient, vel));
+            physicsUpdateList.Add(new ObjectUpdatePacket(id, asset, pos, orient, vel, scl));
         }
 
         // SERVER only

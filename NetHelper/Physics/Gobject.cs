@@ -16,12 +16,26 @@ namespace Helper.Physics
         public Body Body { get; internal set; }
         public CollisionSkin Skin { get; internal set; }
         public Model Model { get; set; }
-        public Vector3 Position { get; internal set; }
-        public Vector3 Scale { get; private set; }
+        public Vector3 Position { get; set; }
+        
+        public Matrix Orientation
+        {
+            get
+            {
+                return Body.Orientation;
+            }
+            set
+            {
+                Body.Orientation = value;
+            }
+
+        }
+        public Vector3 Scale { get; set; }
         public bool Selected;
         public Helper.Input.ActionManager actionManager = new Helper.Input.ActionManager();
         public List<Controller> controllers = new List<Controller>();
         internal BasicEffect Effect { get; set; }
+        public bool hasNotDoneFirstInterpoladation = true; // this object has never processed an update and interpolated (with any factor) 
 
         /// <summary>
         /// Default Constructor
@@ -325,20 +339,34 @@ namespace Helper.Physics
             return ret;
         }
 
-
         /// <summary>
         /// CLIENT SIDE
-        /// Interpolating Update
+        /// Interpolating Update with the default 50/50 interpolation
         /// </summary>
         /// <param name="vector3"></param>
         /// <param name="matrix"></param>
         /// <param name="vector3_2"></param>
         public void Interpoladate(Vector3 position, Matrix orientation, Vector3 velocity)
         {
+            // default interpolation factor is 50/50.
+            Interpoladate(position, orientation, velocity, .5f);           
+        }
+
+        /// <summary>
+        /// CLIENT SIDE
+        /// Interpolating Update with a specified interpolation factor.
+        /// Factor of 1.0 means make it so! 
+        /// Factor of 0 means ignore the update. =(
+        /// </summary>
+        /// <param name="vector3"></param>
+        /// <param name="matrix"></param>
+        /// <param name="vector3_2"></param>
+        public void Interpoladate(Vector3 position, Matrix orientation, Vector3 velocity, float interpFactor)
+        {
             //MoveTo(position, orientation);
             //SetVelocity(velocity);
-            Vector3 intPosition = BodyPosition() + (position - BodyPosition()) * .5f;
-            Vector3 intvelocity = BodyVelocity() + (velocity - BodyVelocity()) * .5f;
+            Vector3 intPosition = BodyPosition() + (position - BodyPosition()) * interpFactor;
+            Vector3 intvelocity = BodyVelocity() + (velocity - BodyVelocity()) * interpFactor;
             if(float.IsNaN(intPosition.X) || 
                 float.IsNaN(intvelocity.X))
             {
@@ -346,6 +374,7 @@ namespace Helper.Physics
             }
             MoveTo(intPosition, orientation);
             SetVelocity(intvelocity);
+            hasNotDoneFirstInterpoladation = false;
             //SetVelocity(intvelocity);            
         }
 

@@ -13,6 +13,7 @@ using Helper.Camera;
 using Game;
 using JigLibX.Collision;
 using System.IO;
+using JigLibX.Geometry;
 
 
 namespace RoboGame
@@ -63,6 +64,16 @@ namespace RoboGame
         }
         #endregion
 
+        #region Enumerations
+        public enum AssetTypes
+        {
+            Rover,
+            Radar1Pickup,
+            Laser1Pickup,
+            Lander,
+        }
+        #endregion
+
         #region Initialization
         public RoboGame()
         {
@@ -73,44 +84,61 @@ namespace RoboGame
         public override void InitializeContent()
         {
             base.InitializeContent();
-            cubeModel = Content.Load<Model>("Cube");
-            sphereModel = Content.Load<Model>("Sphere");
-            roverModel = Content.Load<Model>("car");
-            wheelModel = Content.Load<Model>("wheel");
-            moon = Content.Load<Texture2D>("Moon");
-            terrainModel = Content.Load<Model>("terrain2");
-            roverModel = Content.Load<Model>("Rover2");
-            wheelModel = Content.Load<Model>("wheel");
-            landerModel = Content.Load<Model>("Lunar Lander");
-            chatFont = Content.Load<SpriteFont>("debugFont");
 
-            radar = Content.Load<Texture2D>("radar");
-            radar_icon = Content.Load<Texture2D>("radar_icon");
-            laser_icon = Content.Load<Texture2D>("laser_icon");
-            energy = Content.Load<Texture2D>("Energy");
+            try
+            {
+                cubeModel = Content.Load<Model>("Cube");
+                sphereModel = Content.Load<Model>("Sphere");
+                wheelModel = Content.Load<Model>("wheel");
+                moon = Content.Load<Texture2D>("Moon");
+                terrainModel = Content.Load<Model>("terrain2");
+                roverModel = Content.Load<Model>("Rover2");
+                wheelModel = Content.Load<Model>("wheel");
+                landerModel = Content.Load<Model>("Lunar Lander");
+                chatFont = Content.Load<SpriteFont>("debugFont");
 
-            ChatManager = new Chat(chatFont);
-            ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
+                radar = Content.Load<Texture2D>("radar");
+                radar_icon = Content.Load<Texture2D>("radar_icon");
+                laser_icon = Content.Load<Texture2D>("laser_icon");
+                energy = Content.Load<Texture2D>("Energy");
 
-            spawn = Content.Load<SoundEffect>("spawn");
-            motor = Content.Load<SoundEffect>("motor");
-            radar_noise = Content.Load<SoundEffect>("radar_noise");
-            solar_wind = Content.Load<SoundEffect>("solar_wind");
+                ChatManager = new Chat(chatFont);
+                ChatMessageReceived += new Helper.Handlers.ChatMessageEH(ChatManager.ReceiveMessage);
 
-            motor_running = motor.CreateInstance();
-            //motor_running.IsLooped = true; // should be looped, but need to know when rover stops to call .Stop();
+                spawn = Content.Load<SoundEffect>("spawn");
+                motor = Content.Load<SoundEffect>("motor");
+                radar_noise = Content.Load<SoundEffect>("radar_noise");
+                solar_wind = Content.Load<SoundEffect>("solar_wind");
 
-            solar_wind_loop = solar_wind.CreateInstance();
-            solar_wind_loop.Volume = 0.5f;
-            solar_wind_loop.IsLooped = true;
+                motor_running = motor.CreateInstance();
+                //motor_running.IsLooped = true; // should be looped, but need to know when rover stops to call .Stop();
 
-            radar_noise_loop = radar_noise.CreateInstance();
-            radar_noise_loop.Volume = 0.5f;
-            radar_noise_loop.IsLooped = true;
+                solar_wind_loop = solar_wind.CreateInstance();
+                solar_wind_loop.Volume = 0.5f;
+                solar_wind_loop.IsLooped = true;
 
-            // Let play this right away;  should not play on the server through
-            if(isClient)
-                solar_wind_loop.Play();
+                radar_noise_loop = radar_noise.CreateInstance();
+                radar_noise_loop.Volume = 0.5f;
+                radar_noise_loop.IsLooped = true;
+
+                // Let's play this right away;  should not play on the server through
+                if (isClient)
+                    solar_wind_loop.Play();
+
+
+                #region Initialize Assets
+                assetManager.AddAsset(AssetTypes.Rover.ToString(), CreateRover);
+                assetManager.AddAsset(AssetTypes.Laser1Pickup.ToString(), CreateHighFrictionCube);
+                assetManager.AddAsset(AssetTypes.Radar1Pickup.ToString(), CreateSmallSphere);
+                assetManager.AddAsset(AssetTypes.Lander.ToString(), CreateLunarLander);
+                #endregion
+            }
+            catch (Exception E)
+            {
+
+            }
+
+
         }
         public override void InitializeMultiplayer()
         {
@@ -166,7 +194,6 @@ namespace RoboGame
                 "rover2", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2.0f, 0), 1.0f));
             return profiles;
         }
-
         public override void InitializeInputs()
         {
             inputManager = new InputManager(this.name, GetDefaultControls());
@@ -232,10 +259,118 @@ namespace RoboGame
 
             return defControls;
         }
+
+        #region Assets
+        // Standard and Static callback create methods for the asset manager
+        private Gobject CreateRover()
+        {
+            RoverObject r = null;
+            try
+            {
+                Vector3 pos = Vector3.Zero;
+                float maxSteerAngle = 30.0f;
+                float steerRate = 5.0f;
+                float wheelSideFriction = 4.7f;
+                float wheelFwdFriction = 5.0f;
+                float wheelTravel = 0.2f;
+                float wheelRadius = 0.4f;
+                float wheelZOffset = 0.05f;
+                float wheelRestingFrac = 0.45f;
+                float wheeldampingFrac = 0.3f;
+                int wheelNumRays = 1;
+                float driveTorque = 200.0f;
+
+                r = new RoverObject(string.Empty, pos, roverModel, wheelModel, sphereModel, cubeModel, maxSteerAngle, steerRate,
+                    wheelSideFriction, wheelFwdFriction, wheelTravel, wheelRadius, wheelZOffset, wheelRestingFrac, wheeldampingFrac, wheelNumRays,
+                    driveTorque, physicsManager.PhysicsSystem.Gravity.Length());
+                r.Rover.EnableCar();
+                r.Rover.Chassis.Body.AllowFreezing = false;
+                
+                if (isServer)
+                    r.AddCollisionCallback(CollisionSkin_callbackFn);
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
+            return r;
+        }
+        private Gobject CreateHighFrictionCube()
+        {
+            Vector3 size = new Vector3(1, 1, 1);
+            // position of box was upper leftmost corner
+            // body has world position
+            // skin is relative to the body
+            Box boxPrimitive = new Box(-.5f * size, Matrix.Identity, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
+
+            Gobject box = new Gobject(
+                Vector3.Zero, // position can be setup just following call to assetManager.GetNewInstance
+                size / 2,
+                boxPrimitive,
+                MaterialTable.MaterialID.NotBouncyRough,
+                cubeModel,
+                string.Empty // asset name is set automatically by asset manager when requested
+                );
+            return box;
+        }
+        private Gobject CreateSmallSphere()
+        {
+            float radius = .4f;
+            Sphere spherePrimitive = new Sphere(Vector3.Zero, radius);
+            Gobject sphere = new Gobject(
+                Vector3.Zero,
+                Vector3.One * radius,
+                spherePrimitive,
+                sphereModel,
+                true,
+                string.Empty);
+            return sphere;
+        }
+        private Gobject CreateLunarLander()
+        {
+            Vector3 scale = new Vector3(2, 2, 2);
+            LunarVehicle lander = new LunarVehicle(
+                Vector3.Zero,
+                scale,
+                Matrix.Identity,
+                landerModel,
+                string.Empty
+                );
+
+            return lander;
+        }
+
+        // Flexible create methods for the game 
+        private RoverObject GetRover(Vector3 pos)
+        {
+            RoverObject rover = assetManager.GetNewInstance(AssetTypes.Rover.ToString()) as RoverObject;
+            rover.Position = pos;            
+            return rover;
+        }
+        private Gobject GetLaserPickup(Vector3 pos)
+        {
+            Gobject laser = assetManager.GetNewInstance(AssetTypes.Laser1Pickup.ToString());
+            laser.Position = pos;
+            return laser;
+        }
+        private Gobject GetRadarPickup(Vector3 pos)
+        {
+            Gobject radar = assetManager.GetNewInstance(AssetTypes.Radar1Pickup.ToString());
+            radar.Position = pos;
+            return radar;
+        }
+        public LunarVehicle GetLunarLander(Vector3 pos, Matrix orient)
+        {
+            LunarVehicle lander = assetManager.GetNewInstance(AssetTypes.Lander.ToString()) as LunarVehicle;
+            lander.Position = pos;
+            lander.Orientation = orient;
+            return lander;
+        }
+        #endregion
+
         #endregion
 
         #region Methods
-
         public override void Stop()
         {
             base.Stop();
@@ -303,24 +438,18 @@ namespace RoboGame
         /// <param name="asset"></param>
         public override void AddNewObject(int objectid, string asset)
         {
+            if (assetManager == null)
+                return;
+            // if our client is already using this object id for some reason 
+            if (assetManager.isObjectIdInUse(objectid))
+                // forget it, the next update will prompt it again, it will get added when it's safe.
+                return;
+
             if (Content == null)
                 return;
-            Model model = null;
-            try
-            {
-                model = Content.Load<Model>(asset);
-            }
-            catch (Exception E)
-            {
-
-            }
-            if (model == null)
-            {
-                return;
-            }
-
             
-            Gobject newobject = null;
+            
+            /*
             switch (asset.ToLower())
             {
                 case "cube":            newobject = physicsManager.GetBox(model);                   break;
@@ -332,10 +461,11 @@ namespace RoboGame
                 case "lunar lander":    newobject = physicsManager.GetLunarLander(landerModel);     break;
                 default:                                                                            break;
             }
-            
-            newobject.ID = objectid;
+            */
+            Gobject newobject = assetManager.GetNewInstance(asset);
+            newobject.ID = objectid; // override whatever object ID the assetManager came up with, if it is safe to do so
             physicsManager.AddNewObject(newobject);
-        }        
+        }
 
         /// <summary>
         /// CLIENT SIDE
@@ -345,7 +475,7 @@ namespace RoboGame
         {
             if(commClient!=null)
                 // send a request to the server for an object of asset type "car"
-                commClient.SendObjectRequest("rover2");
+                commClient.SendObjectRequest(AssetTypes.Rover.ToString());
 
             spawn.Play();
         }
@@ -360,8 +490,20 @@ namespace RoboGame
         /// <param name="asset"></param>
         public override void ProcessObjectAdded(int ownerid, int objectid, string asset)
         {
-            Model model = Content.Load<Model>(asset);
-            Gobject newobject = null;
+            //Model model = Content.Load<Model>(asset);
+            Gobject newobject = assetManager.GetNewInstance(asset);
+            newobject.ID = objectid;
+            physicsManager.AddNewObject(newobject);
+            if (ownerid == MyClientID) // Only select the new car if its OUR new car
+            {
+                if (newobject is RoverObject)
+                {
+                    myRover = (RoverObject)newobject;
+                    SelectGameObject(myRover);
+                }
+            }
+            
+            /*
             switch (asset.ToLower())
             {
                 case "cube":
@@ -386,7 +528,7 @@ namespace RoboGame
                     break;
                 default:
                     break;
-            }
+            }*/
         }
 
         private void SpawnPickups()
@@ -402,10 +544,8 @@ namespace RoboGame
                 x= x*250;
                 z= z*250;
 
-                //Gobject sphere = physicsManager.GetSphere(new Vector3(x, 3.0f, z), 1.0f, sphereModel, true);
-                Gobject box = physicsManager.GetBoxHighFriction(new Vector3(x, 3.0f, z), new Vector3(1.0f, 1.0f, 1.0f), Matrix.Identity, cubeModel, true);
-                box.ID = GetAvailableObjectId();  
-                
+                //Gobject box = physicsManager.GetBoxHighFriction(new Vector3(x, 3.0f, z), new Vector3(1.0f, 1.0f, 1.0f), Matrix.Identity, cubeModel, true);
+                Gobject box = GetLaserPickup(new Vector3(x, 3.0f, z));
                 physicsManager.AddNewObject(box);
             }
 
@@ -418,8 +558,8 @@ namespace RoboGame
                 x = x * 250;
                 z = z * 250;
 
-                Gobject sphere = physicsManager.GetSphere(new Vector3(x, 3.0f, z), 0.4f, sphereModel, true);
-                sphere.ID = GetAvailableObjectId();
+                
+                Gobject sphere = GetRadarPickup(new Vector3(x, 3.0f, z));
                 physicsManager.AddNewObject(sphere);
             }
 
@@ -521,7 +661,6 @@ namespace RoboGame
                 myRover = (RoverObject)newobject;
                 SelectGameObject(myRover);
             }
-            
             return newobject;
         }
 
@@ -543,13 +682,13 @@ namespace RoboGame
                 return false; // don't bother doing any collision with it
 
             string type = obj.Asset.ToLower();
-            if (type == "cube")
+            if (type == AssetTypes.Laser1Pickup.ToString())
             {
                 rover.SetLaser(true);
                 DeleteObject(obj.ID);
                 return false;
             }
-            if (type == "sphere")
+            if (type == AssetTypes.Radar1Pickup.ToString())
             {
                 rover.SetRadar(true);
                 DeleteObject(obj.ID);
@@ -562,7 +701,7 @@ namespace RoboGame
         {
             if (commClient != null)
             {
-                commClient.SendObjectRequest("lunar lander");
+                commClient.SendObjectRequest(AssetTypes.Lander.ToString());
             }
         }
         private void ChatKeyPressed()
@@ -620,7 +759,7 @@ namespace RoboGame
                     Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cameraManager.ProjectionMatrix(), cameraManager.currentCamera.RhsLevelViewMatrix, Matrix.Identity);
                     
                     int size = (int)chatFont.MeasureString(text[i]).X;
-                    sb.Draw(BlankBackground, new Rectangle((int)screen.X - size/2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);
+                    sb.Draw(BlankBackground, new Microsoft.Xna.Framework.Rectangle((int)screen.X - size/2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);
                     sb.DrawString(chatFont, text[i], new Vector2(screen.X - size/2, screen.Y), Color.White);
                 }
             }
@@ -634,7 +773,7 @@ namespace RoboGame
             if (myRover != null)
             {            
                 int nrg = (int)myRover.Energy;
-                sb.Draw(energy, new Rectangle(5, 5, nrg, 5), Color.White);
+                sb.Draw(energy, new Microsoft.Xna.Framework.Rectangle(5, 5, nrg, 5), Color.White);
 
                 if (myRover.hasRadar)
                 {
@@ -650,19 +789,19 @@ namespace RoboGame
                     }
 
                     // The radar map                
-                    if(radar!=null)                    
-                        sb.Draw(radar, new Rectangle(10, 900, 100, 100), Color.White);
+                    if(radar!=null)
+                        sb.Draw(radar, new Microsoft.Xna.Framework.Rectangle(10, 900, 100, 100), Color.White);
 
                     // The Icon
                     if(radar_icon != null)
-                        sb.Draw(radar_icon, new Rectangle(10, 10, 50, 50), Color.White);
+                        sb.Draw(radar_icon, new Microsoft.Xna.Framework.Rectangle(10, 10, 50, 50), Color.White);
                 }
 
                 if (myRover.hasLaser)
                 {
                     // The Icon
                     if(laser_icon!=null)
-                        sb.Draw(laser_icon, new Rectangle(70, 10, 50, 50), Color.White);
+                        sb.Draw(laser_icon, new Microsoft.Xna.Framework.Rectangle(70, 10, 50, 50), Color.White);
                 }
             }
 

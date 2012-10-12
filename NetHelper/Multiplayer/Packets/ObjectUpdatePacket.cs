@@ -12,8 +12,9 @@ namespace Helper.Multiplayer.Packets
         public Vector3 position;
         public Matrix orientation;
         public Vector3 velocity;
+        public Vector3 scale;
         
-        public ObjectUpdatePacket(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel) 
+        public ObjectUpdatePacket(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel, Vector3 scl) 
             : base(Types.scObjectUpdate)
         {
             objectId = id;
@@ -21,6 +22,7 @@ namespace Helper.Multiplayer.Packets
             position = pos;
             orientation = orient;
             velocity = vel;
+            scale = scl;
         }
 
         public ObjectUpdatePacket() 
@@ -31,7 +33,7 @@ namespace Helper.Multiplayer.Packets
 
         public override byte[] Serialize()
         {
-            int length = assetName.Length + (25 * 4);
+            int length = assetName.Length + (28 * 4);
             byte[] data = new byte[length+4];
             int index = 0;
             Array.Copy(BitConverter.GetBytes((int)length), 0, data, index, 4);
@@ -71,38 +73,13 @@ namespace Helper.Multiplayer.Packets
             Array.Copy(BitConverter.GetBytes(velocity.Y), 0, data, index, 4);
             index += 4;
             Array.Copy(BitConverter.GetBytes(velocity.Z), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(scale.X), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(scale.Y), 0, data, index, 4);
+            index += 4;
+            Array.Copy(BitConverter.GetBytes(scale.Z), 0, data, index, 4);
             return data;
-                
-            /*List<byte> data = new List<byte>;
-            data.AddRange(BitConverter.GetBytes((int)Type));
-            data.AddRange(BitConverter.GetBytes(objectId));
-            data.AddRange(BitConverter.GetBytes(assetName.Length));
-            foreach(char c in assetName)
-                data.Add((byte)c);
-            data.AddRange(BitConverter.GetBytes(position.X));
-            data.AddRange(BitConverter.GetBytes(position.Y));
-            data.AddRange(BitConverter.GetBytes(position.Z)); // 24 including this line
-            data.AddRange(BitConverter.GetBytes(orientation.M11));
-            data.AddRange(BitConverter.GetBytes(orientation.M12));
-            data.AddRange(BitConverter.GetBytes(orientation.M13));
-            data.AddRange(BitConverter.GetBytes(orientation.M14));
-            data.AddRange(BitConverter.GetBytes(orientation.M21));
-            data.AddRange(BitConverter.GetBytes(orientation.M22));
-            data.AddRange(BitConverter.GetBytes(orientation.M23));
-            data.AddRange(BitConverter.GetBytes(orientation.M24));
-            data.AddRange(BitConverter.GetBytes(orientation.M31));
-            data.AddRange(BitConverter.GetBytes(orientation.M32));
-            data.AddRange(BitConverter.GetBytes(orientation.M33));
-            data.AddRange(BitConverter.GetBytes(orientation.M34));
-            data.AddRange(BitConverter.GetBytes(orientation.M41));
-            data.AddRange(BitConverter.GetBytes(orientation.M42));
-            data.AddRange(BitConverter.GetBytes(orientation.M43));
-            data.AddRange(BitConverter.GetBytes(orientation.M44));
-            data.AddRange(BitConverter.GetBytes(velocity.X));
-            data.AddRange(BitConverter.GetBytes(velocity.Y));
-            data.AddRange(BitConverter.GetBytes(velocity.Z));
-            data.InsertRange(0, BitConverter.GetBytes(data.Count));
-            return data.ToArray();*/
         }
 
         public Packet CustomDeserialize(byte[] data)
@@ -163,6 +140,12 @@ namespace Helper.Multiplayer.Packets
             index+=4;
             velocity.Z = BitConverter.ToSingle(data, index);
             index+=4;
+            scale.X = BitConverter.ToSingle(data, index);
+            index += 4;
+            scale.Y = BitConverter.ToSingle(data, index);
+            index += 4;
+            scale.Z = BitConverter.ToSingle(data, index);
+            index += 4;
 
             return this;
         }

@@ -247,24 +247,6 @@ namespace Helper.Physics
             return box;
         }
 
-        public Gobject GetBoxHighFriction(Vector3 pos, Vector3 size, Matrix orient, Model model, bool moveable)
-        {
-            // position of box was upper leftmost corner
-            // body has world position
-            // skin is relative to the body
-            Box boxPrimitive = new Box(-.5f * size, orient, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
-            
-            Gobject box = new Gobject(
-                pos,
-                size / 2,
-                boxPrimitive, 
-                MaterialTable.MaterialID.NotBouncyRough,
-                model,
-                "cube"
-                );
-
-            return box;
-        }
 
         public void AddSpheres(int n, Model s)
         {
