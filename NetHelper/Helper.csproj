@@ -163,6 +163,7 @@
     <Compile Include="Physics\Terrain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Camera\ViewProfile.cs" />
+    <Compile Include="Utility\MultEnum.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
