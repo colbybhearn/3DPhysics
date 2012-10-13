@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Helper.Lighting;
 using Helper.Physics.PhysicsObjects;
+using Helper.Physics.PhysicObjects;
 
 namespace XnaView
 {
@@ -106,7 +107,7 @@ namespace XnaView
                 Vector3 norm;
                 CollisionSkin cs = new CollisionSkin();
                                 
-                lock (gameObjects)
+                lock (PhysicsSystem)
                 {
                     if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
                     {
@@ -225,6 +226,10 @@ namespace XnaView
                                 if (go is Terrain)
                                 {
                                     (go as Terrain).Draw(GraphicsDevice, view, proj);
+                                }
+                                else if (go is Planet)
+                                {
+                                    (go as Planet).Draw(GraphicsDevice, view, proj);
                                 }
                                 else
                                     go.Draw(ref view, ref proj);

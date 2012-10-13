@@ -147,6 +147,7 @@
     <Compile Include="Physics\Asset.cs" />
     <Compile Include="Physics\AssetManager.cs" />
     <Compile Include="Physics\BoostController.cs" />
+    <Compile Include="Physics\GravityController.cs" />
     <Compile Include="Physics\Gobject.cs" />
     <Compile Include="Physics\HeightMapInfo.cs" />
     <Compile Include="Physics\PhysicObjects\Aircraft.cs" />
@@ -155,6 +156,7 @@
     <Compile Include="Physics\PhysicObjects\LunarVehicle.cs" />
     <Compile Include="Physics\PhysicObjects\PhysicObject.cs" />
     <Compile Include="Physics\PhysicObjects\PlaneObject.cs" />
+    <Compile Include="Physics\PhysicObjects\Planet.cs" />
     <Compile Include="Physics\PhysicObjects\RagdollObject.cs" />
     <Compile Include="Physics\PhysicObjects\Rover.cs" />
     <Compile Include="Physics\PhysicObjects\RoverObject.cs" />
