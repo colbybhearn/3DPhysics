@@ -21,6 +21,7 @@ namespace RoboGame
     // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
     public class RoboGame : BaseGame
     {
+        
         #region Properties / Fields
         
         GameplayModes gameplaymode = GameplayModes.Rover;
@@ -32,6 +33,7 @@ namespace RoboGame
         Model cubeModel;
         Model sphereModel;
         LunarVehicle lander;
+        Model roverRadar;
 
         Texture2D radar;
         Texture2D radar_icon;
@@ -104,6 +106,7 @@ namespace RoboGame
                 wheelModel = Content.Load<Model>("wheel");
                 landerModel = Content.Load<Model>("Lunar Lander");
                 chatFont = Content.Load<SpriteFont>("debugFont");
+                roverRadar = Content.Load<Model>("RoverRadar");
 
                 radar = Content.Load<Texture2D>("radar");
                 radar_icon = Content.Load<Texture2D>("radar_icon");
@@ -120,10 +123,10 @@ namespace RoboGame
 
 
                 #region Initialize Assets
-                assetManager.AddAsset(AssetTypes.Rover.ToString(), CreateRover);
-                assetManager.AddAsset(AssetTypes.Laser1Pickup.ToString(), CreateHighFrictionCube);
-                assetManager.AddAsset(AssetTypes.Radar1Pickup.ToString(), CreateSmallSphere);
-                assetManager.AddAsset(AssetTypes.Lander.ToString(), CreateLunarLander);
+                assetManager.AddAsset(AssetTypes.Rover, CreateRover);
+                assetManager.AddAsset(AssetTypes.Laser1Pickup, CreateHighFrictionCube);
+                assetManager.AddAsset(AssetTypes.Radar1Pickup, CreateSmallSphere);
+                assetManager.AddAsset(AssetTypes.Lander, CreateLunarLander);
                 #endregion
             }
             catch (Exception E)
@@ -182,7 +185,7 @@ namespace RoboGame
         {
             List<ViewProfile> profiles = base.GetViewProfiles();
             profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
-                AssetTypes.Rover.ToString(), new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2.0f, 0), 1.0f));
+                (int)AssetTypes.Rover, new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2.0f, 0), 1.0f));
             return profiles;
         }
         public override void InitializeInputs()
@@ -196,7 +199,30 @@ namespace RoboGame
         {
             KeyMapCollection defControls = base.GetDefaultControls();
             defControls.Game = this.name;
-            
+
+
+            List<KeyBinding> cameraDefaults = new List<KeyBinding>();
+            cameraDefaults.Add(new KeyBinding("Forward", Keys.NumPad8, false, false, false, KeyEvent.Down, CameraMoveForward));
+            cameraDefaults.Add(new KeyBinding("Left", Keys.NumPad4, false, false, false, KeyEvent.Down, CameraMoveLeft));
+            cameraDefaults.Add(new KeyBinding("Backward", Keys.NumPad5, false, false, false, KeyEvent.Down, CameraMoveBackward));
+            cameraDefaults.Add(new KeyBinding("Right", Keys.NumPad6, false, false, false, KeyEvent.Down, CameraMoveRight));
+            cameraDefaults.Add(new KeyBinding("Speed Increase", Keys.NumPad7, false, false, false, KeyEvent.Pressed, CameraMoveSpeedIncrease));
+            cameraDefaults.Add(new KeyBinding("Speed Decrease", Keys.NumPad1, false, false, false, KeyEvent.Pressed, CameraMoveSpeedDecrease));
+            cameraDefaults.Add(new KeyBinding("Height Increase", Keys.NumPad9, false, false, false, KeyEvent.Down, CameraMoveHeightIncrease));
+            cameraDefaults.Add(new KeyBinding("Height Decrease", Keys.NumPad3, false, false, false, KeyEvent.Down, CameraMoveHeightDecrease));
+
+            cameraDefaults.Add(new KeyBinding("Change Mode", Keys.Decimal, false, false, false, KeyEvent.Pressed, CameraModeCycle));
+            cameraDefaults.Add(new KeyBinding("Home", Keys.Multiply, false, false, false, KeyEvent.Pressed, CameraMoveHome));
+            //
+            cameraDefaults.Add(new KeyBinding("Toggle Debug Info", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
+            cameraDefaults.Add(new KeyBinding("Toggle Physics Debug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
+            KeyMap camControls = new KeyMap(GenericInputGroups.Camera.ToString(), cameraDefaults);
+
+            List<KeyBinding> ClientDefs = new List<KeyBinding>();
+            ClientDefs.Add(new KeyBinding("Escape", Keys.Escape, false, false, false, KeyEvent.Pressed, Stop));
+            KeyMap clientControls = new KeyMap(GenericInputGroups.Client.ToString(), ClientDefs);
+
+
             // Car
             List<KeyBinding> roverDefaults = new List<KeyBinding>();
             //careDefaults.Add(new KeyBinding("Spawn", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
@@ -236,8 +262,10 @@ namespace RoboGame
             interfaceDefaults.Add(new KeyBinding("Spawn Lander", Keys.L, false, true, false, KeyEvent.Pressed, SpawnLander));
             interfaceDefaults.Add(new KeyBinding("Spawn Rover", Keys.R, false, true, false, KeyEvent.Pressed, Request_Rover));
             KeyMap interfaceControls = new KeyMap(SpecificInputGroups.Interface.ToString(), interfaceDefaults);
-            
 
+
+            defControls.AddMap(camControls);
+            defControls.AddMap(clientControls);
             defControls.AddMap(roverControls);
             defControls.AddMap(landerControls);
             defControls.AddMap(commControls);
@@ -285,7 +313,7 @@ namespace RoboGame
                 int wheelNumRays = 1;
                 float driveTorque = 200.0f;
 
-                r = new RoverObject(string.Empty, pos, roverModel, wheelModel, sphereModel, cubeModel, maxSteerAngle, steerRate,
+                r = new RoverObject(0, pos, roverModel, wheelModel, roverRadar, cubeModel, maxSteerAngle, steerRate,
                     wheelSideFriction, wheelFwdFriction, wheelTravel, wheelRadius, wheelZOffset, wheelRestingFrac, wheeldampingFrac, wheelNumRays,
                     driveTorque, physicsManager.PhysicsSystem.Gravity.Length());
                 r.Rover.EnableCar();
@@ -314,7 +342,7 @@ namespace RoboGame
                 boxPrimitive,
                 MaterialTable.MaterialID.NotBouncyRough,
                 cubeModel,
-                string.Empty // asset name is set automatically by asset manager when requested
+                0 // asset name is set automatically by asset manager when requested
                 );
             return box;
         }
@@ -328,7 +356,7 @@ namespace RoboGame
                 spherePrimitive,
                 sphereModel,
                 true,
-                string.Empty);
+                0);
             return sphere;
         }
         private Gobject CreateLunarLander()
@@ -339,7 +367,7 @@ namespace RoboGame
                 scale,
                 Matrix.Identity,
                 landerModel,
-                string.Empty
+                0
                 );
 
             return lander;
@@ -348,25 +376,25 @@ namespace RoboGame
         // Flexible create methods for the game 
         private RoverObject GetRover(Vector3 pos)
         {
-            RoverObject rover = assetManager.GetNewInstance(AssetTypes.Rover.ToString()) as RoverObject;
+            RoverObject rover = assetManager.GetNewInstance(AssetTypes.Rover) as RoverObject;
             rover.Position = pos;            
             return rover;
         }
         private Gobject GetLaserPickup(Vector3 pos)
         {
-            Gobject laser = assetManager.GetNewInstance(AssetTypes.Laser1Pickup.ToString());
+            Gobject laser = assetManager.GetNewInstance(AssetTypes.Laser1Pickup);
             laser.Position = pos;
             return laser;
         }
         private Gobject GetRadarPickup(Vector3 pos)
         {
-            Gobject radar = assetManager.GetNewInstance(AssetTypes.Radar1Pickup.ToString());
+            Gobject radar = assetManager.GetNewInstance(AssetTypes.Radar1Pickup);
             radar.Position = pos;
             return radar;
         }
         public LunarVehicle GetLunarLander(Vector3 pos, Matrix orient)
         {
-            LunarVehicle lander = assetManager.GetNewInstance(AssetTypes.Lander.ToString()) as LunarVehicle;
+            LunarVehicle lander = assetManager.GetNewInstance(AssetTypes.Lander) as LunarVehicle;
             lander.Position = pos;
             lander.Orientation = orient;
             return lander;
@@ -439,7 +467,7 @@ namespace RoboGame
         /// </summary>
         /// <param name="objectid"></param>
         /// <param name="asset"></param>
-        public override void AddNewObject(int objectid, string asset)
+        public override void AddNewObject(int objectid, int asset)
         {
             if (assetManager == null)
                 return;
@@ -451,7 +479,7 @@ namespace RoboGame
             if (Content == null)
                 return;
             
-            Gobject newobject = assetManager.GetNewInstance(asset);
+            Gobject newobject = assetManager.GetNewInstance((AssetTypes)asset);
             newobject.ID = objectid; // override whatever object ID the assetManager came up with, if it is safe to do so
             physicsManager.AddNewObject(newobject);
         }
@@ -464,7 +492,7 @@ namespace RoboGame
         {
             if(commClient!=null)
                 // send a request to the server for an object of asset type "car"
-                commClient.SendObjectRequest(AssetTypes.Rover.ToString());
+                commClient.SendObjectRequest((int)AssetTypes.Rover);
 
             //spawn.Play();
             soundManager.Play(Sounds.RoverSpawn.ToString());
@@ -478,9 +506,9 @@ namespace RoboGame
         /// </summary>
         /// <param name="objectid"></param>
         /// <param name="asset"></param>
-        public override void ProcessObjectAdded(int ownerid, int objectid, string asset)
+        public override void ProcessObjectAdded(int ownerid, int objectid, int asset)
         {
-            Gobject newobject = assetManager.GetNewInstance(asset);
+            Gobject newobject = assetManager.GetNewInstance((AssetTypes)asset);
             newobject.ID = objectid;
             physicsManager.AddNewObject(newobject);
             if (ownerid == MyClientID) // Only select the new car if its OUR new car
@@ -617,7 +645,7 @@ namespace RoboGame
 
         private Gobject SpawnRover(int ownerid, int objectid)
         {
-            Gobject newobject = physicsManager.GetRover(roverModel, wheelModel, sphereModel,cubeModel);
+            Gobject newobject = GetRover(new Vector3(0, 0, 0));
             newobject.ID = objectid;
             physicsManager.AddNewObject(newobject);
             if (ownerid == MyClientID) // Only select the new car if its OUR new car
@@ -645,14 +673,14 @@ namespace RoboGame
             if (objectsToDelete.Contains(obj.ID)) // if the object is going to be deleted soon,
                 return false; // don't bother doing any collision with it
 
-            string type = obj.Asset;
-            if (type == AssetTypes.Laser1Pickup.ToString())
+            int type = obj.type;
+            if ((AssetTypes)type == AssetTypes.Laser1Pickup)
             {
                 rover.SetLaser(true);
                 DeleteObject(obj.ID);
                 return false;
             }
-            if (type == AssetTypes.Radar1Pickup.ToString())
+            if ((AssetTypes)type == AssetTypes.Radar1Pickup)
             {
                 rover.SetRadar(true);
                 DeleteObject(obj.ID);
@@ -665,7 +693,7 @@ namespace RoboGame
         {
             if (commClient != null)
             {
-                commClient.SendObjectRequest(AssetTypes.Lander.ToString());
+                commClient.SendObjectRequest((int)AssetTypes.Lander);
             }
         }
         private void ChatKeyPressed()

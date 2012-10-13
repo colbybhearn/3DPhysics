@@ -10,7 +10,7 @@ namespace Helper.Physics.PhysicsObjects
         private Car car;
         private Model wheel;
 
-        public CarObject(string asset,
+        public CarObject(int asset,
             Vector3 pos,
             Model model,Model wheels, bool FWDrive,
                        bool RWDrive,

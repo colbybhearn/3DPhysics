@@ -18,6 +18,10 @@ using Helper.Audio;
 namespace Game
 {
 
+    // can we remove all enums from this and only have enums in the specific game?
+    // manager
+
+
     /*
      * Asynchronous sending / receiving in ComServer/Client
      * 
@@ -158,6 +162,18 @@ namespace Game
         PlaneObject planeObj;
         #endregion
 
+        
+
+        #endregion
+
+        #region Enums
+        // you have to declare some enums for assets, cameras, inputmodes, sounds
+        public enum AssetTypes
+        {
+            Car,
+            Aircraft,
+            Lander,
+        }
         #endregion
 
         #region Initialization
@@ -216,12 +232,13 @@ namespace Game
             foreach (ViewProfile vp in GetViewProfiles())
                 cameraManager.AddProfile(vp);
         }
+
         public virtual List<ViewProfile> GetViewProfiles()
         {
             List<ViewProfile> views = new List<ViewProfile>();
-            views.Add(new ViewProfile(GenericCameraModes.ObjectChase.ToString(), "Airplane", new Vector3(0, 3, 10), .25f, Vector3.Zero, 1.0f));
-            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), "car", new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2, 0), 1.0f));
-            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), "Airplane", new Vector3(0, 3, 10), .25f, new Vector3(0, 0, 0), 1.0f));
+            views.Add(new ViewProfile(GenericCameraModes.ObjectChase.ToString(), (int)AssetTypes.Aircraft, new Vector3(0, 3, 10), .25f, Vector3.Zero, 1.0f));
+            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), (int)AssetTypes.Car, new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2, 0), 1.0f));
+            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), (int)AssetTypes.Aircraft, new Vector3(0, 3, 10), .25f, new Vector3(0, 0, 0), 1.0f));
             return views;
         }
 
@@ -232,29 +249,6 @@ namespace Game
         public virtual KeyMapCollection GetDefaultControls()
         {
             KeyMapCollection defControls = new KeyMapCollection();
-            List<KeyBinding> cameraDefaults = new List<KeyBinding>();
-            cameraDefaults.Add(new KeyBinding("Forward", Keys.NumPad8, false, false, false, KeyEvent.Down, CameraMoveForward));
-            cameraDefaults.Add(new KeyBinding("Left", Keys.NumPad4, false, false, false, KeyEvent.Down, CameraMoveLeft));
-            cameraDefaults.Add(new KeyBinding("Backward", Keys.NumPad5, false, false, false, KeyEvent.Down, CameraMoveBackward));
-            cameraDefaults.Add(new KeyBinding("Right", Keys.NumPad6, false, false, false, KeyEvent.Down, CameraMoveRight));
-            cameraDefaults.Add(new KeyBinding("Speed Increase", Keys.NumPad7, false, false, false, KeyEvent.Pressed, CameraMoveSpeedIncrease));
-            cameraDefaults.Add(new KeyBinding("Speed Decrease", Keys.NumPad1, false, false, false, KeyEvent.Pressed, CameraMoveSpeedDecrease));
-            cameraDefaults.Add(new KeyBinding("Height Increase", Keys.NumPad9, false, false, false, KeyEvent.Down, CameraMoveHeightIncrease));
-            cameraDefaults.Add(new KeyBinding("Height Decrease", Keys.NumPad3, false, false, false, KeyEvent.Down, CameraMoveHeightDecrease));
-
-            cameraDefaults.Add(new KeyBinding("Change Mode", Keys.Decimal, false, false, false, KeyEvent.Pressed, CameraModeCycle));
-            cameraDefaults.Add(new KeyBinding("Home", Keys.Multiply, false, false, false, KeyEvent.Pressed, CameraMoveHome));
-            //
-            cameraDefaults.Add(new KeyBinding("Toggle Debug Info", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
-            cameraDefaults.Add(new KeyBinding("Toggle Physics Debug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
-            KeyMap camControls = new KeyMap(GenericInputGroups.Camera.ToString(), cameraDefaults);
-
-            List<KeyBinding> ClientDefs = new List<KeyBinding>();
-            ClientDefs.Add(new KeyBinding("Escape", Keys.Escape, false, false, false, KeyEvent.Pressed, Stop));
-            KeyMap clientControls = new KeyMap(GenericInputGroups.Client.ToString(), ClientDefs);
-
-            defControls.AddMap(camControls);
-            defControls.AddMap(clientControls);
             return defControls;
         }
 
@@ -265,11 +259,8 @@ namespace Game
         {
             assetManager = new AssetManager(ref gameObjects, ref objectsToAdd, ref objectsToDelete);
             Content = new ContentManager(Services, "content");
-
             try
             {
-                //cubeModel = Content.Load<Model>("Cube");
-                //sphereModel = Content.Load<Model>("Sphere");
                 moon = Content.Load<Texture2D>("Moon");
                 staticFloatObjects = Content.Load<Model>("StaticMesh");
                 planeModel = Content.Load<Model>("plane");
@@ -330,7 +321,7 @@ namespace Game
                 catch (Exception E)
                 {
                     // if that happens just create a ground plane 
-                    planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0), "");
+                    planeObj = new PlaneObject(planeModel, 0.0f, new Vector3(0, -15, 0), 0);
                     objectsToAdd.Add(planeObj.ID, planeObj);
                     System.Diagnostics.Debug.WriteLine(E.StackTrace);
                 }
@@ -437,7 +428,7 @@ namespace Game
         /// <param name="clientId"></param>
         /// <param name="asset"></param>
         /// <param name="objectId"></param>
-        public void ServeObjectRequest(int clientId, string asset, out int objectId)
+        public void ServeObjectRequest(int clientId, int asset, out int objectId)
         {
             objectId = AddOwnedObject(clientId, asset);
             commServer.BroadcastObjectAddedPacket(clientId, objectId, asset);
@@ -450,7 +441,7 @@ namespace Game
         /// <param name="objectid"></param>
         /// <param name="asset"></param>
         /// <returns></returns>
-        public virtual void AddNewObject(int objectid, string asset)
+        public virtual void AddNewObject(int objectid, int asset)
         {
             // all we have here is the name.
             // that tells us a model to load
@@ -599,7 +590,7 @@ namespace Game
                             #region Send Object Updates to the client
                             if (go.isMoveable && go.IsActive)
                             {
-                                ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.Asset, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
+                                ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.type, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
                                 commServer.BroadcastObjectUpdate(oup);
                             }
                             #endregion
@@ -801,7 +792,7 @@ namespace Game
              */
         }
 
-        void commServer_ObjectRequestReceived(int clientId, string asset)
+        void commServer_ObjectRequestReceived(int clientId, int asset)
         {
             ProcessObjectRequest(clientId, asset);
         }
@@ -840,7 +831,7 @@ namespace Game
             
         }
 
-        void commClient_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        void commClient_ObjectUpdateReceived(int id, int asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
             lock (MultiplayerUpdateQueue)
             {
@@ -921,7 +912,7 @@ namespace Game
         /// </summary>
         /// <param name="i"></param>
         /// <param name="asset"></param>
-        void commClient_ObjectAddedReceived(int owner, int id, string asset)
+        void commClient_ObjectAddedReceived(int owner, int id, int asset)
         {
             // MINE!
             if(owner == MyClientID)
@@ -936,7 +927,7 @@ namespace Game
         /// </summary>
         /// <param name="i"></param>
         /// <param name="asset"></param>
-        public virtual void ProcessObjectAdded(int owner, int id, string asset)
+        public virtual void ProcessObjectAdded(int owner, int id, int asset)
         {
 
         }
@@ -961,7 +952,7 @@ namespace Game
         /// </summary>
         /// <param name="clientId"></param>
         /// <param name="asset"></param>
-        public virtual int ProcessObjectRequest(int clientId, string asset)
+        public virtual int ProcessObjectRequest(int clientId, int asset)
         {
             int objectId = -1;
             ServeObjectRequest(clientId, asset, out objectId);
@@ -976,7 +967,7 @@ namespace Game
         /// <param name="clientId"></param>
         /// <param name="asset"></param>
         /// <returns></returns>
-        private int AddOwnedObject(int clientId, string asset)
+        private int AddOwnedObject(int clientId, int asset)
         {
             int objectid = assetManager.GetAvailableObjectId();
             // setup dual reference for flexible and speedy accesses, whether by objectID, or by clientId 
@@ -1016,7 +1007,7 @@ namespace Game
         /// <param name="pos"></param>
         /// <param name="orient"></param>
         /// <param name="vel"></param>
-        void commServer_ObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        void commServer_ObjectUpdateReceived(int id, int asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
             physicsUpdateList.Add(new ObjectUpdatePacket(id, asset, pos, orient, vel));
         }

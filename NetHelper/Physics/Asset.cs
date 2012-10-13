@@ -13,12 +13,12 @@ namespace Helper.Physics
     // they are different game elements and should be distinct asset types with distinct names and distinct default properties with which to be created.
     public class Asset
     {
-        public string Name;
+        public int Name;
         public GetGobjectDelegate GetNewGobject;
         public Vector3 Scale;
         public Color Color;
 
-        public Asset(string name, GetGobjectDelegate getgobjectcallback, Vector3 scale)
+        public Asset(int name, GetGobjectDelegate getgobjectcallback, Vector3 scale)
         {
             Name = name;
             GetNewGobject = getgobjectcallback;

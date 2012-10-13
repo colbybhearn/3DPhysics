@@ -48,8 +48,8 @@ namespace Helper.Camera.Cameras
                 Vector3 WhereItCameFrom = bodyPosition - (ObjectDirection);
 
                 Vector3 offset = new Vector3(0, 2, 0);
-                if(profiles.ContainsKey(gob.Asset))
-                    offset = profiles[gob.Asset].PositionOffset;
+                if(profiles.ContainsKey(gob.type))
+                    offset = profiles[gob.type].PositionOffset;
                 offset = Vector3.Transform(offset, bodyOrientation); 
                 // get the correction value from the profile
                 WhereItCameFrom += offset; 

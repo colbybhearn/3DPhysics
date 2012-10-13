@@ -31,7 +31,7 @@ namespace Helper.Camera.Cameras
             
             Vector3 orientAdjustment = Vector3.Zero;
             Vector3 positionAdjustment = Vector3.Zero;
-            string assetname = gob.Asset.ToLower();
+            int assetname = gob.type;
             // if this camera has a profile for this asset,
             if (profiles.ContainsKey(assetname))
             {

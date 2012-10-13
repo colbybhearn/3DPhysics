@@ -34,7 +34,7 @@ namespace Helper.Physics.PhysicsObjects
             ShootLaser,
         }
 
-        public RoverObject(string asset,
+        public RoverObject(int asset,
             Vector3 pos,
             Model model, 
             Model wheels,
@@ -67,7 +67,7 @@ namespace Helper.Physics.PhysicsObjects
             Body.ExternalData = this;
             this.wheel = wheels;
             CommonInit(pos, new Vector3(1, 1, 1), model, true, asset);
-            SetCarMass(400.1f);
+            SetRoverMass(400.1f);
 
             // allow different types of bindings. bool, int, float
             actionManager.AddBinding((int)Actions.Acceleration, new Helper.Input.ActionBindingDelegate(SimulateAcceleration), 1);
@@ -119,6 +119,72 @@ namespace Helper.Physics.PhysicsObjects
                 mesh.Draw();
             }
         }
+        float radarRotation = 0;
+        DateTime lastDraw;
+        private void DrawRadar(Matrix View, Matrix Projection)
+        {
+            float rotationsPerSecond = .3f;
+            float stepsPerRotation = 20;
+            float radiansPerStep = 2.0f * (float)Math.PI / stepsPerRotation;
+
+            //float rotPosition = DateTime.Now.Millisecond * 
+            Vector3 offsetPos = new Vector3(-.9f, .7f, .5f);
+            DateTime now = DateTime.Now;
+            float diffSeconds = (float)(now-lastDraw).TotalSeconds;
+            radarRotation += diffSeconds * rotationsPerSecond * stepsPerRotation * radiansPerStep;
+            radarRotation %= (2.0f*(float)Math.PI);
+
+            Matrix world =  Matrix.CreateScale(Scale * 1.4f) *
+                            Matrix.CreateRotationY(radarRotation) * // rotate the dish
+                            Matrix.CreateTranslation(offsetPos) * 
+                            rover.Chassis.Body.Orientation * 
+                            Matrix.CreateTranslation(rover.Chassis.Body.Position);
+
+            Matrix[] transforms = new Matrix[Radar.Bones.Count];
+            Radar.CopyAbsoluteBoneTransformsTo(transforms);
+
+            foreach (ModelMesh mesh in Radar.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.AmbientLightColor = Color.Gray.ToVector3();
+                    effect.World =  transforms[mesh.ParentBone.Index] * world;
+                    effect.View = View;
+                    effect.Projection = Projection;
+                }
+                mesh.Draw();
+            }
+            lastDraw = now;
+        }
+
+        public void DrawLaser(Matrix View, Matrix Projection)
+        {
+            Vector3 offsetPos = new Vector3(1, .2f, -.5f);
+
+            Matrix world = Matrix.CreateScale(Scale * .3f) *
+                            Matrix.CreateTranslation(offsetPos) *
+                            rover.Chassis.Body.Orientation *
+                            Matrix.CreateTranslation(rover.Chassis.Body.Position);
+            
+            Matrix[] ltransforms = new Matrix[Laser.Bones.Count];
+            Laser.CopyAbsoluteBoneTransformsTo(ltransforms);
+            foreach (ModelMesh mesh in Laser.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.AmbientLightColor = Color.Gold.ToVector3();
+                    effect.World = ltransforms[mesh.ParentBone.Index] * GetLaserWorldMatrix();
+                    effect.View = View;
+                    effect.Projection = Projection;
+                }
+                mesh.Draw();
+            }
+        }
+
 
         public override void Draw(ref Matrix View, ref Matrix Projection)
         {
@@ -152,64 +218,13 @@ namespace Helper.Physics.PhysicsObjects
             }
 
             if (hasRadar)
-            {
-                foreach (ModelMesh mesh in Radar.Meshes)
-                {
-                    foreach (BasicEffect effect in mesh.Effects)
-                    {
-                        effect.EnableDefaultLighting();
-                        effect.PreferPerPixelLighting = true;
-                        effect.AmbientLightColor = Color.Gray.ToVector3();
-                        effect.World = GetRadarWorldMatrix();
-                        effect.View = View;
-                        effect.Projection = Projection;
-                    }
-                    mesh.Draw();
-                }
-            }
+                DrawRadar(View, Projection);
 
             if (hasLaser)
-            {
-                Matrix[] ltransforms = new Matrix[Laser.Bones.Count];
-                Laser.CopyAbsoluteBoneTransformsTo(ltransforms);
-                foreach (ModelMesh mesh in Laser.Meshes)
-                {
-                    foreach (BasicEffect effect in mesh.Effects)
-                    {
-                        effect.EnableDefaultLighting();
-                        effect.PreferPerPixelLighting = true;
-                        effect.AmbientLightColor = Color.Gold.ToVector3();
-                        effect.World = ltransforms[mesh.ParentBone.Index] * GetLaserWorldMatrix();
-                        effect.View = View;
-                        effect.Projection = Projection;
-                    }
-                    mesh.Draw();
-                }
-            }
+                DrawLaser(View, Projection);
         }
 
-        /// <summary>
-        /// only used for the model
-        /// </summary>
-        /// <returns></returns>
-        public Matrix GetLaserWorldMatrix()
-        {
-            //return Matrix.CreateScale(Scale*.3f) * Body.Orientation * Matrix.CreateTranslation(Body.Position + new Vector3(1, .2f, 0));  WRONG
-            return Matrix.CreateScale(Scale * .3f) * Matrix.CreateTranslation(new Vector3(1, .2f, -.5f)) * rover.Chassis.Body.Orientation * Matrix.CreateTranslation(rover.Chassis.Body.Position);
-
-        }
-
-        /// <summary>
-        /// only used for the model
-        /// </summary>
-        /// <returns></returns>
-        public Matrix GetRadarWorldMatrix()
-        {
-            
-            return Matrix.CreateScale(Scale * .4f) * Matrix.CreateTranslation(new Vector3(-1, .4f, .5f)) * rover.Chassis.Body.Orientation * Matrix.CreateTranslation(rover.Chassis.Body.Position);
-        }
-
-        private void SetCarMass(float mass)
+        private void SetRoverMass(float mass)
         {
             Body.Mass = mass;
             Vector3 min, max;

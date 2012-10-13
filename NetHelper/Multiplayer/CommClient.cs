@@ -181,7 +181,7 @@ namespace Helper.Multiplayer
 
 
         public event Helper.Handlers.ObjectUpdateEH ObjectUpdateReceived;
-        private void CallObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        private void CallObjectUpdateReceived(int id, int asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
             if (ObjectUpdateReceived == null)
                 return;
@@ -189,7 +189,7 @@ namespace Helper.Multiplayer
         }
 
         public event Helper.Handlers.ObjectAddedResponseEH ObjectAddedReceived;
-        private void CallObjectRequestResponseReceived(int owner, int id, string asset)
+        private void CallObjectRequestResponseReceived(int owner, int id, int asset)
         {
             if (ObjectAddedReceived == null)
                 return;
@@ -227,14 +227,15 @@ namespace Helper.Multiplayer
             client.Send(new ChatPacket(msg, player));
         }
 
-        public void SendObjectRequest(string assetname)
+        public void SendObjectRequest(int assetname)
         {
             client.Send(new ObjectRequestPacket(assetname));
         }
 
         public void SendObjectUpdate(int id, Vector3 pos, Matrix orient, Vector3 vel)
-        {
-            client.Send(new ObjectUpdatePacket(id, string.Empty, pos, orient, vel));
+        {//NEVER USED?
+            // the 0 here is WRONG if this IS ever Used
+            client.Send(new ObjectUpdatePacket(id, 0, pos, orient, vel));
         }
 
         public void SendObjectAction(int id, object[] actionvals)

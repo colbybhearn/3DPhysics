@@ -161,7 +161,7 @@ namespace Helper.Physics
             prims.Add(leftWing);
             prims.Add(rightWing);
             prims.Add(fuse);
-            Aircraft a = new Aircraft(new Vector3(0, -14, 0), new Vector3(1, 1, 1), prims, props, model, "Airplane");
+            Aircraft a = new Aircraft(new Vector3(0, -14, 0), new Vector3(1, 1, 1), prims, props, model, 0);
             return a;
         }
 
@@ -170,7 +170,7 @@ namespace Helper.Physics
             CarObject carObject = null;
             try
             {
-                carObject = new CarObject("car",
+                carObject = new CarObject(0,
                     //new Vector3(-60, 0.5f, 8), // camera's left
                     new Vector3(0, 2.5f, 0),
                     carModel, wheelModel, true, true, 30.0f, 5.0f, 4.7f, 5.0f, 0.20f, 0.4f, 0.05f, 0.45f, 0.3f, 1, 520.0f, PhysicsSystem.Gravity.Length());
@@ -240,7 +240,7 @@ namespace Helper.Physics
                 boxPrimitive,
                 model,
                 moveable,
-                "cube"
+                0
                 );
 
 
@@ -278,7 +278,7 @@ namespace Helper.Physics
                 spherePrimitive,
                 model,
                 moveable,
-                "sphere");
+                0);
 
             //newObjects.Add(sphere.ID, sphere);
             return sphere;
@@ -291,7 +291,7 @@ namespace Helper.Physics
                 size,
                 orient,
                 model,
-                "lunar lander"
+                0
                 );
 
             //newObjects.Add(lander.ID, lander);
@@ -322,34 +322,6 @@ namespace Helper.Physics
             return GetAircraft(new Vector3(0, 0, 0), model, new Vector3(1,1,1), Matrix.Identity);
         }
 
-        public Gobject GetRover(Model roverModel, Model wheelModel, Model radar, Model laser)
-        {
-            RoverObject carObject = null;
-            try
-            {
-                Vector3 pos = new Vector3(0, 2.5f, 0);
-                float maxSteerAngle = 30.0f;
-                float steerRate = 5.0f;
-                float wheelSideFriction = 4.7f;
-                float wheelFwdFriction = 5.0f;
-                float wheelTravel = 0.2f;
-                float wheelRadius = 0.4f;
-                float wheelZOffset = 0.05f;
-                float wheelRestingFrac = 0.45f;
-                float wheeldampingFrac = 0.3f;
-                int wheelNumRays = 1;
-                float driveTorque = 200.0f;
-
-                carObject = new RoverObject("Rover2", pos, roverModel, wheelModel, radar, laser, maxSteerAngle, steerRate,
-                    wheelSideFriction, wheelFwdFriction, wheelTravel, wheelRadius, wheelZOffset, wheelRestingFrac, wheeldampingFrac, wheelNumRays, driveTorque, PhysicsSystem.Gravity.Length());
-                carObject.Rover.EnableCar();
-                carObject.Rover.Chassis.Body.AllowFreezing = false;
-            }
-            catch (Exception E)
-            {
-                System.Diagnostics.Debug.WriteLine(E.StackTrace);
-            }
-            return carObject;
-        }
+        
     }
 }

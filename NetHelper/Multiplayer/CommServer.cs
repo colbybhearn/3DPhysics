@@ -161,7 +161,7 @@ namespace Helper.Multiplayer
         }
 
         public event Helper.Handlers.ObjectRequestEH ObjectRequestReceived;
-        private void CallObjectRequestReceived(int clientId, string asset)
+        private void CallObjectRequestReceived(int clientId, int asset)
         {
             if (ObjectRequestReceived == null)
                 return;
@@ -186,7 +186,7 @@ namespace Helper.Multiplayer
         }
 
         public event Helper.Handlers.ObjectUpdateEH ObjectUpdateReceived;
-        private void CallObjectUpdateReceived(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel)
+        private void CallObjectUpdateReceived(int id, int asset, Vector3 pos, Matrix orient, Vector3 vel)
         {
             if (ObjectUpdateReceived == null)
                 return;
@@ -215,14 +215,14 @@ namespace Helper.Multiplayer
             SendPacket(new ClientConnectedPacket(id, alias), receivingClient);
         }
 
-        public void BroadcastObjectAddedPacket(int clientid, int objectId, string asset)
+        public void BroadcastObjectAddedPacket(int clientid, int objectId, int asset)
         {
             if (!Clients.Contains(clientid))
                 return;
             tcpServer.Send(new ObjectAddedPacket(clientid, objectId, asset));
         }
 
-        public void SendObjectAddedPacket(int receivingClient, int owner, int objectId, string asset)
+        public void SendObjectAddedPacket(int receivingClient, int owner, int objectId, int asset)
         {
             if (!Clients.Contains(owner) || !Clients.Contains(receivingClient))
                 return;

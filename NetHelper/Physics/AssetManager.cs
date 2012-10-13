@@ -8,7 +8,7 @@ namespace Helper.Physics
 {
     public class AssetManager
     {
-        public SortedList<string, Asset> Assets = new SortedList<string, Asset>();
+        public SortedList<int, Asset> Assets = new SortedList<int, Asset>();
         private SortedList<int, Gobject> gameObjects;
         private SortedList<int, Gobject> objectsToAdd;
         private List<int> objectsToDelete;
@@ -35,9 +35,10 @@ namespace Helper.Physics
         /// <param name="name"></param>
         /// <param name="CreateCallback"></param>
         /// <param name="scale"></param>
-        public void AddAsset(string name, GetGobjectDelegate CreateCallback, Vector3 scale)
+        public void AddAsset(Enum e, GetGobjectDelegate CreateCallback, Vector3 scale)
         {
-            AddAsset(new Asset(name, CreateCallback, scale));
+            int id = (int)Convert.ChangeType(e, e.GetTypeCode());
+            AddAsset(new Asset(id, CreateCallback, scale));
         }
         /// <summary>
         /// Adds an asset with a scale of X = Y = Z = scale
@@ -45,31 +46,32 @@ namespace Helper.Physics
         /// <param name="name"></param>
         /// <param name="CreateCallback"></param>
         /// <param name="scale"></param>
-        public void AddAsset(string name, GetGobjectDelegate CreateCallback, float scale)
+        public void AddAsset(Enum e, GetGobjectDelegate CreateCallback, float scale)
         {
-            AddAsset(name, CreateCallback, new Vector3(scale, scale, scale));
+            AddAsset(e, CreateCallback, new Vector3(scale, scale, scale));
         }
         /// <summary>
         /// Adds an asset with a default scale of 1
         /// </summary>
         /// <param name="name"></param>
         /// <param name="CreateCallback"></param>
-        public void AddAsset(string name, GetGobjectDelegate CreateCallback)
+        public void AddAsset(Enum e, GetGobjectDelegate CreateCallback)
         {
-            AddAsset(name, CreateCallback, 1.0f);
+            AddAsset(e, CreateCallback, 1.0f);
         }
 
-        public Gobject GetNewInstance(string name)
+        public Gobject GetNewInstance(Enum e)
         {
-            if (!Assets.ContainsKey(name))
+            int id = (int)Convert.ChangeType(e, e.GetTypeCode());
+            if (!Assets.ContainsKey(id))
                 return null;
 
-            Asset a = Assets[name];
+            Asset a = Assets[id];
             if (a == null)
                 return null;
 
             Gobject go = a.GetNewGobject();
-            go.Asset = name;
+            go.type = id; // THIS IS WRONG BUT SO CHEAP!
             go.ID = GetAvailableObjectId();
             return go;
         }

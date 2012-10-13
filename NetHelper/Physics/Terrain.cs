@@ -170,7 +170,7 @@ namespace Helper.Physics
                 //VertexPositionColor[] wireFrame = Skin.GetLocalSkinWireframe(); // 1200 across before Z changes to from -7.5/-7.35 to -7.35/-7.2
                 
                 PhysicsSystem.CurrentPhysicsSystem.CollisionSystem.AddCollisionSkin(Skin);
-                CommonInit(posCenter, new Vector3(0,0,0), null, false, "");
+                CommonInit(posCenter, new Vector3(0,0,0), null, false, 0);
             }
             catch(Exception E)
             {

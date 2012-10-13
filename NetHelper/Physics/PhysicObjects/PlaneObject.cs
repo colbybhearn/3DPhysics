@@ -11,7 +11,7 @@ namespace Helper.Physics.PhysicsObjects
     public class PlaneObject : Gobject
     {
 
-        public PlaneObject(Model model,float d, Vector3 position, string asset) : base()
+        public PlaneObject(Model model,float d, Vector3 position, int asset) : base()
         {
             Body = new Body();
             Skin = new CollisionSkin(null);            
