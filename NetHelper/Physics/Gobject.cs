@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System;
 using Helper.Physics.PhysicsObjects;
 using Helper.Lighting;
+using Helper.Physics.PhysicObjects;
 
 namespace Helper.Physics
 {
@@ -248,7 +249,7 @@ namespace Helper.Physics
                         Microsoft.Xna.Framework.Graphics.PrimitiveType.LineStrip,
                         wireFrame, 0, wireFrame.Length - 1);
                 }
-                
+
                 VertexPositionColor[] Velocity = new VertexPositionColor[2];
                 Velocity[0] = new VertexPositionColor(Body.Position, Color.Blue);
                 Velocity[1] = new VertexPositionColor(Body.Position + Body.Velocity, Color.Red);

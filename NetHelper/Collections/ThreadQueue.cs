@@ -25,7 +25,7 @@ namespace Helper.Collections
             T o;
             lock (this)
             {
-                o =this.Dequeue();
+                o = this.Dequeue();
             }
             return o;
         }

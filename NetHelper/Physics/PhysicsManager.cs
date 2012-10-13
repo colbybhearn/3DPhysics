@@ -27,6 +27,8 @@ namespace Helper.Physics
         double TIME_STEP = .01; // Recommended timestep
         float SimFactor = 1.0f;
 
+        private List<Controller> GeneralControllers;
+
         public PhysicsManager(ref SortedList<int, Gobject> gObjects, ref SortedList<int, Gobject> nObjects, ref List<int> dObjects, double updateInterval = 10)
         {
             gameObjects = gObjects;
@@ -61,6 +63,8 @@ namespace Helper.Physics
             tmrPhysicsUpdate.Elapsed += new System.Timers.ElapsedEventHandler(tmrPhysicsUpdate_Elapsed);
             tmrPhysicsUpdate.Start();
             PhysicsEnabled = true;
+
+            GeneralControllers = new List<Controller>();
         }
 
         void tmrPhysicsUpdate_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -76,7 +80,10 @@ namespace Helper.Physics
             if (PhysicsEnabled)
             {
                 float step = (float)TIME_STEP * SimFactor;
-                PhysicsSystem.CurrentPhysicsSystem.Integrate(step);
+                lock (PhysicsSystem)
+                {
+                    PhysicsSystem.CurrentPhysicsSystem.Integrate(step);
+                }
             }
             CallPostIntegrate();
 
@@ -322,6 +329,11 @@ namespace Helper.Physics
             return GetAircraft(new Vector3(0, 0, 0), model, new Vector3(1,1,1), Matrix.Identity);
         }
 
-        
+        public void AddGravityController(Vector3 pos, double radius, double gravity)
+        {
+            Controller c = new GravityController(pos, radius, gravity);
+            GeneralControllers.Add(c);
+            PhysicsSystem.AddController(c);
+        }
     }
 }

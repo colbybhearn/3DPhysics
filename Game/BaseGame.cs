@@ -158,7 +158,7 @@ namespace Game
         Model staticFloatObjects;
         Model carModel, wheelModel;
         Texture2D moon;
-        Terrain terrain;
+        protected Terrain terrain;
         PlaneObject planeObj;
         #endregion
 

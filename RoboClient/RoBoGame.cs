@@ -14,6 +14,7 @@ using Game;
 using JigLibX.Collision;
 using System.IO;
 using JigLibX.Geometry;
+using Helper.Physics.PhysicObjects;
 
 
 namespace RoboGame
@@ -33,6 +34,7 @@ namespace RoboGame
         Model cubeModel;
         Model sphereModel;
         LunarVehicle lander;
+        Planet planet;
         Model roverRadar;
 
         Texture2D radar;
@@ -149,12 +151,19 @@ namespace RoboGame
             {
                 try
                 {
-                    //terrain = new Terrain(new Vector3(0, -15, 0), // position
-                    //    //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
-                    //                        new Vector3(15000f, .55f, 15000f),  // X with, possible y range, Z depth 
-                    //                        100, 100, graphicsDevice, moon);
+                    physicsManager.PhysicsSystem.Gravity = Vector3.Zero;
+                    physicsManager.AddGravityController(new Vector3(0, -101, 0), 100, 10);
+                    /*terrain = new Terrain(new Vector3(0, -15, 0), // position
+                        //new Vector3(100f, .1f, 100f),  // X with, possible y range, Z depth 
+                                            new Vector3(15000f, .55f, 15000f),  // X with, possible y range, Z depth 
+                                            100, 100, graphicsDevice, moon);*/
+                    planet = new Planet(new Vector3(0, -101, 0), // Position
+                        new Vector3(100, 100, 100), // Radius
+                        0, Math.PI / 8, 2, graphicsDevice, moon);
 
-                    //newObjects.Add(terrain.ID, terrain);
+
+                    objectsToAdd.Add(planet.ID, planet);
+                    //objectsToAdd.Add(terrain.ID, terrain);
                 }
                 catch (Exception E)
                 {
