@@ -12,7 +12,7 @@ namespace Helper.Camera
     {
         SortedList<string, BaseCamera> Cameras = new SortedList<string, BaseCamera>();
         public BaseCamera currentCamera = null;
-        SortedList<string, SortedList<string, ViewProfile>> Views = new SortedList<string, SortedList<string, ViewProfile>>();
+        SortedList<string, SortedList<int, ViewProfile>> Views = new SortedList<string, SortedList<int, ViewProfile>>();
 
         #region Initialization
         public CameraManager()
@@ -32,8 +32,8 @@ namespace Helper.Camera
         public void AddProfile(ViewProfile vp)
         {
             if (!Views.ContainsKey(vp.CameraAlias))
-                Views.Add(vp.CameraAlias, new SortedList<string, ViewProfile>());
-            SortedList<string, ViewProfile> camViews = Views[vp.CameraAlias];
+                Views.Add(vp.CameraAlias, new SortedList<int, ViewProfile>());
+            SortedList<int, ViewProfile> camViews = Views[vp.CameraAlias];
             if (camViews.ContainsKey(vp.assetAlias))
                 return;
             camViews.Add(vp.assetAlias, vp);
@@ -47,7 +47,7 @@ namespace Helper.Camera
 
             cam.SetGobjectList(gobs);
 
-            SortedList<string, ViewProfile> camViews = new SortedList<string, ViewProfile>();
+            SortedList<int, ViewProfile> camViews = new SortedList<int, ViewProfile>();
             try
             {
                 if (Views.ContainsKey(camAlias))
@@ -55,7 +55,7 @@ namespace Helper.Camera
                     foreach (Gobject gob in gobs)
                     {
                         System.Diagnostics.Debug.WriteLine("CamAlias: "+camAlias);
-                        string assetname = gob.Asset.ToLower();
+                        int assetname = gob.type;
                         if (Views[camAlias].ContainsKey(assetname))
                             camViews.Add(assetname, Views[camAlias][assetname]);
                     }

@@ -8,12 +8,12 @@ namespace Helper.Multiplayer.Packets
     public class ObjectUpdatePacket : Packet
     {
         public int objectId;
-        public string assetName;
+        public int assetName;
         public Vector3 position;
         public Matrix orientation;
         public Vector3 velocity;
         
-        public ObjectUpdatePacket(int id, string asset, Vector3 pos, Matrix orient, Vector3 vel) 
+        public ObjectUpdatePacket(int id, int asset, Vector3 pos, Matrix orient, Vector3 vel) 
             : base(Types.scObjectUpdate)
         {
             objectId = id;
@@ -31,7 +31,7 @@ namespace Helper.Multiplayer.Packets
 
         public override byte[] Serialize()
         {
-            int length = assetName.Length + (28 * 4);
+            int length = 4 + (28 * 4);
             byte[] data = new byte[length+4];
             int index = 0;
             Array.Copy(BitConverter.GetBytes((int)length), 0, data, index, 4);
@@ -40,10 +40,8 @@ namespace Helper.Multiplayer.Packets
             index += 4;
             Array.Copy(BitConverter.GetBytes(objectId), 0, data, index, 4);
             index += 4;
-            Array.Copy(BitConverter.GetBytes(assetName.Length), 0, data, index, 4);
+            Array.Copy(BitConverter.GetBytes(assetName), 0, data, index, 4);
             index += 4;
-            foreach (char c in assetName)
-                Array.Copy(new byte[1] { (byte)c }, 0, data, index++, 1);
             Array.Copy(BitConverter.GetBytes(position.X), 0, data, index, 4);
             index += 4;
             Array.Copy(BitConverter.GetBytes(position.Y), 0, data, index, 4);
@@ -80,12 +78,8 @@ namespace Helper.Multiplayer.Packets
             int index=0;
             objectId = BitConverter.ToInt32(data, index);  
             index+=4;
-            int strLen = BitConverter.ToInt32(data, index);
-            index+=4;
-            assetName = string.Empty;
-            for(int ci = 0;ci<strLen;ci++)
-                assetName+=(char)data[ci+index];
-            index+=strLen;
+            assetName = BitConverter.ToInt32(data, index);
+            index += 4;
             position.X = BitConverter.ToSingle(data, index);
             index+=4;
             position.Y = BitConverter.ToSingle(data, index);

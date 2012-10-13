@@ -33,7 +33,7 @@ namespace Helper.Camera
 
     public class ViewProfile
     {
-        public string assetAlias;
+        public int assetAlias;
         public string CameraAlias;
         public float PositionLagFactor;
         public float OrientationLagFactor;
@@ -41,7 +41,7 @@ namespace Helper.Camera
         public Vector3 PositionOffset;
         public Vector3 OrientationOffset;
 
-        public ViewProfile(string camAlias, string asset, Vector3 posOffset, float posLag, Vector3 orientOffsetXYZ, float orientLag)
+        public ViewProfile(string camAlias, int asset, Vector3 posOffset, float posLag, Vector3 orientOffsetXYZ, float orientLag)
         {
             assetAlias = asset;
             CameraAlias = camAlias;

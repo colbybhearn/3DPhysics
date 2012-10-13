@@ -97,7 +97,7 @@ namespace Helper.Physics.PhysicObjects
             Skin.ApplyLocalTransform(new JigLibX.Math.Transform(center, Matrix.Identity));
             // we also need to move this dummy, so the object is *rendered* at the correct positiob
             Body.MoveTo(center, Matrix.Identity);
-            CommonInit(center, new Vector3(1, 1, 1), null, false, "");
+            CommonInit(center, new Vector3(1, 1, 1), null, false, -1);
         }
 
         private Vector3 SphericalToCartesian(double i, double j, Vector3 radius)

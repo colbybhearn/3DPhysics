@@ -17,7 +17,7 @@ namespace Helper.Physics.PhysicsObjects
         const float MAX_VERT_MAGNITUDE=30;
         const float MAX_ROT_JET=10;
 
-        public LunarVehicle(Vector3 position, Vector3 scale, Matrix orient, Model model, string asset)
+        public LunarVehicle(Vector3 position, Vector3 scale, Matrix orient, Model model, int asset)
             : base()
         {
             Vector3 sides = new Vector3(1f * scale.X, 1.75f * scale.Y, 1f * scale.Z);

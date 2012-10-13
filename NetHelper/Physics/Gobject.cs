@@ -18,7 +18,7 @@ namespace Helper.Physics
         public CollisionSkin Skin { get; internal set; }
         public Model Model { get; set; }
         public Vector3 Position { get; set; }
-        
+        public int type;
         public Matrix Orientation
         {
             get
@@ -60,7 +60,7 @@ namespace Helper.Physics
         /// <param name="scale">Scale</param>
         /// <param name="primative">Primitive to add to Skin</param>
         /// <param name="prop">Material Properties of Primitive</param>
-        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialProperties prop, Model model, string asset)
+        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialProperties prop, Model model, int asset)
             : this()
         {
             Skin.AddPrimitive(primative, prop);
@@ -75,7 +75,7 @@ namespace Helper.Physics
         /// <param name="scale">Scale</param>
         /// <param name="primative">Primitive to add to Skin</param>
         /// <param name="propId">Predefined Material Properties of Primitive</param>
-        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialTable.MaterialID propId, Model model, string asset)
+        public Gobject(Vector3 position, Vector3 scale, Primitive primative, MaterialTable.MaterialID propId, Model model, int asset)
             : this()
         {
             Skin.AddPrimitive(primative, (int)propId);
@@ -91,7 +91,7 @@ namespace Helper.Physics
         /// <param name="scale">Scale</param>
         /// <param name="primatives">Primitives to add to Skin</param>
         /// <param name="props">Material Properties of Primitives to add</param>
-        public Gobject(Vector3 position, Vector3 scale, List<Primitive> primatives, List<MaterialProperties> props, Model model, string asset)
+        public Gobject(Vector3 position, Vector3 scale, List<Primitive> primatives, List<MaterialProperties> props, Model model, int asset)
             : this()
         {
             for (int i = 0; i < primatives.Count && i < props.Count; i++)
@@ -100,7 +100,7 @@ namespace Helper.Physics
             CommonInit(position, scale, model, true, asset);
         }
 
-        public Gobject(Vector3 position, Vector3 scale, Primitive primitive, Model model, bool moveable, string asset)
+        public Gobject(Vector3 position, Vector3 scale, Primitive primitive, Model model, bool moveable, int asset)
             : this()
         {
             
@@ -117,14 +117,14 @@ namespace Helper.Physics
                 System.Diagnostics.Debug.WriteLine(E.StackTrace);
             }
         }
-        public string Asset;
-        internal void CommonInit(Vector3 pos, Vector3 scale, Model model, bool moveable, string asset)
+        
+        internal void CommonInit(Vector3 pos, Vector3 scale, Model model, bool moveable, int asset)
         {
             Position = pos;
             Scale = scale;
             Model = model;
             Body.Immovable = !moveable;
-            Asset = asset;
+            type = asset;
             
             // MOVED TO BEFORE INTEGRATE
             //FinalizeBody();
@@ -349,8 +349,20 @@ namespace Helper.Physics
         /// <param name="vector3_2"></param>
         public void Interpoladate(Vector3 position, Matrix orientation, Vector3 velocity)
         {
+            float interFactor = .5f; // assume simple interpolation
+
+            bool VariableInterp=false;            
+            if (VariableInterp)
+            {
+                float magicFactor = 10; // there's some magic number (varrying per game according to map/unit scale) 
+                // the further away the object is from where it should be, the more we should make it where it should be
+                // the magic number should be enough to counter-act gravity, perhaps.
+                float distSq = Vector3.DistanceSquared(position, Position);
+                interFactor = distSq / magicFactor;
+            }
+
             // default interpolation factor is 50/50.
-            Interpoladate(position, orientation, velocity, .5f);           
+            Interpoladate(position, orientation, velocity, interFactor);
         }
 
         /// <summary>
@@ -364,6 +376,10 @@ namespace Helper.Physics
         /// <param name="vector3_2"></param>
         public void Interpoladate(Vector3 position, Matrix orientation, Vector3 velocity, float interpFactor)
         {
+            if (interpFactor > 1.0f)
+                interpFactor = 1.0f;
+            if (interpFactor < 0)
+                interpFactor = 0;
             //MoveTo(position, orientation);
             //SetVelocity(velocity);
             Vector3 intPosition = BodyPosition() + (position - BodyPosition()) * interpFactor;

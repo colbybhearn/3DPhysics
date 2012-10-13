@@ -76,13 +76,13 @@ namespace Helper.Physics.PhysicsObjects
             }
         }
 
-        public Aircraft(Vector3 position, Vector3 scale, Primitive primitive, Model model, string asset)
+        public Aircraft(Vector3 position, Vector3 scale, Primitive primitive, Model model, int asset)
             : base(position, scale, primitive, model, true, asset)
         {
             Initialize();
         }
 
-        public Aircraft(Vector3 position, Vector3 scale, List<Primitive> prims, List<MaterialProperties> props, Model model, string asset)
+        public Aircraft(Vector3 position, Vector3 scale, List<Primitive> prims, List<MaterialProperties> props, Model model, int asset)
             :base (position, scale, prims, props, model, asset)
         {
             Initialize();

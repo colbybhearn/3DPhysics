@@ -100,7 +100,31 @@ namespace Game
         {
             KeyMapCollection defControls = base.GetDefaultControls();
             defControls.Game = this.name;
-            
+
+            //Camera
+            List<KeyBinding> cameraDefaults = new List<KeyBinding>();
+            cameraDefaults.Add(new KeyBinding("Forward", Keys.NumPad8, false, false, false, KeyEvent.Down, CameraMoveForward));
+            cameraDefaults.Add(new KeyBinding("Left", Keys.NumPad4, false, false, false, KeyEvent.Down, CameraMoveLeft));
+            cameraDefaults.Add(new KeyBinding("Backward", Keys.NumPad5, false, false, false, KeyEvent.Down, CameraMoveBackward));
+            cameraDefaults.Add(new KeyBinding("Right", Keys.NumPad6, false, false, false, KeyEvent.Down, CameraMoveRight));
+            cameraDefaults.Add(new KeyBinding("Speed Increase", Keys.NumPad7, false, false, false, KeyEvent.Pressed, CameraMoveSpeedIncrease));
+            cameraDefaults.Add(new KeyBinding("Speed Decrease", Keys.NumPad1, false, false, false, KeyEvent.Pressed, CameraMoveSpeedDecrease));
+            cameraDefaults.Add(new KeyBinding("Height Increase", Keys.NumPad9, false, false, false, KeyEvent.Down, CameraMoveHeightIncrease));
+            cameraDefaults.Add(new KeyBinding("Height Decrease", Keys.NumPad3, false, false, false, KeyEvent.Down, CameraMoveHeightDecrease));
+
+            cameraDefaults.Add(new KeyBinding("Change Mode", Keys.Decimal, false, false, false, KeyEvent.Pressed, CameraModeCycle));
+            cameraDefaults.Add(new KeyBinding("Home", Keys.Multiply, false, false, false, KeyEvent.Pressed, CameraMoveHome));
+            //
+            cameraDefaults.Add(new KeyBinding("Toggle Debug Info", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
+            cameraDefaults.Add(new KeyBinding("Toggle Physics Debug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
+            KeyMap camControls = new KeyMap(GenericInputGroups.Camera.ToString(), cameraDefaults);
+
+            List<KeyBinding> ClientDefs = new List<KeyBinding>();
+            ClientDefs.Add(new KeyBinding("Escape", Keys.Escape, false, false, false, KeyEvent.Pressed, Stop));
+            KeyMap clientControls = new KeyMap(GenericInputGroups.Client.ToString(), ClientDefs);
+
+
+
             // Car
             List<KeyBinding> carDefaults = new List<KeyBinding>();
             //careDefaults.Add(new KeyBinding("Spawn", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
@@ -154,6 +178,9 @@ namespace Game
             interfaceDefaults.Add(new KeyBinding("Spawn Car", Keys.R, false, true, false, KeyEvent.Pressed, Request_Car));
             KeyMap interfaceControls = new KeyMap(SpecificInputGroups.Interface.ToString(), interfaceDefaults);
 
+
+            defControls.AddMap(camControls);
+            defControls.AddMap(clientControls);
             defControls.AddMap(carControls);
             defControls.AddMap(jetControls);
             defControls.AddMap(landerControls);
@@ -248,29 +275,20 @@ namespace Game
         /// </summary>
         /// <param name="objectid"></param>
         /// <param name="asset"></param>
-        public override void AddNewObject(int objectid, string asset)
+        public override void AddNewObject(int objectid, int asset)
         {
-            Model model = Content.Load<Model>(asset);
-            Gobject newobject = null;
-            switch (asset.ToLower())
-            {
-                case "sphere":
-                    newobject = physicsManager.GetDefaultSphere(model);
-                    break;
-                case "car":
-                    newobject = physicsManager.GetCar(carModel, wheelModel);
-                    break;
-                case "lunar lander":
-                    newobject = physicsManager.GetLunarLander(landerModel);
-                    break;
-                case "airplane":
-                    newobject = physicsManager.GetAircraft(model);
-                    break;
-                default:
-                    break;
-            }
-            
-            newobject.ID = objectid;
+            if (assetManager == null)
+                return;
+            // if our client is already using this object id for some reason 
+            if (assetManager.isObjectIdInUse(objectid))
+                // forget it, the next update will prompt it again, it will get added when it's safe.
+                return;
+
+            if (Content == null)
+                return;
+
+            Gobject newobject = assetManager.GetNewInstance((AssetTypes)asset);
+            newobject.ID = objectid; // override whatever object ID the assetManager came up with, if it is safe to do so
             physicsManager.AddNewObject(newobject);
         }        
 
@@ -282,14 +300,14 @@ namespace Game
         {
             if(commClient!=null)
                 // send a request to the server for an object of asset type "car"
-                commClient.SendObjectRequest("car");
+                commClient.SendObjectRequest((int)AssetTypes.Car);
         }
 
         private void Request_Plane()
         {
             if (commClient != null)
                 // send a request to the server for an object of asset type "car"
-                commClient.SendObjectRequest("airplane");
+                commClient.SendObjectRequest((int)AssetTypes.Aircraft);
         }
 
         
@@ -303,33 +321,18 @@ namespace Game
         /// </summary>
         /// <param name="objectid"></param>
         /// <param name="asset"></param>
-        public override void ProcessObjectAdded(int ownerid, int objectid, string asset)
+        public override void ProcessObjectAdded(int ownerid, int objectid, int asset)
         {
-            Model model = Content.Load<Model>(asset);
-            Gobject newobject = null;
-            switch (asset.ToLower())
+            Gobject newobject = assetManager.GetNewInstance((AssetTypes)asset);
+            newobject.ID = objectid;
+            physicsManager.AddNewObject(newobject);
+            if (ownerid == MyClientID) // Only select the new car if its OUR new car
             {
-                case "sphere":
-                    newobject = physicsManager.GetDefaultSphere(model);
-                    newobject.ID = objectid;
-                    physicsManager.AddNewObject(newobject);
-                    break;
-                case "car":
-                    newobject = SpawnCar(ownerid, objectid);
-                    break;
-                case "lunar lander":
-                    lander = physicsManager.GetLunarLander(landerModel);
-                    lander.ID = objectid;
-                    physicsManager.AddNewObject(lander);
-                    if (ownerid == MyClientID) // Only select the new object if its OUR new object
-                        SelectGameObject(lander);
-
-                    break;
-                case "airplane":
-                    newobject = SpawnPlane(ownerid, objectid);
-                    break;
-                default:
-                    break;
+                if (newobject is LunarVehicle)
+                {
+                    lander = (LunarVehicle)newobject;
+                    SelectGameObject(lander);
+                }
             }
         }
 
@@ -400,7 +403,7 @@ namespace Game
         {
             if (commClient != null)
             {
-                commClient.SendObjectRequest("lunar lander");
+                commClient.SendObjectRequest((int)AssetTypes.Lander);
             }
         }
 
