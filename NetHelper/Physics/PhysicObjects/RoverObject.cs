@@ -177,14 +177,13 @@ namespace Helper.Physics.PhysicsObjects
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;
                     effect.AmbientLightColor = Color.Gold.ToVector3();
-                    effect.World = ltransforms[mesh.ParentBone.Index] * GetLaserWorldMatrix();
+                    effect.World = ltransforms[mesh.ParentBone.Index] * world;
                     effect.View = View;
                     effect.Projection = Projection;
                 }
                 mesh.Draw();
             }
         }
-
 
         public override void Draw(ref Matrix View, ref Matrix Projection)
         {
