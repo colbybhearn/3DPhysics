@@ -36,6 +36,9 @@ namespace RoboGame
         LunarVehicle lander;
         Planet planet;
         Model roverRadar;
+        Model RotArm;
+        Model roverCam;
+        Model Pole;
 
         Texture2D radar;
         Texture2D radar_icon;
@@ -109,6 +112,9 @@ namespace RoboGame
                 landerModel = Content.Load<Model>("Lunar Lander");
                 chatFont = Content.Load<SpriteFont>("debugFont");
                 roverRadar = Content.Load<Model>("RoverRadar");
+                roverCam = Content.Load<Model>("RoverCam");
+                RotArm = Content.Load<Model>("RotArm");
+                Pole = Content.Load<Model>("Pole");
 
                 radar = Content.Load<Texture2D>("radar");
                 radar_icon = Content.Load<Texture2D>("radar_icon");
@@ -239,7 +245,11 @@ namespace RoboGame
             roverDefaults.Add(new KeyBinding("Left", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
             roverDefaults.Add(new KeyBinding("Backward", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
             roverDefaults.Add(new KeyBinding("Right", Keys.Right, false, false, false, KeyEvent.Down, SteerRight));
-            roverDefaults.Add(new KeyBinding("Laser", Keys.B, false, false, false, KeyEvent.Down, UseLaser));            
+            roverDefaults.Add(new KeyBinding("Laser", Keys.B, false, false, false, KeyEvent.Down, UseLaser));
+            roverDefaults.Add(new KeyBinding("Pan Camera Left", Keys.J, false, false, false, KeyEvent.Down, RoverCamPanLeft));
+            roverDefaults.Add(new KeyBinding("Pan Camera Right", Keys.L, false, false, false, KeyEvent.Down, RoverCamPanRight));
+            roverDefaults.Add(new KeyBinding("Pan Camera Up", Keys.I, false, false, false, KeyEvent.Down, RoverCamPanUp));
+            roverDefaults.Add(new KeyBinding("Pan Camera Down", Keys.K, false, false, false, KeyEvent.Down, RoverCamPanDown));            
             KeyMap roverControls = new KeyMap(SpecificInputGroups.Rover.ToString(),roverDefaults);
 
             // player 
@@ -287,7 +297,6 @@ namespace RoboGame
 
             return defControls;
         }
-
         public override void InitializeSound()
         {
             base.InitializeSound();
@@ -300,6 +309,14 @@ namespace RoboGame
             // Let's play this right away;  should not play on the server through
             if (isClient)
                 soundManager.Play(Sounds.SolarWind.ToString());
+
+            if(isClient && 
+                !IsConnectedToServer)
+            {
+                SpawnRover(0, 1);
+                CameraModeCycle();
+                cameraManager.currentCamera.TargetPosition = new Vector3(10, -8, 5);
+            }
         }
 
         #region Assets
@@ -322,7 +339,7 @@ namespace RoboGame
                 int wheelNumRays = 1;
                 float driveTorque = 200.0f;
 
-                r = new RoverObject(0, pos, roverModel, wheelModel, roverRadar, cubeModel, maxSteerAngle, steerRate,
+                r = new RoverObject(0, pos, roverModel, wheelModel, roverRadar, cubeModel, RotArm, roverCam, Pole, maxSteerAngle, steerRate,
                     wheelSideFriction, wheelFwdFriction, wheelTravel, wheelRadius, wheelZOffset, wheelRestingFrac, wheeldampingFrac, wheelNumRays,
                     driveTorque, physicsManager.PhysicsSystem.Gravity.Length());
                 r.Rover.EnableCar();
@@ -650,6 +667,26 @@ namespace RoboGame
                 return;
             myRover.SetShootLaser(1.0f);
         }
+
+        public void RoverCamPanLeft()
+        {
+            myRover.AdjustCamYaw(.0005f);
+        }
+
+        public void RoverCamPanRight()
+        {
+            myRover.AdjustCamYaw(-.0005f);
+        }
+        public void RoverCamPanUp()
+        {
+            myRover.AdjustCamPitch(.0005f);
+        }
+
+        public void RoverCamPanDown()
+        {
+            myRover.AdjustCamPitch(-.0005f);
+        }
+
         #endregion
 
         private Gobject SpawnRover(int ownerid, int objectid)
