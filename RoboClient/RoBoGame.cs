@@ -386,7 +386,7 @@ namespace RoboGame
         private RoverObject GetRover(Vector3 pos)
         {
             RoverObject rover = assetManager.GetNewInstance(AssetTypes.Rover) as RoverObject;
-            rover.Position = pos;            
+            rover.MoveTo(pos, Matrix.Identity);
             return rover;
         }
         private Gobject GetLaserPickup(Vector3 pos)
@@ -654,7 +654,7 @@ namespace RoboGame
 
         private Gobject SpawnRover(int ownerid, int objectid)
         {
-            Gobject newobject = GetRover(new Vector3(0, 0, 0));
+            Gobject newobject = GetRover(new Vector3(90, 20, 20));
             newobject.ID = objectid;
             physicsManager.AddNewObject(newobject);
             if (ownerid == MyClientID) // Only select the new car if its OUR new car
