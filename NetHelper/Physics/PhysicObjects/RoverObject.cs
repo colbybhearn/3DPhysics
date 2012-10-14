@@ -517,8 +517,6 @@ namespace Helper.Physics.PhysicsObjects
                 SetRadar(false);
         }
 
-
-
         public void SetAcceleration(float p)
         {
             rover.Accelerate = p;

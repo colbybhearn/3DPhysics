@@ -50,26 +50,58 @@ namespace Helper.Communication
             List<byte[]> dataToSend = new List<byte[]>();
             byte[] lenBytes = new byte[4];
             int length = -1;
-            
+
+            int packetSizeCount = 0;
+
+            int packetSizeSum = 0;
+            int packetSizeAvg = 0;
+            int second = 0;
+            int printed = 0;
+            int count = 0;
+            DateTime pre = new DateTime();
             while (ShouldBeRunning)
             {
                 if (!socket.Connected)
                     break;
 
-                if (length == -1 && socket.Available>=4)
+                if (length == -1 && socket.Available >= 4)
                 {
-                    int count = socket.Receive(lenBytes);
+                    pre = DateTime.Now;
+                    count = socket.Receive(lenBytes);
                     length = BitConverter.ToInt32(lenBytes, 0);
-                    //Debug.WriteLine(length);
+
+                    //Trace.WriteLine("Reading " + length + " / " + socket.Available);
                     if (length > 5000)
-                      throw new FormatException("packet length "+length+" is unreasonably long.");
+                        throw new FormatException("packet length " + length + " is unreasonably long.");
+                }
+                else
+                {
                 }
                 
                 if (length > 0 && socket.Available>=length)
                 {
                     byte[] data = new byte[length];
-                    int datacount = socket.Receive(data);
                     
+                    int datacount = socket.Receive(data);
+                    DateTime post = DateTime.Now;
+
+                    packetSizeSum += datacount + count;
+                    packetSizeCount++;
+
+                    second = DateTime.Now.Second;
+                    if (second != printed)
+                    {
+                        double ts = (post - pre).TotalSeconds;
+                        if (ts == 0)
+                            ts = .00001;
+                        packetSizeAvg = packetSizeSum / packetSizeCount;
+                        //Trace.WriteLine("SocketComm input bytes received: " + packetSizeSum + " Avg Packet Size:" + packetSizeAvg + ", Packet Count" + packetSizeCount + " took " + ts + " seconds, Rate=" + (float)packetSizeSum / ts + "Bps");
+                        packetSizeCount = 0;
+                        packetSizeSum = 0;
+                        printed = second;
+                    }
+
+
                     if (data != null)
                         CallPacketReceived(data);
                     length = -1;
@@ -84,26 +116,50 @@ namespace Helper.Communication
         private void outputWorker()
         {
             List<byte> dataToSend = new List<byte>();
+            int sent = 0;
 
+            int packetSizeCount=0;
+            int packetSizeSum=0;
+            int packetSizeAvg=0;
             while (ShouldBeRunning)
             {
+                Thread.Sleep(1);
                 if (!socket.Connected)
                     break;
 
                 dataToSend.Clear();
+
+                packetSizeSum = 0;
+                packetSizeCount = 0;
                 while (DataToSendQueue.Count > 0)
+                {
+                    packetSizeCount++;
+                    packetSizeSum += DataToSendQueue.Peek().Length;
                     dataToSend.AddRange(DataToSendQueue.DeQ());
+                }                
+
+                if (dataToSend.Count == 0)
+                    continue;
+
+                packetSizeAvg = packetSizeSum / packetSizeCount;
+                
                 try
                 {
+                    DateTime pre = DateTime.Now;
                     //Send ALL bytes at once instead of "per packet", should be better
-                    socket.Send(dataToSend.ToArray());
+                    int r = socket.Send(dataToSend.ToArray());
+                    DateTime post = DateTime.Now;
+                    sent += r;
+                    
+                    double ts = (post - pre).TotalSeconds;
+                    //Trace.WriteLine("SocketComm output bytes actually sent: " + sent + " took " +ts + " seconds, Avg Packet Size:" + packetSizeAvg+ ", Packet Count"+packetSizeCount + " Rate="+(float)r/ts +"Bps");
+                    sent = 0;
+
                 }
-                catch (SocketException E)
+                catch (Exception E)
                 {
-                    ShouldBeRunning = false;
                     System.Diagnostics.Debug.WriteLine(E.StackTrace);
                 }
-                Thread.Sleep(1);
             }
         }
 

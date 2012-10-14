@@ -38,9 +38,8 @@ namespace RoboGame
             sKey = "";// System.Guid.NewGuid().ToString();
 
 
-            //this.TopMost = true;
             //this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
+            //this.WindowState = FormWindowState.Maximized;
 
             // Give the xna panel a reference to game.
             // Xna Panel will initialize the game with its graphicsDevice the moment it is ready.

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace Helper.Physics
 {
@@ -64,7 +65,10 @@ namespace Helper.Physics
         {
             int id = (int)Convert.ChangeType(e, e.GetTypeCode());
             if (!Assets.ContainsKey(id))
+            {
+                Debug.WriteLine("Aborting load of asset unkown to AssetManager: " + id);
                 return null;
+            }
 
             Asset a = Assets[id];
             if (a == null)

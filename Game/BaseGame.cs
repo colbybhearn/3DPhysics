@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Helper.Audio;
+using System.Diagnostics;
 
 namespace Game
 {
@@ -374,6 +375,7 @@ namespace Game
                 return;
             if (currentSelectedObject != null)
                 currentSelectedObject.Selected = false;
+            Debug.WriteLine("SelectGameObject id:" + go.ID);
             currentSelectedObject = go;
             currentSelectedObject.Selected = true;
             //objectCam.TargetPosition = currentSelectedObject.Position;
@@ -629,15 +631,18 @@ namespace Game
         /// </summary>
         public virtual void SetNominalInputState()
         {
-            foreach (int i in clientControlledObjects)
+            lock (gameObjects)
             {
-                if (!gameObjects.ContainsKey(i))
-                    return;
-                gameObjects[i].SetNominalInput();
+                foreach (int i in clientControlledObjects)
+                {
+                    if (!gameObjects.ContainsKey(i))
+                        return;
+                    gameObjects[i].SetNominalInput();
+                }
+                // for client-side only created object (mainly for testing new aircraft without the server. this can be removed after 2012.09.25)
+                foreach (Gobject go in gameObjects.Values)
+                    go.SetNominalInput();
             }
-            // for client-side only created object (mainly for testing new aircraft without the server. this can be removed after 2012.09.25)
-            foreach (Gobject go in gameObjects.Values)
-                go.SetNominalInput();
         }
 
         public virtual void EditSettings()

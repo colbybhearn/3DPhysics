@@ -16,6 +16,7 @@ using System.IO;
 using JigLibX.Geometry;
 using Helper.Physics.PhysicObjects;
 using Helper.Camera.Cameras;
+using System.Diagnostics;
 
 
 namespace RoboGame
@@ -156,7 +157,9 @@ namespace RoboGame
             base.InitializeMultiplayer();
 
             if (isServer)
+            {
                 SpawnPickups();
+            }
         }
         public override void InitializeEnvironment()
         {
@@ -208,6 +211,8 @@ namespace RoboGame
         {
             cameraManager.AddCamera((int)CameraModes.FreeLook, new FreeCamera());
             cameraManager.AddCamera((int)CameraModes.RoverFirstPerson, new BaseCamera());
+            cameraManager.currentCamera.TargetPosition = new Vector3(0, 10, 50);
+            cameraManager.currentCamera.Orientation = Quaternion.CreateFromYawPitchRoll(0, (float)-Math.PI / 6, 0);
         }
         public override List<ViewProfile> GetViewProfiles()
         {
@@ -520,6 +525,11 @@ namespace RoboGame
                 return;
             
             Gobject newobject = assetManager.GetNewInstance((AssetTypes)asset);
+            if (newobject == null)
+            {
+                
+                return;
+            }
             newobject.isOnClient = isClient;
             newobject.isOnServer = isServer;
             newobject.ID = objectid; // override whatever object ID the assetManager came up with, if it is safe to do so
@@ -550,6 +560,7 @@ namespace RoboGame
         /// <param name="asset"></param>
         public override void ProcessObjectAdded(int ownerid, int objectid, int asset)
         {
+            Debug.WriteLine("Process Object Added: owner:" + ownerid + " id:" + objectid + " asset:" + asset);
             Gobject newobject = assetManager.GetNewInstance((AssetTypes)asset);
             newobject.ID = objectid;
             physicsManager.AddNewObject(newobject);
@@ -567,8 +578,9 @@ namespace RoboGame
         {
             Random r = new Random((int)DateTime.Now.ToOADate());
             float x, z;
-            
-            for (int i = 0; i < 10; i++)
+            int pickups = 10;
+
+            for (int i = 0; i < pickups; i++)
             {
                 x = (float)(r.NextDouble()-.5);
                 z = (float)(r.NextDouble()-.5);
@@ -582,7 +594,7 @@ namespace RoboGame
             }
 
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < pickups; i++)
             {
                 x = (float)(r.NextDouble() - .5);
                 z = (float)(r.NextDouble() - .5);
@@ -590,7 +602,7 @@ namespace RoboGame
                 x = x * 250;
                 z = z * 250;
 
-                
+
                 Gobject sphere = GetRadarPickup(new Vector3(x, 3.0f, z));
                 physicsManager.AddNewObject(sphere);
             }
@@ -731,8 +743,10 @@ namespace RoboGame
             Gobject newobject = GetRover(new Vector3(90, 20, 20));
             newobject.ID = objectid;
             physicsManager.AddNewObject(newobject);
+            Debug.WriteLine("Selecting: owner" + ownerid + " mine" + MyClientID);
             if (ownerid == MyClientID) // Only select the new car if its OUR new car
             {
+                
                 myRover = (RoverObject)newobject;
                 SelectGameObject(myRover);
             }
