@@ -18,6 +18,8 @@ namespace Helper.Physics
         public CollisionSkin Skin { get; internal set; }
         public Model Model { get; set; }
         public Vector3 Position { get; set; }
+        public bool isOnServer;
+        public bool isOnClient;
         public int type;
         public Matrix Orientation
         {

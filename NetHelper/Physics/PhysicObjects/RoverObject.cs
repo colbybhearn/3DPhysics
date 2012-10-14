@@ -119,8 +119,8 @@ namespace Helper.Physics.PhysicsObjects
             actionManager.AddBinding((int)Actions.ShootLaser, new Helper.Input.ActionBindingDelegate(SimulateShootLaser), 1);
             actionManager.AddBinding((int)Actions.DropLaser, new Helper.Input.ActionBindingDelegate(SimulateDropLaser), 1);
             actionManager.AddBinding((int)Actions.DropRadar, new Helper.Input.ActionBindingDelegate(SimulateDropRadar), 1);
-            actionManager.AddBinding((int)Actions.RotatedCamX, new Helper.Input.ActionBindingDelegate(SimulateDropLaser), 1);
-            actionManager.AddBinding((int)Actions.RotatedCamY, new Helper.Input.ActionBindingDelegate(SimulateDropRadar), 1);
+            actionManager.AddBinding((int)Actions.RotatedCamX, new Helper.Input.ActionBindingDelegate(SimulateSetRotateCamYaw), 1);
+            actionManager.AddBinding((int)Actions.RotatedCamY, new Helper.Input.ActionBindingDelegate(SimulateSetRotateCamPitch), 1);
         }
 
         public override void FinalizeBody()
@@ -491,6 +491,7 @@ namespace Helper.Physics.PhysicsObjects
             SetShootLaser(0);
         }
 
+
         public void SimulateAcceleration(object[] vals)
         {
             SetAcceleration((float)vals[0]);
@@ -515,15 +516,9 @@ namespace Helper.Physics.PhysicsObjects
             if ((float)vals[0] > .5f)
                 SetRadar(false);
         }
-        public void SimulateRotateCamX(object[] vals)
-        {
-            AdjustCamYaw((float)vals[0]);
-        }
-        public void SimulateRotateCamY(object[] vals)
-        {
-            AdjustCamPitch((float)vals[0]);
-        }
-        
+
+
+
         public void SetAcceleration(float p)
         {
             rover.Accelerate = p;
@@ -546,17 +541,6 @@ namespace Helper.Physics.PhysicsObjects
         {
             actionManager.SetActionValues((int)Actions.DropLaser, new object[] { 1 });
         }
-        public void AdjustCamPitch(float v)
-        {
-            rotCamPitch += v;
-            rotCamPitch = MathHelper.Clamp(rotCamPitch, -1.5f, 1.5f);
-            actionManager.SetActionValues((int)Actions.RotatedCamY, new object[] { v });
-        }
-        public void AdjustCamYaw(float v)
-        {
-            rotCamYaw += v;
-            actionManager.SetActionValues((int)Actions.RotatedCamX, new object[] { v });
-        }
 
         public void SetRadar(bool hasit)
         {
@@ -568,6 +552,73 @@ namespace Helper.Physics.PhysicsObjects
             hasAttributeChanged = hasLaser != hasit;
             hasLaser = hasit;
         }
+
+
+        public void SimulateSetRotateCamYaw(object[] vals)
+        {
+            SetCamYaw((float)vals[0]);
+        }
+
+        public void AdjustCamYaw(float v)
+        {
+            if (isOnServer)
+            {
+            }
+            else
+            {
+                SetCamYaw(rotCamYaw + v);
+                if (Math.Abs(lastSentRotCamYaw - rotCamYaw) > .2)
+                {
+                    lastSentRotCamYaw = rotCamYaw;
+                    actionManager.SetActionValues((int)Actions.RotatedCamX, new object[] { lastSentRotCamYaw });
+                }
+            }
+        }
+        public void SetCamYaw(float y)
+        {
+            hasAttributeChanged = true;
+            rotCamYaw = y;
+            while (rotCamYaw > (float)Math.PI * 2)
+                rotCamYaw -= (float)Math.PI * 2;
+            while (rotCamYaw < -(float)Math.PI * 2)
+                rotCamYaw += (float)Math.PI * 2;
+        }
+
+        public void SimulateSetRotateCamPitch(object[] vals)
+        {
+            SetCamPitch((float)vals[0]);
+        }
+        public void AdjustCamPitch(float v)
+        {
+            if (isOnServer)
+            {
+            }
+            else
+            {                
+                SetCamPitch(rotCamPitch + v);
+                if (Math.Abs(lastSentRotCamPitch - rotCamPitch) > .2)
+                {
+                    lastSentRotCamPitch = rotCamPitch;
+                    actionManager.SetActionValues((int)Actions.RotatedCamY, new object[] { lastSentRotCamPitch });
+                }
+            }
+        }
+
+        float lastSentRotCamPitch = 0;
+        float lastSentRotCamYaw = 0;
+
+        public void SetCamPitch(float p)
+        {
+            hasAttributeChanged = true;
+            rotCamPitch = p;
+            while (rotCamPitch > (float)Math.PI * 2)
+                rotCamPitch -= (float)Math.PI * 2;
+            while (rotCamPitch < -(float)Math.PI * 2)
+                rotCamPitch += (float)Math.PI * 2;
+            rotCamPitch = MathHelper.Clamp(rotCamPitch, -1.5f, 1.5f);
+        }
+        
+
         #endregion
 
         /// <summary>
@@ -580,7 +631,8 @@ namespace Helper.Physics.PhysicsObjects
         {
             bv = new bool[] {hasRadar, hasLaser};
             iv = null;
-            fv = null;
+            fv = new float[] { rotCamYaw, rotCamPitch };
+            hasAttributeChanged = false;
         }
 
         /// <summary>
@@ -606,6 +658,11 @@ namespace Helper.Physics.PhysicsObjects
                 SetLaser(bv[++index]);
             }
             index = -1;
+            if (fv != null && fv.Length >= 2)
+            {
+                SetCamYaw(fv[++index]);
+                SetCamPitch(fv[++index]);
+            }
         }
     }
 

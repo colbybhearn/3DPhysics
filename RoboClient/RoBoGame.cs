@@ -323,13 +323,8 @@ namespace RoboGame
             if (isClient)
                 soundManager.Play(Sounds.SolarWind.ToString());
 
-            //if (isClient && 
-                //!IsConnectedToServer)
-            {
-                SpawnRover(0, 1);
-                CameraModeCycle();
-                cameraManager.currentCamera.TargetPosition = new Vector3(10, -8, 5);
-            }
+            //CameraModeCycle();
+            //cameraManager.currentCamera.TargetPosition = new Vector3(10, -8, 5);
         }
 
         public void CameraModeCycle()
@@ -525,6 +520,8 @@ namespace RoboGame
                 return;
             
             Gobject newobject = assetManager.GetNewInstance((AssetTypes)asset);
+            newobject.isOnClient = isClient;
+            newobject.isOnServer = isServer;
             newobject.ID = objectid; // override whatever object ID the assetManager came up with, if it is safe to do so
             physicsManager.AddNewObject(newobject);
         }
