@@ -15,6 +15,7 @@ using JigLibX.Collision;
 using System.IO;
 using JigLibX.Geometry;
 using Helper.Physics.PhysicObjects;
+using Helper.Camera.Cameras;
 
 
 namespace RoboGame
@@ -60,8 +61,9 @@ namespace RoboGame
         #endregion
 
         #region Enumerations
-        public enum SpecificInputGroups
+        public enum InputGroups
         {
+
             Communication,
             Rover,
             Lander,
@@ -86,6 +88,13 @@ namespace RoboGame
             RoverMotor,
             RadarNoise, 
             RoverSpawn,
+        }
+        public enum CameraModes
+        {
+            FreeLook,
+            ObjectWatch,
+            RoverFirstPerson,
+            ObjectChase
         }
         #endregion
 
@@ -195,12 +204,16 @@ namespace RoboGame
 
             
         }
-
+        public override void InitializeCameras()
+        {
+            cameraManager.AddCamera((int)CameraModes.FreeLook, new FreeCamera());
+            cameraManager.AddCamera((int)CameraModes.RoverFirstPerson, new BaseCamera());
+        }
         public override List<ViewProfile> GetViewProfiles()
         {
             List<ViewProfile> profiles = base.GetViewProfiles();
-            profiles.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(),
-                (int)AssetTypes.Rover, new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2.0f, 0), 1.0f));
+            profiles.Add(new ViewProfile((int)CameraModes.RoverFirstPerson,
+                                        (int)AssetTypes.Rover, new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2.0f, 0), 1.0f));
             return profiles;
         }
         public override void InitializeInputs()
@@ -250,7 +263,7 @@ namespace RoboGame
             roverDefaults.Add(new KeyBinding("Pan Camera Right", Keys.L, false, false, false, KeyEvent.Down, RoverCamPanRight));
             roverDefaults.Add(new KeyBinding("Pan Camera Up", Keys.I, false, false, false, KeyEvent.Down, RoverCamPanUp));
             roverDefaults.Add(new KeyBinding("Pan Camera Down", Keys.K, false, false, false, KeyEvent.Down, RoverCamPanDown));            
-            KeyMap roverControls = new KeyMap(SpecificInputGroups.Rover.ToString(),roverDefaults);
+            KeyMap roverControls = new KeyMap(InputGroups.Rover.ToString(),roverDefaults);
 
             // player 
 
@@ -268,19 +281,19 @@ namespace RoboGame
             landerDefaults.Add(new KeyBinding("Roll Right", Keys.NumPad6, false, false, false, KeyEvent.Down, LunarRollRight));
             landerDefaults.Add(new KeyBinding("Yaw Left", Keys.NumPad7, false, false, false, KeyEvent.Down, LunarYawLeft));
             landerDefaults.Add(new KeyBinding("Yaw Right", Keys.NumPad9, false, false, false, KeyEvent.Down, LunarYawRight));
-            KeyMap landerControls = new KeyMap(SpecificInputGroups.Lander.ToString(), landerDefaults);
+            KeyMap landerControls = new KeyMap(InputGroups.Lander.ToString(), landerDefaults);
             
             // Chat
             List<KeyBinding> commDefaults = new List<KeyBinding>();
             commDefaults.Add(new KeyBinding("Chat ", Keys.Enter, false, false, false, KeyEvent.Pressed, ChatKeyPressed));
-            KeyMap commControls = new KeyMap(SpecificInputGroups.Communication.ToString(), commDefaults);
+            KeyMap commControls = new KeyMap(InputGroups.Communication.ToString(), commDefaults);
 
             // Interface
             List<KeyBinding> interfaceDefaults = new List<KeyBinding>();
             //interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.E, false, true, false, KeyEvent.Pressed, EnterExitVehicle));
             interfaceDefaults.Add(new KeyBinding("Spawn Lander", Keys.L, false, true, false, KeyEvent.Pressed, SpawnLander));
             interfaceDefaults.Add(new KeyBinding("Spawn Rover", Keys.R, false, true, false, KeyEvent.Pressed, Request_Rover));
-            KeyMap interfaceControls = new KeyMap(SpecificInputGroups.Interface.ToString(), interfaceDefaults);
+            KeyMap interfaceControls = new KeyMap(InputGroups.Interface.ToString(), interfaceDefaults);
 
 
             defControls.AddMap(camControls);
@@ -310,13 +323,19 @@ namespace RoboGame
             if (isClient)
                 soundManager.Play(Sounds.SolarWind.ToString());
 
-            if(isClient && 
-                !IsConnectedToServer)
+            //if (isClient && 
+                //!IsConnectedToServer)
             {
                 SpawnRover(0, 1);
                 CameraModeCycle();
                 cameraManager.currentCamera.TargetPosition = new Vector3(10, -8, 5);
             }
+        }
+
+        public void CameraModeCycle()
+        {
+            cameraManager.NextCamera();
+            //cameraManager.SetGobjectList(cameraMode.ToString(), new List<Gobject> { currentSelectedObject });
         }
 
         #region Assets
@@ -468,16 +487,16 @@ namespace RoboGame
             // turn on always needed inputs
             inputManager.EnableKeyMap(GenericInputGroups.Client.ToString());
             inputManager.EnableKeyMap(GenericInputGroups.Camera.ToString());
-            inputManager.EnableKeyMap(SpecificInputGroups.Communication.ToString());
-            inputManager.EnableKeyMap(SpecificInputGroups.Interface.ToString());
+            inputManager.EnableKeyMap(InputGroups.Communication.ToString());
+            inputManager.EnableKeyMap(InputGroups.Interface.ToString());
 
             switch (gameplaymode)
             {
                 case GameplayModes.Rover:
-                    inputManager.EnableKeyMap(SpecificInputGroups.Rover.ToString());
+                    inputManager.EnableKeyMap(InputGroups.Rover.ToString());
                     break;
                 case GameplayModes.Lander:
-                    inputManager.EnableKeyMap(SpecificInputGroups.Lander.ToString());
+                    inputManager.EnableKeyMap(InputGroups.Lander.ToString());
                     break;
                 case GameplayModes.Spectate:
                     break;
@@ -581,6 +600,23 @@ namespace RoboGame
 
         }
 
+        public override void UpdateCamera()
+        {
+            base.UpdateCamera();
+            if (myRover == null)
+                return;
+
+            if (!(cameraManager.currentCamera is FreeCamera))
+            {
+                cameraManager.currentCamera.TargetPosition = myRover.GetCamPosition();
+                cameraManager.currentCamera.CurrentPosition = myRover.GetCamPosition();
+                //            cameraManager.currentCamera.Orientation = Quaternion.CreateFromRotationMatrix(myRover.GetRoverCamWorldMatrix());
+                //cameraManager.currentCamera.LookInDirection(myRover.GetCameraDirection(), myRover.GetCameraUp());
+
+                cameraManager.currentCamera.SetCurrentOrientation(myRover.GetCameraOrientation());
+            }
+        }
+
         #region Lunar
         private void LunarThrustUp()
         {
@@ -670,20 +706,24 @@ namespace RoboGame
 
         public void RoverCamPanLeft()
         {
+            if (myRover == null) return;
             myRover.AdjustCamYaw(.0005f);
         }
 
         public void RoverCamPanRight()
         {
+            if (myRover == null) return;
             myRover.AdjustCamYaw(-.0005f);
         }
         public void RoverCamPanUp()
         {
+            if (myRover == null) return;
             myRover.AdjustCamPitch(.0005f);
         }
 
         public void RoverCamPanDown()
         {
+            if (myRover == null) return;
             myRover.AdjustCamPitch(-.0005f);
         }
 
@@ -794,7 +834,7 @@ namespace RoboGame
                 // TODO - magic number
                 if (Vector3.Distance(cameraManager.currentCamera.CurrentPosition, pos[i]) < 100)
                 {
-                    Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cameraManager.ProjectionMatrix(), cameraManager.currentCamera.RhsLevelViewMatrix, Matrix.Identity);
+                    Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cameraManager.ProjectionMatrix(), cameraManager.currentCamera.GetViewMatrix(), Matrix.Identity);
                     
                     int size = (int)chatFont.MeasureString(text[i]).X;
                     sb.Draw(BlankBackground, new Microsoft.Xna.Framework.Rectangle((int)screen.X - size/2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);

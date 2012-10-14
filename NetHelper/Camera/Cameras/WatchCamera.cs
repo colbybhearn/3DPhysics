@@ -4,7 +4,7 @@ using Helper.Physics;
 
 namespace Helper.Camera.Cameras
 {
-    public class WatchCamera : BaseCamera
+    public class WatchCamera : UprightCamera
     {
         public WatchCamera()
         {
@@ -16,18 +16,13 @@ namespace Helper.Camera.Cameras
             return RhsLevelViewMatrix;
         }
 
-        public override Matrix GetProjectionMatrix()
-        {
-            return _projection;
-        }
-
         public override void Update()
         {
             base.Update();
             Gobject gob = GetFirstGobject();
             if (gob == null) return;
 
-            LookAtLocation(gob.BodyPosition());
+            LookAtLocation(gob.BodyPosition(), Vector3.Up);
             
         }
     }

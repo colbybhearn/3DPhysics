@@ -23,6 +23,7 @@ namespace Game
             Spectate,
         }
 
+        Aircraft myPlane;
         Texture2D wallTexture;
         Model carModel, wheelModel, landerModel;
         CarObject myCar;
@@ -310,9 +311,15 @@ namespace Game
                 commClient.SendObjectRequest((int)AssetTypes.Aircraft);
         }
 
-        
 
-        Aircraft myPlane;
+        public void CameraModeCycle()
+        {
+            cameraManager.NextCamera();
+            //cameraManager.SetGobjectList(cameraMode.ToString(), new List<Gobject> { currentSelectedObject });
+        }
+
+
+        
         /// <summary>
         /// CLIENT SIDE
         /// client should do something oriented to the specific game here, like player bullets or cars.
@@ -569,7 +576,7 @@ namespace Game
                 // TODO - magic number
                 if (Vector3.Distance(cameraManager.currentCamera.CurrentPosition, pos[i]) < 100)
                 {
-                    Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cameraManager.ProjectionMatrix(), cameraManager.currentCamera.RhsLevelViewMatrix, Matrix.Identity);
+                    Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cameraManager.ProjectionMatrix(), cameraManager.currentCamera.GetViewMatrix(), Matrix.Identity);
                     
                     int size = (int)chatFont.MeasureString(text[i]).X;
                     sb.Draw(BlankBackground, new Rectangle((int)screen.X - size/2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);

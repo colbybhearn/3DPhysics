@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using System;
 namespace Helper.Camera.Cameras
 {
-    public class ChaseCamera : BaseCamera
+    public class ChaseCamera : UprightCamera
     {
         
         public ChaseCamera()
@@ -13,15 +13,12 @@ namespace Helper.Camera.Cameras
             lookAtLagFactor = .2f;
         }
 
+        
         public override Matrix GetViewMatrix()
         {
             return RhsViewMatrix;
         }
-
-        public override Matrix GetProjectionMatrix()
-        {            
-            return _projection;
-        }
+        
 
         public override void Update()
         {

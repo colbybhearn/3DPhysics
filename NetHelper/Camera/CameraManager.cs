@@ -10,39 +10,54 @@ namespace Helper.Camera
 {
     public class CameraManager
     {
-        SortedList<string, BaseCamera> Cameras = new SortedList<string, BaseCamera>();
+        SortedList<int, BaseCamera> Cameras = new SortedList<int, BaseCamera>();
         public BaseCamera currentCamera = null;
-        SortedList<string, SortedList<int, ViewProfile>> Views = new SortedList<string, SortedList<int, ViewProfile>>();
+        SortedList<int, SortedList<int, ViewProfile>> Views = new SortedList<int, SortedList<int, ViewProfile>>();
+        
 
         #region Initialization
         public CameraManager()
         {
         }
 
-        public void AddCamera(string alias, BaseCamera newCam)
+        public void NextCamera()
         {
-            if (GetCamera(alias) != null) return;
+            if (Cameras.Count == 0)
+                return;
 
-            Cameras.Add(alias, newCam);
+            int index = Cameras.IndexOfKey(currentCamera.id);
+            index++;
+            if (index >= Cameras.Count)
+                index = 0;
+            currentCamera= Cameras.Values[index];            
+        }
+
+        public void AddCamera(int camId, BaseCamera newCam)
+        {
+            if (GetCamera(camId) != null) return;
+
+            newCam.id = camId;
+            Cameras.Add(camId, newCam);
 
             /// if this is the first camera, make it the default
             if (Cameras.Count == 1)
-                SetCurrentCamera(alias);
+                SetCurrentCamera(camId);
         }
+
         public void AddProfile(ViewProfile vp)
         {
-            if (!Views.ContainsKey(vp.CameraAlias))
-                Views.Add(vp.CameraAlias, new SortedList<int, ViewProfile>());
-            SortedList<int, ViewProfile> camViews = Views[vp.CameraAlias];
+            if (!Views.ContainsKey(vp.CameraId))
+                Views.Add(vp.CameraId, new SortedList<int, ViewProfile>());
+            SortedList<int, ViewProfile> camViews = Views[vp.CameraId];
             if (camViews.ContainsKey(vp.assetAlias))
                 return;
             camViews.Add(vp.assetAlias, vp);
 
         }
 
-        public void SetGobjectList(string camAlias, List<Gobject> gobs)
+        public void SetGobjectList(int camId, List<Gobject> gobs)
         {
-            BaseCamera cam = GetCamera(camAlias);
+            BaseCamera cam = GetCamera(camId);
             if (cam == null) return;
 
             cam.SetGobjectList(gobs);
@@ -50,17 +65,16 @@ namespace Helper.Camera
             SortedList<int, ViewProfile> camViews = new SortedList<int, ViewProfile>();
             try
             {
-                if (Views.ContainsKey(camAlias))
+                if (Views.ContainsKey(camId))
                 {
                     foreach (Gobject gob in gobs)
                     {
-                        System.Diagnostics.Debug.WriteLine("CamAlias: "+camAlias);
+                        if (gob == null)
+                            continue;
                         int assetname = gob.type;
-                        if (Views[camAlias].ContainsKey(assetname))
-                            camViews.Add(assetname, Views[camAlias][assetname]);
+                        if (Views[camId].ContainsKey(assetname))
+                            camViews.Add(assetname, Views[camId][assetname]);
                     }
-
-                    System.Diagnostics.Debug.WriteLine("CamView count: " + camViews.Count);
                 }
             }
             catch (Exception E)
@@ -76,9 +90,9 @@ namespace Helper.Camera
 
         #region Current Camera
         
-        public void SetCurrentCamera(string alias)
+        public void SetCurrentCamera(int camId)
         {
-            BaseCamera cam = GetCamera(alias);
+            BaseCamera cam = GetCamera(camId);
             if (cam == null) return;
             currentCamera = cam;
         }
@@ -103,11 +117,11 @@ namespace Helper.Camera
         #endregion
 
         #region Utility
-        private BaseCamera GetCamera(string alias)
+        private BaseCamera GetCamera(int camId)
         {
-            if (!Cameras.ContainsKey(alias))
+            if (!Cameras.ContainsKey(camId))
                 return null;
-            return Cameras[alias];
+            return Cameras[camId];
         }
         #endregion
 
@@ -163,5 +177,9 @@ namespace Helper.Camera
             currentCamera.MoveRight();
         }
 
+
+        public void SetWorldMatrix(Matrix matrix)
+        {
+        }
     }
 }

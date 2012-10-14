@@ -5,7 +5,7 @@ using Helper.Physics;
 
 namespace Helper.Camera.Cameras
 {
-    public class FirstPersonCamera : BaseCamera
+    public class FirstPersonCamera : UprightCamera
     {
         public FirstPersonCamera()
         {
@@ -18,19 +18,16 @@ namespace Helper.Camera.Cameras
             return RhsViewMatrix;
         }
 
-        public override Matrix GetProjectionMatrix()
-        {
-            return _projection;
-        }
-
         public override void Update()
         {
             base.Update();
+            Vector3 orientAdjustment = Vector3.Zero;
+            Vector3 positionAdjustment = Vector3.Zero;
+            
             Gobject gob = GetFirstGobject();
             if (gob == null) return;
             
-            Vector3 orientAdjustment = Vector3.Zero;
-            Vector3 positionAdjustment = Vector3.Zero;
+            
             int assetname = gob.type;
             // if this camera has a profile for this asset,
             if (profiles.ContainsKey(assetname))
@@ -40,6 +37,7 @@ namespace Helper.Camera.Cameras
                 // get the adjustment value from the profile
                 positionAdjustment = profiles[assetname].PositionOffset;
             }
+
 
             // create an adjustment quat for the orientation
             Quaternion orientOffset = Quaternion.CreateFromYawPitchRoll(orientAdjustment.Y, orientAdjustment.X, orientAdjustment.Z);// YXZ

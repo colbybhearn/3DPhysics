@@ -101,20 +101,13 @@ namespace Game
         /// </summary>
         public GraphicsDevice graphicsDevice;
         public delegate void myCallbackDelegate(BaseCamera c, Matrix v, Matrix p);
-        public enum GenericCameraModes
-        {
-            FreeLook,
-            ObjectWatch,
-            ObjectFirstPerson,
-            ObjectChase
-        }
+        
         myCallbackDelegate UpdateCameraCallback;
 
         public string name = "BaseGame";
         
 
-        public CameraManager cameraManager = new CameraManager();
-        GenericCameraModes cameraMode = GenericCameraModes.FreeLook;
+        public CameraManager cameraManager = new CameraManager();      
 
         #endregion
 
@@ -223,22 +216,24 @@ namespace Game
         }
 
         public virtual void InitializeCameras()
-        {
+        {/* This is what would go in the specific game
             cameraManager.AddCamera(GenericCameraModes.FreeLook.ToString(), new FreeCamera());
             cameraManager.AddCamera(GenericCameraModes.ObjectChase.ToString(), new ChaseCamera());
             cameraManager.AddCamera(GenericCameraModes.ObjectFirstPerson.ToString(), new FirstPersonCamera());
             cameraManager.AddCamera(GenericCameraModes.ObjectWatch.ToString(), new WatchCamera());
             cameraManager.SetCurrentCamera(GenericCameraModes.FreeLook.ToString());
             foreach (ViewProfile vp in GetViewProfiles())
-                cameraManager.AddProfile(vp);
+                cameraManager.AddProfile(vp);*/
         }
 
         public virtual List<ViewProfile> GetViewProfiles()
         {
             List<ViewProfile> views = new List<ViewProfile>();
+            /*
             views.Add(new ViewProfile(GenericCameraModes.ObjectChase.ToString(), (int)AssetTypes.Aircraft, new Vector3(0, 3, 10), .25f, Vector3.Zero, 1.0f));
             views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), (int)AssetTypes.Car, new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2, 0), 1.0f));
             views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), (int)AssetTypes.Aircraft, new Vector3(0, 3, 10), .25f, new Vector3(0, 0, 0), 1.0f));
+             * */
             return views;
         }
 
@@ -604,9 +599,15 @@ namespace Game
                 if (UpdateCameraCallback == null)
                     return;
                 cameraManager.Update();
+                UpdateCamera();
 
                 UpdateCameraCallback(cameraManager.currentCamera, cameraManager.ViewMatrix(), cameraManager.ProjectionMatrix());
             }
+        }
+
+        public virtual void UpdateCamera()
+        {
+
         }
 
         #endregion
@@ -679,29 +680,6 @@ namespace Game
             cameraManager.AdjustTargetOrientation(pitch, yaw);
         }
 
-        public void CameraModeCycle()
-        {
-            switch (cameraMode)
-            {
-                case GenericCameraModes.FreeLook:
-                    cameraMode = GenericCameraModes.ObjectWatch;
-                    break;
-                case GenericCameraModes.ObjectWatch:
-                    cameraMode = GenericCameraModes.ObjectChase;
-                    break;
-                case GenericCameraModes.ObjectChase:
-                    cameraMode = GenericCameraModes.ObjectFirstPerson;
-                    break;
-                case GenericCameraModes.ObjectFirstPerson:
-                    cameraMode = GenericCameraModes.FreeLook;
-                    break;
-                default:
-                    break;
-            }
-            cameraManager.SetCurrentCamera(cameraMode.ToString());
-            cameraManager.SetGobjectList(cameraMode.ToString(), new List<Gobject> { currentSelectedObject });
-
-        }
         public void CameraMoveHeightIncrease()
         {
             cameraManager.MoveUp();
@@ -712,8 +690,7 @@ namespace Game
         }
         public void CameraMoveHome()
         {
-            cameraMode = GenericCameraModes.FreeLook;
-            //cam.MoveHome();
+            //cameraMode = GenericCameraModes.FreeLook;
         }
 
         public virtual void PreUpdateCameraCallback()

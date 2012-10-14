@@ -24,10 +24,43 @@ namespace Helper.Physics.PhysicsObjects
         {
             get { return this.rover; }
         }
+
+        public float rotCamYaw = 0.0f;
+        public float rotCamPitch = 0.0f;
+
+        Vector3 CamArmAPointOfRotationFromRover = new Vector3(1, 1, 0);
+        private Matrix CamArmARotation
+        {
+            get
+            {
+                return Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rotCamYaw, 0, 0));
+            }
+        }
+        Vector3 CamArmAOriginCorrection = new Vector3(0, 0, -.1f);
+
+        Vector3 CamArmBPointOfRotationFromArmA = new Vector3(.07f, .07f, -.19f);
+        private Matrix CamArmBRotation
+        {
+            get
+            {
+                return Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, rotCamPitch, -(float)Math.PI / 2.0f));
+            }
+        }
+        Vector3 CamArmBOriginCorrection = new Vector3(0, 0, -.1f);
+
+        Vector3 CamBoxPointOfRotationFromArmB = new Vector3(0, 0, 0);
+        Matrix CamBoxRotation = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, 0, 0));
+        Matrix CamBoxOrientCorrection = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, (float)Math.PI, -(float)Math.PI / 2.0f));
+        Vector3 CamBoxOriginCorrection = new Vector3(0, 0, .13f);
+
+        Vector3 CamPoleLocation = new Vector3(1, 0, 0);
+        Vector3 CamPoleScaleCorrection = new Vector3(.75f, .5f, .75f);
+
+        float radarRotation = 0;
+        DateTime lastDraw;
         #endregion
 
-        // These must be actions like dropRadar,
-        // not properties like hasRadar.
+        // These must be actions like dropRadar, not properties like hasRadar.
         public enum Actions
         {
             Acceleration,
@@ -35,6 +68,8 @@ namespace Helper.Physics.PhysicsObjects
             DropLaser,
             DropRadar,
             ShootLaser,
+            RotatedCamX,
+            RotatedCamY
         }
 
         public RoverObject(int asset,
@@ -84,6 +119,8 @@ namespace Helper.Physics.PhysicsObjects
             actionManager.AddBinding((int)Actions.ShootLaser, new Helper.Input.ActionBindingDelegate(SimulateShootLaser), 1);
             actionManager.AddBinding((int)Actions.DropLaser, new Helper.Input.ActionBindingDelegate(SimulateDropLaser), 1);
             actionManager.AddBinding((int)Actions.DropRadar, new Helper.Input.ActionBindingDelegate(SimulateDropRadar), 1);
+            actionManager.AddBinding((int)Actions.RotatedCamX, new Helper.Input.ActionBindingDelegate(SimulateDropLaser), 1);
+            actionManager.AddBinding((int)Actions.RotatedCamY, new Helper.Input.ActionBindingDelegate(SimulateDropRadar), 1);
         }
 
         public override void FinalizeBody()
@@ -102,248 +139,7 @@ namespace Helper.Physics.PhysicsObjects
             }
         }
 
-        private void DrawWheel(Wheel wh, bool rotated, Matrix View, Matrix Projection)
-        {
-            float steer = wh.SteerAngle;
-
-            Matrix rot;
-            if (rotated) rot = Matrix.CreateRotationY(MathHelper.ToRadians(180.0f));
-            else rot = Matrix.Identity;
-
-            Matrix world = rot * Matrix.CreateRotationZ(MathHelper.ToRadians(-wh.AxisAngle)) * // rotate the wheels
-                        Matrix.CreateRotationY(MathHelper.ToRadians(steer)) *
-                        Matrix.CreateTranslation(wh.Pos + wh.Displacement * wh.LocalAxisUp) * rover.Chassis.Body.Orientation * // oritentation of wheels
-                        Matrix.CreateTranslation(rover.Chassis.Body.Position);
-            foreach (ModelMesh mesh in wheel.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.World = world; // translation
-
-                    effect.View = View;
-                    effect.Projection = Projection;
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-                }
-                mesh.Draw();
-            }
-        }
-        float radarRotation = 0;
-        DateTime lastDraw;
-        private void DrawRadar(Matrix View, Matrix Projection)
-        {
-            float rotationsPerSecond = .3f;
-            float stepsPerRotation = 20;
-            float radiansPerStep = 2.0f * (float)Math.PI / stepsPerRotation;
-
-            //float rotPosition = DateTime.Now.Millisecond * 
-            Vector3 offsetPos = new Vector3(-.9f, .7f, .5f);
-            DateTime now = DateTime.Now;
-            float diffSeconds = (float)(now-lastDraw).TotalSeconds;
-            radarRotation += diffSeconds * rotationsPerSecond * stepsPerRotation * radiansPerStep;
-            radarRotation %= (2.0f*(float)Math.PI);
-
-            Matrix world =  Matrix.CreateScale(Scale * 1.4f) *
-                            Matrix.CreateRotationY(radarRotation) * // rotate the dish
-                            Matrix.CreateTranslation(offsetPos) * 
-                            rover.Chassis.Body.Orientation * 
-                            Matrix.CreateTranslation(rover.Chassis.Body.Position);
-
-            Matrix[] transforms = new Matrix[Radar.Bones.Count];
-            Radar.CopyAbsoluteBoneTransformsTo(transforms);
-
-            foreach (ModelMesh mesh in Radar.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-                    effect.AmbientLightColor = Color.DarkGray.ToVector3();
-                    effect.World =  transforms[mesh.ParentBone.Index] * world;
-                    effect.View = View;
-                    effect.Projection = Projection;
-                }
-                mesh.Draw();
-            }
-            lastDraw = now;
-        }
-
-        public void DrawLaser(Matrix View, Matrix Projection)
-        {
-            Vector3 offsetPos = new Vector3(1, .2f, -.5f);
-
-            Matrix world = Matrix.CreateScale(Scale * .3f) *
-                            Matrix.CreateTranslation(offsetPos) *
-                            rover.Chassis.Body.Orientation *
-                            Matrix.CreateTranslation(rover.Chassis.Body.Position);
-            
-            Matrix[] ltransforms = new Matrix[Laser.Bones.Count];
-            Laser.CopyAbsoluteBoneTransformsTo(ltransforms);
-            foreach (ModelMesh mesh in Laser.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-                    effect.AmbientLightColor = Color.Gold.ToVector3();
-                    effect.World = ltransforms[mesh.ParentBone.Index] * world;
-                    effect.View = View;
-                    effect.Projection = Projection;
-                }
-                mesh.Draw();
-            }
-        }
-
-        public float rotCamYaw = 0.0f;
-        public float rotCamPitch = 0.0f;
-        public void DrawCameraRig(Matrix View, Matrix Projection)
-        {
-            //Rover Chasis -> Arm A -> Arm B / Camera
-
-            Vector3 ArmAPointOfRotationFromRover = new Vector3(1, 1, 0);
-            Matrix ArmARotation = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rotCamYaw, 0, 0));
-            Vector3 ArmAOriginCorrection = new Vector3(0, 0, -.1f);
-
-            Vector3 ArmBPointOfRotationFromArmA = new Vector3(.07f, .07f, -.19f);
-            Matrix ArmBRotation = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, rotCamPitch, -(float)Math.PI /2.0f));
-            Vector3 ArmBOriginCorrection = new Vector3(0, 0, -.1f);
-
-
-            Vector3 CamPointOfRotationFromArmB = new Vector3(0,0,0);
-            Matrix CamRotation = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, 0, 0));
-            Matrix CamOrientCorrection = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, (float)Math.PI, -(float)Math.PI / 2.0f));
-            Vector3 CamOriginCorrection = new Vector3(0, 0, .13f);
-
-            Vector3 PoleLocation = new Vector3(1, 0, 0);
-            Vector3 PoleScaleCorrection = new Vector3(.75f, .5f, .75f);
-
-            #region Pole
-            Matrix world = //Matrix.CreateScale(PoleScaleCorrection) * // scale it in addition to the scale of this entire gobject
-                            Matrix.CreateScale(Scale * PoleScaleCorrection) * // scale it in addition to the scale of this entire gobject
-                            Matrix.CreateTranslation(PoleLocation) * // move to the location of the pole
-                            rover.Chassis.Body.Orientation * // orient with the rover
-                            Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover
-
-            Matrix[] modtrans = new Matrix[Pole.Bones.Count];
-            Pole.CopyAbsoluteBoneTransformsTo(modtrans);
-            foreach (ModelMesh mesh in Pole.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-                    effect.AmbientLightColor = Color.Gray.ToVector3();
-                    effect.World = modtrans[mesh.ParentBone.Index] * world;
-                    effect.View = View;
-                    effect.Projection = Projection;
-                }
-                mesh.Draw();
-            }
-            #endregion
-
-            #region Rotation Arm A
-            world =  Matrix.CreateScale(Scale * 1.4f) *
-                            Matrix.CreateTranslation(ArmAOriginCorrection) * //
-                            ArmARotation *
-                            Matrix.CreateTranslation(ArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
-                            rover.Chassis.Body.Orientation * // orient with the rover
-                            Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover
-
-            modtrans = new Matrix[Arm.Bones.Count];
-            Arm.CopyAbsoluteBoneTransformsTo(modtrans);
-            foreach (ModelMesh mesh in Arm.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-                    effect.AmbientLightColor = Color.Gray.ToVector3();
-                    effect.World = modtrans[mesh.ParentBone.Index] * world;
-                    effect.View = View;
-                    effect.Projection = Projection;
-                }
-                mesh.Draw();
-            }
-            #endregion
-
-            #region Rotation Arm B
-            world = Matrix.CreateScale(Scale * 1.4f) *
-
-                    Matrix.CreateTranslation(ArmBOriginCorrection) * //
-                    ArmBRotation *
-                    Matrix.CreateTranslation(ArmBPointOfRotationFromArmA) * // move to the point of rotation for the arm (relative to the parent)
-
-                    Matrix.CreateTranslation(ArmAOriginCorrection) * //
-                    ArmARotation *
-                    Matrix.CreateTranslation(ArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
-                    rover.Chassis.Body.Orientation * // orient with the rover
-                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
-
-            foreach (ModelMesh mesh in Arm.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-                    effect.AmbientLightColor = Color.Gray.ToVector3();
-                    effect.World = modtrans[mesh.ParentBone.Index] * world;
-                    effect.View = View;
-                    effect.Projection = Projection;
-                }
-                mesh.Draw();
-            }
-            #endregion
-
-            #region Camera
-
-            world = Matrix.CreateScale(Scale * 1.4f) *
-
-                    // Cam
-                    Matrix.CreateTranslation(CamOriginCorrection) * //
-                    CamRotation *
-                    CamOrientCorrection *
-                    Matrix.CreateTranslation(CamPointOfRotationFromArmB) * // move to the point of rotation for the arm (relative to the parent)
-                    
-                    // Arm B
-                    Matrix.CreateTranslation(ArmBOriginCorrection) * //
-                    ArmBRotation *                                            // (Step 7)
-                    Matrix.CreateTranslation(ArmBPointOfRotationFromArmA) * // move to the point of rotation for the arm (relative to the parent)
-                    // Arm A
-                    Matrix.CreateTranslation(ArmAOriginCorrection) * //
-                    ArmARotation *
-                    Matrix.CreateTranslation(ArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
-                    rover.Chassis.Body.Orientation * // orient with the rover
-                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
-
-            modtrans = new Matrix[Cam.Bones.Count];
-            Cam.CopyAbsoluteBoneTransformsTo(modtrans);
-            foreach (ModelMesh mesh in Cam.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-                    effect.AmbientLightColor = Color.Gray.ToVector3();
-                    effect.World = modtrans[mesh.ParentBone.Index] * world;
-                    effect.View = View;
-                    effect.Projection = Projection;
-                }
-                mesh.Draw();
-            }
-            #endregion
-        }
-
-        public void AdjustCamPitch(float v)
-        {
-            rotCamPitch += v;
-            rotCamPitch = MathHelper.Clamp(rotCamPitch, -1.5f, 1.5f);
-        }
-
-        public void AdjustCamYaw(float v)
-        {
-            rotCamYaw += v;
-        }
-
+        #region Draw
         public override void Draw(ref Matrix View, ref Matrix Projection)
         {
             DrawWheel(rover.Wheels[0], true, View, Projection);
@@ -383,6 +179,288 @@ namespace Helper.Physics.PhysicsObjects
 
             DrawCameraRig(View, Projection);
         }
+        private void DrawWheel(Wheel wh, bool rotated, Matrix View, Matrix Projection)
+        {
+            float steer = wh.SteerAngle;
+
+            Matrix rot;
+            if (rotated) rot = Matrix.CreateRotationY(MathHelper.ToRadians(180.0f));
+            else rot = Matrix.Identity;
+
+            Matrix world = rot * Matrix.CreateRotationZ(MathHelper.ToRadians(-wh.AxisAngle)) * // rotate the wheels
+                        Matrix.CreateRotationY(MathHelper.ToRadians(steer)) *
+                        Matrix.CreateTranslation(wh.Pos + wh.Displacement * wh.LocalAxisUp) * rover.Chassis.Body.Orientation * // oritentation of wheels
+                        Matrix.CreateTranslation(rover.Chassis.Body.Position);
+            foreach (ModelMesh mesh in wheel.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = world; // translation
+
+                    effect.View = View;
+                    effect.Projection = Projection;
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                }
+                mesh.Draw();
+            }
+        }
+        private void DrawRadar(Matrix View, Matrix Projection)
+        {
+            float rotationsPerSecond = .3f;
+            float stepsPerRotation = 20;
+            float radiansPerStep = 2.0f * (float)Math.PI / stepsPerRotation;
+
+            //float rotPosition = DateTime.Now.Millisecond * 
+            Vector3 offsetPos = new Vector3(-.9f, .7f, .5f);
+            DateTime now = DateTime.Now;
+            float diffSeconds = (float)(now-lastDraw).TotalSeconds;
+            radarRotation += diffSeconds * rotationsPerSecond * stepsPerRotation * radiansPerStep;
+            radarRotation %= (2.0f*(float)Math.PI);
+
+            Matrix world =  Matrix.CreateScale(Scale * 1.4f) *
+                            Matrix.CreateRotationY(radarRotation) * // rotate the dish
+                            Matrix.CreateTranslation(offsetPos) * 
+                            rover.Chassis.Body.Orientation * 
+                            Matrix.CreateTranslation(rover.Chassis.Body.Position);
+
+            Matrix[] transforms = new Matrix[Radar.Bones.Count];
+            Radar.CopyAbsoluteBoneTransformsTo(transforms);
+
+            foreach (ModelMesh mesh in Radar.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.AmbientLightColor = Color.DarkGray.ToVector3();
+                    effect.World =  transforms[mesh.ParentBone.Index] * world;
+                    effect.View = View;
+                    effect.Projection = Projection;
+                }
+                mesh.Draw();
+            }
+            lastDraw = now;
+        }
+        private void DrawLaser(Matrix View, Matrix Projection)
+        {
+            /* Old Location
+            Vector3 offsetPos = new Vector3(1, .2f, -1.0f);
+            
+            Matrix world = Matrix.CreateScale(Scale * .2f) *
+                            Matrix.CreateTranslation(offsetPos) *
+                            rover.Chassis.Body.Orientation *
+                            Matrix.CreateTranslation(rover.Chassis.Body.Position);*/
+
+            // New Location (On Top Ya Head)
+            Vector3 offsetFromCam = new Vector3(-.47f, -.1f, .06f);
+
+            Matrix world = 
+                    Matrix.CreateScale(new Vector3(1,1,2))*
+                    Matrix.CreateScale(Scale * .05f) *
+                    // Laser
+                    Matrix.CreateTranslation(offsetFromCam) * //
+                    // Cam
+                    Matrix.CreateTranslation(CamBoxOriginCorrection) * //
+                    CamBoxRotation *
+                    CamBoxOrientCorrection *
+                    Matrix.CreateTranslation(CamBoxPointOfRotationFromArmB) * // move to the point of rotation for the arm (relative to the parent)
+
+                    // Arm B
+                    Matrix.CreateTranslation(CamArmBOriginCorrection) * //
+                    CamArmBRotation *                                            // (Step 7)
+                    Matrix.CreateTranslation(CamArmBPointOfRotationFromArmA) * // move to the point of rotation for the arm (relative to the parent)
+                // Arm A
+                    Matrix.CreateTranslation(CamArmAOriginCorrection) * //
+                    CamArmARotation *
+                    Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+                    rover.Chassis.Body.Orientation * // orient with the rover
+                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
+
+            
+            Matrix[] ltransforms = new Matrix[Laser.Bones.Count];
+            Laser.CopyAbsoluteBoneTransformsTo(ltransforms);
+            foreach (ModelMesh mesh in Laser.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.AmbientLightColor = Color.Gold.ToVector3();
+                    effect.World = ltransforms[mesh.ParentBone.Index] * world;
+                    effect.View = View;
+                    effect.Projection = Projection;
+                }
+                mesh.Draw();
+            }
+        }
+        private void DrawCameraRig(Matrix View, Matrix Projection)
+        {
+            //Rover Chasis -> Arm A -> Arm B / Camera
+
+            #region Pole
+            Matrix world = //Matrix.CreateScale(PoleScaleCorrection) * // scale it in addition to the scale of this entire gobject
+                            Matrix.CreateScale(Scale * CamPoleScaleCorrection) * // scale it in addition to the scale of this entire gobject
+                            Matrix.CreateTranslation(CamPoleLocation) * // move to the location of the pole
+                            rover.Chassis.Body.Orientation * // orient with the rover
+                            Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover
+
+            Matrix[] modtrans = new Matrix[Pole.Bones.Count];
+            Pole.CopyAbsoluteBoneTransformsTo(modtrans);
+            foreach (ModelMesh mesh in Pole.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.AmbientLightColor = Color.Gray.ToVector3();
+                    effect.World = modtrans[mesh.ParentBone.Index] * world;
+                    effect.View = View;
+                    effect.Projection = Projection;
+                }
+                mesh.Draw();
+            }
+            #endregion
+
+            #region Rotation Arm A
+            world =  Matrix.CreateScale(Scale * 1.4f) *
+                            Matrix.CreateTranslation(CamArmAOriginCorrection) * //
+                            CamArmARotation *
+                            Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+                            rover.Chassis.Body.Orientation * // orient with the rover
+                            Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover
+
+            modtrans = new Matrix[Arm.Bones.Count];
+            Arm.CopyAbsoluteBoneTransformsTo(modtrans);
+            foreach (ModelMesh mesh in Arm.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.AmbientLightColor = Color.Gray.ToVector3();
+                    effect.World = modtrans[mesh.ParentBone.Index] * world;
+                    effect.View = View;
+                    effect.Projection = Projection;
+                }
+                mesh.Draw();
+            }
+            #endregion
+
+            #region Rotation Arm B
+            world = Matrix.CreateScale(Scale * 1.4f) *
+
+                    Matrix.CreateTranslation(CamArmBOriginCorrection) * //
+                    CamArmBRotation *
+                    Matrix.CreateTranslation(CamArmBPointOfRotationFromArmA) * // move to the point of rotation for the arm (relative to the parent)
+
+                    Matrix.CreateTranslation(CamArmAOriginCorrection) * //
+                    CamArmARotation *
+                    Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+                    rover.Chassis.Body.Orientation * // orient with the rover
+                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
+
+            foreach (ModelMesh mesh in Arm.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.AmbientLightColor = Color.Gray.ToVector3();
+                    effect.World = modtrans[mesh.ParentBone.Index] * world;
+                    effect.View = View;
+                    effect.Projection = Projection;
+                }
+                mesh.Draw();
+            }
+            #endregion
+
+            #region Camera
+
+            world = Matrix.CreateScale(Scale * 1.4f) *
+
+                    // Cam
+                    Matrix.CreateTranslation(CamBoxOriginCorrection) * //
+                    CamBoxRotation *
+                    CamBoxOrientCorrection *
+                    Matrix.CreateTranslation(CamBoxPointOfRotationFromArmB) * // move to the point of rotation for the arm (relative to the parent)
+                    
+                    // Arm B
+                    Matrix.CreateTranslation(CamArmBOriginCorrection) * //
+                    CamArmBRotation *                                            // (Step 7)
+                    Matrix.CreateTranslation(CamArmBPointOfRotationFromArmA) * // move to the point of rotation for the arm (relative to the parent)
+                    // Arm A
+                    Matrix.CreateTranslation(CamArmAOriginCorrection) * //
+                    CamArmARotation *
+                    Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+                    rover.Chassis.Body.Orientation * // orient with the rover
+                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
+
+            modtrans = new Matrix[Cam.Bones.Count];
+            Cam.CopyAbsoluteBoneTransformsTo(modtrans);
+            foreach (ModelMesh mesh in Cam.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.AmbientLightColor = Color.Gray.ToVector3();
+                    effect.World = modtrans[mesh.ParentBone.Index] * world;
+                    effect.View = View;
+                    effect.Projection = Projection;
+                }
+                mesh.Draw();
+            }
+            #endregion
+        }
+        #endregion
+
+        public Matrix GetRoverCamWorldMatrix()
+        {
+            return Matrix.CreateScale(Scale * 1.4f) *
+                    // Cam                    
+                    Matrix.CreateTranslation(CamBoxOriginCorrection) * //
+                    CamBoxRotation *
+                    CamBoxOrientCorrection *
+                    Matrix.CreateTranslation(CamBoxPointOfRotationFromArmB) * // move to the point of rotation for the arm (relative to the parent)
+                    // Arm B
+                    Matrix.CreateTranslation(CamArmBOriginCorrection) * //
+                    CamArmBRotation *                                            // (Step 7)
+                    Matrix.CreateTranslation(CamArmBPointOfRotationFromArmA) * // move to the point of rotation for the arm (relative to the parent)
+                    // Arm A
+                    Matrix.CreateTranslation(CamArmAOriginCorrection) * //
+                    CamArmARotation *
+                    Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+                    rover.Chassis.Body.Orientation * // orient with the rover
+                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
+        }
+        public Vector3 GetCamPosition()
+        {
+            Vector3 CamLensRelativeToBoxOrigin = new Vector3(-.1f, 0, .3f);
+            return Vector3.Transform(CamLensRelativeToBoxOrigin, GetRoverCamWorldMatrix());
+        }
+
+        public Matrix GetCameraOrientation()
+        {
+            return //Matrix.CreateScale(Scale * 1.4f) *
+                // Cam
+                Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, 0, (float)Math.PI / 2.0f)) *
+                    CamBoxRotation *
+                // Arm B
+                    CamArmBRotation *                                            // (Step 7)
+                // Arm A
+                    CamArmARotation *
+                    rover.Chassis.Body.Orientation; // orient with the rover
+        }
+
+        public Vector3 GetCameraDirection()
+        {
+            return GetRoverCamWorldMatrix().Backward;
+        }
+        public Vector3 GetCameraUp()
+        {
+            return GetRoverCamWorldMatrix().Down;
+        }
 
         private void SetRoverMass(float mass)
         {
@@ -400,7 +478,6 @@ namespace Helper.Physics.PhysicsObjects
             rover.Chassis.Body.BodyInertia = inertia;
             rover.SetupDefaultWheels();
         }
-
         public override Vector3 GetPositionAbove()
         {
             return Body.Position + Vector3.UnitY * 4;
@@ -438,6 +515,14 @@ namespace Helper.Physics.PhysicsObjects
             if ((float)vals[0] > .5f)
                 SetRadar(false);
         }
+        public void SimulateRotateCamX(object[] vals)
+        {
+            AdjustCamYaw((float)vals[0]);
+        }
+        public void SimulateRotateCamY(object[] vals)
+        {
+            AdjustCamPitch((float)vals[0]);
+        }
         
         public void SetAcceleration(float p)
         {
@@ -460,6 +545,17 @@ namespace Helper.Physics.PhysicsObjects
         public void DropLaser()
         {
             actionManager.SetActionValues((int)Actions.DropLaser, new object[] { 1 });
+        }
+        public void AdjustCamPitch(float v)
+        {
+            rotCamPitch += v;
+            rotCamPitch = MathHelper.Clamp(rotCamPitch, -1.5f, 1.5f);
+            actionManager.SetActionValues((int)Actions.RotatedCamY, new object[] { v });
+        }
+        public void AdjustCamYaw(float v)
+        {
+            rotCamYaw += v;
+            actionManager.SetActionValues((int)Actions.RotatedCamX, new object[] { v });
         }
 
         public void SetRadar(bool hasit)

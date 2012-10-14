@@ -83,6 +83,7 @@
     <Compile Include="Camera\Cameras\ChaseCamera.cs" />
     <Compile Include="Camera\Cameras\FirstPersonCamera.cs" />
     <Compile Include="Camera\Cameras\FreeCamera.cs" />
+    <Compile Include="Camera\Cameras\UprightCamera.cs" />
     <Compile Include="Camera\Cameras\WatchCamera.cs" />
     <Compile Include="Chat.cs" />
     <Compile Include="Collections\Counter.cs" />

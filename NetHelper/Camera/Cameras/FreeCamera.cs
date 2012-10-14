@@ -1,9 +1,8 @@
-﻿using Helper.Camera.Cameras;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace Helper.Camera
+namespace Helper.Camera.Cameras
 {
-    public class FreeCamera : BaseCamera
+    public class FreeCamera : UprightCamera
     {
         public FreeCamera() 
         {

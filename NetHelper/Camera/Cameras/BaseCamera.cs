@@ -21,8 +21,10 @@ namespace Helper.Camera.Cameras
     
     public class BaseCamera
     {
+        public int id;
         public SortedList<int, ViewProfile> profiles = new SortedList<int,ViewProfile>();
-        public Matrix view;
+        public Matrix view = Matrix.Identity;
+        public Matrix _projection;
         // allows multiple Gobjects to be used by a camera for calculation, or reference points.
         public List<Gobject> Gobjects = new List<Gobject>();
         public Vector3 PitchYawRoll = new Vector3(); // Named this way Becuase X,Y,Z = Pitch,Yaw,Roll when stored
@@ -31,20 +33,19 @@ namespace Helper.Camera.Cameras
         public float SpeedChangeRate = 1.2f;
 
         public Quaternion Orientation;
-        public Vector3 CurrentPosition;
-        public Vector3 TargetPosition = new Vector3(); 
-        public float positionLagFactor = 1.0f;
-
         public Vector3 CurrentLookAt;
-        public Vector3 TargetLookAt;        
-        public float lookAtLagFactor = .1f;
-
-        public Matrix _projection;
-
+        public Vector3 CurrentPosition;
+        
         public float fieldOfView = 45.0f;
         public float zoomRate = 1f;
         public float MinimumFieldOfView = 10;
         public float MaximumFieldOfView = 80;
+
+
+        public Vector3 TargetPosition = new Vector3(); 
+        public float positionLagFactor = 1.0f;        
+        public Vector3 TargetLookAt;        
+        public float lookAtLagFactor = .1f;
 
         public BaseCamera(Vector3 pos)
         {
@@ -82,47 +83,16 @@ namespace Helper.Camera.Cameras
             profiles = vps;
             Update();
         }
-
-        public Matrix RhsLevelViewMatrix
-        {
-            get
-            {
-                Vector3 camRotation = Matrix.CreateFromQuaternion(Orientation).Forward;
-                // Side x camRotation gives the correct Up vector WITHOUT roll, if you do -Z,0,X instead, you will be upsidedown
-                // There is still an issue when nearing a "1" in camRotation in the positive or negative Y, in that it rotates weird,
-                // This does not appear to be related to the up vector.
-                Vector3 side = new Vector3(camRotation.Z, 0, -camRotation.X);
-                Vector3 up = Vector3.Cross(camRotation, side);
-                return Matrix.CreateLookAt(
-                    CurrentPosition,
-                    CurrentPosition + camRotation,
-                    up);
-            }
-        }
-
-        public Matrix RhsViewMatrix
-        {
-            get
-            {
-                Vector3 camRotation = Matrix.CreateFromQuaternion(Orientation).Forward;
-                // Side x camRotation gives the correct Up vector WITHOUT roll, if you do -Z,0,X instead, you will be upsidedown
-                // There is still an issue when nearing a "1" in camRotation in the positive or negative Y, in that it rotates weird,
-                // This does not appear to be related to the up vector.
-                Vector3 cameraRotatedUpVector = Vector3.Transform(Vector3.Up, Orientation);
-                return Matrix.CreateLookAt(
-                    CurrentPosition,
-                    CurrentPosition + camRotation,
-                    cameraRotatedUpVector);
-            }
-        }
-
+       
         public Ray GetMouseRay(Vector2 mousePosition, Viewport viewport)
         {            
             Vector3 nearPoint = new Vector3(mousePosition, 0);
             Vector3 farPoint = new Vector3(mousePosition, 1);
 
-            nearPoint = viewport.Unproject(nearPoint, _projection, RhsLevelViewMatrix, Matrix.Identity);
-            farPoint = viewport.Unproject(farPoint, _projection, RhsLevelViewMatrix, Matrix.Identity);
+            /*nearPoint = viewport.Unproject(nearPoint, _projection, RhsLevelViewMatrix, Matrix.Identity);
+            farPoint = viewport.Unproject(farPoint, _projection, RhsLevelViewMatrix, Matrix.Identity);*/
+            nearPoint = viewport.Unproject(nearPoint, GetProjectionMatrix(), GetViewMatrix(), Matrix.Identity);
+            farPoint = viewport.Unproject(farPoint, GetProjectionMatrix(), GetViewMatrix(), Matrix.Identity);
 
             Vector3 direction = farPoint - nearPoint;
             direction.Normalize();
@@ -148,19 +118,19 @@ namespace Helper.Camera.Cameras
             LookAtLocation(CurrentLookAt);
         }
 
-        public Matrix LhsLevelViewMatrix
-        {
-            get
-            {
-                return Matrix.Invert(RhsLevelViewMatrix);
-            }
-        }
-
         public void AdjustTargetPosition(Vector3 delta)
         {
             TargetPosition += delta * Speed;
         }
-        
+
+        public void SetCurrentOrientation(Quaternion o)
+        {
+            Orientation = o;
+        }
+        public void SetCurrentOrientation(Matrix o)
+        {
+            Orientation = Quaternion.CreateFromRotationMatrix(o);
+        }
         public void SetTargetOrientation(Matrix o)
         {
             Orientation = Quaternion.CreateFromRotationMatrix(o);
@@ -201,19 +171,28 @@ namespace Helper.Camera.Cameras
         }
         public virtual void AdjustTargetOrientation(float pitch, float yaw)
         {
-
         }
 
         public void LookAtLocation(Vector3 location)
         {
-            Orientation = Quaternion.CreateFromRotationMatrix(Matrix.Invert(Matrix.CreateLookAt(TargetPosition, location, Vector3.Up)));
+            LookAtLocation(location, Vector3.Up);
         }
-        public void LookToward(Vector3 direction)
+        public void LookAtLocation(Vector3 location, Vector3 up)
         {
-            LookAtLocation(TargetPosition + direction);
+            Orientation = Quaternion.CreateFromRotationMatrix(Matrix.Invert(Matrix.CreateLookAt(TargetPosition, location, up)));
+            if (float.IsNaN(Orientation.W))
+            {
+                Orientation = Quaternion.Identity;
+            }
         }
-
-        /*NEW METHODS!!!*/
+        public void LookInDirection(Vector3 direction, Vector3 up)
+        {
+            LookAtLocation(TargetPosition + direction, up);
+        }
+        public void LookInDirection(Vector3 direction)
+        {
+            LookInDirection(direction);
+        }
 
         public void SetGobjectList(List<Gobject> gobs)
         {
@@ -222,12 +201,17 @@ namespace Helper.Camera.Cameras
 
         public virtual Matrix GetViewMatrix()
         {
-            return Matrix.Identity;
+            Matrix camOrient = Matrix.CreateFromQuaternion(Orientation);
+            Vector3 camForward = camOrient.Forward;
+            return Matrix.CreateLookAt(
+                CurrentPosition,
+                CurrentPosition + camForward,
+                camOrient.Up);
         }
 
         public virtual Matrix GetProjectionMatrix()
         {
-            return Matrix.Identity;
+            return _projection;
         }
 
         public virtual void Update()
@@ -244,7 +228,6 @@ namespace Helper.Camera.Cameras
                 return null;
             return Gobjects[0];
         }
-
 
         
         public virtual void ZoomOut()
@@ -267,5 +250,6 @@ namespace Helper.Camera.Cameras
             if (fieldOfView < MinimumFieldOfView)
                 fieldOfView = MinimumFieldOfView;
         }
+        
     }
 }

@@ -26,12 +26,13 @@ namespace Helper.Communication
         public SocketComm(Socket s)
         {
             ShouldBeRunning = true;
+            DataToSendQueue = new ThreadQueue<byte[]>();
             socket = s;
             inputThread = new Thread(new ThreadStart(inputWorker));
             outputThread = new Thread(new ThreadStart(outputWorker));
+            
             inputThread.Start();
-            outputThread.Start();
-            DataToSendQueue = new ThreadQueue<byte[]>();
+            outputThread.Start();            
         }
 
         public void Disconnect()
