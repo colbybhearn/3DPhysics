@@ -462,10 +462,12 @@ namespace JigLibX.Collision
             {
                 float thisFrac;
                 Vector3 newPosition = pos;
+                Vector3 newNormal = normal;
 
-                if (primitivesNewWorld[prim].SegmentIntersect(out thisFrac, out newPosition, out normal, segCopy))
+                if (primitivesNewWorld[prim].SegmentIntersect(out thisFrac, out newPosition, out newNormal, segCopy))
                 {
                     pos = newPosition;
+                    normal = newNormal;
                     frac = thisFrac * thisSegLenRelToOrig;
                     segCopy.Delta *= thisFrac;
                     thisSegLenRelToOrig *= frac;

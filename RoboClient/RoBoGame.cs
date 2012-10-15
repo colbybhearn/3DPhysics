@@ -163,7 +163,7 @@ namespace RoboGame
         }
         public override void InitializeEnvironment()
         {
-            bool useCustomTerrain = false;
+            bool useCustomTerrain = true;
 
             if (useCustomTerrain)
             {
