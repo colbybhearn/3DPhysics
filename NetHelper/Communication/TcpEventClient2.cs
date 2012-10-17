@@ -29,7 +29,7 @@ namespace Helper.Communication
             try
             {
                 client.Connect(remoteEndPoint);
-                socket = new SocketComm(client.Client);
+                socket = new SocketComm(client.Client, true, "Only Client"); // true beause this is the client side
                 socket.PacketReceived += new SocketComm.PacketReceivedEventHandler(socket_PacketReceived);
                 socket.ClientDisconnected += new Handlers.voidEH(socket_ClientDisconnected);
                 connected = true;

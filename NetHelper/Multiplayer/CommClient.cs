@@ -98,13 +98,14 @@ namespace Helper.Multiplayer
                     ProcessInputPacket(InputQueue.Dequeue());
                     count++;
                 }
+                
                 if (count > 0)
                 {
                     //Counter.AddTick("pps_in", maxThisSecond);
                     //Counter.AddTick("average_pps_in", Counter.GetAverageValue("pps_in"));
                 }
-
                 Thread.Sleep(1);
+                
             }
         }
 
@@ -112,6 +113,7 @@ namespace Helper.Multiplayer
         {
             if (packet is ClientInfoRequestPacket)
             {
+                Trace.WriteLine("Received ClientInfoRequest");
                 ClientInfoRequestPacket cir = packet as ClientInfoRequestPacket;
                 ClientInfoResponsePacket clientInfoResponse = new ClientInfoResponsePacket(sAlias);
                 client.Send(clientInfoResponse);
@@ -124,6 +126,7 @@ namespace Helper.Multiplayer
             }
             else if (packet is ObjectAddedPacket)
             {
+                Trace.WriteLine("Received ObjectAdded");
                 ObjectAddedPacket corp = packet as ObjectAddedPacket;
                 CallObjectRequestResponseReceived(corp.Owner, corp.ID, corp.AssetName);
             }
@@ -154,6 +157,7 @@ namespace Helper.Multiplayer
             }
             else if (packet is ObjectDeletedPacket)
             {
+                Trace.WriteLine("Received ObjectDelete");
                 ObjectDeletedPacket odp = packet as ObjectDeletedPacket;
                 CallObjectDeleteReceived(odp);
             }

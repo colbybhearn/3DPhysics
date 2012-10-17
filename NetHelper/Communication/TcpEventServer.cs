@@ -134,6 +134,20 @@ namespace Helper.Communication
             }
         }
 
+        public void SendToAllButOne(Packet p, int id)
+        {
+            // Avoid the Specified id
+            
+            foreach (ClientInfoSocket s in Clients.Values)
+            {
+                if (s == null)
+                    continue;
+                if (s.ClientID == id)
+                    continue;
+                s.Send(p.Serialize());
+            }
+        }
+
         public void Receive(int id, byte[] data)
         {
             Packet p = Packet.Read(data);

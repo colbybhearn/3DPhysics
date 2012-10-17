@@ -639,7 +639,7 @@ namespace Helper.Physics.PhysicsObjects
         /// <param name="bv"></param>
         /// <param name="iv"></param>
         /// <param name="fv"></param>
-        public override void SetObjectAttributes(bool[] bv, int[] iv, float[] fv)
+        public override void SetObjectAttributes(bool[] bv, int[] iv, float[] fv, bool mine)
         {
             // user presses forward and coasts into a radar
             // server detects and calls SetRadar(true)
@@ -658,8 +658,11 @@ namespace Helper.Physics.PhysicsObjects
             index = -1;
             if (fv != null && fv.Length >= 2)
             {
-                SetCamYaw(fv[++index]);
-                SetCamPitch(fv[++index]);
+                if (!mine)    
+                {
+                    SetCamYaw(fv[++index]);
+                    SetCamPitch(fv[++index]);
+                }
             }
         }
     }

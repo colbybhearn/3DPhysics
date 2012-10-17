@@ -527,9 +527,9 @@ namespace RoboGame
             Gobject newobject = assetManager.GetNewInstance((AssetTypes)asset);
             if (newobject == null)
             {
-                
                 return;
             }
+
             newobject.isOnClient = isClient;
             newobject.isOnServer = isServer;
             newobject.ID = objectid; // override whatever object ID the assetManager came up with, if it is safe to do so
@@ -578,7 +578,7 @@ namespace RoboGame
         {
             Random r = new Random((int)DateTime.Now.ToOADate());
             float x, z;
-            int pickups = 10;
+            int pickups = 100;
 
             for (int i = 0; i < pickups; i++)
             {
@@ -588,7 +588,6 @@ namespace RoboGame
                 x= x*250;
                 z= z*250;
 
-                //Gobject box = physicsManager.GetBoxHighFriction(new Vector3(x, 3.0f, z), new Vector3(1.0f, 1.0f, 1.0f), Matrix.Identity, cubeModel, true);
                 Gobject box = GetLaserPickup(new Vector3(x, 3.0f, z));
                 physicsManager.AddNewObject(box);
             }
@@ -606,7 +605,6 @@ namespace RoboGame
                 Gobject sphere = GetRadarPickup(new Vector3(x, 3.0f, z));
                 physicsManager.AddNewObject(sphere);
             }
-
         }
 
         public override void UpdateCamera()
@@ -619,9 +617,6 @@ namespace RoboGame
             {
                 cameraManager.currentCamera.TargetPosition = myRover.GetCamPosition();
                 cameraManager.currentCamera.CurrentPosition = myRover.GetCamPosition();
-                //            cameraManager.currentCamera.Orientation = Quaternion.CreateFromRotationMatrix(myRover.GetRoverCamWorldMatrix());
-                //cameraManager.currentCamera.LookInDirection(myRover.GetCameraDirection(), myRover.GetCameraUp());
-
                 cameraManager.currentCamera.SetCurrentOrientation(myRover.GetCameraOrientation());
             }
         }

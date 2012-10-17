@@ -5,6 +5,7 @@ using System.Threading;
 using Helper.Communication;
 using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace Helper.Multiplayer
 {
@@ -106,6 +107,7 @@ namespace Helper.Multiplayer
             Packet packet = cpi.packet;
             if (packet is ClientInfoResponsePacket)
             {
+                Trace.WriteLine("Received Client info Response");
                 //client connects. Server sends infoRequest, Client sends infoResponse.
                 ClientInfoResponsePacket cirp = packet as ClientInfoResponsePacket;
                 CallClientConnected(cpi.id, cirp.Alias);
@@ -123,6 +125,7 @@ namespace Helper.Multiplayer
             }
             else if (packet is ObjectRequestPacket)
             {
+                Trace.WriteLine("Received ObjectRequestPacket");
                 ObjectRequestPacket corp = packet as ObjectRequestPacket;
                 CallObjectRequestReceived(cpi.id,corp.AssetName);
             }
@@ -195,6 +198,12 @@ namespace Helper.Multiplayer
         #endregion
 
         #region Packet Sending
+
+        public void BroadcastPacketToAllButOne(Packet p, int clientid)
+        {
+            tcpServer.SendToAllButOne(p, clientid);
+        }
+
         public void BroadcastPacket(Packet p)
         {
             tcpServer.Send(p);

@@ -52,7 +52,30 @@ namespace Helper.Physics
             Body = new Body();
             Skin = new CollisionSkin(Body);
             Body.CollisionSkin = Skin;
-            Body.ExternalData = this;            
+            Body.ExternalData = this;
+            Body.CollisionSkin.callbackFn += new CollisionCallbackFn(CollisionSkin_callbackFn);
+
+        }
+        private bool CollidedRecently = true; // we want the object to update immediately once created
+
+        bool CollisionSkin_callbackFn(CollisionSkin skin0, CollisionSkin skin1)
+        {
+            CollidedRecently = true; // we just want to know when it collided
+            return true; // let the physics system handle the collision
+        }
+
+        public int UpdateCountdown = 10;
+        public bool DidCollideRecently
+        {
+            get
+            {
+                if (CollidedRecently)
+                {
+                    CollidedRecently = false;
+                    return true;
+                }
+                return false;
+            }
         }
 
         /// <summary>
@@ -409,7 +432,7 @@ namespace Helper.Physics
             iv = null;
             fv = null;
         }
-        public virtual void SetObjectAttributes(bool[] bv, int[] iv, float[] fv)
+        public virtual void SetObjectAttributes(bool[] bv, int[] iv, float[] fv, bool mine)
         {
         }
 

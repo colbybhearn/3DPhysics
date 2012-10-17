@@ -23,6 +23,7 @@ namespace Helper
         public delegate void ObjectAttributeEH(ObjectAttributePacket oap);
         public delegate void ClientConnectedEH(int id, string alias);
         public delegate void PacketReceivedEH(Packet p);
+        public delegate void DataReceivedEH(byte[] b);
         public delegate void IntPacketEH(int i, Packet p);
         public delegate void ChatMessageEH(ChatMessage cm);
 

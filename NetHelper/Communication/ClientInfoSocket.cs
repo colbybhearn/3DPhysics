@@ -14,7 +14,8 @@ namespace Helper.Communication
         new public event Helper.Handlers.IntEH ClientDisconnected;
         public int ClientID;
 
-        public ClientInfoSocket(Socket s, int id) : base(s)
+        public ClientInfoSocket(Socket s, int id) 
+            : base(s, false, id.ToString()) // false because the server uses one ClientInfoSocket per client
         {
             ClientID = id;
         }

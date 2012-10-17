@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Input;
 using Helper.Audio;
 using System.Diagnostics;
 
+
 namespace Game
 {
 
@@ -128,7 +129,7 @@ namespace Game
         // Todo - turn the players into a SortedList<int, Player> type? (thus allowing more information than an alias to be stored
         // This can also be used server side
         public SortedList<int, string> players = new SortedList<int, string>(); // User ID, User ID Alias
-        public SortedList<int, int> objectsOwned = new SortedList<int, int>(); // Object ID, User ID who owns them
+        public SortedList<int, int> objectsOwned = new SortedList<int, int>(); // Object ID, Client ID who owns them
         public List<int> clientControlledObjects = new List<int>(); // TODO - Client Side only, merge with ownedObjects somehow?
         public List<object> MultiplayerUpdateQueue = new List<object>();
         public int MyClientID; // Used by the client
@@ -522,7 +523,12 @@ namespace Game
                                 if (gameObjects.ContainsKey(oap.objectId))
                                 {
                                     Gobject go = gameObjects[oap.objectId];
-                                    go.SetObjectAttributes(oap.booleans, oap.ints, oap.floats);
+                                    bool locallyOwnedAndOperated = false;
+
+                                    if (objectsOwned.ContainsKey(go.ID))
+                                        if (objectsOwned[go.ID] == MyClientID)
+                                            locallyOwnedAndOperated = true;
+                                    go.SetObjectAttributes(oap.booleans, oap.ints, oap.floats, locallyOwnedAndOperated);
                                 }
                                 #endregion
                             }
@@ -585,10 +591,20 @@ namespace Game
                             #endregion
 
                             #region Send Object Updates to the client
+                                
                             if (go.isMoveable && go.IsActive)
                             {
-                                ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.type, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
-                                commServer.BroadcastObjectUpdate(oup);
+                                go.UpdateCountdown--;
+                                if (go.UpdateCountdown == 0 || isOwnedByClient(go.ID))
+                                {
+                                    
+                                    ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.type, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
+                                    commServer.BroadcastObjectUpdate(oup);
+                                    go.UpdateCountdown = 10;
+                                }
+                                
+                                
+                                
                             }
                             #endregion
                         }
@@ -605,6 +621,17 @@ namespace Game
 
                 UpdateCameraCallback(cameraManager.currentCamera, cameraManager.ViewMatrix(), cameraManager.ProjectionMatrix());
             }
+        }
+
+        private bool isOwnedByClient(int objectId)
+        {
+            foreach (List<int> obs in ClientObjectIds.Values)
+            {
+                if (obs.Contains(objectId))
+                    return true;
+            }
+            return false;
+
         }
 
         public virtual void UpdateCamera()
@@ -1025,6 +1052,7 @@ namespace Game
         
         private void CallClientConnected(int id, string alias)
         {
+            Trace.WriteLine("Alias Connected");
             players.Add(id, alias);
             // Let new client know about all other clients
             for (int i = 0; i < players.Count; i++)
