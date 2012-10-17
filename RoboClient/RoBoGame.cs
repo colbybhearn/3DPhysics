@@ -579,7 +579,7 @@ namespace RoboGame
         {
             Random r = new Random((int)DateTime.Now.ToOADate());
             float x, z;
-            int pickups = 100;
+            int pickups = 10;
 
             for (int i = 0; i < pickups; i++)
             {

@@ -10,13 +10,13 @@ using Helper.Collections;
 
 namespace Helper.Communication
 {
-    class TcpEventClient2
+    class TcpEventClient
     {
         SocketComm socket;
         public event Helper.Handlers.PacketReceivedEH PacketReceived;
         public event Helper.Handlers.voidEH Disconnected;
 
-        public TcpEventClient2()
+        public TcpEventClient()
         {
             
 

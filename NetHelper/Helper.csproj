@@ -90,7 +90,7 @@
     <Compile Include="Collections\ThreadQueue.cs" />
     <Compile Include="Communication\ClientInfoSocket.cs" />
     <Compile Include="Communication\SocketComm.cs" />
-    <Compile Include="Communication\TcpEventClient2.cs" />
+    <Compile Include="Communication\TcpEventClient.cs" />
     <Compile Include="Gui\Containers\DynamicContainer.cs">
       <SubType>Component</SubType>
     </Compile>

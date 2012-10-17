@@ -15,7 +15,7 @@ namespace Helper.Multiplayer
         public int iPort;
         public string sAlias;
         IPAddress a;
-        Helper.Communication.TcpEventClient2 client;
+        Helper.Communication.TcpEventClient client;
         ServerInfo Server;
         bool ShouldBeRunning = false;
         ThreadQueue<Packet> InputQueue = new ThreadQueue<Packet>();
@@ -41,7 +41,7 @@ namespace Helper.Multiplayer
                 ShouldBeRunning = true;
                 inputThread = new Thread(new ThreadStart(inputWorker));
                 inputThread.Start();
-                client = new TcpEventClient2();
+                client = new TcpEventClient();
                 client.PacketReceived += new Helper.Handlers.PacketReceivedEH(PacketReceived);
                 client.Disconnected += new Handlers.voidEH(client_ThisClientDisconnectedFromServer);                
                 connected = client.Connect(Server.endPoint);
