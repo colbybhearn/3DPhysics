@@ -88,8 +88,7 @@ namespace RoboGame
         private void ClientSetup_FormClosing(object sender, FormClosingEventArgs e)
         {
             Properties.Settings.Default.Save();
-            if (roboclient != null)
-                roboclient.Close();
+            CloseClient();
         }
 
         private void ClientSetup_KeyPress(object sender, KeyPressEventArgs e)

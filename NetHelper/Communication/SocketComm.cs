@@ -272,7 +272,6 @@ namespace Helper.Communication
                     //Trace.WriteLine("SocketComm output bytes actually sent: " + sent + " took " +ts + " seconds, Avg Packet Size:" + packetSizeAvg+ ", Packet Count"+packetSizeCount + " Rate="+(float)r/ts +"Bps");
                     //Trace.WriteLine("SocketComm output bytes actually sent: " + sent );
                     sent = 0;
-
                 }
                 catch (Exception E)
                 {
