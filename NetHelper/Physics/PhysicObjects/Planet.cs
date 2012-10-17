@@ -18,7 +18,7 @@ namespace Helper.Physics.PhysicObjects
         List<int[]> indices = new List<int[]>();
         Texture2D texture;
 
-        public Planet(Vector3 center, Vector3 radius, double maxDeviation, double radianMeshSize, int trianglesPerMesh, GraphicsDevice g, Texture2D texture)
+        public Planet(Vector3 center, Vector3 radius, double maxDeviation, double radianMeshSize, int subdivides, GraphicsDevice g, Texture2D texture)
             : base()
         {
             this.texture = texture;
@@ -36,6 +36,7 @@ namespace Helper.Physics.PhysicObjects
                     // X = R * Sin(Θ) * Cos(ϕ)
                     // Y = R * Sin(Θ) * Sin(ϕ)
                     // Z = R * Cos(Θ)
+
                     vl.Add(SphericalToCartesian(i, j, radius));
                     vl.Add(SphericalToCartesian(i + radianMeshSize, j, radius));
                     vl.Add(SphericalToCartesian(i + radianMeshSize, j + radianMeshSize, radius));
@@ -74,10 +75,10 @@ namespace Helper.Physics.PhysicObjects
                     indices.Add(new int[] { 0, 1, 2, 1, 3, 2});
                     SetNormalOfTriangleAtIndices(0, 1, 2, verts.Count - 1);
                     SetNormalOfTriangleAtIndices(1, 3, 2, verts.Count - 1);
-                    tm.CreateMesh(vl, tvi, trianglesPerMesh, 1f);
+                    tm.CreateMesh(vl, tvi, 1, 1f); // Last two parameters are listed as not used on the octree
 
                     triangleMeshes.Add(tm);
-                    Skin.AddPrimitive(tm, new MaterialProperties(0.8f, 0.7f, 0.6f));
+                    Skin.AddPrimitive(tm, (int)MaterialTable.MaterialID.NormalRough);
                 }
             }
 

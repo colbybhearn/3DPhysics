@@ -163,7 +163,7 @@ namespace RoboGame
         }
         public override void InitializeEnvironment()
         {
-            bool useCustomTerrain = false;
+            bool useCustomTerrain = true;
 
             if (useCustomTerrain)
             {
@@ -360,7 +360,8 @@ namespace RoboGame
 
                 r = new RoverObject(0, pos, roverModel, wheelModel, roverRadar, cubeModel, RotArm, roverCam, Pole, maxSteerAngle, steerRate,
                     wheelSideFriction, wheelFwdFriction, wheelTravel, wheelRadius, wheelZOffset, wheelRestingFrac, wheeldampingFrac, wheelNumRays,
-                    driveTorque, physicsManager.PhysicsSystem.Gravity.Length());
+                    driveTorque, /*physicsManager.PhysicsSystem.Gravity.Length());*/ 10f);
+                // TODO FIX - Jeffrey changed gravity to magic constant because planets have their own gravity ... thus PhysicsSystem.Gravity = 0;
                 r.Rover.EnableCar();
                 r.Rover.Chassis.Body.AllowFreezing = false;
                 

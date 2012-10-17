@@ -29,7 +29,7 @@ namespace Helper.Physics
                     continue;
 
                 double distance = (b.Position - position).Length();
-                if (distance < 0)
+                if (distance < 1)
                     distance = 1;
                 else
                     distance /= radius; // Normalize distance, so that "1 radius" away from center gets "Full" gravity (full gravity on surface)
@@ -46,7 +46,7 @@ namespace Helper.Physics
                 // Thus I use r^2 as distance from other object to center of planet, normalized by the radius of the planet (surface is "1" away, so you get G force)
 
 
-                b.AddWorldForce(force);
+                b.AddWorldForce(force * b.Mass);
 
             }
         }
