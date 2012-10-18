@@ -36,7 +36,7 @@ namespace RoboGame
 
         private void CreateGame()
         {
-            game = new RoboGame();
+            game = new RoboGame(false);
             game.OtherClientConnectedToServer += new Helper.Handlers.ClientConnectedEH(game_ConnectedToServer);
             game.ThisClientDisconnectedFromServer += new Helper.Handlers.voidEH(game_ThisClientDiconnectedFromServer);
         }

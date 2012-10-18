@@ -116,6 +116,11 @@ namespace Helper.Multiplayer
                 ClientConnectedPacket ccp = new ClientConnectedPacket(cpi.id, cirp.Alias);
                 BroadcastPacket(ccp);
             }
+            else if(packet is ClientReadyPacket)
+            {
+                ClientReadyPacket crp = packet as ClientReadyPacket;
+                CallClientReadyReceived(crp.Id, crp.Alias);
+            }
             else if (packet is ChatPacket)
             {
                 ChatPacket cp = packet as ChatPacket;
@@ -144,6 +149,13 @@ namespace Helper.Multiplayer
                 ObjectAttributePacket oap = packet as ObjectAttributePacket;
                 CallObjectAttributeReceived(oap);
             }
+        }
+
+        public event Helper.Handlers.IntStringEH ClientReadyReceived;
+        private void CallClientReadyReceived(int id, string alias)
+        {
+            if (ClientReadyReceived == null) return;
+            ClientReadyReceived(id, alias);
         }
 
         public event Handlers.ObjectAttributeEH ObjectAttributeReceived;
@@ -179,7 +191,6 @@ namespace Helper.Multiplayer
             ChatMessageReceived(cm);
         }
 
-        // Colby fixed the name of this 2012.10.10
         public event Helper.Handlers.IntStringEH ClientConnected;
         private void CallClientConnected(int id, string alias)
         {
@@ -209,7 +220,7 @@ namespace Helper.Multiplayer
             tcpServer.Send(p);
         }
 
-        private void SendPacket(Packet p, int clientID)
+        public void SendPacket(Packet p, int clientID)
         {
             tcpServer.Send(p, clientID);
         }

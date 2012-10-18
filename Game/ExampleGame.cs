@@ -36,7 +36,7 @@ namespace Game
         Model airplane;
         PointLight firstLight;
 
-        public ExampleGame()            
+        public ExampleGame(bool server) : base (server)
         {
             name = "ExampleGame";
         }

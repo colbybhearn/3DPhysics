@@ -266,5 +266,10 @@ namespace Helper.Multiplayer
         {
             client.Send(new ObjectActionPacket(id, actionvals));
         }
+
+        public void Send(Packet clientReadyPacket)
+        {
+            client.Send(clientReadyPacket);
+        }
     }
 }

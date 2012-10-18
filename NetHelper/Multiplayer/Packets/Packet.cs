@@ -25,6 +25,7 @@ namespace Helper.Multiplayer.Packets
             ClientConnectedPacket,
             Attributes,
             scObjectDeleted,
+            csClientReady,
         }
 
         public Types Type;

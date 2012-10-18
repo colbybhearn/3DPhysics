@@ -20,14 +20,7 @@ using System.Diagnostics;
 namespace Game
 {
 
-    // can we remove all enums from this and only have enums in the specific game?
-    // manager
-
-
-    /*
-     * Asynchronous sending / receiving in ComServer/Client
-     * 
-     */
+   
     // Wiki: https://github.com/colbybhearn/3DPhysics/wiki
 
     /* We may need an object manager or some kind of Object data structure.
@@ -172,16 +165,18 @@ namespace Game
         #endregion
 
         #region Initialization
-        public BaseGame()
+        public BaseGame(bool server)
         {
-            CommonInit(10, 10);
+            CommonInit(10, 10, server);
         }
-        public BaseGame(int camUpdateInterval)
+        public BaseGame(int camUpdateInterval, bool server)
         {
-            CommonInit(10, camUpdateInterval);
+            CommonInit(10, camUpdateInterval, server);
         }
-        private void CommonInit(double physicsUpdateInterval, double cameraUpdateInterval)
+        private void CommonInit(double physicsUpdateInterval, double cameraUpdateInterval, bool server)
         {
+            isServer = server;
+            isClient = !server;
             graphicsDevice = null;
             gameObjects = new SortedList<int, Gobject>();
             objectsToAdd = new SortedList<int, Gobject>();
@@ -191,6 +186,8 @@ namespace Game
             physicsManager = new PhysicsManager(ref gameObjects, ref objectsToAdd, ref objectsToDelete, physicsUpdateInterval);
             physicsManager.PreIntegrate += new Handlers.voidEH(physicsManager_PreIntegrate);
             physicsManager.PostIntegrate += new Handlers.voidEH(physicsManager_PostIntegrate);
+
+           
         }
         
         public void Initialize(ServiceContainer services, GraphicsDevice gd, myCallbackDelegate updateCamCallback)
@@ -198,6 +195,7 @@ namespace Game
             Services = services;
             graphicsDevice = gd;
             UpdateCameraCallback = updateCamCallback;
+
             try
             {
                 InitializeContent();
@@ -210,6 +208,9 @@ namespace Game
             {
                 System.Diagnostics.Trace.WriteLine(e.StackTrace);
             }
+
+            if (isClient)
+                commClient.Send(new ClientReadyPacket(MyClientID, "someone"));
         }
 
         public virtual void InitializeSound()
@@ -218,39 +219,28 @@ namespace Game
         }
 
         public virtual void InitializeCameras()
-        {/* This is what would go in the specific game
-            cameraManager.AddCamera(GenericCameraModes.FreeLook.ToString(), new FreeCamera());
-            cameraManager.AddCamera(GenericCameraModes.ObjectChase.ToString(), new ChaseCamera());
-            cameraManager.AddCamera(GenericCameraModes.ObjectFirstPerson.ToString(), new FirstPersonCamera());
-            cameraManager.AddCamera(GenericCameraModes.ObjectWatch.ToString(), new WatchCamera());
-            cameraManager.SetCurrentCamera(GenericCameraModes.FreeLook.ToString());
-            foreach (ViewProfile vp in GetViewProfiles())
-                cameraManager.AddProfile(vp);*/
+        {
         }
 
         public virtual List<ViewProfile> GetViewProfiles()
         {
-            List<ViewProfile> views = new List<ViewProfile>();
-            /*
-            views.Add(new ViewProfile(GenericCameraModes.ObjectChase.ToString(), (int)AssetTypes.Aircraft, new Vector3(0, 3, 10), .25f, Vector3.Zero, 1.0f));
-            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), (int)AssetTypes.Car, new Vector3(-.45f, 1.4f, .05f), .25f, new Vector3(0, (float)-Math.PI / 2, 0), 1.0f));
-            views.Add(new ViewProfile(GenericCameraModes.ObjectFirstPerson.ToString(), (int)AssetTypes.Aircraft, new Vector3(0, 3, 10), .25f, new Vector3(0, 0, 0), 1.0f));
-             * */
-            return views;
+            return null;
         }
 
         public virtual void InitializeInputs()
         {
+            if (isClient)
+            {
+            }
             keyMapCollections = GetDefaultControls();
         }
         public virtual KeyMapCollection GetDefaultControls()
         {
-            KeyMapCollection defControls = new KeyMapCollection();
-            return defControls;
+            return null;
         }
 
         /// <summary>
-        /// Should do all model, and texture loading
+        /// Should do all model and texture loading
         /// </summary>
         public virtual void InitializeContent()
         {
@@ -340,7 +330,6 @@ namespace Game
                 commClient.ThisClientDisconnectedFromServer += new Handlers.voidEH(commClient_ThisClientDisconnectedFromServer);
                 commClient.OtherClientConnectedToServer += new Handlers.ClientConnectedEH(commClient_OtherClientConnected);
                 commClient.OtherClientDisconnectedFromServer += new Handlers.IntEH(commClient_OtherClientDisconnectedFromServer);
-                
                 commClient.ObjectAttributeReceived += new Handlers.ObjectAttributeEH(commClient_ObjectAttributeReceived);
                 commClient.ObjectDeleteReceived += new Handlers.IntEH(commClient_ObjectDeleteReceived);
             }
@@ -353,7 +342,16 @@ namespace Game
                 commServer.ObjectActionReceived += new Handlers.ObjectActionEH(commServer_ObjectActionReceived);
                 commServer.ObjectRequestReceived += new Handlers.ObjectRequestEH(commServer_ObjectRequestReceived);
                 commServer.ObjectAttributeReceived += new Handlers.ObjectAttributeEH(commServer_ObjectAttributeReceived);
+                commServer.ClientReadyReceived += new Handlers.IntStringEH(commServer_ClientReadyReceived);
             }
+        }
+
+        void commServer_ClientReadyReceived(int id, string alias)
+        {
+            
+            CallClientConnected(id, alias); // pass this event on up, even
+            commServer.BroadcastChatMessage(alias + " has joined.", -1);
+            CatchUpClient(id);
         }
 
         void commClient_ThisClientDisconnectedFromServer()
@@ -534,6 +532,8 @@ namespace Game
                             }
                         }
                     }
+
+
                     #endregion
                 }
             }
@@ -879,7 +879,6 @@ namespace Game
         // CLIENT only
         public virtual bool ConnectToServer(string ip, int port, string alias)
         {
-            isClient = true;
             commClient = new CommClient(ip, port, alias);
             InitializeMultiplayer();
             //ChatManager.PlayerAlias = alias;
@@ -1024,11 +1023,9 @@ namespace Game
         // SERVER only
         public void ListenForClients(int port)
         {
-            isServer = true;
             commServer = new CommServer(port);
             InitializeMultiplayer();
             commServer.Start();
-
         }
         void commServer_ChatMessageReceived(ChatMessage cm)
         {
@@ -1045,8 +1042,37 @@ namespace Game
 
         public virtual void ProcessClientConnected(int id, string alias)
         {
-            CallClientConnected(id, alias);
-            commServer.BroadcastChatMessage("Player " + alias + " has joined.", -1);
+              
+        }
+
+        private void CatchUpClient(int id)
+        {
+            lock (gameObjects)
+            {
+                foreach (Gobject go in gameObjects.Values)
+                {
+                    ObjectAddedPacket oap1 = new ObjectAddedPacket(-1, go.ID, go.type);
+                    commServer.SendPacket(oap1, id);
+
+                    #region Send Attribute Updates to the client
+                    if (go.hasAttributeChanged)
+                    {
+                        bool[] bools = null;
+                        int[] ints = null;
+                        float[] floats = null;
+                        go.GetObjectAttributes(out bools, out ints, out floats);
+                        ObjectAttributePacket oap = new ObjectAttributePacket(go.ID, bools, ints, floats);
+                        commServer.SendPacket(oap,id);
+                    }
+                    #endregion
+
+                    #region Send Object Updates to the client
+                    ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.type, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
+                    commServer.SendPacket(oup,id);
+                    #endregion
+                }
+            }
+            
         }
 
         

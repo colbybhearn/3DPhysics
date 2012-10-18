@@ -26,7 +26,7 @@ namespace ServerApp
             iBasePort = (int)numBasePort.Value;
             btnStopServer.Enabled = false;
             
-            game = new RoboGame.RoboGame();
+            game = new RoboGame.RoboGame(true);
             game.ClientConnected += new Helper.Handlers.IntStringEH(game_ClientConnected); 
             AddXnaPanel(ref game);
 

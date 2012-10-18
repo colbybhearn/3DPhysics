@@ -100,7 +100,7 @@ namespace RoboGame
         #endregion
 
         #region Initialization
-        public RoboGame()
+        public RoboGame(bool server) : base(server)
         {
             name = "RoBo Game";
 
@@ -163,7 +163,7 @@ namespace RoboGame
         }
         public override void InitializeEnvironment()
         {
-            bool useCustomTerrain = true;
+            bool useCustomTerrain = false;
 
             if (useCustomTerrain)
             {
@@ -211,7 +211,7 @@ namespace RoboGame
         {
             cameraManager.AddCamera((int)CameraModes.FreeLook, new FreeCamera());
             cameraManager.AddCamera((int)CameraModes.RoverFirstPerson, new BaseCamera());
-            cameraManager.currentCamera.TargetPosition = new Vector3(0, 10, 50);
+            cameraManager.currentCamera.TargetPosition = new Vector3(0, 50, 170);
             cameraManager.currentCamera.Orientation = Quaternion.CreateFromYawPitchRoll(0, (float)-Math.PI / 6, 0);
         }
         public override List<ViewProfile> GetViewProfiles()
@@ -223,14 +223,16 @@ namespace RoboGame
         }
         public override void InitializeInputs()
         {
+            if (isClient)
+            {
+            }
             inputManager = new InputManager(this.name, GetDefaultControls());
-
             inputManager.AddInputMode(InputMode.Chat, (ChatDelegate)ChatCallback);
             UpdateInputs();
         }
         public override KeyMapCollection GetDefaultControls()
         {
-            KeyMapCollection defControls = base.GetDefaultControls();
+            KeyMapCollection defControls = new KeyMapCollection();
             defControls.Game = this.name;
 
 
@@ -327,15 +329,11 @@ namespace RoboGame
             // Let's play this right away;  should not play on the server through
             if (isClient)
                 soundManager.Play(Sounds.SolarWind.ToString());
-
-            //CameraModeCycle();
-            //cameraManager.currentCamera.TargetPosition = new Vector3(10, -8, 5);
         }
 
         public void CameraModeCycle()
         {
             cameraManager.NextCamera();
-            //cameraManager.SetGobjectList(cameraMode.ToString(), new List<Gobject> { currentSelectedObject });
         }
 
         #region Assets

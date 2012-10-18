@@ -132,6 +132,7 @@
     <Compile Include="Multiplayer\Packets\ChatPacket.cs" />
     <Compile Include="Multiplayer\Packets\ClientConnectedPacket.cs" />
     <Compile Include="Multiplayer\Packets\ClientDisconnectPacket.cs" />
+    <Compile Include="Multiplayer\Packets\ClientReadyPacket.cs" />
     <Compile Include="Multiplayer\Packets\KeepAlivePacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectActionPacket.cs" />
     <Compile Include="Multiplayer\Packets\ObjectAttributePacket.cs" />
