@@ -70,31 +70,12 @@ namespace Helper.Multiplayer
 
         private void inputWorker()
         {
-
-            int printSecond=0;
-            int second=0;
-            int maxThisSecond = 0;
             int count = 0; // Using this since its possible one can get added to the queue while another is being processed
             while (ShouldBeRunning)
             {
                 
-                while (InputQueue.Count > 0)                    
+                while (InputQueue.myCount > 0)            
                 {
-                    second = DateTime.Now.Second;
-                    //Debug.WriteLine(second + ", " + count);
-                    if (count > maxThisSecond)
-                    {                        
-                        maxThisSecond = count;
-                    }
-                    
-                    if (second != printSecond)
-                    {
-                        //Debug.WriteLine("Client InputQueue: " + count);                        
-                        printSecond = second;
-                        maxThisSecond = 0;
-                        count = 0;
-                    }
-
                     ProcessInputPacket(InputQueue.Dequeue());
                     count++;
                 }
@@ -104,8 +85,7 @@ namespace Helper.Multiplayer
                     //Counter.AddTick("pps_in", maxThisSecond);
                     //Counter.AddTick("average_pps_in", Counter.GetAverageValue("pps_in"));
                 }
-                Thread.Sleep(1);
-                
+                Thread.Sleep(1);                
             }
         }
 

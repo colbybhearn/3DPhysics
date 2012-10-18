@@ -12,6 +12,19 @@ namespace Helper.Collections
         {
         }
 
+        public int myCount
+        {
+            get
+            {
+                int c = 0;
+                lock (this)
+                {
+                    c= this.Count;
+                }
+                return c;
+            }
+        }
+
         public void EnQ(T o)
         {
             lock(this)

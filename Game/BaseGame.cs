@@ -348,7 +348,6 @@ namespace Game
 
         void commServer_ClientReadyReceived(int id, string alias)
         {
-            
             CallClientConnected(id, alias); // pass this event on up, even
             commServer.BroadcastChatMessage(alias + " has joined.", -1);
             CatchUpClient(id);
@@ -488,10 +487,12 @@ namespace Game
                     #endregion
 
                     #region Process packets from the server
-                    while (MultiplayerUpdateQueue.Count > 0)
+                    List<object> ShouldRetry = new List<object>();
+                    lock (MultiplayerUpdateQueue)
                     {
-                        lock (MultiplayerUpdateQueue)
+                        while (MultiplayerUpdateQueue.Count > 0)
                         {
+                        
                             Packet p = MultiplayerUpdateQueue[0] as Packet;
                             MultiplayerUpdateQueue.RemoveAt(0);
 
@@ -503,6 +504,7 @@ namespace Game
                                 if (!gameObjects.ContainsKey(oup.objectId))
                                 {
                                     AddNewObject(oup.objectId, oup.assetName);
+                                    ShouldRetry.Add(oup);
                                     continue;
                                     // TODO -  Should we continue instead of not updating this frame?
                                 }
@@ -531,7 +533,13 @@ namespace Game
                                 #endregion
                             }
                         }
+                        while (ShouldRetry.Count > 0)
+                        {
+                            MultiplayerUpdateQueue.Add(ShouldRetry[0]);
+                            ShouldRetry.RemoveAt(0);
+                        }
                     }
+                    
 
 
                     #endregion
@@ -1051,8 +1059,8 @@ namespace Game
             {
                 foreach (Gobject go in gameObjects.Values)
                 {
-                    ObjectAddedPacket oap1 = new ObjectAddedPacket(-1, go.ID, go.type);
-                    commServer.SendPacket(oap1, id);
+                    //ObjectAddedPacket oap1 = new ObjectAddedPacket(-1, go.ID, go.type);
+                    //commServer.SendPacket(oap1, id);
 
                     #region Send Attribute Updates to the client
                     if (go.hasAttributeChanged)

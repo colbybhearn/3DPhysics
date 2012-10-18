@@ -6,6 +6,7 @@ using Helper.Communication;
 using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
+using Helper.Collections;
 
 namespace Helper.Multiplayer
 {
@@ -26,15 +27,13 @@ namespace Helper.Multiplayer
      * interpolation between realities may be needed to smooth out jitter
      * UDP packets may be needed to facilitate high update rates
      */
-   
 
     public class CommServer
     {
-        
         // list of client information with socket to communicate back
         List<int> Clients = new List<int>();
         TcpEventServer tcpServer;
-        Queue<ClientPacketInfo> InputQueue = new Queue<ClientPacketInfo>();
+        ThreadQueue<ClientPacketInfo> InputQueue = new ThreadQueue<ClientPacketInfo>();
         Thread inputThread;
         bool ShouldBeRunning = false;
 
@@ -82,7 +81,7 @@ namespace Helper.Multiplayer
         {
             while (ShouldBeRunning)
             {
-                while (InputQueue.Count > 0)
+                while (InputQueue.myCount > 0)
                 {
                     ProcessInputPacket(InputQueue.Dequeue());
                 }

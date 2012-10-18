@@ -179,7 +179,7 @@ namespace Helper.Communication
             byte[] oldData = new byte[0];
             while (ShouldBeRunning)
             {
-                while (DataReceived.Count > 0)
+                while (DataReceived.myCount > 0)
                 {
                     try
                     {
@@ -248,7 +248,7 @@ namespace Helper.Communication
 
                 packetSizeSum = 0;
                 packetSizeCount = 0;
-                while (DataToSendQueue.Count > 0)
+                while (DataToSendQueue.myCount > 0)
                 {
                     //packetSizeCount++;
                     //packetSizeSum += DataToSendQueue.Peek().Length;
