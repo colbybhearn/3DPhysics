@@ -56,7 +56,8 @@ namespace Helper.Physics.PhysicsObjects
             CameraPole,
             CameraArmA,
             CameraArmB,
-            CameraBox
+            CameraBox,
+            LaserBox
 
         }
 
@@ -255,7 +256,7 @@ namespace Helper.Physics.PhysicsObjects
                             Matrix.CreateTranslation(rover.Chassis.Body.Position);*/
 
             // New Location (On Top Ya Head)
-            Vector3 offsetFromCam = new Vector3(-.47f, -.1f, .06f);
+            
             /*
             Matrix world = 
                     Matrix.CreateScale(new Vector3(1,1,2))*
@@ -279,7 +280,10 @@ namespace Helper.Physics.PhysicsObjects
                     rover.Chassis.Body.Orientation * // orient with the rover
                     Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)*/
 
-            Matrix world = rig.GetTranformationMatrix((int)RigParts.CameraBox);
+            Matrix world =  Matrix.CreateScale(Scale) * 
+                            rig.GetTranformationMatrix((int)RigParts.LaserBox) *
+                            rover.Chassis.Body.Orientation * // orient with the rover
+                            Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)*/
             Matrix[] ltransforms = new Matrix[Laser.Bones.Count];
             Laser.CopyAbsoluteBoneTransformsTo(ltransforms);
             foreach (ModelMesh mesh in Laser.Meshes)
@@ -301,13 +305,6 @@ namespace Helper.Physics.PhysicsObjects
             //Rover Chasis -> Pole -> Arm A -> Arm B -> Camera
 
             #region Pole
-            /*
-            Matrix world = //Matrix.CreateScale(PoleScaleCorrection) * // scale it in addition to the scale of this entire gobject
-                            Matrix.CreateScale(Scale * CamPoleScaleCorrection) * // scale it in addition to the scale of this entire gobject
-                            Matrix.CreateTranslation(CamPoleLocation) * // move to the location of the pole
-                            rover.Chassis.Body.Orientation * // orient with the rover
-                            Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover*/
-
             Matrix world = rig.GetTranformationMatrix((int)RigParts.CameraPole) *
                             rover.Chassis.Body.Orientation * // orient with the rover
                             Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover
@@ -331,14 +328,7 @@ namespace Helper.Physics.PhysicsObjects
             #endregion
 
             #region Rotation Arm A
-            /*
-            world =  Matrix.CreateScale(Scale * 1.4f) *
-                            Matrix.CreateTranslation(CamArmAOriginCorrection) * //
-                            CamArmARotation *
-                            Matrix.CreateTranslation(CamArmAPointOfRotationFromPole) * // move to the point of rotation for the arm
-                            rover.Chassis.Body.Orientation * // orient with the rover
-                            Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover
-            */
+            
             world = Matrix.CreateScale(Scale) *
                     //Matrix.CreateScale(Scale * 1.4f) *
                     rig.GetTranformationMatrix((int)RigParts.CameraArmA) *
@@ -364,19 +354,7 @@ namespace Helper.Physics.PhysicsObjects
             #endregion
 
             #region Rotation Arm B
-            /*
-            world = Matrix.CreateScale(Scale * 1.4f) *
-
-                    Matrix.CreateTranslation(CamArmBOriginCorrection) * //
-                    CamArmBRotation *
-                    Matrix.CreateTranslation(CamArmBPointOfRotationFromArmA) * // move to the point of rotation for the arm (relative to the parent)
-
-                    Matrix.CreateTranslation(CamArmAOriginCorrection) * //
-                    CamArmARotation *
-                    Matrix.CreateTranslation(CamArmAPointOfRotationFromPole) * // move to the point of rotation for the arm
-                    rover.Chassis.Body.Orientation * // orient with the rover
-                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
-            */
+            
             world = Matrix.CreateScale(Scale) *
                     rig.GetTranformationMatrix((int)RigParts.CameraArmB) *
                     rover.Chassis.Body.Orientation * // orient with the rover
@@ -444,6 +422,10 @@ namespace Helper.Physics.PhysicsObjects
             Vector3 CamBoxOrientCorrection = new Vector3(0, (float)Math.PI, 0);
             Vector3 CamBoxOriginCorrection = new Vector3(0, 0, .13f);
 
+            //Vector3 LaserBoxRelativeToCam = new Vector3(-.47f, -.1f, .06f);
+            Vector3 LaserBoxRelativeToCam = new Vector3(-.35f, .1f, -.26f); //X:-0.35 Y:0.1 Z:-0.26 
+            Vector3 LaserScaleCorrection = new Vector3(.05f, .05f, .1f);
+
             RigBone CameraPole = RigBone.GetBone((int)RigParts.CameraPole, Pole, CamPoleScaleCorrection, Vector3.Zero, CamPoleLocation, Vector3.Zero, Vector3.Zero);
 
             RigBone CameraArmA = RigBone.GetBone((int)RigParts.CameraArmA, Arm, 1.4f, Vector3.Zero, CamArmAPointOfRotationFromPole, Vector3.Zero, CamArmAOriginCorrection);
@@ -453,13 +435,14 @@ namespace Helper.Physics.PhysicsObjects
             CameraArmB.AdjustYawPitchRoll(0, rotCamPitch, 0);
 
             RigBone CameraBox = RigBone.GetBone((int)RigParts.CameraBox, Cam, Vector3.Zero, CamBoxPointOfRotationFromArmB, CamBoxOrientCorrection, CamBoxOriginCorrection);
-            //CameraBox.SetYawPitchRoll(0, (float)Math.PI, -(float)Math.PI / 2.0f);
-            
+
+            RigBone LaserBox = RigBone.GetBone((int)RigParts.LaserBox, Laser, LaserScaleCorrection, Vector3.Zero, LaserBoxRelativeToCam, Vector3.Zero, Vector3.Zero);
 
             rig.AddBone(-1, CameraPole);
             rig.AddBone((int)RigParts.CameraPole, CameraArmA);
             rig.AddBone((int)RigParts.CameraArmA, CameraArmB);
             rig.AddBone((int)RigParts.CameraArmB, CameraBox);
+            rig.AddBone((int)RigParts.CameraBox, LaserBox);
         }
 
         public Matrix GetRoverCamWorldMatrix()

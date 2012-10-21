@@ -34,8 +34,6 @@ namespace Helper.Objects
         Vector3 RelativeOrigin = Vector3.Zero;
         Vector3 RelativeOrientYPR = Vector3.Zero;
         
-        
-        
         public RigBone ParentBone;
         public SortedList<int, RigBone> ChildBones = new SortedList<int, RigBone>();
 
@@ -79,6 +77,9 @@ namespace Helper.Objects
         {
             return GetBone(id, m, 1.0f, orientYPR, RelativeOrigin,modelOrientCorrection,  modelOriginCorrection);
         }
+        /// <summary>
+        /// Used for iterating through the meshes
+        /// </summary>
         public Matrix[] ModelTranforms
         {
             get
@@ -114,7 +115,7 @@ namespace Helper.Objects
             Matrix mRot = Matrix.CreateFromQuaternion(qRot); //
 
             transform *= mRot; // Rotate the model
-
+            //X:-0.35 Y:0.1 Z:-0.26
             transform*=Matrix.CreateTranslation(RelativeOrigin); // Move the model
                 
             if(ParentBone!=null)
