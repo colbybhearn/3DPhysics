@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using JigLibX.Geometry;
 using JigLibX.Collision;
+using Helper.Objects;
 
 namespace Helper.Physics.PhysicsObjects
 {
@@ -28,7 +29,7 @@ namespace Helper.Physics.PhysicsObjects
         public float rotCamYaw = 0.0f;
         public float rotCamPitch = 0.0f;
 
-        Vector3 CamArmAPointOfRotationFromRover = new Vector3(1, 1, 0);
+        
         private Matrix CamArmARotation
         {
             get
@@ -36,9 +37,7 @@ namespace Helper.Physics.PhysicsObjects
                 return Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rotCamYaw, 0, 0));
             }
         }
-        Vector3 CamArmAOriginCorrection = new Vector3(0, 0, -.1f);
-
-        Vector3 CamArmBPointOfRotationFromArmA = new Vector3(.07f, .07f, -.19f);
+        
         private Matrix CamArmBRotation
         {
             get
@@ -46,19 +45,20 @@ namespace Helper.Physics.PhysicsObjects
                 return Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, rotCamPitch, -(float)Math.PI / 2.0f));
             }
         }
-        Vector3 CamArmBOriginCorrection = new Vector3(0, 0, -.1f);
-
-        Vector3 CamBoxPointOfRotationFromArmB = new Vector3(0, 0, 0);
-        Matrix CamBoxRotation = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, 0, 0));
-        Matrix CamBoxOrientCorrection = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, (float)Math.PI, -(float)Math.PI / 2.0f));
-        Vector3 CamBoxOriginCorrection = new Vector3(0, 0, .13f);
-
-        Vector3 CamPoleLocation = new Vector3(1, 0, 0);
-        Vector3 CamPoleScaleCorrection = new Vector3(.75f, .5f, .75f);
+        
 
         float radarRotation = 0;
         DateTime lastDraw;
         #endregion
+
+        public enum RigParts
+        {
+            CameraPole,
+            CameraArmA,
+            CameraArmB,
+            CameraBox
+
+        }
 
         // These must be actions like dropRadar, not properties like hasRadar.
         public enum Actions
@@ -121,6 +121,8 @@ namespace Helper.Physics.PhysicsObjects
             actionManager.AddBinding((int)Actions.DropRadar, new Helper.Input.ActionBindingDelegate(SimulateDropRadar), 1);
             actionManager.AddBinding((int)Actions.RotatedCamX, new Helper.Input.ActionBindingDelegate(SimulateSetRotateCamYaw), 1);
             actionManager.AddBinding((int)Actions.RotatedCamY, new Helper.Input.ActionBindingDelegate(SimulateSetRotateCamPitch), 1);
+            
+            InitializeRigging();
         }
 
         public override void FinalizeBody()
@@ -254,7 +256,7 @@ namespace Helper.Physics.PhysicsObjects
 
             // New Location (On Top Ya Head)
             Vector3 offsetFromCam = new Vector3(-.47f, -.1f, .06f);
-
+            /*
             Matrix world = 
                     Matrix.CreateScale(new Vector3(1,1,2))*
                     Matrix.CreateScale(Scale * .05f) *
@@ -273,11 +275,11 @@ namespace Helper.Physics.PhysicsObjects
                 // Arm A
                     Matrix.CreateTranslation(CamArmAOriginCorrection) * //
                     CamArmARotation *
-                    Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+                    Matrix.CreateTranslation(CamArmAPointOfRotationFromPole) * // move to the point of rotation for the arm
                     rover.Chassis.Body.Orientation * // orient with the rover
-                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
+                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)*/
 
-            
+            Matrix world = rig.GetTranformationMatrix((int)RigParts.CameraBox);
             Matrix[] ltransforms = new Matrix[Laser.Bones.Count];
             Laser.CopyAbsoluteBoneTransformsTo(ltransforms);
             foreach (ModelMesh mesh in Laser.Meshes)
@@ -296,17 +298,23 @@ namespace Helper.Physics.PhysicsObjects
         }
         private void DrawCameraRig(Matrix View, Matrix Projection)
         {
-            //Rover Chasis -> Arm A -> Arm B / Camera
+            //Rover Chasis -> Pole -> Arm A -> Arm B -> Camera
 
             #region Pole
+            /*
             Matrix world = //Matrix.CreateScale(PoleScaleCorrection) * // scale it in addition to the scale of this entire gobject
                             Matrix.CreateScale(Scale * CamPoleScaleCorrection) * // scale it in addition to the scale of this entire gobject
                             Matrix.CreateTranslation(CamPoleLocation) * // move to the location of the pole
+                            rover.Chassis.Body.Orientation * // orient with the rover
+                            Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover*/
+
+            Matrix world = rig.GetTranformationMatrix((int)RigParts.CameraPole) *
                             rover.Chassis.Body.Orientation * // orient with the rover
                             Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover
 
             Matrix[] modtrans = new Matrix[Pole.Bones.Count];
             Pole.CopyAbsoluteBoneTransformsTo(modtrans);
+            modtrans = rig.GetModelTransforms((int)RigParts.CameraPole);
             foreach (ModelMesh mesh in Pole.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -323,15 +331,23 @@ namespace Helper.Physics.PhysicsObjects
             #endregion
 
             #region Rotation Arm A
+            /*
             world =  Matrix.CreateScale(Scale * 1.4f) *
                             Matrix.CreateTranslation(CamArmAOriginCorrection) * //
                             CamArmARotation *
-                            Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+                            Matrix.CreateTranslation(CamArmAPointOfRotationFromPole) * // move to the point of rotation for the arm
                             rover.Chassis.Body.Orientation * // orient with the rover
                             Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover
+            */
+            world = Matrix.CreateScale(Scale) *
+                    //Matrix.CreateScale(Scale * 1.4f) *
+                    rig.GetTranformationMatrix((int)RigParts.CameraArmA) *
+                    rover.Chassis.Body.Orientation * // orient with the rover
+                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover;
 
             modtrans = new Matrix[Arm.Bones.Count];
             Arm.CopyAbsoluteBoneTransformsTo(modtrans);
+            modtrans = rig.GetModelTransforms((int)RigParts.CameraArmA);
             foreach (ModelMesh mesh in Arm.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -348,6 +364,7 @@ namespace Helper.Physics.PhysicsObjects
             #endregion
 
             #region Rotation Arm B
+            /*
             world = Matrix.CreateScale(Scale * 1.4f) *
 
                     Matrix.CreateTranslation(CamArmBOriginCorrection) * //
@@ -356,7 +373,12 @@ namespace Helper.Physics.PhysicsObjects
 
                     Matrix.CreateTranslation(CamArmAOriginCorrection) * //
                     CamArmARotation *
-                    Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+                    Matrix.CreateTranslation(CamArmAPointOfRotationFromPole) * // move to the point of rotation for the arm
+                    rover.Chassis.Body.Orientation * // orient with the rover
+                    Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
+            */
+            world = Matrix.CreateScale(Scale) *
+                    rig.GetTranformationMatrix((int)RigParts.CameraArmB) *
                     rover.Chassis.Body.Orientation * // orient with the rover
                     Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
 
@@ -376,28 +398,15 @@ namespace Helper.Physics.PhysicsObjects
             #endregion
 
             #region Camera
-
-            world = Matrix.CreateScale(Scale * 1.4f) *
-
-                    // Cam
-                    Matrix.CreateTranslation(CamBoxOriginCorrection) * //
-                    CamBoxRotation *
-                    CamBoxOrientCorrection *
-                    Matrix.CreateTranslation(CamBoxPointOfRotationFromArmB) * // move to the point of rotation for the arm (relative to the parent)
-                    
-                    // Arm B
-                    Matrix.CreateTranslation(CamArmBOriginCorrection) * //
-                    CamArmBRotation *                                            // (Step 7)
-                    Matrix.CreateTranslation(CamArmBPointOfRotationFromArmA) * // move to the point of rotation for the arm (relative to the parent)
-                    // Arm A
-                    Matrix.CreateTranslation(CamArmAOriginCorrection) * //
-                    CamArmARotation *
-                    Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+            
+            world = Matrix.CreateScale(Scale) *
+                    rig.GetTranformationMatrix((int)RigParts.CameraBox) *
                     rover.Chassis.Body.Orientation * // orient with the rover
                     Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
 
             modtrans = new Matrix[Cam.Bones.Count];
             Cam.CopyAbsoluteBoneTransformsTo(modtrans);
+            modtrans = rig.GetModelTransforms((int)RigParts.CameraBox);
             foreach (ModelMesh mesh in Cam.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -413,24 +422,50 @@ namespace Helper.Physics.PhysicsObjects
             }
             #endregion
         }
+        RigManager rig = new RigManager();
+        
+
         #endregion
+        private void InitializeRigging()
+        {
+            Vector3 CamPoleLocation = new Vector3(1, 0, 0);
+            Vector3 CamPoleScaleCorrection = new Vector3(.75f, .5f, .75f);
+
+            Vector3 CamArmAPointOfRotationFromPole = new Vector3(0, 1, 0);
+            Vector3 CamArmAOriginCorrection = new Vector3(0, 0, -.1f);
+
+            Vector3 CamArmBPointOfRotationFromArmA = new Vector3(.07f, .07f, -.19f);
+            Vector3 CamArmBOriginCorrection = new Vector3(0, 0, -.1f);
+            Vector3 CamArmBOrientCorrection = new Vector3(0, 0, -(float)Math.PI / 2.0f);
+
+            Vector3 CamBoxPointOfRotationFromArmB = new Vector3(0, 0, 0);
+            Matrix CamBoxRotation = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, 0, 0));
+            //Matrix CamBoxOrientCorrection = Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, (float)Math.PI, -(float)Math.PI / 2.0f));
+            Vector3 CamBoxOrientCorrection = new Vector3(0, (float)Math.PI, 0);
+            Vector3 CamBoxOriginCorrection = new Vector3(0, 0, .13f);
+
+            RigBone CameraPole = RigBone.GetBone((int)RigParts.CameraPole, Pole, CamPoleScaleCorrection, Vector3.Zero, CamPoleLocation, Vector3.Zero, Vector3.Zero);
+
+            RigBone CameraArmA = RigBone.GetBone((int)RigParts.CameraArmA, Arm, 1.4f, Vector3.Zero, CamArmAPointOfRotationFromPole, Vector3.Zero, CamArmAOriginCorrection);
+            CameraArmA.AdjustYawPitchRoll(rotCamYaw, 0, 0);
+
+            RigBone CameraArmB = RigBone.GetBone((int)RigParts.CameraArmB, Arm, 1.4f, Vector3.Zero, CamArmBPointOfRotationFromArmA, CamArmBOrientCorrection, CamArmBOriginCorrection);
+            CameraArmB.AdjustYawPitchRoll(0, rotCamPitch, 0);
+
+            RigBone CameraBox = RigBone.GetBone((int)RigParts.CameraBox, Cam, Vector3.Zero, CamBoxPointOfRotationFromArmB, CamBoxOrientCorrection, CamBoxOriginCorrection);
+            //CameraBox.SetYawPitchRoll(0, (float)Math.PI, -(float)Math.PI / 2.0f);
+            
+
+            rig.AddBone(-1, CameraPole);
+            rig.AddBone((int)RigParts.CameraPole, CameraArmA);
+            rig.AddBone((int)RigParts.CameraArmA, CameraArmB);
+            rig.AddBone((int)RigParts.CameraArmB, CameraBox);
+        }
 
         public Matrix GetRoverCamWorldMatrix()
         {
-            return Matrix.CreateScale(Scale * 1.4f) *
-                    // Cam                    
-                    Matrix.CreateTranslation(CamBoxOriginCorrection) * //
-                    CamBoxRotation *
-                    CamBoxOrientCorrection *
-                    Matrix.CreateTranslation(CamBoxPointOfRotationFromArmB) * // move to the point of rotation for the arm (relative to the parent)
-                    // Arm B
-                    Matrix.CreateTranslation(CamArmBOriginCorrection) * //
-                    CamArmBRotation *                                            // (Step 7)
-                    Matrix.CreateTranslation(CamArmBPointOfRotationFromArmA) * // move to the point of rotation for the arm (relative to the parent)
-                    // Arm A
-                    Matrix.CreateTranslation(CamArmAOriginCorrection) * //
-                    CamArmARotation *
-                    Matrix.CreateTranslation(CamArmAPointOfRotationFromRover) * // move to the point of rotation for the arm
+            return Matrix.CreateScale(Scale) *
+                    rig.GetTranformationMatrix((int)RigParts.CameraBox) *
                     rover.Chassis.Body.Orientation * // orient with the rover
                     Matrix.CreateTranslation(rover.Chassis.Body.Position); // move to the rover (Step 1)
         }
@@ -441,16 +476,23 @@ namespace Helper.Physics.PhysicsObjects
         }
 
         public Matrix GetCameraOrientation()
-        {
+        {/*
             return //Matrix.CreateScale(Scale * 1.4f) *
                 // Cam
                 Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, 0, (float)Math.PI / 2.0f)) *
-                    CamBoxRotation *
+                    //CamBoxRotation *
                 // Arm B
                     CamArmBRotation *                                            // (Step 7)
                 // Arm A
                     CamArmARotation *
                     rover.Chassis.Body.Orientation; // orient with the rover
+ */
+            return
+                        //Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(0, 0, (float)Math.PI / 2.0f)) *
+                        //rig.GetOrientationMatrix((int)RigParts.CameraArmB) *
+                        rig.GetOrientationMatrix((int)RigParts.CameraBox) *
+                        rover.Chassis.Body.Orientation;
+
         }
 
         public Vector3 GetCameraDirection()
@@ -484,13 +526,15 @@ namespace Helper.Physics.PhysicsObjects
         }
 
         #region Input
+
+        float lastSentRotCamPitch = 0;
+        float lastSentRotCamYaw = 0;
         public override void SetNominalInput()
         {
             SetAcceleration(0);
             SetSteering(0);
             SetShootLaser(0);
         }
-
 
         public void SimulateAcceleration(object[] vals)
         {
@@ -551,7 +595,6 @@ namespace Helper.Physics.PhysicsObjects
             hasLaser = hasit;
         }
 
-
         public void SimulateSetRotateCamYaw(object[] vals)
         {
             SetCamYaw((float)vals[0]);
@@ -576,10 +619,17 @@ namespace Helper.Physics.PhysicsObjects
         {
             hasAttributeChanged = true;
             rotCamYaw = y;
+            
             while (rotCamYaw > (float)Math.PI * 2)
+            {
                 rotCamYaw -= (float)Math.PI * 2;
+            }
             while (rotCamYaw < -(float)Math.PI * 2)
+            {
                 rotCamYaw += (float)Math.PI * 2;
+            }
+
+            rig.SetYawPitchRoll((int)RigParts.CameraArmA, rotCamYaw, 0, 0);
         }
 
         public void SimulateSetRotateCamPitch(object[] vals)
@@ -594,6 +644,7 @@ namespace Helper.Physics.PhysicsObjects
             else
             {                
                 SetCamPitch(rotCamPitch + v);
+                
                 if (Math.Abs(lastSentRotCamPitch - rotCamPitch) > .2)
                 {
                     lastSentRotCamPitch = rotCamPitch;
@@ -601,10 +652,6 @@ namespace Helper.Physics.PhysicsObjects
                 }
             }
         }
-
-        float lastSentRotCamPitch = 0;
-        float lastSentRotCamYaw = 0;
-
         public void SetCamPitch(float p)
         {
             hasAttributeChanged = true;
@@ -614,9 +661,8 @@ namespace Helper.Physics.PhysicsObjects
             while (rotCamPitch < -(float)Math.PI * 2)
                 rotCamPitch += (float)Math.PI * 2;
             rotCamPitch = MathHelper.Clamp(rotCamPitch, -1.5f, 1.5f);
+            rig.SetYawPitchRoll((int)RigParts.CameraArmB, 0, rotCamPitch, 0);
         }
-        
-
         #endregion
 
         /// <summary>
