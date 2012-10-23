@@ -8,6 +8,7 @@ using JigLibX.Geometry;
 using JigLibX.Physics;
 using JigLibX.Collision;
 using JigLibX.Utils;
+using Helper.Objects;
 
 namespace Helper.Physics
 {

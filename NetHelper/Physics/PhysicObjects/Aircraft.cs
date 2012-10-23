@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using JigLibX.Collision;
 using System;
+using Helper.Objects;
 
 namespace Helper.Physics.PhysicsObjects
 {

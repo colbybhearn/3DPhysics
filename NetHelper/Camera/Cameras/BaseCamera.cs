@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Helper.Physics;
+using Helper.Objects;
 
 namespace Helper.Camera.Cameras
 {

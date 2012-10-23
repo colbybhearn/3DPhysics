@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using JigLibX.Collision;
 using JigLibX.Physics;
+using Helper.Objects;
 
 namespace Helper.Physics.PhysicsObjects
 {

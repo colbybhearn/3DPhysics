@@ -147,11 +147,11 @@
     <Compile Include="Multiplayer\ServerInfo.cs" />
     <Compile Include="Objects\RigBone.cs" />
     <Compile Include="Objects\RigManager.cs" />
-    <Compile Include="Physics\Asset.cs" />
-    <Compile Include="Physics\AssetManager.cs" />
+    <Compile Include="Objects\Asset.cs" />
+    <Compile Include="Objects\AssetManager.cs" />
     <Compile Include="Physics\BoostController.cs" />
     <Compile Include="Physics\GravityController.cs" />
-    <Compile Include="Physics\Gobject.cs" />
+    <Compile Include="Objects\Gobject.cs" />
     <Compile Include="Physics\HeightMapInfo.cs" />
     <Compile Include="Physics\PhysicObjects\Aircraft.cs" />
     <Compile Include="Physics\PhysicObjects\CarObject.cs" />

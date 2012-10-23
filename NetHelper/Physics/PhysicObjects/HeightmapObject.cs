@@ -8,6 +8,7 @@ using JigLibX.Geometry;
 using JigLibX.Math;
 using Microsoft.Xna.Framework.Graphics;
 using JigLibX.Utils;
+using Helper.Objects;
 #endregion
 
 namespace Helper.Physics.PhysicsObjects

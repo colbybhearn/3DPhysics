@@ -8,8 +8,9 @@ using System;
 using Helper.Physics.PhysicsObjects;
 using Helper.Lighting;
 using Helper.Physics.PhysicObjects;
+using Helper.Physics;
 
-namespace Helper.Physics
+namespace Helper.Objects
 {
     public class Gobject
     {
@@ -39,6 +40,7 @@ namespace Helper.Physics
         public List<Controller> controllers = new List<Controller>();
         internal BasicEffect Effect { get; set; }
         public bool hasNotDoneFirstInterpoladation = true; // this object has never processed an update and interpolated (with any factor) 
+        public int OwningClientId = -1;
 
         /// <summary>
         /// Default Constructor

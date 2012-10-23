@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using JigLibX.Physics;
 using JigLibX.Collision;
 using Microsoft.Xna.Framework.Graphics;
+using Helper.Objects;
 
 namespace Helper.Physics.PhysicObjects
 {

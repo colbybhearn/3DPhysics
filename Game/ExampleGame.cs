@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Helper.Lighting;
 using System;
+using Helper.Objects;
 
 namespace Game
 {

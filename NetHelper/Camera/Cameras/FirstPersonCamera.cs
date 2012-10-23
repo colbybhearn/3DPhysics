@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Helper.Physics;
+using Helper.Objects;
 
 namespace Helper.Camera.Cameras
 {

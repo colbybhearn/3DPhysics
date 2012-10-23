@@ -2,6 +2,7 @@ using System;
 using JigLibX.Vehicles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Helper.Objects;
 
 namespace Helper.Physics.PhysicsObjects
 {

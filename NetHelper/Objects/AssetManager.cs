@@ -4,15 +4,26 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
+using Helper.Physics;
 
-namespace Helper.Physics
+namespace Helper.Objects
 {
     public class AssetManager
     {
+        /*
+         * (Object -> Client) Gobject should have an owner field for the client. 
+         * (Client -> Object) AssetManager needs a sortedList<id, List<int>>
+         * (Object owned?) Gobject owner == -1;
+         * 
+         */
+        
         public SortedList<int, Asset> Assets = new SortedList<int, Asset>();
         private SortedList<int, Gobject> gameObjects;
         private SortedList<int, Gobject> objectsToAdd;
         private List<int> objectsToDelete;
+        private SortedList<int, List<int>> ObjectIdsByOwningClient = new SortedList<int, List<int>>();
+        private SortedList<int, int> OwningClientsByObjectId = new SortedList<int, int>();
+
         public AssetManager(ref SortedList<int, Gobject> gObjects, ref SortedList<int, Gobject> nObjects, ref List<int> dObjects)
         {
             gameObjects = gObjects;
@@ -29,6 +40,7 @@ namespace Helper.Physics
             if (Assets.ContainsKey(a.Name))
                 return;
             Assets.Add(a.Name, a);
+            
         }
         /// <summary>
         /// Adds an asset
@@ -60,10 +72,43 @@ namespace Helper.Physics
         {
             AddAsset(e, CreateCallback, 1.0f);
         }
-
+        /// <summary>
+        /// returns an instance of the specified asset type
+        /// Assumes no client owns the object
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
         public Gobject GetNewInstance(Enum e)
         {
+            return GetNewInstance(e, -1);
+        }
+        
+        /// <summary>
+        /// returns an instance of the specified asset type
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="owningClientId"></param>
+        /// <returns></returns>
+        public Gobject GetNewInstance(Enum e, int owningClientId)
+        {
             int id = (int)Convert.ChangeType(e, e.GetTypeCode());
+            return GetNewInstance(id, owningClientId);
+        }
+
+
+        //public Gobject GetNewInstance<T>(T type, int owningClientId) where T : int
+        //{
+        //    return GetNewInstance(type, owningClientId);
+        //}
+
+        /// <summary>
+        /// returns an instance of the specified asset type
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="owningClientId"></param>
+        /// <returns></returns>
+        private Gobject GetNewInstance(int id, int owningClientId)
+        {
             if (!Assets.ContainsKey(id))
             {
                 Debug.WriteLine("Aborting load of asset unkown to AssetManager: " + id);
@@ -75,9 +120,33 @@ namespace Helper.Physics
                 return null;
 
             Gobject go = a.GetNewGobject();
-            go.type = id; // THIS IS WRONG BUT SO CHEAP!
+            go.OwningClientId = owningClientId;
+            go.type = id; // THIS IS WRONG BUT SO CHEAP! - Colby.
             go.ID = GetAvailableObjectId();
+
+            if (!ObjectIdsByOwningClient.ContainsKey(owningClientId))
+                ObjectIdsByOwningClient.Add(owningClientId, new List<int>());
+
+            List<int> ownedIds = ObjectIdsByOwningClient[owningClientId];
+            ownedIds.Add(go.ID);
+
+            OwningClientsByObjectId.Add(go.ID, owningClientId);
+
+            // we should centralize all object addition here. (but still return the Gobject)
+            // Maybe the baseGame should call PostIntegrate and PreIntegrate methods overridden in the specific game so that Specific-Game can call AssetManager.GetNewInstance() at the appropriate time.
             return go;
+        }
+
+        public void RemoveInstance(int objectId)
+        {
+            if (isObjectOwnedByAnyClient(objectId))
+                RemoveObjectIdFromOwnerList(objectId);
+
+            if (OwningClientsByObjectId.ContainsKey(objectId))
+                OwningClientsByObjectId.Remove(objectId);
+
+            // we should centralize all object removal here
+            // Maybe the baseGame should call PostIntegrate and PreIntegrate methods overridden in the specific game so that Specific-Game can call AssetManager.RemoveInstance() at the appropriate time.
         }
 
         /// <summary>
@@ -139,5 +208,40 @@ namespace Helper.Physics
                 }
             }
         }
+
+        public bool isObjectOwnedByAnyClient(int objectId)
+        {
+            if (!gameObjects.ContainsKey(objectId))
+                return false;
+
+            if (gameObjects[objectId].OwningClientId == -1)
+                return false;
+            return true;
+        }
+
+        public bool isObjectOwnedByClient(int objectId, int clientId)
+        {
+            if(!OwningClientsByObjectId.ContainsKey(objectId))
+                return false;
+            if (OwningClientsByObjectId[objectId] == clientId)
+                return true;
+            return false;
+        }
+
+        public List<int> GetObjectsOwnedByClient(int clientId)
+        {
+            if(!ObjectIdsByOwningClient.ContainsKey(clientId))
+                return new List<int>();
+            return ObjectIdsByOwningClient[clientId];
+        }
+
+        private void RemoveObjectIdFromOwnerList(int id)
+        {
+            foreach (List<int> idList in ObjectIdsByOwningClient.Values)
+                if (idList.Contains(id))
+                    idList.Remove(id);
+        }
+
+        
     }
 }

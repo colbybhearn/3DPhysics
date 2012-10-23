@@ -15,7 +15,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Helper.Audio;
 using System.Diagnostics;
-
+using Helper.Objects;
 
 namespace Game
 {
@@ -57,7 +57,7 @@ namespace Game
         public AssetManager assetManager;
         public PhysicsManager physicsManager;
         public static BaseGame Instance { get; private set; }
-        SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
+        
         public SortedList<int, Gobject> gameObjects; // This member is accessed from multiple threads and needs to be locked
         public SortedList<int, Gobject> objectsToAdd; // This member is accessed from multiple threads and needs to be locked
         public List<int> objectsToDelete;
@@ -122,8 +122,12 @@ namespace Game
         // Todo - turn the players into a SortedList<int, Player> type? (thus allowing more information than an alias to be stored
         // This can also be used server side
         public SortedList<int, string> players = new SortedList<int, string>(); // User ID, User ID Alias
+
+
+        //SortedList<int, List<int>> ClientObjectIds = new SortedList<int, List<int>>();
         public SortedList<int, int> objectsOwned = new SortedList<int, int>(); // Object ID, Client ID who owns them
         public List<int> clientControlledObjects = new List<int>(); // TODO - Client Side only, merge with ownedObjects somehow?
+
         public List<object> MultiplayerUpdateQueue = new List<object>();
         public int MyClientID; // Used by the client
         public bool isClient = false;
@@ -525,9 +529,8 @@ namespace Game
                                     Gobject go = gameObjects[oap.objectId];
                                     bool locallyOwnedAndOperated = false;
 
-                                    if (objectsOwned.ContainsKey(go.ID))
-                                        if (objectsOwned[go.ID] == MyClientID)
-                                            locallyOwnedAndOperated = true;
+                                    if (go.OwningClientId == MyClientID)
+                                        locallyOwnedAndOperated = true;
                                     go.SetObjectAttributes(oap.booleans, oap.ints, oap.floats, locallyOwnedAndOperated);
                                 }
                                 #endregion
@@ -603,9 +606,8 @@ namespace Game
                             if (go.isMoveable && go.IsActive)
                             {
                                 go.UpdateCountdown--;
-                                if (go.UpdateCountdown == 0 || isOwnedByClient(go.ID))
+                                if (go.UpdateCountdown == 0 || assetManager.isObjectOwnedByAnyClient(go.ID))
                                 {
-                                    
                                     ObjectUpdatePacket oup = new ObjectUpdatePacket(go.ID, go.type, go.BodyPosition(), go.BodyOrientation(), go.BodyVelocity());
                                     commServer.BroadcastObjectUpdate(oup);
                                     go.UpdateCountdown = 10;
@@ -629,17 +631,6 @@ namespace Game
 
                 UpdateCameraCallback(cameraManager.currentCamera, cameraManager.ViewMatrix(), cameraManager.ProjectionMatrix());
             }
-        }
-
-        private bool isOwnedByClient(int objectId)
-        {
-            foreach (List<int> obs in ClientObjectIds.Values)
-            {
-                if (obs.Contains(objectId))
-                    return true;
-            }
-            return false;
-
         }
 
         public virtual void UpdateCamera()
@@ -666,9 +657,20 @@ namespace Game
         /// </summary>
         public virtual void SetNominalInputState()
         {
+            //the specific game cannot inherit an Asset enumeration from base game 
+            //thus, the assetManager has to be in the specificGame with the enum it uses
+            //thus, the base class has no reference to the assetManager because it is a different class.
+            //thus, we cannot refer to the assetManager here in setNominalInputState
+            //thus, we would have to override this in every specific game, despite the content being identical in every one.
+
+            // Reflection would impact performance, but how much is unknown.
+            // using strings works alright, but requires constant conversion from enumType to string
+            // AssetManager cannot be declared with generic enum because it requires knowledge of the specific enum at compilation time.
+            // Can assetManager be partially Generic?
+            
             lock (gameObjects)
             {
-                foreach (int i in clientControlledObjects)
+                foreach (int i in assetManager.GetObjectsOwnedByClient(MyClientID))
                 {
                     if (!gameObjects.ContainsKey(i))
                         return;
@@ -986,13 +988,15 @@ namespace Game
         private int AddOwnedObject(int clientId, int asset)
         {
             int objectid = assetManager.GetAvailableObjectId();
+            
+            /* Handled by assetManager now when called from SpecificGame
             // setup dual reference for flexible and speedy accesses, whether by objectID, or by clientId 
             if (!ClientObjectIds.ContainsKey(clientId))
                 ClientObjectIds.Add(clientId, new List<int>());
             // this is the list of objects owned by client ClientID
             List<int> objects = ClientObjectIds[clientId];
             objects.Add(objectid);
-
+            */
             AddNewObject(objectid, asset);
 
             return objectid;

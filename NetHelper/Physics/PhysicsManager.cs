@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using JigLibX.Geometry;
 using Helper.Physics.PhysicsObjects;
 using Helper.Collections;
+using Helper.Objects;
 
 namespace Helper.Physics
 {

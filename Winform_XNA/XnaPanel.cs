@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Helper.Lighting;
 using Helper.Physics.PhysicsObjects;
 using Helper.Physics.PhysicObjects;
+using Helper.Objects;
 
 namespace XnaView
 {

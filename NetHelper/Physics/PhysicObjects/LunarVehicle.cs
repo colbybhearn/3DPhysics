@@ -4,6 +4,7 @@ using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using Helper.Objects;
 
 
 namespace Helper.Physics.PhysicsObjects

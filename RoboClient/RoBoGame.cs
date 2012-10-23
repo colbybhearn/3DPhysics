@@ -17,6 +17,7 @@ using JigLibX.Geometry;
 using Helper.Physics.PhysicObjects;
 using Helper.Camera.Cameras;
 using System.Diagnostics;
+using Helper.Objects;
 
 
 namespace RoboGame
@@ -420,6 +421,7 @@ namespace RoboGame
         // Flexible create methods for the game 
         private RoverObject GetRover(Vector3 pos)
         {
+            // Colby says: Assets.Rover exists only as an experiment to decide between using Enums with casting or public static int variables with manual (possibly automated with reflection) initialization
             RoverObject rover = assetManager.GetNewInstance(AssetTypes.Rover) as RoverObject;
             rover.MoveTo(pos, Matrix.Identity);
             return rover;
@@ -740,7 +742,6 @@ namespace RoboGame
             Debug.WriteLine("Selecting: owner" + ownerid + " mine" + MyClientID);
             if (ownerid == MyClientID) // Only select the new car if its OUR new car
             {
-                
                 myRover = (RoverObject)newobject;
                 SelectGameObject(myRover);
             }
