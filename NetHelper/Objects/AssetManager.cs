@@ -129,8 +129,8 @@ namespace Helper.Objects
 
             List<int> ownedIds = ObjectIdsByOwningClient[owningClientId];
             ownedIds.Add(go.ID);
-
-            OwningClientsByObjectId.Add(go.ID, owningClientId);
+            if(!OwningClientsByObjectId.ContainsKey(go.ID))
+                OwningClientsByObjectId.Add(go.ID, owningClientId);
 
             // we should centralize all object addition here. (but still return the Gobject)
             // Maybe the baseGame should call PostIntegrate and PreIntegrate methods overridden in the specific game so that Specific-Game can call AssetManager.GetNewInstance() at the appropriate time.

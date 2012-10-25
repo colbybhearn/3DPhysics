@@ -200,7 +200,7 @@ namespace Helper.Objects
             {
                 Vector3 com = SetMass(1.0f);
 
-                Body.MoveTo(Position, Matrix.Identity);
+                Body.MoveTo(Position, Orientation);
                 Skin.ApplyLocalTransform(new JigLibX.Math.Transform(-com, Matrix.Identity));
                 Body.EnableBody(); // adds to CurrentPhysicsSystem
             }
@@ -335,6 +335,8 @@ namespace Helper.Objects
 
         public void MoveTo(Vector3 pos, Matrix orient)
         {
+            Position = pos;
+            
             Body.MoveTo(pos, orient);
         }
         public bool isMoveable

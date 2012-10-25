@@ -65,7 +65,6 @@ namespace LegoGame
         #region Enumerations
         public enum InputGroups
         {
-
             Communication,
             Rover,
             Lander,
@@ -73,10 +72,11 @@ namespace LegoGame
         }
         public enum AssetTypes
         {
-            Rover,
+            B_4_2_3, // Brick 4L x 2W x 3H (height is in slim increments)
             Radar1Pickup,
             Laser1Pickup,
             Lander,
+            Rover,
         }
         public enum GameplayModes
         {
@@ -147,6 +147,7 @@ namespace LegoGame
                 assetManager.AddAsset(AssetTypes.Laser1Pickup, CreateHighFrictionCube);
                 assetManager.AddAsset(AssetTypes.Radar1Pickup, CreateSmallSphere);
                 assetManager.AddAsset(AssetTypes.Lander, CreateLunarLander);
+                assetManager.AddAsset(AssetTypes.B_4_2_3, CreateB_4_2_3);
                 #endregion
             }
             catch (Exception E)
@@ -161,6 +162,8 @@ namespace LegoGame
             if (isServer)
             {
                 SpawnPickups();
+                SpawnCircleHouse();
+                SpawnRectangleHouse();
             }
         }
         public override void InitializeEnvironment()
@@ -182,8 +185,8 @@ namespace LegoGame
         {
             cameraManager.AddCamera((int)CameraModes.FreeLook, new FreeCamera());
             cameraManager.AddCamera((int)CameraModes.RoverFirstPerson, new BaseCamera());
-            cameraManager.currentCamera.TargetPosition = new Vector3(0, 50, 170);
-            cameraManager.currentCamera.Orientation = Quaternion.CreateFromYawPitchRoll(0, (float)-Math.PI / 6, 0);
+            cameraManager.currentCamera.TargetPosition = new Vector3(10, 5, -20);
+            cameraManager.currentCamera.Orientation = Quaternion.CreateFromYawPitchRoll((float)Math.PI, (float)-Math.PI / 6, 0);
         }
         public override List<ViewProfile> GetViewProfiles()
         {
@@ -271,6 +274,7 @@ namespace LegoGame
             //interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.E, false, true, false, KeyEvent.Pressed, EnterExitVehicle));
             interfaceDefaults.Add(new KeyBinding("Spawn Lander", Keys.L, false, true, false, KeyEvent.Pressed, SpawnLander));
             interfaceDefaults.Add(new KeyBinding("Spawn Rover", Keys.R, false, true, false, KeyEvent.Pressed, Request_Rover));
+            interfaceDefaults.Add(new KeyBinding("Pause Physics", Keys.P, false, true, false, KeyEvent.Pressed, Pause));
             KeyMap interfaceControls = new KeyMap(InputGroups.Interface.ToString(), interfaceDefaults);
 
 
@@ -307,8 +311,39 @@ namespace LegoGame
             cameraManager.NextCamera();
         }
 
+        bool paused = false;
+        private void Pause()
+        {
+            paused = !paused;
+
+            if(paused)
+                physicsManager.SetSimFactor(0);
+            else
+                physicsManager.SetSimFactor(1);
+        }
+
         #region Assets
         // Standard and Static callback create methods for the asset manager
+
+        private Gobject CreateB_4_2_3()
+        {
+            Vector3 size = new Vector3(1, 1, 2);
+            // position of box was upper leftmost corner
+            // body has world position
+            // skin is relative to the body
+            Box boxPrimitive = new Box(-.5f * size, Matrix.Identity, size); // relative to the body, the position is the top left-ish corner instead of the center, so subtract from the center, half of all sides to get that point.
+
+            Gobject brick = new Gobject(
+                Vector3.Zero, // position can be setup just following call to assetManager.GetNewInstance
+                size / 2,
+                boxPrimitive,
+                MaterialTable.MaterialID.NotBouncyRough,
+                cubeModel,
+                0 // asset name is set automatically by asset manager when requested
+                );
+            return brick;
+                
+        }
         private Gobject CreateRover()
         {
             RoverObject r = null;
@@ -388,7 +423,145 @@ namespace LegoGame
             return lander;
         }
 
+        private void SpawnRectangleHouse()
+        {
+            Vector3 HouseLocation = new Vector3(0, 0, 0);
+            int LongWallLengthBrickCount = 4;
+            int ShortWallLengthBrickCount = 2;
+            float blockLength = 2.0f;
+            int rows = 2;
+            float blockHeight = 1f;
+            Vector3 WallPoint = new Vector3(0,0,0);
+            int count = 0;
+            
+            for (int y = 0; y < rows; y++)
+            {
+                WallPoint.Z = 0;
+                if (y % 2 == 0)
+                {
+                    WallPoint.X -= blockLength / 4.0f;
+                    
+                    count = LongWallLengthBrickCount;
+                }
+                else
+                {
+                    WallPoint.X += blockLength / 4.0f;
+                    count = LongWallLengthBrickCount;
+                }
+
+                // increase x
+                for (int b = 0; b < count; b++)
+                {
+                    Vector3 brickLocation = new Vector3(WallPoint.X, (y*blockHeight)-10.5f, WallPoint.Z );
+                    Vector3 brickOrientYPR = new Vector3((float)Math.PI/2.0f, 0, 0);
+                    Gobject brick = GetB_4_2_3(HouseLocation + brickLocation, brickOrientYPR);
+                    WallPoint.X += blockLength;
+                    physicsManager.AddNewObject(brick);
+                }
+
+                if (y % 2 == 0)
+                {
+                    WallPoint.Z -= 0;
+                    count = ShortWallLengthBrickCount;
+                }
+                else
+                {
+                    WallPoint.Z -= blockLength / 2.0f;
+                    count = ShortWallLengthBrickCount;
+                }
+
+                // increase Z
+                for (int b = 0; b < count; b++)
+                {
+                    Vector3 brickLocation = new Vector3(WallPoint.X, (y * blockHeight)-10.5f, WallPoint.Z);
+                    Vector3 brickOrientYPR = new Vector3(0, 0, 0);
+                    Gobject brick = GetB_4_2_3(HouseLocation + brickLocation, brickOrientYPR);
+                    WallPoint.Z += blockLength;
+                    physicsManager.AddNewObject(brick);
+                }
+
+                if (y % 2 == 0)
+                {
+                    WallPoint.X -= 0;
+                    count = LongWallLengthBrickCount;
+                }
+                else
+                {
+                    WallPoint.X -= blockLength / 2.0f;
+                    count = LongWallLengthBrickCount;
+                }
+
+                // decrease x
+                for (int b = 0; b < count; b++)
+                {
+                    Vector3 brickLocation = new Vector3(WallPoint.X, (y * blockHeight) - 10.5f, WallPoint.Z);
+                    Vector3 brickOrientYPR = new Vector3((float)Math.PI / 2.0f, 0, 0);
+                    Gobject brick = GetB_4_2_3(HouseLocation + brickLocation, brickOrientYPR);
+                    WallPoint.X -= blockLength;
+                    physicsManager.AddNewObject(brick);
+                }
+
+
+                if (y % 2 == 0)
+                {
+                    WallPoint.Z -= 0;
+                    count = ShortWallLengthBrickCount;
+                }
+                else
+                {
+                    WallPoint.Z -= blockLength / 2.0f;
+                    count = ShortWallLengthBrickCount ;
+                }
+
+                // decrease Z
+                for (int b = 0; b < count; b++)
+                {
+                    Vector3 brickLocation = new Vector3(WallPoint.X, (y * blockHeight) - 10.5f, WallPoint.Z);
+                    Vector3 brickOrientYPR = new Vector3(0, 0, 0);
+                    Gobject brick = GetB_4_2_3(HouseLocation + brickLocation, brickOrientYPR);
+                    WallPoint.Z -= blockLength;
+                    physicsManager.AddNewObject(brick);
+                }
+            }
+        }
+
+        private void SpawnCircleHouse()
+        {
+            Vector3 HouseLocation = new Vector3(40,0,0);
+
+            int circumferenceBlockCount = 20;
+            float blockLength = 1.12f;
+            float circumference = circumferenceBlockCount* blockLength;
+            float radius = circumference / (float)Math.PI;
+            float circPoint = 0;
+            float intervals = (float)Math.PI * 2.0f / (float)circumferenceBlockCount;
+            int rows = 5;
+            float blockHeight = .1f;
+            
+            for (int y = 0; y < rows; y++)
+            {
+                if (y % 2 == 0)
+                    circPoint = 0;
+                else
+                    circPoint = intervals / 2.0f;
+
+                for (int c = 0; c < circumferenceBlockCount; c++)
+                {
+                    Vector3 brickLocation = new Vector3((float)Math.Cos(circPoint), (blockHeight*y)-1.5f, (float)Math.Sin(circPoint));
+                    Vector3 brickOrientYPR = new Vector3((float)(-circPoint), 0, 0);
+                    Gobject brick = GetB_4_2_3(HouseLocation + (radius * brickLocation), brickOrientYPR);
+                    circPoint += intervals;
+                    physicsManager.AddNewObject(brick);
+                }
+            }
+        }
         // Flexible create methods for the game 
+        private Gobject GetB_4_2_3(Vector3 pos, Vector3 orientYPR)
+        {
+            Gobject brick = assetManager.GetNewInstance(AssetTypes.B_4_2_3);
+            brick.MoveTo(pos, Matrix.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(orientYPR.X, orientYPR.Y, orientYPR.Z)));
+            return brick;
+        }
         private RoverObject GetRover(Vector3 pos)
         {
             // Colby says: Assets.Rover exists only as an experiment to decide between using Enums with casting or public static int variables with manual (possibly automated with reflection) initialization

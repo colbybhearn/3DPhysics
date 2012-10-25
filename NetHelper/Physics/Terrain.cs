@@ -64,7 +64,7 @@ namespace Helper.Physics
             }
 
             bool stretchTexture=false;
-            float textureTileCount=100;
+            float textureTileCount=10000;
 
             float worldZPosition = - (size.Z / 2);
             for (int z = 0; z < numVertsZ; z++)

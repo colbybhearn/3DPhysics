@@ -37,7 +37,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(799, 474);
             this.Name = "frmClient";
-            this.Text = "Robo Client";
+            this.Text = "Lego Client";
             this.SizeChanged += new System.EventHandler(this.frmClient_SizeChanged);
             this.ResumeLayout(false);
 

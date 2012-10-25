@@ -89,6 +89,10 @@
       <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
       <Name>Helper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WindowsGameLibrary\WindowsGameLibrary.csproj">
+      <Project>{080DD9B6-4867-457A-9B9B-2400CCD30AAD}</Project>
+      <Name>WindowsGameLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Winform_XNA\XnaView.csproj">
       <Project>{485FC2F7-3BA9-4046-AB91-919B74F2F03C}</Project>
       <Name>XnaView</Name>
