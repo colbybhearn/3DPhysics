@@ -27,6 +27,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboGame", "RoboClient\RoboGame.csproj", "{E39A1EC6-7BBE-4881-86EC-9A43521E6647}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LegoGame", "LegoGame", "{FC26F61D-6FE4-4DAD-9E59-82111AA68C46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoClient", "LegoClient\LegoClient.csproj", "{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoServer", "LegoServer\LegoServer.csproj", "{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,8 +173,36 @@ Global
 		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Release|x86.ActiveCfg = Release|x86
 		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Release|x86.Build.0 = Release|x86
 		{E39A1EC6-7BBE-4881-86EC-9A43521E6647}.Release|Xbox 360.ActiveCfg = Release|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Debug|x86.ActiveCfg = Debug|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Debug|x86.Build.0 = Debug|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Release|Any CPU.ActiveCfg = Release|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Release|Mixed Platforms.Build.0 = Release|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Release|x86.ActiveCfg = Release|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Release|x86.Build.0 = Release|x86
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}.Release|Xbox 360.ActiveCfg = Release|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Debug|x86.ActiveCfg = Debug|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Debug|x86.Build.0 = Debug|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Release|Any CPU.ActiveCfg = Release|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Release|Mixed Platforms.Build.0 = Release|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Release|x86.ActiveCfg = Release|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Release|x86.Build.0 = Release|x86
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Release|Xbox 360.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2} = {FC26F61D-6FE4-4DAD-9E59-82111AA68C46}
+		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D} = {FC26F61D-6FE4-4DAD-9E59-82111AA68C46}
 	EndGlobalSection
 EndGlobal

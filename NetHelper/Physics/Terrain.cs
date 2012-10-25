@@ -63,6 +63,9 @@ namespace Helper.Physics
                                                 (float)((-size.Z / 2) + (r.NextDouble() * size.Z)));
             }
 
+            bool stretchTexture=false;
+            float textureTileCount=100;
+
             float worldZPosition = - (size.Z / 2);
             for (int z = 0; z < numVertsZ; z++)
             {
@@ -79,8 +82,17 @@ namespace Helper.Physics
                     height = 0;
                     verts[count].Position = new Vector3(worldXPosition, height, worldZPosition);
                     verts[count].Normal = Vector3.Zero;
-                    verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
-                    verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);
+
+                    if (stretchTexture)
+                    {
+                        verts[count].TextureCoordinate.X = (float)x / (numVertsX - 1);
+                        verts[count].TextureCoordinate.Y = (float)z / (numVertsZ - 1);
+                    }
+                    else
+                    {
+                        verts[count].TextureCoordinate.X = ((float)x / (numVertsX - 1))*textureTileCount;
+                        verts[count].TextureCoordinate.Y = ((float)z / (numVertsZ - 1))*textureTileCount;
+                    }
 
                     count++;
 
@@ -232,8 +244,8 @@ namespace Helper.Physics
                 Effect.Texture = texture;
                 Effect.Projection = projection;
                 Effect.EnableDefaultLighting();
-                Effect.AmbientLightColor = Color.Black.ToVector3();
-                Effect.DiffuseColor = Color.DarkGray.ToVector3();
+                Effect.AmbientLightColor = Color.Gray.ToVector3();
+                Effect.DiffuseColor = Color.Green.ToVector3();                
                 Effect.TextureEnabled = true;
 
                 VertexPositionNormalTexture[] worldly = TransformVPNTs(verts); // because the verts are relative to the body, but here we need the real deal for drawing in the world

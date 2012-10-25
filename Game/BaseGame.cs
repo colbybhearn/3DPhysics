@@ -213,7 +213,7 @@ namespace Game
                 System.Diagnostics.Trace.WriteLine(e.StackTrace);
             }
 
-            if (isClient)
+            if (isClient && commClient!=null)
                 commClient.Send(new ClientReadyPacket(MyClientID, "someone"));
         }
 

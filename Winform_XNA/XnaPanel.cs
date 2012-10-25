@@ -140,7 +140,7 @@ namespace XnaView
                 //Counter.AddTick("average_fps", Counter.GetAveragePerSecond("fps"));
 
                 Matrix proj = Matrix.Identity;
-                GraphicsDevice.Clear(Color.Black);
+                GraphicsDevice.Clear(Color.SkyBlue);
 
                 DrawObjects();
 
