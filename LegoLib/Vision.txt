@@ -1,0 +1,46 @@
+﻿The game is an extension of the imagination.
+You are both a builder and the MiniFig
+
+Users needs to quickly be able to create things.
+Example:
+- Create a house
+	- Create East wall
+		- Select brick to use (and repeat)
+		- Click and drag the length of a wall in a cardinal direction
+		- Click and drag height of the wall
+		- wall bricks are automatically interleaved for strength
+		- bricks are immovable while constructing.
+	- Create North wall
+		- Click and drag the length of the wall
+		- Height is automatically guessed if next to existing wall
+		- Click to confirm height.
+		- wall is automatically dove-tailed into existing wall
+	- Create West wall
+	- Create South wall
+
+- Create a car
+	- pick a plate
+	- place four wheels
+		- select wheels
+		- rotate and place
+	- place a seat
+	- define input for the seat
+	- define actions for the input
+	
+
+
+		
+User can toggle between build mode and minifig mode
+User can only build in build mode.
+User can only operate vehicles in minifig mode.
+
+User can interact via a seat (and optimally, via modeled controls)
+Examples
+- Create a creation
+- Add a seat
+- Define what the seat controls
+- Define the input 
+- Define the behavior of the input
+- Save the creation
+- Enter the seat
+- Operate the vehicle

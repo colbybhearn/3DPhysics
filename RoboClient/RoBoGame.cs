@@ -18,6 +18,7 @@ using Helper.Physics.PhysicObjects;
 using Helper.Camera.Cameras;
 using System.Diagnostics;
 using Helper.Objects;
+using JigLibX.Physics;
 
 
 namespace RoboGame
@@ -892,5 +893,59 @@ namespace RoboGame
 
         #endregion
 
+        #region Mouse Input
+        float lastX;
+        float lastY;
+        public override void ProcessMouseMove(Point dPos, System.Windows.Forms.MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                if (lastX != 0 && lastY != 0)
+                {
+                    float dX = lastX - e.X;
+                    float dY = lastY - e.Y;
+                    PanCam(dX, dY);
+                }
+            }
+            lastX = e.X;
+            lastY = e.Y;
+        }
+
+        public void PanCam(float dX, float dY)
+        {
+            AdjustCameraOrientation(-dY * .001f, -dX * .001f);
+        }
+
+
+        public override void ProcessMouseDown(object sender, System.Windows.Forms.MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {
+            try
+            {
+                Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+                Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
+                Microsoft.Xna.Framework.Ray r = cameraManager.currentCamera.GetMouseRay(mouse, view);
+                float dist = 0;
+                Vector3 pos;
+                Vector3 norm;
+                CollisionSkin cs = new CollisionSkin();
+
+                lock (physicsManager.PhysicsSystem)
+                {
+                    if (physicsManager.PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new Helper.Physics.DefaultCollisionPredicate()))
+                    {
+                        Body b = cs.Owner;
+                        if (b == null)
+                            return;
+                        Gobject go = b.ExternalData as Gobject;
+                        SelectGameObject(go);
+                    }
+                }
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
+        }
+        #endregion
     }
 }

@@ -6,6 +6,7 @@ using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework.Input;
 using RoboGame;
 using Game;
+using Microsoft.Xna.Framework;
 
 namespace RoboGame
 {
@@ -83,6 +84,7 @@ namespace RoboGame
             this.XnaPanelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlMouseDown);
             this.XnaPanelMain.MouseEnter += new System.EventHandler(this.pnlMouseEnter);
             this.XnaPanelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlMouseMove);
+
             this.XnaPanelMain.MouseWheel += new MouseEventHandler(XnaPanelMain_MouseWheel);            
             this.Controls.Add(this.XnaPanelMain);
         }
@@ -135,10 +137,20 @@ namespace RoboGame
         {
             XnaPanelMain.Focus();
         }
-        float lastX;
-        float lastY;
+        int lastx;
+        int lasty;
+        Point dPos;
         private void pnlMouseMove(object sender, MouseEventArgs e)
         {
+            if (e.X == lastx && e.Y == lasty)
+                return;
+
+            dPos = new Microsoft.Xna.Framework.Point((lastx - e.X), (lasty - e.Y));
+            lastx = e.X;
+            lasty = e.Y;
+
+            game.ProcessMouseMove(dPos, e, XnaPanelMain.Bounds);
+            /*
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 if (lastX != 0 && lastY != 0)
@@ -149,11 +161,12 @@ namespace RoboGame
                 }
             }
             lastX = e.X;
-            lastY = e.Y;
+            lastY = e.Y;*/
         }
         private void pnlMouseDown(object sender, MouseEventArgs e)
         {
-            XnaPanelMain.ProcessMouseDown(e, XnaPanelMain.Bounds);
+            game.ProcessMouseDown(sender, e, XnaPanelMain.Bounds);
+            //XnaPanelMain.ProcessMouseDown(e, XnaPanelMain.Bounds);
         }
         void XnaPanelMain_MouseWheel(object sender, MouseEventArgs e)
         {

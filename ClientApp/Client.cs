@@ -169,25 +169,23 @@ namespace ClientApp
         {
             XnaPanelMain.Focus();
         }
-        float lastX;
-        float lastY;
+        int lastx;
+        int lasty;
+        Point dPos;
         private void pnlMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
-                if (lastX != 0 && lastY != 0)
-                {
-                    float dX = lastX - e.X;
-                    float dY = lastY - e.Y;
-                    XnaPanelMain.PanCam(dX, dY);
-                }
-            }
-            lastX = e.X;
-            lastY = e.Y;
+            if (e.X == lastx && e.Y == lasty)
+                return;
+
+            dPos = new Microsoft.Xna.Framework.Point((lastx - e.X), (lasty - e.Y));
+            lastx = e.X;
+            lasty = e.Y;
+            game.ProcessMouseMove(dPos, e, XnaPanelMain.Bounds);
         }
         private void pnlMouseDown(object sender, MouseEventArgs e)
         {
-            XnaPanelMain.ProcessMouseDown(e, XnaPanelMain.Bounds);
+            game.ProcessMouseDown(sender, e, XnaPanelMain.Bounds);
+            //XnaPanelMain.ProcessMouseDown(e, XnaPanelMain.Bounds);
         }
         void XnaPanelMain_MouseWheel(object sender, MouseEventArgs e)
         {

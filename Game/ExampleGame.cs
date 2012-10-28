@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Input;
 using Helper.Lighting;
 using System;
 using Helper.Objects;
+using JigLibX.Collision;
+using JigLibX.Physics;
+using JigLibX.Geometry;
 
 namespace Game
 {
@@ -580,7 +583,7 @@ namespace Game
                     Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cameraManager.ProjectionMatrix(), cameraManager.currentCamera.GetViewMatrix(), Matrix.Identity);
                     
                     int size = (int)chatFont.MeasureString(text[i]).X;
-                    sb.Draw(BlankBackground, new Rectangle((int)screen.X - size/2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);
+                    sb.Draw(BlankBackground, new Microsoft.Xna.Framework.Rectangle((int)screen.X - size/2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);
 
                     sb.DrawString(chatFont, text[i], new Vector2(screen.X - size/2, screen.Y), Color.White);
                 }
@@ -649,6 +652,60 @@ namespace Game
             }
         }
 
+        #region Mouse Input
+        float lastX;
+        float lastY;
+        public override void ProcessMouseMove(Point p, System.Windows.Forms.MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                if (lastX != 0 && lastY != 0)
+                {
+                    //float dX = lastX - e.X;
+                    //float dY = lastY - e.Y;
+                    PanCam(p.X, p.Y);
+                }
+            }
+            lastX = e.X;
+            lastY = e.Y;
+        }
+
+        public void PanCam(float dX, float dY)
+        {
+            AdjustCameraOrientation(-dY * .001f, -dX * .001f);
+        }
+
+
+        public override void ProcessMouseDown(object sender, System.Windows.Forms.MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {
+            try
+            {
+                Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+                Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
+                Microsoft.Xna.Framework.Ray r = cameraManager.currentCamera.GetMouseRay(mouse, view);
+                float dist = 0;
+                Vector3 pos;
+                Vector3 norm;
+                CollisionSkin cs = new CollisionSkin();
+
+                lock (physicsManager.PhysicsSystem)
+                {
+                    if (physicsManager.PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new Helper.Physics.DefaultCollisionPredicate()))
+                    {
+                        Body b = cs.Owner;
+                        if (b == null)
+                            return;
+                        Gobject go = b.ExternalData as Gobject;
+                        SelectGameObject(go);
+                    }
+                }
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
+        }
+        #endregion
         
     }
 }

@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using Helper.Multiplayer.Packets;
 using Microsoft.Xna.Framework.Input;
 using Game;
+using System.Drawing;
+using System.Diagnostics;
 
 namespace LegoGame
 {
@@ -46,6 +48,7 @@ namespace LegoGame
             game.Stopped += new Helper.Handlers.voidEH(game_Stopped);
 
             Application.Idle += new EventHandler(Application_Idle);
+            //Cursor.Hide();
         }
 
         void game_Stopped()
@@ -134,25 +137,54 @@ namespace LegoGame
         {
             XnaPanelMain.Focus();
         }
-        float lastX;
-        float lastY;
+        int lastx;
+        int lasty;
+        Point pCenter = new Point();
+        Point pCenterRelativeToWindow = new Point();
+        Microsoft.Xna.Framework.Point dPos;
+        bool ignoreMouse = false;
         private void pnlMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            //Debug.WriteLine(e.X + "," + e.Y);
+            if (e.X == lastx && e.Y == lasty)
             {
-                if (lastX != 0 && lastY != 0)
-                {
-                    float dX = lastX - e.X;
-                    float dY = lastY - e.Y;
-                    XnaPanelMain.PanCam(dX, dY);
-                }
+                //Debug.WriteLine("Ignoring same a last");
+                //return;
             }
-            lastX = e.X;
-            lastY = e.Y;
+
+
+            if ((8 +e.X == pCenterRelativeToWindow.X  && 30 + e.Y == pCenterRelativeToWindow.Y))
+            {
+                //Debug.WriteLine("Ignoring Center");
+                return;
+            }
+
+
+            dPos = new Microsoft.Xna.Framework.Point((-8+pCenterRelativeToWindow.X - e.X), (-30+pCenterRelativeToWindow.Y - e.Y));
+            lastx = e.X;
+            lasty = e.Y;
+
+            //Debug.WriteLine("=>"+dPos.X +", "+dPos.Y);
+            game.ProcessMouseMove(dPos,
+                e,
+                XnaPanelMain.Bounds);
+
+            
+            try
+            {
+                pCenter = new System.Drawing.Point(this.Left + (this.Width / 2), this.Top + (this.Height / 2));
+                pCenterRelativeToWindow = new System.Drawing.Point((this.Width / 2), (this.Height / 2));
+            }
+            catch (Exception E)
+            {
+            }
+            Cursor.Position = pCenter;
+
         }
         private void pnlMouseDown(object sender, MouseEventArgs e)
         {
-            XnaPanelMain.ProcessMouseDown(e, XnaPanelMain.Bounds);
+            game.ProcessMouseDown(sender, e, XnaPanelMain.Bounds);
+            
         }
         void XnaPanelMain_MouseWheel(object sender, MouseEventArgs e)
         {

@@ -85,6 +85,10 @@
       <Project>{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2}</Project>
       <Name>LegoClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LegoLib\LegoLib.csproj">
+      <Project>{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}</Project>
+      <Name>LegoLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NetHelper\Helper.csproj">
       <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
       <Name>Helper</Name>

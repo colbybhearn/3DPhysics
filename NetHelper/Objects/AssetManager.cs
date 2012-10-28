@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using Helper.Physics;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Helper.Objects
 {
@@ -242,6 +243,13 @@ namespace Helper.Objects
                     idList.Remove(id);
         }
 
-        
+        public Model GetModel(int id)
+        {
+            Asset a = Assets[id];
+            if (a == null)
+                return null;
+            Gobject go = a.GetNewGobject();
+            return go.Model;
+        }
     }
 }

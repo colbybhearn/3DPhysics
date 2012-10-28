@@ -131,10 +131,15 @@ namespace Helper.Camera
             currentCamera.IncreaseMovementSpeed();
         }
 
-        public void AdjustTargetOrientation(float p, float y)
+        public void AdjustTargetOrientationTo(float p, float y)
         {
-            currentCamera.AdjustTargetOrientation(p,y);
+            currentCamera.AdjustTargetOrientationTo(p,y);
         }
+        public void AdjustTargetOrientationBy(float p, float y)
+        {
+            currentCamera.AdjustTargetOrientationBy(p, y);
+        }
+
         public void DecreaseMovementSpeed()
         {
             currentCamera.DecreaseMovementSpeed();

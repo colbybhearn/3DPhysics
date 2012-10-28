@@ -16,6 +16,8 @@ using Microsoft.Xna.Framework.Input;
 using Helper.Audio;
 using System.Diagnostics;
 using Helper.Objects;
+using System.Windows.Forms;
+
 
 namespace Game
 {
@@ -719,7 +721,7 @@ namespace Game
 
         public void AdjustCameraOrientation(float pitch, float yaw)
         {
-            cameraManager.AdjustTargetOrientation(pitch, yaw);
+            cameraManager.AdjustTargetOrientationTo(pitch, yaw);
         }
 
         public void CameraMoveHeightIncrease()
@@ -732,7 +734,6 @@ namespace Game
         }
         public void CameraMoveHome()
         {
-            //cameraMode = GenericCameraModes.FreeLook;
         }
 
         public virtual void PreUpdateCameraCallback()
@@ -1108,5 +1109,14 @@ namespace Game
         #endregion
 
         #endregion
+
+
+        public virtual void ProcessMouseMove(Point p, MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {
+        }
+
+        public virtual void ProcessMouseDown(object sender, MouseEventArgs e, System.Drawing.Rectangle globalSystemDrawingRectangle)
+        {
+        }
     }
 }

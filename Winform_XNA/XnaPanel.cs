@@ -96,39 +96,8 @@ namespace XnaView
         #endregion
 
         #region Mouse Input
-        public void ProcessMouseDown(MouseEventArgs e, System.Drawing.Rectangle bounds)
-        {
-            try
-            {
-                Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
-                Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
-                Microsoft.Xna.Framework.Ray r = cam.GetMouseRay(mouse, view);
-                float dist = 0;
-                Vector3 pos;
-                Vector3 norm;
-                CollisionSkin cs = new CollisionSkin();
-                                
-                lock (PhysicsSystem)
-                {
-                    if (PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000), new MyCollisionPredicate()))
-                    {
-                        Body b = cs.Owner;
-                        if (b == null)
-                            return;
-                        Gobject go = b.ExternalData as Gobject;
-                        game.SelectGameObject(go);
-                    }
-                }
-            }
-            catch (Exception E)
-            {
-                System.Diagnostics.Debug.WriteLine(E.StackTrace);
-            }
-        }
-        public void PanCam(float dX, float dY)
-        {
-            game.AdjustCameraOrientation(-dY*.001f,-dX*.001f);
-        }
+        
+        
         #endregion
 
         #region Draw
@@ -249,11 +218,4 @@ namespace XnaView
         #endregion
     }
 
-    public class MyCollisionPredicate : CollisionSkinPredicate1
-    {
-        public override bool ConsiderSkin(CollisionSkin skin0)
-        {
-            return true;
-        }
-    }
 }

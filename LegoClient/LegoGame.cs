@@ -18,6 +18,8 @@ using Helper.Physics.PhysicObjects;
 using Helper.Camera.Cameras;
 using System.Diagnostics;
 using Helper.Objects;
+using LegoLib;
+using JigLibX.Physics;
 
 namespace LegoGame
 {
@@ -27,7 +29,7 @@ namespace LegoGame
 
         #region Properties / Fields
 
-        GameplayModes gameplaymode = GameplayModes.Rover;
+        GameplayModes gameplaymode = GameplayModes.Build;
 
         Model roverModel, wheelModel, landerModel;
         RoverObject myRover;
@@ -35,8 +37,6 @@ namespace LegoGame
         Texture2D moon;
         Model cubeModel;
         Model sphereModel;
-        LunarVehicle lander;
-        Planet planet;
         Model roverRadar;
         Model RotArm;
         Model roverCam;
@@ -59,8 +59,15 @@ namespace LegoGame
         SoundEffectInstance motor_running;
         SoundEffectInstance radar_noise_loop;
 
+        
         Texture2D BlankBackground;
         #endregion
+
+        #region Lego!
+        Piece buildPiece;
+        List<Piece> selectedPieces = new List<Piece>();
+        #endregion
+
 
         #region Enumerations
         public enum InputGroups
@@ -69,6 +76,8 @@ namespace LegoGame
             Rover,
             Lander,
             Interface,
+            Build,
+            Play,
         }
         public enum AssetTypes
         {
@@ -80,10 +89,11 @@ namespace LegoGame
         }
         public enum GameplayModes
         {
-            Rover,
-            Lander,
-            Spectate,
+            Build,
+            BuildCam,
+            Play,
         }
+        
         public enum Sounds
         {
             SolarWind, // not a real thing, but is still awesome
@@ -97,6 +107,14 @@ namespace LegoGame
             ObjectWatch,
             RoverFirstPerson,
             ObjectChase
+        }
+
+        public enum BuildModes
+        {
+            Orientation,
+            Location,
+            Length,            
+            Height
         }
         #endregion
 
@@ -185,8 +203,8 @@ namespace LegoGame
         {
             cameraManager.AddCamera((int)CameraModes.FreeLook, new FreeCamera());
             cameraManager.AddCamera((int)CameraModes.RoverFirstPerson, new BaseCamera());
-            cameraManager.currentCamera.TargetPosition = new Vector3(10, 5, -20);
-            cameraManager.currentCamera.Orientation = Quaternion.CreateFromYawPitchRoll((float)Math.PI, (float)-Math.PI / 6, 0);
+            cameraManager.currentCamera.TargetPosition = new Vector3(10, 5, 20);
+            cameraManager.currentCamera.Orientation = Quaternion.CreateFromYawPitchRoll((float)Math.PI, 0, 0);
         }
         public override List<ViewProfile> GetViewProfiles()
         {
@@ -210,60 +228,33 @@ namespace LegoGame
             defControls.Game = this.name;
 
 
-            List<KeyBinding> cameraDefaults = new List<KeyBinding>();
-            cameraDefaults.Add(new KeyBinding("Forward", Keys.NumPad8, false, false, false, KeyEvent.Down, CameraMoveForward));
-            cameraDefaults.Add(new KeyBinding("Left", Keys.NumPad4, false, false, false, KeyEvent.Down, CameraMoveLeft));
-            cameraDefaults.Add(new KeyBinding("Backward", Keys.NumPad5, false, false, false, KeyEvent.Down, CameraMoveBackward));
-            cameraDefaults.Add(new KeyBinding("Right", Keys.NumPad6, false, false, false, KeyEvent.Down, CameraMoveRight));
-            cameraDefaults.Add(new KeyBinding("Speed Increase", Keys.NumPad7, false, false, false, KeyEvent.Pressed, CameraMoveSpeedIncrease));
-            cameraDefaults.Add(new KeyBinding("Speed Decrease", Keys.NumPad1, false, false, false, KeyEvent.Pressed, CameraMoveSpeedDecrease));
-            cameraDefaults.Add(new KeyBinding("Height Increase", Keys.NumPad9, false, false, false, KeyEvent.Down, CameraMoveHeightIncrease));
-            cameraDefaults.Add(new KeyBinding("Height Decrease", Keys.NumPad3, false, false, false, KeyEvent.Down, CameraMoveHeightDecrease));
+            List<KeyBinding> buildDefaults = new List<KeyBinding>();
+            buildDefaults.Add(new KeyBinding("Forward", Keys.NumPad8, false, false, false, KeyEvent.Down, CameraMoveForward));
+            buildDefaults.Add(new KeyBinding("Left", Keys.NumPad4, false, false, false, KeyEvent.Down, CameraMoveLeft));
+            buildDefaults.Add(new KeyBinding("Backward", Keys.NumPad5, false, false, false, KeyEvent.Down, CameraMoveBackward));
+            buildDefaults.Add(new KeyBinding("Right", Keys.NumPad6, false, false, false, KeyEvent.Down, CameraMoveRight));
+            buildDefaults.Add(new KeyBinding("Speed Increase", Keys.NumPad7, false, false, false, KeyEvent.Pressed, CameraMoveSpeedIncrease));
+            buildDefaults.Add(new KeyBinding("Speed Decrease", Keys.NumPad1, false, false, false, KeyEvent.Pressed, CameraMoveSpeedDecrease));
+            buildDefaults.Add(new KeyBinding("Height Increase", Keys.NumPad9, false, false, false, KeyEvent.Down, CameraMoveHeightIncrease));
+            buildDefaults.Add(new KeyBinding("Height Decrease", Keys.NumPad3, false, false, false, KeyEvent.Down, CameraMoveHeightDecrease));
 
-            cameraDefaults.Add(new KeyBinding("Change Mode", Keys.Decimal, false, false, false, KeyEvent.Pressed, CameraModeCycle));
-            cameraDefaults.Add(new KeyBinding("Home", Keys.Multiply, false, false, false, KeyEvent.Pressed, CameraMoveHome));
+            buildDefaults.Add(new KeyBinding("Cycle Mode", Keys.Decimal, false, false, false, KeyEvent.Pressed, CameraModeCycle));
+            buildDefaults.Add(new KeyBinding("Home", Keys.Multiply, false, false, false, KeyEvent.Pressed, CameraMoveHome));
             //
-            cameraDefaults.Add(new KeyBinding("Toggle Debug Info", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
-            cameraDefaults.Add(new KeyBinding("Toggle Physics Debug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
-            KeyMap camControls = new KeyMap(GenericInputGroups.Camera.ToString(), cameraDefaults);
+            buildDefaults.Add(new KeyBinding("Toggle Debug Info", Keys.F1, false, false, false, KeyEvent.Pressed, ToggleDebugInfo));
+            buildDefaults.Add(new KeyBinding("Toggle Physics Debug", Keys.F2, false, false, false, KeyEvent.Pressed, TogglePhsyicsDebug));
+            
+
+            KeyMap buildControls = new KeyMap(InputGroups.Build.ToString(), buildDefaults);
+
+
 
             List<KeyBinding> ClientDefs = new List<KeyBinding>();
             ClientDefs.Add(new KeyBinding("Escape", Keys.Escape, false, false, false, KeyEvent.Pressed, Stop));
             KeyMap clientControls = new KeyMap(GenericInputGroups.Client.ToString(), ClientDefs);
 
 
-            // Car
-            List<KeyBinding> roverDefaults = new List<KeyBinding>();
-            //careDefaults.Add(new KeyBinding("Spawn", Keys.R, false, true, false, KeyEvent.Pressed, SpawnCar));
-            roverDefaults.Add(new KeyBinding("Forward", Keys.Up, false, false, false, KeyEvent.Down, Accelerate));
-            roverDefaults.Add(new KeyBinding("Left", Keys.Left, false, false, false, KeyEvent.Down, SteerLeft));
-            roverDefaults.Add(new KeyBinding("Backward", Keys.Down, false, false, false, KeyEvent.Down, Deccelerate));
-            roverDefaults.Add(new KeyBinding("Right", Keys.Right, false, false, false, KeyEvent.Down, SteerRight));
-            roverDefaults.Add(new KeyBinding("Laser", Keys.B, false, false, false, KeyEvent.Down, UseLaser));
-            roverDefaults.Add(new KeyBinding("Pan Camera Left", Keys.J, false, false, false, KeyEvent.Down, RoverCamPanLeft));
-            roverDefaults.Add(new KeyBinding("Pan Camera Right", Keys.L, false, false, false, KeyEvent.Down, RoverCamPanRight));
-            roverDefaults.Add(new KeyBinding("Pan Camera Up", Keys.I, false, false, false, KeyEvent.Down, RoverCamPanUp));
-            roverDefaults.Add(new KeyBinding("Pan Camera Down", Keys.K, false, false, false, KeyEvent.Down, RoverCamPanDown));
-            KeyMap roverControls = new KeyMap(InputGroups.Rover.ToString(), roverDefaults);
-
-            // player 
-
-            // Spheres
-            //cardefaults.Add(new KeyBinding("SpawnSpheres", Keys.N, false, true, false, KeyEvent.Pressed, SpawnSpheres));
-
-
-            //Lunar Lander
-            List<KeyBinding> landerDefaults = new List<KeyBinding>();
-            //landerDefaults.Add(new KeyBinding("Spawn", Keys.Decimal, false, false, false, KeyEvent.Pressed, SpawnLander));
-            landerDefaults.Add(new KeyBinding("Thrust Up", Keys.Space, false, false, false, KeyEvent.Down, LunarThrustUp));
-            landerDefaults.Add(new KeyBinding("Pitch Up", Keys.NumPad5, false, false, false, KeyEvent.Down, LunarPitchUp));
-            landerDefaults.Add(new KeyBinding("Pitch Down", Keys.NumPad8, false, false, false, KeyEvent.Down, LunarPitchDown));
-            landerDefaults.Add(new KeyBinding("Roll Left", Keys.NumPad4, false, false, false, KeyEvent.Down, LunarRollLeft));
-            landerDefaults.Add(new KeyBinding("Roll Right", Keys.NumPad6, false, false, false, KeyEvent.Down, LunarRollRight));
-            landerDefaults.Add(new KeyBinding("Yaw Left", Keys.NumPad7, false, false, false, KeyEvent.Down, LunarYawLeft));
-            landerDefaults.Add(new KeyBinding("Yaw Right", Keys.NumPad9, false, false, false, KeyEvent.Down, LunarYawRight));
-            KeyMap landerControls = new KeyMap(InputGroups.Lander.ToString(), landerDefaults);
-
+            
             // Chat
             List<KeyBinding> commDefaults = new List<KeyBinding>();
             commDefaults.Add(new KeyBinding("Chat ", Keys.Enter, false, false, false, KeyEvent.Pressed, ChatKeyPressed));
@@ -271,17 +262,14 @@ namespace LegoGame
 
             // Interface
             List<KeyBinding> interfaceDefaults = new List<KeyBinding>();
-            //interfaceDefaults.Add(new KeyBinding("Enter / Exit Vehicle", Keys.E, false, true, false, KeyEvent.Pressed, EnterExitVehicle));
-            interfaceDefaults.Add(new KeyBinding("Spawn Lander", Keys.L, false, true, false, KeyEvent.Pressed, SpawnLander));
-            interfaceDefaults.Add(new KeyBinding("Spawn Rover", Keys.R, false, true, false, KeyEvent.Pressed, Request_Rover));
             interfaceDefaults.Add(new KeyBinding("Pause Physics", Keys.P, false, true, false, KeyEvent.Pressed, Pause));
+            interfaceDefaults.Add(new KeyBinding("Toggle Build / Play Mode", Keys.F5, false, false, false, KeyEvent.Pressed, ToggleMode));
+            interfaceDefaults.Add(new KeyBinding("Toggle Build Camera", Keys.C, false, false, false, KeyEvent.Pressed, buildCamToggle));
             KeyMap interfaceControls = new KeyMap(InputGroups.Interface.ToString(), interfaceDefaults);
 
 
-            defControls.AddMap(camControls);
+            defControls.AddMap(buildControls);
             defControls.AddMap(clientControls);
-            defControls.AddMap(roverControls);
-            defControls.AddMap(landerControls);
             defControls.AddMap(commControls);
             defControls.AddMap(interfaceControls);
             Vector3 res = new Vector3();
@@ -300,10 +288,6 @@ namespace LegoGame
             soundManager.AddSound(Sounds.RoverMotor.ToString(), motor, false, .3f, Helper.Audio.SoundTypes.Effect);
             soundManager.AddSound(Sounds.RadarNoise.ToString(), radar_noise, true, .5f, Helper.Audio.SoundTypes.Effect);
             soundManager.AddSound(Sounds.SolarWind.ToString(), solar_wind, true, .5f, Helper.Audio.SoundTypes.Effect);
-
-            // Let's play this right away;  should not play on the server through
-            if (isClient)
-                soundManager.Play(Sounds.SolarWind.ToString());
         }
 
         public void CameraModeCycle()
@@ -598,31 +582,51 @@ namespace LegoGame
             base.Stop();
         }
 
-        private void EnterExitVehicle()
+
+        private void buildCamToggle()
+        {
+            switch (gameplaymode)
+            {
+                case GameplayModes.Build:
+                    gameplaymode = GameplayModes.BuildCam;
+                    break;
+                case GameplayModes.BuildCam:
+                    gameplaymode = GameplayModes.Build;
+
+                    break;
+            }
+        }
+
+        private void ToggleMode()
         {
 
             switch (gameplaymode)
             {
-                case GameplayModes.Rover:
-                    gameplaymode = GameplayModes.Spectate;
+                case GameplayModes.Build:
+                case GameplayModes.BuildCam:
+                    gameplaymode = GameplayModes.Play;
                     break;
-                case GameplayModes.Lander:
-                    gameplaymode = GameplayModes.Spectate;
-                    break;
-                case GameplayModes.Spectate:
-                    if (currentSelectedObject == null)
-                        return;
-                    // turn on only those appropriate to the current Game mode
-                    if (currentSelectedObject is CarObject)
-                        gameplaymode = GameplayModes.Rover;
-                    if (currentSelectedObject is LunarVehicle)
-                        gameplaymode = GameplayModes.Lander;
-                    break;
-                default:
+                case GameplayModes.Play:
+                    gameplaymode = GameplayModes.Build;
+                    PickPiece(AssetTypes.B_4_2_3);
                     break;
             }
 
+            ProcessModeChange();
             UpdateInputs();
+        }
+
+        private void ProcessModeChange()
+        {
+            switch (gameplaymode)
+            {
+                case GameplayModes.Build:
+                    SetSimFactor(0);
+                    break;
+                case GameplayModes.Play:
+                    SetSimFactor(1);
+                    break;
+            }
         }
         private void UpdateInputs()
         {
@@ -636,15 +640,11 @@ namespace LegoGame
 
             switch (gameplaymode)
             {
-                case GameplayModes.Rover:
-                    inputManager.EnableKeyMap(InputGroups.Rover.ToString());
+                case GameplayModes.Build:
+                    inputManager.EnableKeyMap(InputGroups.Build.ToString());
                     break;
-                case GameplayModes.Lander:
-                    inputManager.EnableKeyMap(InputGroups.Lander.ToString());
-                    break;
-                case GameplayModes.Spectate:
-                    break;
-                default:
+                case GameplayModes.Play:
+                    inputManager.EnableKeyMap(InputGroups.Play.ToString());
                     break;
             }
         }
@@ -764,119 +764,6 @@ namespace LegoGame
                 cameraManager.currentCamera.SetCurrentOrientation(myRover.GetCameraOrientation());
             }
         }
-
-        #region Lunar
-        private void LunarThrustUp()
-        {
-            if (lander == null)
-                return;
-            lander.SetVertJetThrust(.9f);
-        }
-        private void LunarPitchDown()
-        {
-            if (lander == null)
-                return;
-            lander.SetRotJetXThrust(-.4f);
-
-        }
-        private void LunarRollLeft()
-        {
-            if (lander == null)
-                return;
-            lander.SetRotJetZThrust(-.4f);
-        }
-        private void LunarPitchUp()
-        {
-            if (lander == null)
-                return;
-            lander.SetRotJetXThrust(.4f);
-        }
-        private void LunarRollRight()
-        {
-            if (lander == null)
-                return;
-            lander.SetRotJetZThrust(.4f);
-        }
-        private void LunarYawLeft()
-        {
-            if (lander == null)
-                return;
-            lander.SetRotJetYThrust(.4f);
-        }
-        private void LunarYawRight()
-        {
-            if (lander == null)
-                return;
-            lander.SetRotJetYThrust(-.4f);
-        }
-        #endregion
-
-        #region Rover
-        private void Accelerate()
-        {
-            if (myRover == null)
-                return;
-            myRover.SetAcceleration(1.0f);
-
-            soundManager.Play(Sounds.RoverMotor.ToString());
-            if (motor_running != null)
-            {
-                motor_running.Volume = 0.3f;
-
-                motor_running.Play();
-            }
-
-        }
-        private void Deccelerate()
-        {
-            if (myRover == null)
-                return;
-            myRover.SetAcceleration(-1.0f);
-        }
-        private void SteerLeft()
-        {
-            if (myRover == null)
-                return;
-            myRover.SetSteering(1.0f);
-        }
-        private void SteerRight()
-        {
-            if (myRover == null)
-                return;
-            myRover.SetSteering(-1.0f);
-        }
-        private void UseLaser()
-        {
-            if (myRover == null)
-                return;
-            myRover.SetShootLaser(1.0f);
-        }
-
-        public void RoverCamPanLeft()
-        {
-            if (myRover == null) return;
-            myRover.AdjustCamYaw(.0005f);
-        }
-
-        public void RoverCamPanRight()
-        {
-            if (myRover == null) return;
-            myRover.AdjustCamYaw(-.0005f);
-        }
-        public void RoverCamPanUp()
-        {
-            if (myRover == null) return;
-            myRover.AdjustCamPitch(.0005f);
-        }
-
-        public void RoverCamPanDown()
-        {
-            if (myRover == null) return;
-            myRover.AdjustCamPitch(-.0005f);
-        }
-
-        #endregion
-
         private Gobject SpawnRover(int ownerid, int objectid)
         {
             Gobject newobject = GetRover(new Vector3(90, 20, 20));
@@ -890,7 +777,6 @@ namespace LegoGame
             }
             return newobject;
         }
-
         bool CollisionSkin_callbackFn(CollisionSkin skin0, CollisionSkin skin1)
         {
             RoverObject rover = null;
@@ -948,7 +834,190 @@ namespace LegoGame
             }
         }
 
+        #region Mouse Input
+        float WindowLocationX;
+        float WindowLocationY;
+        /*
+         * In build mode, the screen is your build area? is there some other, better way?
+         * In build cam, we don't show the mouse and we auto-center the mouse.
+         * 
+         */
+        public override void ProcessMouseMove(Point dPos, System.Windows.Forms.MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {
+            switch (gameplaymode)
+            {
+                case GameplayModes.Build:
+                    UpdateMouseLocationIn2DWindow(dPos);
+                    BuildMouseMove(dPos, e, bounds);                    
+                    break;
+                case GameplayModes.BuildCam:
+                    BuildCamMouseMove(dPos);
+                    break;
+                case GameplayModes.Play:
+                    PlayMouseMove(e);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void UpdateMouseLocationIn2DWindow(Point dPos)
+        {
+            WindowLocationX += dPos.X;
+            WindowLocationY += dPos.Y;
+        }
+
+        private void PlayMouseMove(System.Windows.Forms.MouseEventArgs e)
+        {
+            
+        }
+
+        private void BuildCamMouseMove(Point d)
+        {
+            PanCam(d.X, d.Y);
+        }
+
+        
+        private void BuildMouseMove(Point dPos, System.Windows.Forms.MouseEventArgs e,  System.Drawing.Rectangle bounds)
+        {
+            switch (gameplaymode)
+            {
+                case GameplayModes.Build:
+                    BuildMouseDown(dPos, e, bounds);
+                    break;
+                case GameplayModes.BuildCam:
+                    break;
+                case GameplayModes.Play:
+                    PlayMouseDown(e, bounds);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void PanCam(float dX, float dY)
+        {
+            cameraManager.AdjustTargetOrientationBy(dY*.001f, dX*.001f);
+        }
+
+        
+        private void BuildMouseDown(Point dPos, System.Windows.Forms.MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {
+            try
+            {
+                Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+                Vector2 mouse = new Vector2(WindowLocationX, WindowLocationY);
+                Microsoft.Xna.Framework.Ray r = cameraManager.currentCamera.GetMouseRay(mouse, view);
+                float dist = 0;
+                Vector3 pos;
+                Vector3 norm;
+                CollisionSkin cs = new CollisionSkin();
+
+                if (GetClickedPoint(out dist, out  cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000)))
+                {
+                    buildLastMouseDownPosition = pos;
+                    
+                }
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
+        }
+
+        private void PlayMouseDown(System.Windows.Forms.MouseEventArgs e, System.Drawing.Rectangle bounds)
+        {
+            try
+            {
+                Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+                Vector2 mouse = new Vector2(e.Location.X, e.Location.Y);
+                Microsoft.Xna.Framework.Ray r = cameraManager.currentCamera.GetMouseRay(mouse, view);
+                float dist = 0;
+                Vector3 pos;
+                Vector3 norm;
+                CollisionSkin cs = new CollisionSkin();
+
+                if (GetClickedPoint(out dist,out  cs,out pos, out norm, new Segment(r.Position, r.Direction * 1000)))
+                {
+                    Body b = cs.Owner;
+                    if (b == null)
+                        return;
+                    Gobject go = b.ExternalData as Gobject;
+                    SelectGameObject(go);
+                }
+            }
+            catch (Exception E)
+            {
+                System.Diagnostics.Debug.WriteLine(E.StackTrace);
+            }
+        }
+
+        private bool GetClickedPoint(float x, float y, System.Drawing.Rectangle bounds, out float dist, out CollisionSkin cs, out Vector3 pos, out Vector3 norm)
+        {
+            Viewport view = new Viewport(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+            Vector2 mouse = new Vector2(x, y);
+            Microsoft.Xna.Framework.Ray r = cameraManager.currentCamera.GetMouseRay(mouse, view);
+            return GetClickedPoint(out dist, out  cs, out pos, out norm, new Segment(r.Position, r.Direction * 1000));
+        }
+
+        private bool GetClickedPoint(out float dist, out CollisionSkin cs, out Vector3 pos, out Vector3 norm, Segment s)
+        {
+            // only ray tracing currently done is for object selection.
+            // I need object intersection point.
+            lock (physicsManager.PhysicsSystem)
+            {
+                if (physicsManager.PhysicsSystem.CollisionSystem.SegmentIntersect(out dist, out cs, out pos, out norm, s, new Helper.Physics.DefaultCollisionPredicate()))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        #endregion
+
+        #region Build Mode
+        /*
+         * What are we building?
+         * what is the location?
+         * what is the orientation?
+         * 
+         * What different things need to be specified for an object
+         *  - Anything using two connection points has only 4 orientations
+         * What is the length/height
+         * 
+         */
+        BuildModes buildMode = BuildModes.Location;
+        Vector3 buildLastMouseDownPosition;        
+        float buildOrientation;
+        
+        Model currentPiece;
+
+        private Model GetAssetModel(AssetTypes a)
+        {
+            return assetManager.GetModel((int) a);
+        }
+
+        private void PickPiece(AssetTypes p)
+        {
+            currentPiece = GetAssetModel(p);
+        }
+
+        #endregion
+
+
         #region Graphics
+
+        
+        private void DrawBuildMode(Matrix v, Matrix p)
+        {
+            if (currentPiece == null)
+                return;
+            Matrix world = Matrix.CreateTranslation(buildLastMouseDownPosition);
+            currentPiece.Draw(world, v, p);
+        }
+
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
@@ -971,11 +1040,16 @@ namespace LegoGame
                     }
                 }
             }
+
             if (BlankBackground == null)
             {
                 BlankBackground = new Texture2D(sb.GraphicsDevice, 1, 1);
                 BlankBackground.SetData(new Color[] { Color.White });
             }
+
+            Matrix v = cameraManager.currentCamera.GetViewMatrix();
+            Matrix p =cameraManager.ProjectionMatrix();
+            
 
             //Now that we're no longer blocking, lets draw
             for (int i = 0; i < pos.Count; i++)
@@ -983,13 +1057,15 @@ namespace LegoGame
                 // TODO - magic number
                 if (Vector3.Distance(cameraManager.currentCamera.CurrentPosition, pos[i]) < 100)
                 {
-                    Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], cameraManager.ProjectionMatrix(), cameraManager.currentCamera.GetViewMatrix(), Matrix.Identity);
+                    Vector3 screen = sb.GraphicsDevice.Viewport.Project(pos[i], p, v, Matrix.Identity);
 
                     int size = (int)chatFont.MeasureString(text[i]).X;
                     sb.Draw(BlankBackground, new Microsoft.Xna.Framework.Rectangle((int)screen.X - size / 2, (int)screen.Y, size, chatFont.LineSpacing), Color.Gray * .5f);
                     sb.DrawString(chatFont, text[i], new Vector2(screen.X - size / 2, screen.Y), Color.White);
                 }
             }
+
+            DrawBuildMode(v,p);
 
             ChatManager.Draw(sb);
 
@@ -1031,6 +1107,7 @@ namespace LegoGame
             }
 
         }
+
         #endregion
 
         #endregion

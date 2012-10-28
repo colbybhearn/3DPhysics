@@ -170,7 +170,10 @@ namespace Helper.Camera.Cameras
         public virtual void MoveUp()
         {
         }
-        public virtual void AdjustTargetOrientation(float pitch, float yaw)
+        public virtual void AdjustTargetOrientationTo(float pitch, float yaw)
+        {
+        }
+        public virtual void AdjustTargetOrientationBy(float pitch, float yaw)
         {
         }
 

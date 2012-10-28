@@ -150,6 +150,7 @@
     <Compile Include="Objects\Asset.cs" />
     <Compile Include="Objects\AssetManager.cs" />
     <Compile Include="Physics\BoostController.cs" />
+    <Compile Include="Physics\DefaultCollisionPredicate.cs" />
     <Compile Include="Physics\GravityController.cs" />
     <Compile Include="Objects\Gobject.cs" />
     <Compile Include="Physics\HeightMapInfo.cs" />

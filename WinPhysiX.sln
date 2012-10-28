@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoClient", "LegoClient\Le
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoServer", "LegoServer\LegoServer.csproj", "{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegoLib", "LegoLib\LegoLib.csproj", "{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -197,6 +199,18 @@ Global
 		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Release|x86.ActiveCfg = Release|x86
 		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Release|x86.Build.0 = Release|x86
 		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D}.Release|Xbox 360.ActiveCfg = Release|x86
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Debug|Xbox 360.ActiveCfg = Debug|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Release|x86.ActiveCfg = Release|Any CPU
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A}.Release|Xbox 360.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -204,5 +218,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{F019BAE8-4732-4C1C-8FCB-5FDFD31043E2} = {FC26F61D-6FE4-4DAD-9E59-82111AA68C46}
 		{8A97C530-5C38-4BE6-943F-81C2BAB84F2D} = {FC26F61D-6FE4-4DAD-9E59-82111AA68C46}
+		{0BEA2DAF-4F36-4CAD-B602-68E1C0707F5A} = {FC26F61D-6FE4-4DAD-9E59-82111AA68C46}
 	EndGlobalSection
 EndGlobal

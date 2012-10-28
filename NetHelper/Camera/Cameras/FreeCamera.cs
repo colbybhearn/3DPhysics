@@ -34,11 +34,17 @@ namespace Helper.Camera.Cameras
         }
 
 
-        public override void AdjustTargetOrientation(float pitch, float yaw)
+        public override void AdjustTargetOrientationTo(float pitch, float yaw)
         {
-            PitchYawRoll.X = (PitchYawRoll.X + pitch);
-            PitchYawRoll.Y = (PitchYawRoll.Y + yaw);
+            PitchYawRoll.X = pitch;
+            PitchYawRoll.Y = yaw;
 
+            UpdateOrientation();
+        }
+
+        private void UpdateOrientation()
+        {
+            //System.Diagnostics.Debug.WriteLine(PitchYawRoll.X + ", " + PitchYawRoll.Y);
             //prevents camera from flipping over, Math.Pi/2 = 1.57f with rounding
             // I use 1.57f because Math.PI causes constant "flipping"
             PitchYawRoll = Vector3.Clamp(PitchYawRoll, new Vector3(-1.57f, float.MinValue, float.MinValue), new Vector3(1.57f, float.MaxValue, float.MaxValue));
@@ -51,6 +57,16 @@ namespace Helper.Camera.Cameras
             //Quaternion.CreateFromAxisAngle(Vector3.UnitY, -dX * .001f);
             //Orientation = Orientation * cameraChange;
         }
+
+        public override void AdjustTargetOrientationBy(float pitch, float yaw)
+        {
+            AdjustTargetOrientationTo(PitchYawRoll.X + pitch,
+                                      PitchYawRoll.Y + yaw);
+
+            
+        }
+
+
 
         public override void MoveRight()
         {

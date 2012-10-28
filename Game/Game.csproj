@@ -69,6 +69,8 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExampleGame.cs" />
@@ -76,6 +78,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JigLibX 0.3.1\JigLibX\JigLibX.csproj">
+      <Project>{8A7CEF45-3501-491D-AEDA-0164060F5348}</Project>
+      <Name>JigLibX</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NetHelper\Helper.csproj">
       <Project>{6A67E9EA-E2AB-47CC-90A5-8E8813084721}</Project>
       <Name>Helper</Name>
